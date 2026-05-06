@@ -1,0 +1,332 @@
+﻿<script setup lang="ts">
+import {
+  CheckCircleOutlined,
+  CloseCircleOutlined,
+  LoadingOutlined,
+  QuestionCircleOutlined,
+} from '@ant-design/icons-vue'
+import { NiceModal } from '@rpa/components'
+import type { Rule } from 'ant-design-vue/es/form'
+import { useTranslation } from 'i18next-vue'
+import { nanoid } from 'nanoid'
+import { reactive, ref } from 'vue'
+
+import { apiCheckEmail, apiSaveMail } from '@/api/mail'
+import { EMAIL_OPTIONS, PROTOCAL_OPTIONS } from '@/constants/mail'
+
+const props = defineProps<{ data: object }>()
+const emit = defineEmits(['ok'])
+
+const modal = NiceModal.useModal()
+const { t } = useTranslation()
+
+const emailOptions = EMAIL_OPTIONS.map((it) => {
+  return {
+    label: t(`mailServer.${it.value}`),
+    value: it.value,
+  }
+})
+
+const emailFormRef = ref(null)
+const isEdit = ref(false)
+const email = reactive({
+  resourceId: nanoid(),
+  mode: 'add',
+  emailService: '163Email',
+  emailProtocol: 'IMAP',
+  emailServiceAddress: '',
+  port: '',
+  enableSSL: true,
+  emailAccount: '',
+  authorizationCode: '',
+})
+
+const emailFormRules: Record<string, Rule[]> = {
+  emailServiceAddress: [{
+    required: true,
+    message: t('mailManageConfig.inputServerAddress'),
+    trigger: 'blur',
+  }],
+  port: [{
+    required: true,
+    message: t('mailManageConfig.inputPort'),
+    trigger: 'blur',
+  }],
+  emailAccount: [
+    { required: true, message: t('mailManageConfig.inputEmailAccount') },
+    { validator: validateTypedEmail },
+  ],
+  authorizationCode: [{
+    required: true,
+    message: t('mailManageConfig.inputAuthorizationCode'),
+    trigger: 'blur',
+  }],
+}
+
+const testStatus = ref('')
+const errorMsg = ref('')
+
+async function okhandle() {
+  await validateForm()
+  const data = await apiSaveMail(email)
+
+  if (data.code === '000000') {
+    emit('ok', email)
+    modal.hide()
+  }
+}
+
+async function testConnection() {
+  if (testStatus.value === 'loading')
+    return
+
+  await validateForm()
+  testStatus.value = 'loading'
+
+  const mail = {
+    enableSSL: email.enableSSL,
+    emailService: email.emailService,
+    emailProtocol: email.emailProtocol,
+    emailAccount: email.emailAccount,
+    authorizationCode: email.authorizationCode,
+    ...(email.emailService === 'customEmail' && {
+      emailServiceAddress: email.emailServiceAddress,
+      port: email.port,
+    }),
+  }
+
+  apiCheckEmail(mail).then(
+    (res) => {
+      if (res.data === '1') {
+        testStatus.value = 'success'
+        errorMsg.value = ''
+      }
+      else {
+        testStatus.value = 'error'
+        errorMsg.value = res.message
+      }
+    },
+    (err) => {
+      testStatus.value = 'error'
+      errorMsg.value = err.message
+    },
+  )
+}
+
+function changeEmailService() {
+  testStatus.value = ''
+  resetForm()
+}
+
+function resetForm() {
+  // 제거완료 resourceId, mode, emailService 재제어
+  emailFormRef.value.resetFields([
+    'emailServiceAddress',
+    'port',
+    'emailAccount',
+    'authorizationCode',
+  ])
+}
+
+function validateForm() {
+  return new Promise((resolve) => {
+    emailFormRef.value.validate().then(() => {
+      resolve(true)
+    })
+  })
+}
+
+// 메일함주소검증
+async function validateTypedEmail(_rule, value) {
+  if (!value) {
+    return Promise.resolve()
+  }
+  const type = email.emailService
+  // xxx@xxx.xxx 의정상이면
+  let pattern = /^\S+@\S+\.\S+$/
+  if (type === '126Email') {
+    pattern = /^([\w-])+@126\.com$/
+  }
+  if (type === '163Email') {
+    pattern = /^([\w-])+@163\.com$/
+  }
+  if (type === 'qqEmail') {
+    pattern = /^([\w-])+@qq\.com$/
+  }
+  if (type === 'customMail') {
+    pattern = /^([\w-])+@([\w-])+\.[\w-]+$/
+  }
+  // console.log('pattern: ', pattern)
+  if (pattern && pattern.test(email.emailAccount)) {
+    return Promise.resolve()
+  }
+  else {
+    return Promise.reject(new Error(t('mailManageConfig.emailFormatError')))
+  }
+}
+
+// 메일함데이터
+function assignEmailData(data) {
+  if (data && data.resourceId) {
+    Object.assign(email, data)
+    isEdit.value = true
+  }
+}
+
+assignEmailData(props.data)
+</script>
+
+<template>
+  <a-modal
+    v-bind="NiceModal.antdModal(modal)"
+    class="mailAddModal"
+    :width="400"
+    :title="`${!isEdit ? t('mailManageConfig.addEmail') : t('mailManageConfig.editEmail')}`"
+    :mask-closable="false"
+    @ok="okhandle"
+  >
+    <a-form
+      ref="emailFormRef"
+      :rules="emailFormRules"
+      :model="email"
+      layout="vertical"
+    >
+      <!-- 메일함서비스기기 -->
+      <a-form-item
+        :label="t('mailManageConfig.emailServer')"
+        name="emailService"
+      >
+        <a-select
+          v-model:value="email.emailService"
+          style="width: 100%"
+          :options="emailOptions"
+          @select="changeEmailService"
+        />
+      </a-form-item>
+      <!-- 메일함 -->
+      <div v-if="email.emailService === 'customEmail'" class="form-item custom">
+        <a-form-item
+          :label="t('mailManageConfig.emailProtocol')"
+          name="emailProtocol"
+        >
+          <a-select
+            v-model:value="email.emailProtocol"
+            style="width: 100%"
+            :options="PROTOCAL_OPTIONS"
+          />
+        </a-form-item>
+        <!-- 서비스기기주소 -->
+        <a-form-item
+          :label="t('mailManageConfig.serverAddress')"
+          name="emailServiceAddress"
+        >
+          <a-input
+            v-model:value="email.emailServiceAddress"
+            autocomplete="off"
+            :placeholder="t('mailManageConfig.inputServerAddress')"
+          />
+        </a-form-item>
+        <!-- 단말 -->
+        <a-form-item :label="t('mailManageConfig.port')" name="port">
+          <a-input
+            v-model:value="email.port"
+            autocomplete="off"
+            :placeholder="t('mailManageConfig.inputPort')"
+          />
+        </a-form-item>
+        <!-- 여부사용SSL -->
+        <a-form-item :label="t('mailManageConfig.enableSSL')" name="enableSSL">
+          <a-switch v-model:checked="email.enableSSL" />
+        </a-form-item>
+      </div>
+      <!-- 메일함계정 -->
+      <a-form-item
+        :label="t('mailManageConfig.emailAccount')"
+        name="emailAccount"
+      >
+        <a-input
+          v-model:value="email.emailAccount"
+          autocomplete="off"
+          :placeholder="t('mailManageConfig.inputEmailAccount')"
+        />
+      </a-form-item>
+      <!-- 메일함권한 부여코드 -->
+      <a-form-item name="authorizationCode">
+        <template #label>
+          {{ t("mailManageConfig.authorizationCode") }}
+          <a-tooltip :title="t('mailManageConfig.authorizationCodeTip')">
+            <QuestionCircleOutlined class="ml-1" />
+          </a-tooltip>
+        </template>
+        <a-input-password
+          v-model:value="email.authorizationCode"
+          autocomplete="off"
+          :placeholder="t('mailManageConfig.inputAuthorizationCode')"
+        />
+      </a-form-item>
+      <!-- 시도연결 -->
+      <div class="form-item test-status flex items-center text-small">
+        <div class="test-btn cursor-pointer" @click="testConnection">
+          {{ t("mailManageConfig.testConnection") }}
+        </div>
+      </div>
+      <div class="form-item test-status flex items-center text-small">
+        <div>
+          <div v-if="testStatus === 'loading'" class="flex items-center">
+            <LoadingOutlined class="mr-2 primary" />{{
+              t("mailManageConfig.connecting")
+            }}...
+          </div>
+          <div v-if="testStatus === 'success'" class="flex items-center">
+            <CheckCircleOutlined class="success mr-2" />{{
+              t("mailManageConfig.connectSuccess")
+            }}
+          </div>
+          <div v-else-if="testStatus === 'error'" class="flex items-center">
+            <CloseCircleOutlined class="error mr-2" />{{
+              t("mailManageConfig.connectFail")
+            }}
+          </div>
+        </div>
+        <div
+          v-if="testStatus === 'error' && errorMsg"
+          class="flex items-center ml-2"
+        >
+          {{ errorMsg }}
+        </div>
+      </div>
+    </a-form>
+  </a-modal>
+</template>
+
+<style lang="scss">
+.mailAddModal {
+  .ant-modal-body {
+    max-height: 400px;
+    overflow-y: auto;
+    padding-bottom: 20px;
+  }
+  .ant-form-item {
+    margin-bottom: 20px;
+  }
+  .test {
+    margin-top: 10px;
+    padding: 0;
+  }
+  .test-status {
+    display: flex;
+  }
+  .test-btn {
+    color: var(--color-primary);
+  }
+  .primary {
+    color: var(--color-primary);
+  }
+  .success {
+    color: #52c41a;
+  }
+  .error {
+    color: #ff4d4f;
+  }
+}
+</style>

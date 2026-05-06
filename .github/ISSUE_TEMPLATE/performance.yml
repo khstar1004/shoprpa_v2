@@ -1,0 +1,303 @@
+name: ⚡ 성능 문제
+description: 항목알림성능 문제또는생성항목가능항목
+title: "[Performance]: "
+labels: ["performance", "optimization"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        항목항목항목수정항목 Shoprpa 의항목가능!항목가능항목항목사용자항목검증항목닫기재필요.
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: 항목항목단일
+      description: 에서제출성능 문제항목전, 확인하세요으로아래항목
+      options:
+        - label: 항목완료항목검색완료항목있음의항목가능항목닫기 Issues
+          required: true
+        - label: 항목완료항목시도완료항목본의항목가능항목항목
+          required: true
+        - label: 항목완료항목항목완료항목닫기의항목가능데이터근거
+          required: false
+
+  - type: dropdown
+    id: performance_type
+    attributes:
+      label: 🎯 성능 문제유형
+      description: 선택성능 문제의유형
+      options:
+        - 🐌 항목항목정도느림
+        - 💾 메모리사용경과높음
+        - 🔥 CPU 사용항목높음
+        - 🗄️ 디스크 I/O 항목
+        - 🌐 네트워크지연항목제목
+        - 📊 데이터근거라이브러리조회느림
+        - ⏰ 시간 초과항목제목
+        - 🔄 항목발송성능 문제
+        - 📈 가능항목항목제목
+        - 🚀 시작시간길이
+        - 🔋 항목항목
+        - 항목
+      default: 0
+    validations:
+      required: true
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: 🧩 항목컴포넌트
+      description: 선택성능 문제항목의항목필요컴포넌트
+      options:
+        - 전단말 Web 항목사용
+        - 전단말데스크톱 앱
+        - 전단말브라우저 확장
+        - 후단말 robot-service
+        - 후단말 ai-service
+        - 후단말 openapi-service
+        - 후단말 resource-service
+        - RPA 엔진 코어
+        - RPA 컴포넌트실행
+        - 데이터근거라이브러리항목
+        - 파일항목관리
+        - 네트워크통신
+        - 이미지항목관리
+        - AI 계획항목
+        - 항목개시스템시스템
+        - 아니오항목지정
+      default: 15
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: 📝 항목제목설명
+      description: 항목설명성능 문제
+      placeholder: |
+        요청설명: 
+        - 항목의성능 문제예항목?
+        - 에서항목항목아래출력항목?
+        - 항목사용자의항목예항목?
+        - 항목항목전여부있음항목가능아래항목?
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: 🔄 재항목항목
+      description: 예항목재항목개성능 문제
+      placeholder: |
+        재항목항목: 
+        1. 준비...데이터근거/항목
+        2. 실행...항목
+        3. 항목항목가능테이블항목
+        4. 항목량...항목
+    validations:
+      required: true
+
+  - type: textarea
+    id: metrics
+    attributes:
+      label: 📊 항목가능항목
+      description: 항목항목의항목가능데이터근거및항목
+      placeholder: |
+        항목가능데이터근거: 
+        - 항목시간: ...ms/s
+        - 메모리사용: ...MB/GB
+        - CPU 사용항목: ...%
+        - 디스크 I/O: ...MB/s
+        - 네트워크지연항목: ...ms
+        - 항목관리항목정도: ...ops/s
+        - 오류항목: ...%
+        
+        항목데이터근거(예있음): 
+        - 항목값: ...
+        - 항목테이블항목: ...
+        - 항목항목시도: ...
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: 🚨 항목재항목정도
+      description: 성능 문제의항목재항목정도
+      options:
+        - 🔥 항목재 - 시스템시스템항목아니오가능사용
+        - 🔶 높음 - 항목재항목사용자항목검증
+        - 🔷 중 - 항목의항목가능아래항목
+        - 🔹 낮음 - 항목의항목가능항목
+      default: 2
+
+  - type: dropdown
+    id: environment
+    attributes:
+      label: 🖥️ 항목시도항목
+      description: 에서항목개항목중항목까지성능 문제?
+      options:
+        - 운영 환경
+        - 항목시도항목
+        - 열기발송항목
+        - 본항목항목
+        - Docker 내용기기
+        - 다중개항목
+      default: 0
+
+  - type: textarea
+    id: system_info
+    attributes:
+      label: 💻 시스템시스템정보
+      description: 항목시스템시스템매칭항목정보
+      placeholder: |
+        하드웨어 구성: 
+        - CPU: ...
+        - 메모리: ...GB
+        - 디스크: ...(유형, 대소)
+        - 네트워크: ...
+
+        소프트파일항목: 
+        - 운영체제: ...
+        - Python 버전: ...
+        - Java 버전: ...
+        - 데이터근거라이브러리버전: ...
+        - Docker 버전: ...(예항목사용)
+
+  - type: input
+    id: version
+    attributes:
+      label: 📋 버전정보
+      description: 발송항목성능 문제의버전
+      placeholder: 항목예: v1.0.0
+    validations:
+      required: true
+
+  - type: textarea
+    id: data_scale
+    attributes:
+      label: 📏 데이터근거항목
+      description: 설명데이터근거항목및항목항목
+      placeholder: |
+        데이터근거항목: 
+        - 항목관리의항목기록데이터: ...
+        - 파일대소: ...MB/GB
+        - 항목발송사용자데이터: ...
+        - 작업큐길이정도: ...
+        - 데이터근거라이브러리항목기록데이터: ...
+
+        항목항목: 
+        - 높음항목항목: ...
+        - 평면항목항목: ...
+        - 항목시도항목: ...
+
+  - type: textarea
+    id: profiling
+    attributes:
+      label: 🔍 항목가능분항목
+      description: 예결과항목행완료항목가능분항목, 요청항목결과
+      placeholder: |
+        항목가능분항목결과: 
+        - 항목항목데이터/방법법: ...
+        - 항목위치항목: ...
+        - 항목사용분항목: ...
+        - 느림조회로그: ...
+        
+        사용의분항목도구: 
+        - 도구이름: ...
+        - 분항목알림: ...(가능항목이미지또는항목연결)
+
+  - type: textarea
+    id: comparison
+    attributes:
+      label: 📈 항목가능항목
+      description: 및항목버전, 시스템시스템또는항목의항목가능항목
+      placeholder: |
+        항목가능항목: 
+        - 항목버전테이블항목: ...
+        - 항목유형항목시스템시스템: ...
+        - 관리항목항목가능: ...
+        - 행항목항목: ...
+
+  - type: textarea
+    id: optimization_attempts
+    attributes:
+      label: 🔧 항목시도의항목
+      description: 항목완료항목시도경과의항목항목
+      placeholder: |
+        완료항목시도의항목: 
+        - 매칭항목조정항목: ...
+        - 하드파일업그레이드: ...
+        - 항목코드항목: ...
+        - 데이터근거라이브러리항목: ...
+        
+        결과: 
+        - 있음항목결과의항목: ...
+        - 없음항목결과의항목: ...
+
+  - type: textarea
+    id: suggestions
+    attributes:
+      label: 💡 항목생성항목
+      description: 항목로가능가능의항목방법항목또는생성항목
+      placeholder: |
+        가능가능의항목방법항목: 
+        - 항목법항목: ...
+        - 항목저장항목: ...
+        - 항목발송항목: ...
+        - 아키텍처조정항목: ...
+        - 항목항목: ...
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: 📋 항목닫기로그
+      description: 성능 문제항목닫기의로그정보
+      placeholder: |
+        ```
+        항목닫기로그내용...
+        
+        패키지항목아니오제한항목: 
+        - 항목사용로그
+        - 시스템시스템항목가능로그
+        - 데이터근거라이브러리느림조회로그
+        - 오류로그
+        ```
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: 📸 항목가능항목스크린샷
+      description: 항목가능항목도구의스크린샷또는이미지테이블
+      placeholder: |
+        요청항목: 
+        - 시스템시스템항목스크린샷
+        - 항목가능분항목이미지테이블
+        - 항목사용항목이미지
+        - 항목시간이미지테이블
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: 🤝 항목항목
+      description: 항목여부항목매개및항목가능항목항목?
+      options:
+        - label: 항목항목항목변경다중항목시도데이터근거
+          required: false
+        - label: 항목가능으로항목항목시도항목방법항목
+          required: false
+        - label: 항목항목제출항목가능항목의 PR
+          required: false
+        - label: 항목가능으로항목항목가능항목시도항목
+          required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: 📝 항목정보
+      description: 작업항목항목있음항목항목가능항목의정보
+      placeholder: |
+        항목항목닫기정보: 
+        - 항목서비스항목
+        - 항목필요항목
+        - 제한제어항목파일
+        - 항목목록항목

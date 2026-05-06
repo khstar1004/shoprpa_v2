@@ -1,0 +1,279 @@
+﻿atomic:
+  Dialog.message_box:
+    title: 메시지안내
+    comment: ''
+    icon: message-dialog
+    helpManual: 열기메시지안내대화상자, 가능지정메시지안내의내용및제목.
+    inputList:
+      - key: box_title
+        title: 대화상자제목
+        tip: 사용자 지정 대화상자위방법의제목, 제한제목내용문자수로50개문자.아니오입력이면제목로`메시지안내`
+      - key: message_type
+        title: 메시지유형
+        tip: 선택 가능메시지유형
+      - key: message_content
+        title: 메시지내용
+        tip: 사용자 지정 대화상자내부의내용, 제한내용문자수로120개문자
+      - key: button_type
+        title: 버튼
+        tip: 메시지가능사용자행선택의버튼, 허용, 아니오허용빈선택상태
+      - key: auto_check
+        title: 자동으로 대화상자 닫기
+        tip: ''
+      - key: wait_time
+        title: 시간 초과 대기(초)
+        tip: 시간 초과대기시간, 찾을 수 없는 사용자마우스행로초과경과해당시간이면선택중버튼, 로60초
+      - key: default_button_c
+        title: 시간 초과선택중버튼
+        tip: ''
+      - key: default_button_cn
+        title: 시간 초과선택중버튼
+        tip: ''
+      - key: default_button_y
+        title: 시간 초과선택중버튼
+        tip: ''
+      - key: default_button_yn
+        title: 시간 초과선택중버튼
+        tip: ''
+      - key: preview_button
+        title: 
+        tip: ''
+    outputList:
+      - key: result_button
+        title: 저장사용자선택의버튼
+        tip: ''
+  Dialog.input_box:
+    title: 입력대화상자
+    comment: ''
+    icon: input-dialog
+    helpManual: 열기입력대화상자, 필요사용자행정보입력지정제출, 반환사용자에서대화상자중입력의내용.
+    inputList:
+      - key: box_title
+        title: 대화상자제목
+        tip: 제한제목내용문자수로50개문자, 아니오입력이면제목로`입력대화상자`
+      - key: input_type
+        title: 입력란유형
+        tip: ''
+      - key: input_title
+        title: 입력란제목
+        tip: ''
+      - key: default_input_text
+        title: 입력란내용 값
+        tip: 이면에서대화상자중텍스트로텍스트안내기호, 제한내용문자수로120개문자
+      - key: default_input_pwd
+        title: 입력란내용 값
+        tip: 이면에서대화상자중비밀번호, 비밀번호길이정도에서4-16위치
+      - key: preview_button
+        title: 
+        tip: ''
+    outputList:
+      - key: input_content
+        title: 저장사용자 입력내용 
+        tip: ''
+  Dialog.select_box:
+    title: 선택대화상자
+    comment: ''
+    icon: select-dialog
+    helpManual: 열기선택대화상자, 저장사용자에서선택목록중선택의일개또는다중개선택
+    inputList:
+      - key: box_title
+        title: 대화상자제목
+        tip: ''
+      - key: select_type
+        title: 선택방식
+        tip: ''
+      - key: options
+        title: 선택
+        tip: ''
+      - key: options_title
+        title: 선택제목
+        tip: ''
+      - key: preview_button
+        title: 
+        tip: ''
+    outputList:
+      - key: select_result
+        title: 저장선택결과
+        tip: ''
+  Dialog.select_time_box:
+    title: 날짜시간선택
+    comment: ''
+    icon: datetime-picker
+    helpManual: 열기날짜시간선택, 저장사용자선택의날짜또는시간
+    inputList:
+      - key: box_title
+        title: 대화상자제목
+        tip: ''
+      - key: time_type
+        title: 시간유형
+        tip: ''
+      - key: time_format
+        title: 시간형식
+        tip: ''
+      - key: default_time
+        title: 시간
+        tip: ''
+      - key: default_time_range
+        title: 시간
+        tip: ''
+      - key: input_title
+        title: 입력란제목
+        tip: ''
+      - key: preview_button
+        title: 
+        tip: ''
+    outputList:
+      - key: select_time
+        title: 저장시간선택결과
+        tip: ''
+  Dialog.select_file_box:
+    title: 파일선택대화상자
+    comment: ''
+    icon: file-select-dialog
+    helpManual: 열기시스템선택파일대화상자, 저장사용자선택의의파일/폴더 경로
+    inputList:
+      - key: box_title_file
+        title: 대화상자제목
+        tip: ''
+      - key: box_title_folder
+        title: 대화상자제목
+        tip: ''
+      - key: open_type
+        title: 열기유형
+        tip: ''
+      - key: file_type
+        title: 파일유형
+        tip: ''
+      - key: multiple_choice
+        title: 여부허용다중선택
+        tip: ''
+      - key: select_title
+        title: 선택제목
+        tip: ''
+      - key: default_path
+        title: 폴더
+        tip: 매칭완료해당매개변수, 이면에서열기파일선택시파싱에서해당폴더 경로 행다음 단계선택
+      - key: preview_button
+        title: 
+        tip: ''
+    outputList:
+      - key: select_file
+        title: 저장파일선택결과
+        tip: 저장사용자의파일선택결과, 결과가사용자클릭가져오기 버튼이면반환비어 있습니다값
+  Dialog.custom_box:
+    title: 지정대화상자
+    comment: ''
+    icon: custom-dialog
+    helpManual: ''
+    inputList:
+      - key: box_title
+        title: 대화상자제목
+        tip: ''
+      - key: design_interface
+        title: 계획대화상자
+        tip: 클릭버튼이면이동대화상자계획팝업
+      - key: auto_check
+        title: 자동으로 대화상자 닫기
+        tip: ''
+      - key: wait_time
+        title: 시간 초과 대기(초)
+        tip: ''
+      - key: default_button
+        title: 시간 초과선택중버튼
+        tip: ''
+    outputList:
+      - key: dialog_result
+        title: 지정대화상자결과
+        tip: 저장모든테이블단일파일의출력결과으로클릭의버튼결과
+options:
+  MessageType:
+    - value: message
+      label: 정보
+    - value: warning
+      label: 경고
+    - value: question
+      label: 제목
+    - value: error
+      label: 오류
+  ButtonType:
+    - value: confirm
+      label: 
+    - value: confirm_cancel
+      label: -가져오기 
+    - value: yes_no
+      label: 예-아니오
+    - value: yes_no_cancel
+      label: 예-아니오-가져오기 
+  Bool:
+    - value: true
+      label: 예
+    - value: false
+      label: 아니오
+  DefaultButtonC:
+    - value: confirm
+      label: 
+  DefaultButtonCN:
+    - value: confirm
+      label: 
+    - value: cancel
+      label: 가져오기 
+  DefaultButtonY:
+    - value: 'yes'
+      label: 예
+    - value: 'no'
+      label: 아니오
+  DefaultButtonYN:
+    - value: 'yes'
+      label: 예
+    - value: 'no'
+      label: 아니오
+    - value: cancel
+      label: 가져오기 
+  InputType:
+    - value: text
+      label: 텍스트
+    - value: password
+      label: 비밀번호
+  SelectType:
+    - value: single
+      label: 단일선택
+    - value: multi
+      label: 다중선택
+  TimeType:
+    - value: time
+      label: 시간
+    - value: time_range
+      label: 시간
+  TimeFormat:
+    - value: YYYY-MM-DD
+      label: 년-월-일
+    - value: YYYY-MM-DD HH:mm
+      label: 년-월-일 시:분
+    - value: YYYY-MM-DD HH:mm:ss
+      label: 년-월-일 시:분:초
+    - value: YYYY/MM/DD
+      label: 년/월/일
+    - value: YYYY/MM/DD HH:mm
+      label: 년/월/일 시:분
+    - value: YYYY/MM/DD HH:mm:ss
+      label: 년/월/일 시:분:초
+  OpenType:
+    - value: file
+      label: 파일
+    - value: folder
+      label: 폴더
+  FileType:
+    - value: '*'
+      label: 모든파일
+    - value: .xls,.xlsx
+      label: Excel
+    - value: .doc,.docx
+      label: Word
+    - value: .txt
+      label: 텍스트파일
+    - value: .png,.jpg,.jpeg,.bmp,.gif
+      label: 이미지파일
+    - value: .ppt,.pptx
+      label: PPT파일
+    - value: .zip,.rar
+      label: 압축파일

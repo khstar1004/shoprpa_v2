@@ -1,0 +1,175 @@
+﻿atomic:
+  OpenApi.id_card:
+    title: 인증
+    comment: 인증
+    icon: id-card-recognition
+    helpManual: ''
+    inputList:
+      - key: is_multi
+        title: 량관리
+        tip: 량관리선택`아니오`이면매단일개관리일이미지파일, 선택`예`이면폴더유형파일순서행관리
+      - key: src_file
+        title: 이미지파일
+        tip: ''
+      - key: src_dir
+        title: 이미지폴더
+        tip: ''
+      - key: is_save
+        title: 출력문서
+        tip: 량관리선택`아니오`이면매단일개관리일이미지파일, 선택`예`이면폴더유형파일순서행관리, 저장로excel문서, 지원하지 않음수정
+      - key: dst_file
+        title: 문서출력경로
+        tip: ''
+      - key: dst_file_name
+        title: 문서출력파일이름
+        tip: 선택문서출력파일이름
+    outputList:
+      - key: id_card
+        title: 인증결과객체
+        tip: 출력인증결과
+  OpenApi.business_license:
+    title: 운영실행
+    comment: 운영실행
+    icon: business-license-recognition
+    helpManual: ''
+    inputList:
+      - key: is_multi
+        title: 량관리
+        tip: 량관리선택`아니오`이면매단일개관리일이미지파일, 선택`예`이면폴더유형파일순서행관리
+      - key: src_file
+        title: 이미지파일
+        tip: ''
+      - key: src_dir
+        title: 이미지폴더
+        tip: ''
+      - key: is_save
+        title: 출력문서
+        tip: 량관리선택`아니오`이면매단일개관리일이미지파일, 선택`예`이면폴더유형파일순서행관리, 저장로excel문서, 지원하지 않음수정
+      - key: dst_file
+        title: 문서출력경로
+        tip: ''
+      - key: dst_file_name
+        title: 문서출력파일이름
+        tip: 선택문서출력파일이름
+    outputList:
+      - key: business_license
+        title: 운영실행결과객체
+        tip: 출력운영실행결과객체
+  OpenApi.vat_invoice:
+    title: 증가값발송
+    comment: 증가값발송
+    icon: vat-invoice-recognition
+    helpManual: ''
+    inputList:
+      - key: is_multi
+        title: 량관리
+        tip: 량관리선택`아니오`이면매단일개관리일이미지파일, 선택`예`이면폴더유형파일순서행관리
+      - key: src_file
+        title: 이미지파일
+        tip: ''
+      - key: src_dir
+        title: 이미지폴더
+        tip: ''
+      - key: is_save
+        title: 출력문서
+        tip: 량관리선택`아니오`이면매단일개관리일이미지파일, 선택`예`이면폴더유형파일순서행관리, 저장로excel문서, 지원하지 않음수정
+      - key: dst_file
+        title: 문서출력경로
+        tip: ''
+      - key: dst_file_name
+        title: 문서출력파일이름
+        tip: 선택문서출력파일이름
+    outputList:
+      - key: vat_invoice
+        title: 증가값발송결과객체
+        tip: 출력증가값발송결과객체
+  OpenApi.train_ticket:
+    title: Shoprpa차
+    comment: Shoprpa차
+    icon: train-ticket-recognition
+    helpManual: ''
+    inputList:
+      - key: is_multi
+        title: 량관리
+        tip: 량관리선택`아니오`이면매단일개관리일이미지파일, 선택`예`이면폴더유형파일순서행관리
+      - key: src_file
+        title: 이미지파일
+        tip: ''
+      - key: src_dir
+        title: 이미지폴더
+        tip: ''
+      - key: is_save
+        title: 출력문서
+        tip: 량관리선택`아니오`이면매단일개관리일이미지파일, 선택`예`이면폴더유형파일순서행관리, 저장로excel문서, 지원하지 않음수정
+      - key: dst_file
+        title: 문서출력경로
+        tip: ''
+      - key: dst_file_name
+        title: 문서출력파일이름
+        tip: 선택문서출력파일이름
+    outputList:
+      - key: train_ticket
+        title: Shoprpa차결과객체
+        tip: Shoprpa차결과객체
+  OpenApi.taxi_ticket:
+    title: 출력차발송
+    comment: 출력차발송
+    icon: taxi-invoice-recognition
+    helpManual: ''
+    inputList:
+      - key: is_multi
+        title: 량관리
+        tip: 량관리선택`아니오`이면매단일개관리일이미지파일, 선택`예`이면폴더유형파일순서행관리
+      - key: src_file
+        title: 이미지파일
+        tip: ''
+      - key: src_dir
+        title: 이미지폴더
+        tip: ''
+      - key: is_save
+        title: 출력문서
+        tip: 량관리선택`아니오`이면매단일개관리일이미지파일, 선택`예`이면폴더유형파일순서행관리, 저장로excel문서, 지원하지 않음수정
+      - key: dst_file
+        title: 문서출력경로
+        tip: ''
+      - key: dst_file_name
+        title: 문서출력파일이름
+        tip: 선택문서출력파일이름
+    outputList:
+      - key: taxi_ticket
+        title: 출력차발송결과객체
+        tip: 출력차발송결과객체
+  OpenApi.common_ocr:
+    title: 통신사용문서문자
+    comment: 통신사용문서문자
+    icon: general-text-recognition
+    helpManual: ''
+    inputList:
+      - key: is_multi
+        title: 량관리
+        tip: 량관리선택`아니오`이면매단일개관리일이미지파일, 선택`예`이면폴더유형파일순서행관리
+      - key: src_file
+        title: 이미지파일
+        tip: ''
+      - key: src_dir
+        title: 이미지폴더
+        tip: ''
+      - key: is_save
+        title: 출력문서
+        tip: 량관리선택`아니오`이면매단일개관리일이미지파일, 선택`예`이면폴더유형파일순서행관리, 저장로excel문서, 지원하지 않음수정
+      - key: dst_file
+        title: 문서출력경로
+        tip: 선택문서출력폴더
+      - key: dst_file_name
+        title: 문서출력파일이름
+        tip: 선택문서출력파일이름
+    outputList:
+      - key: common_ocr
+        title: 통신사용문서문자결과객체
+        tip: 출력통신사용문서문자결과객체
+options:
+  Bool:
+    - value: true
+      label: 예
+    - value: false
+      label: 아니오

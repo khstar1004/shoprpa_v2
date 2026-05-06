@@ -1,0 +1,150 @@
+spring:
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
+  task:
+    shutdown: graceful
+    graceful-shutdown-timeout: 20s
+  servlet:
+    multipart:
+      max-request-size: 110MB
+      max-file-size: 100MB
+      file-size-threshold: 100MB
+  redis:
+    database: ${REDIS_DB}
+    host: ${REDIS_HOST}
+    port: ${REDIS_PORT}
+    password: ${REDIS_PASSWORD}
+    pool:
+      max-active: 300
+      max-idle: 20
+      max-wait: 10000
+      min-idle: 0
+    timeout: 10000
+    lettuce:
+      shutdown-timeout: 100ms
+      pool:
+        shutdown-timeout: 100ms
+  datasource:
+    url: jdbc:mysql://${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_NAME}?serverTimezone=GMT%2B8&zeroDateTimeBehavior=round&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&allowPublicKeyRetrieval=true
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+    driverClassName: com.mysql.cj.jdbc.Driver
+    platform: mysql
+    type: com.alibaba.druid.pool.DruidDataSource
+    initialSize: 1
+    minIdle: 3
+    maxActive: 20
+    maxWait: 60000
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 30000
+    validationQuery: select 'x'
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: true
+    maxPoolPreparedStatementPerConnectionSize: 20
+    filters: stat,wall,slf4j
+    connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=2000;druid.stat.logSlowSql=true;druid.stat.enabled=true
+    druid:
+      remove-abandoned: true
+      remove-abandoned-timeout: 180
+      log-abandoned: true
+      test-while-idle: true
+      validation-query: SELECT 1
+      shutdown-timeout: 30s
+  session:
+    store-type: redis
+    redis:
+      flush-mode: on_save
+      namespace: spring:session
+    timeout: 86400s  # 24시간
+
+mybatis-plus:
+  mapper-locations: classpath:/mapper/*/*.xml
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+
+resource:
+  download:
+    url: /api/resource/file/download?fileId=
+
+
+#로그종료 매칭
+logging:
+  level:
+    org:
+      springframework:
+        boot:
+          autoconfigure: info
+  config: classpath:logback-delayed.xml
+
+redis:
+  open: "true"
+
+# 봇테이블내보내기크기제한제어,  테이블행데이터
+robotExcel:
+  lineSizeLimit: 3000
+
+# 닫기매개변수
+deBounce:
+  prefix: "doBouncePrefix::"
+  window: 500
+
+
+report:
+  export:
+    strategy: excel
+  excel:
+    sheet:
+      name: "봇실행기록"
+    buffer:
+      size: 16384
+  robot:
+    maxLines: 50000
+    fileNameTemplate: "{tenant}_{dept}_봇분데이터.xlsx"
+    titleTemplate: "모듈: {dept} 시스템계획: {start} --> {end}"
+
+
+#  허용매칭에서의주소요청 연결
+#  전백엔드분시결과가프론트엔드의및백엔드아니요일, 요청를프론트엔드의매칭에서,비고예이름또는ip가능, 아니요필요단말
+allowed:
+  origins: localhost
+
+# 짧음정보매칭
+sms:
+  apiUrl: 
+  secretKey: 
+  appId: 
+  tid: 
+  # 알림경고메시지
+  alarmTemplate: "알림경고알림: {0} 트리거이면[{1}]알림경고, [{2}], 역할[{3}], 요청로그인평면조회."
+
+example:
+  expoUserId: b6306b95-ebf2-4aed-97ff-e65d463958fe
+
+uap:
+  database:
+    name: uap_db
+
+auth:
+  base-url: http://rpa-opensource-rpa-auth:10251
+  check-session-path: /api/rpa-auth/check-session
+
+# 팀마켓종료 매칭
+market:
+  maxCreateCount: 3 # 개사람버전-팀마켓생성개데이터제한제어
+  invite:
+    maxJoinCount: 10  # 초대연결대추가입력사람데이터
+
+package:
+  download: https://www.shoprpa.com/api/resource/cloud/s3/downloadDataExe
+
+astron:
+  agent:
+    api:
+      key: "zyzhou666!"

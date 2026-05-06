@@ -1,0 +1,330 @@
+﻿atomic:
+  Network.ftp_create:
+    title: 생성FTP연결
+    comment: 생성및주소(@{host}),단말(@{port})의FTP연결, 출력로(@{ftp_instance})
+    icon: ftp-create-connection
+    helpManual: 생성일개파일서비스서버의FTP연결, 반환연결객체
+    inputList:
+      - key: host
+        title: 서비스서버주소
+        tip: FTP서비스서버주소
+      - key: port
+        title: 서비스서버단말
+        tip: FTP서비스서버단말
+      - key: name
+        title: 사용자명
+        tip: 파일서비스서버의가능로그인계정
+      - key: password
+        title: 사용자비밀번호
+        tip: 파일서비스서버의가능로그인계정의비밀번호
+    outputList:
+      - key: ftp_instance
+        title: 저장FTP연결객체
+        tip: 를생성의FTP연결객체저장지정변수중
+  Network.ftp_close:
+    title: 닫기FTP연결
+    comment: 열기및(@{ftp_instance})의FTP연결, 를결과출력변수(@{close_ftp})
+    icon: ftp-close-connection
+    helpManual: 열기일개FTP연결, 반환열기결과
+    inputList:
+      - key: ftp_instance
+        title: FTP객체
+        tip: 대기열기의FTP연결객체
+    outputList:
+      - key: close_ftp
+        title: 열기결과저장
+        tip: FTP연결여부성공열기의불리언
+  Network.get_work_dir:
+    title: 가져오기 디렉터리(FTP)
+    comment: 가져오기(@{ftp_instance})현재의디렉터리, 출력로(@{get_work_dir})
+    icon: get-work-directory
+    helpManual: 가져오기FTP객체현재디렉터리
+    inputList:
+      - key: ftp_instance
+        title: FTP연결객체
+        tip: 현재FTP연결객체
+    outputList:
+      - key: get_work_dir
+        title: 디렉터리저장
+        tip: 출력가져오기까지의디렉터리
+  Network.change_working_dir:
+    title: 디렉터리(FTP)
+    comment: >-
+      FTP연결(@{ftp_instance})의디렉터리로(@{new_work_dir}),저장후디렉터리까지(@{change_work_dir})중
+    icon: change-work-directory
+    helpManual: FTP연결현재디렉터리까지지정경로
+    inputList:
+      - key: ftp_instance
+        title: FTP연결객체
+        tip: 필요디렉터리의FTP연결객체
+      - key: new_work_dir
+        title: 디렉터리
+        tip: 필요까지의새의디렉터리
+    outputList:
+      - key: change_work_dir
+        title: 후디렉터리
+        tip: 출력후현재디렉터리
+  Network.create_folder:
+    title: 생성폴더(FTP)
+    comment: 에서지정FTP연결(@{ftp_instance})아래생성폴더(@{folder_name}),저장새폴더 경로까지(@{new_folder})중
+    icon: create-folder
+    helpManual: 에서지정FTP연결아래생성폴더
+    inputList:
+      - key: ftp_instance
+        title: FTP연결객체
+        tip: 필요생성폴더의FTP연결객체
+      - key: folder_name
+        title: 새폴더이름
+        tip: 필요생성의폴더이름
+      - key: exist_type
+        title: 폴더존재함시
+        tip: FTP연결아래저장된 이름폴더시필요실행의
+    outputList:
+      - key: new_folder
+        title: 생성후폴더 경로
+        tip: 를생성후의폴더 경로저장변수
+  Network.get_ftp_list:
+    title: 가져오기파일/폴더(FTP)
+    comment: 가져오기 지정FTP연결(@{ftp_instance})아래의(@{file_type})목록,저장까지(@{get_ftp_list})중
+    icon: get-folder
+    helpManual: 가져오기 지정FTP연결아래의전체파일/폴더목록
+    inputList:
+      - key: ftp_instance
+        title: FTP연결객체
+        tip: 가져올파일및폴더정보의FTP연결객체
+      - key: file_type
+        title: 가져오기객체
+        tip: 선택할가져오기의객체
+    outputList:
+      - key: get_ftp_list
+        title: 가져오기의파일/폴더목록
+        tip: 를FTP연결아래의파일/폴더목록출력변수
+  Network.ftp_rename:
+    title: 이름 변경파일/폴더(FTP)
+    comment: >-
+      이름 변경(@{ftp_instance})중(@{file_type})(@{cur_file_name||cur_folder_name})로새이름(@{new_file_name||new_folder_name}),를이름 변경후경로저장변수(@{rename_ftp_path})
+    icon: rename-folder
+    helpManual: 이름 변경FTP서비스서버위파일/폴더
+    inputList:
+      - key: ftp_instance
+        title: FTP연결객체
+        tip: 실행파일/폴더이름 변경의FTP연결객체
+      - key: file_type
+        title: 이름 변경객체
+        tip: ''
+      - key: cur_file_name
+        title: 기존파일이름
+        tip: 입력대기이름 변경파일
+      - key: new_file_name
+        title: 새파일이름(아니오패키지파일이름)
+        tip: 입력새파일이름,아니오패키지파일이름
+      - key: cur_folder_name
+        title: 기존폴더이름
+        tip: 입력대기이름 변경폴더
+      - key: new_folder_name
+        title: 새폴더이름
+        tip: 입력새폴더이름
+      - key: exist_type
+        title: 이름 변경객체존재함시
+        tip: 이름 변경후객체완료존재함시실행의
+    outputList:
+      - key: rename_ftp_path
+        title: 이름 변경후경로
+        tip: 저장이름 변경후(@{file_type})경로변수
+  Network.ftp_upload:
+    title: 업로드파일/폴더(FTP)
+    comment: >-
+      업로드(@{file_path||folder_path})FTP지정디렉터리(@{ftp_pwd}),를업로드후경로결과저장까지(@{upload_ftp_list})중
+    icon: upload-folder
+    helpManual: 를본일개또는다중개파일/폴더업로드까지FTP지정디렉터리아래
+    inputList:
+      - key: ftp_instance
+        title: FTP연결객체
+        tip: 필요업로드파일/폴더의FTP연결객체
+      - key: file_type
+        title: 업로드객체
+        tip: ''
+      - key: ftp_pwd
+        title: 디렉터리
+        tip: 파일/폴더업로드의디렉터리,비어 있습니다,업로드현재경로
+      - key: file_path
+        title: 대기업로드파일
+        tip: 지원단일개또는다중개파일업로드,다중개파일이름사용열기,예:test1.txt,test2.txt,test3.txt
+      - key: folder_path
+        title: 대기업로드폴더
+        tip: 지원단일개또는다중개폴더업로드,다중개폴더사용열기,예:folder1,folder2,folder3
+      - key: exist_type
+        title: 업로드객체완료존재함시
+        tip: 필요업로드의파일/폴더에서FTP서비스서버위완료존재함시의관리방식
+    outputList:
+      - key: upload_ftp_list
+        title: 업로드목록
+        tip: 출력완료업로드파일/폴더에서FTP서비스서버위의경로정보변수,데이터 유형로목록
+  Network.ftp_download:
+    title: 다운로드파일/폴더(FTP)
+    comment: >-
+      다운로드(@{download_file_name||download_folder_name})본디렉터리(@{dst_path}),를다운로드후경로저장까지변수(@{download_ftp_path})
+    icon: download-folder
+    helpManual: 를FTP서비스서버위의다중개파일/폴더다운로드본
+    inputList:
+      - key: ftp_instance
+        title: FTP연결객체
+        tip: 실행다운로드파일/폴더의FTP서비스서버연결객체
+      - key: file_type
+        title: 다운로드객체
+        tip: ''
+      - key: download_file_name
+        title: 대기다운로드파일
+        tip: 지원단일개또는다중개파일다운로드,다중개파일이름사용열기,예:test1.txt,test2.txt,test3.txt
+      - key: download_folder_name
+        title: 대기다운로드폴더
+        tip: 지원단일개또는다중개폴더다운로드,다중개폴더사용열기,예:folder1,folder2,folder3
+      - key: dst_path
+        title: 다운로드
+        tip: 본저장경로
+      - key: state_type
+        title: 본경로찾을 수 없습니다시
+        tip: 본저장경로찾을 수 없습니다시실행의
+      - key: exist_type
+        title: 다운로드객체존재함시
+        tip: 다운로드파일/폴더존재함시실행의
+    outputList:
+      - key: download_ftp_path
+        title: 다운로드목록
+        tip: 출력완료다운로드의파일/폴더 경로목록변수,데이터 유형로목록
+  Network.ftp_delete:
+    title: 삭제파일/폴더(FTP)
+    comment: >-
+      삭제(@{ftp_instance})위(@{delete_file_name||delete_folder_name}),출력삭제결과변수(@{delete_ftp_result})
+    icon: delete-folder-ftp
+    helpManual: 삭제FTP서비스서버중지정파일/폴더
+    inputList:
+      - key: ftp_instance
+        title: FTP연결객체
+        tip: 실행파일/폴더삭제의FTP연결객체
+      - key: file_type
+        title: 삭제객체
+        tip: ''
+      - key: delete_file_name
+        title: 대기삭제파일
+        tip: 지원단일개또는다중개파일삭제,다중개파일이름사용열기,예:test1.txt,test2.txt,test3.txt
+      - key: delete_folder_name
+        title: 대기삭제폴더
+        tip: 지원단일개또는다중개폴더삭제,다중개폴더사용열기,예:folder1,folder2,folder3
+    outputList:
+      - key: delete_ftp_result
+        title: 삭제결과
+        tip: 출력삭제결과까지변수,데이터 유형로불리언
+  Network.http_request:
+    title: HTTP요청 
+    comment: >-
+      URL(@{url})전송HTTP요청 (@{request_type}), 요청 (@{headers}), 요청 (@{body}),
+      저장결과까지{@{http_response}}
+    icon: http-request
+    helpManual: 지정url전송HTTP요청 
+    inputList:
+      - key: url
+        title: URL
+        tip: ''
+      - key: request_type
+        title: 요청 유형
+        tip: ''
+      - key: headers
+        title: 요청 
+        tip: ''
+      - key: body
+        title: 요청 
+        tip: ''
+      - key: file_path
+        title: 대기업로드파일 경로
+        tip: ''
+      - key: time_out
+        title: 시간 초과시간
+        tip: ''
+      - key: save_type
+        title: 결과저장까지파일
+        tip: 를결과저장까지지정텍스트파일중
+      - key: save_path
+        title: 문서저장디렉터리
+        tip: 입력파일저장디렉터리
+      - key: save_name
+        title: 파일이름
+        tip: 입력저장파일이름, 로텍스트파일
+    outputList:
+      - key: http_response
+        title: 저장결과까지
+        tip: ''
+  Network.http_download:
+    title: HTTP다운로드
+    comment: HTTP다운로드
+    icon: http-download
+    helpManual: 다운로드지정URL(@{url})의파일저장까지지정디렉터리(@{dst_dir})중,저장다운로드경로까지변수(@{http_download_path})
+    inputList:
+      - key: url
+        title: 다운로드주소
+        tip: ''
+      - key: dst_dir
+        title: 파일저장디렉터리
+        tip: ''
+      - key: rename
+        title: 지정파일이름
+        tip: 아니오지정사용다운로드경로중의파일이름, 있음파일이름이면오류
+      - key: state_type
+        title: 디렉터리찾을 수 없습니다시
+        tip: 파일저장디렉터리찾을 수 없습니다시의관리방식
+      - key: exist_type
+        title: 파일존재함시
+        tip: 목록파일완료존재함시의관리방식
+    outputList:
+      - key: http_download_path
+        title: 다운로드파일저장까지
+        tip: 를다운로드파일 경로저장까지변수중
+options:
+  FileExistenceType:
+    - value: rename
+      label: 생성파일본
+    - value: overwrite
+      label: 덮어쓰기기존있음파일
+    - value: cancel
+      label: 건너뛰기저장
+  ListType:
+    - value: all
+      label: 전체
+    - value: file
+      label: 파일
+    - value: folder
+      label: 폴더
+  FileType:
+    - value: file
+      label: 파일
+    - value: folder
+      label: 폴더
+  StateType:
+    - value: create
+      label: 생성
+    - value: error
+      label: 안내오류
+  RequestType:
+    - value: post
+      label: post
+    - value: get
+      label: get
+    - value: connect
+      label: connect
+    - value: put
+      label: put
+    - value: patch
+      label: patch
+    - value: delete
+      label: delete
+    - value: options
+      label: options
+    - value: head
+      label: head
+    - value: trace
+      label: trace
+  SaveType:
+    - value: 'yes'
+      label: 저장
+    - value: 'no'
+      label: 삭제

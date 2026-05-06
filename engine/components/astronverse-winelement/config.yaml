@@ -1,0 +1,161 @@
+﻿atomic:
+  WinEle.click_element:
+    title: 요소 클릭()
+    comment: '@{click_type} 선택까지의요소 @{pick} , 길이대기 @{wait_time} 초직선까지원출력'
+    icon: click-element-win
+    helpManual: ''
+    inputList:
+      - key: pick
+        title: 요소 선택
+        tip: ''
+      - key: click_button
+        title: 클릭버튼
+        tip: ''
+      - key: click_type
+        title: 클릭유형
+        tip: ''
+      - key: wait_time
+        title: 대기원출력시간
+        tip: ''
+      - key: horizontals_offset
+        title: 가로량
+        tip: ''
+      - key: verticals_offset
+        title: 세로량
+        tip: ''
+      - key: keyboard_input
+        title: 키보드입력
+        tip: 클릭시시아래키보드위의
+    outputList: []
+  WinEle.screenshot_element:
+    title: 요소스크린샷()
+    comment: 스크린샷선택까지의요소 @{pick} , 저장폴더 @{file_path}
+    icon: element-screenshot-win
+    helpManual: ''
+    inputList:
+      - key: pick
+        title: 요소 선택
+        tip: ''
+      - key: file_path
+        title: 파일저장경로
+        tip: ''
+      - key: file_name
+        title: 파일이름
+        tip: ''
+      - key: exist_type
+        title: 파일이름시관리방식
+        tip: ''
+    outputList: []
+  WinEle.hover_element:
+    title: 마우스중지요소()
+    comment: 마우스중지선택까지의요소 @{pick} , 대기시간 @{wait_time} 초
+    icon: mouse-hover-element-win
+    helpManual: ''
+    inputList:
+      - key: pick
+        title: 요소 선택
+        tip: ''
+      - key: wait_time
+        title: 대기원출력시간
+        tip: ''
+    outputList: []
+  WinEle.input_text_element:
+    title: 입력란()
+    comment: 입력란 @{pick} , 입력유형로 @{input_type} , 입력내용로 @{text}
+    icon: fill-input-win
+    helpManual: ''
+    inputList:
+      - key: pick
+        title: 요소 선택
+        tip: ''
+      - key: input_type
+        title: 입력유형
+        tip: ''
+      - key: text
+        title: 입력내용
+        tip: ''
+      - key: credential_text
+        title: 선택근거
+        tip: ''
+      - key: clear_first
+        title: 여부빈입력란내용
+        tip: ''
+      - key: wait_time
+        title: 대기원출력시간
+        tip: ''
+    outputList: []
+  WinEle.get_element_text:
+    title: 가져오기원텍스트()
+    comment: 에서요소 @{pick} 가져오기텍스트저장까지 @{ele_text}
+    icon: get-element-text-win
+    helpManual: ''
+    inputList:
+      - key: pick
+        title: 요소 선택
+        tip: ''
+      - key: wait_time
+        title: 대기원출력시간
+        tip: ''
+    outputList:
+      - key: ele_text
+        title: 원텍스트
+        tip: ''
+  WinEle.similar:
+    title: 가져오기 원목록()
+    comment: 가져오기선택까지의요소 @{pick} 의요소, 를요소배열출력 @{get_similar_ele}
+    icon: get-similar-elements-win
+    helpManual: ''
+    inputList:
+      - key: pick
+        title: 요소 선택
+        tip: 에서위선택아니오위치의개요소
+      - key: wait_time
+        title: 대기원출력시간(초)
+        tip: 초과경과해당시간중지대기
+    outputList:
+      - key: get_similar_ele
+        title: 원정보
+        tip: ''
+options:
+  MouseClickButton:
+    - value: left
+      label: 왼쪽 버튼
+    - value: right
+      label: 오른쪽 버튼
+    - value: middle
+      label: 중
+  MouseClickType:
+    - value: click
+      label: 단일
+    - value: double_click
+      label: 더블클릭
+  MouseClickKeyboard:
+    - value: none
+      label: 아니오사용
+    - value: alt
+      label: Alt
+    - value: ctrl
+      label: Ctrl
+    - value: shift
+      label: Shift
+    - value: win
+      label: Win
+  FileExistenceType:
+    - value: overwrite
+      label: 덮어쓰기기존있음파일
+    - value: rename
+      label: 생성파일본
+    - value: cancel
+      label: 건너뛰기저장
+  ElementInputType:
+    - value: keyboard
+      label: 키보드입력
+    - value: clipboard
+      label: 입력
+    - value: credential
+      label: 근거입력
+  Bool:
+    - value: true
+      label: 예
+    - value: false
+      label: 아니오

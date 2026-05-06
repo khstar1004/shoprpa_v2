@@ -1,0 +1,80 @@
+﻿import os
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
+
+import uvicorn
+from fastapi import FastAPI
+
+from app.dependencies import get_ws_service
+from app.internal import admin
+from app.logger import get_logger
+from app.middlewares.tracing import RequestTracingMiddleware
+from app.redis import close_redis_pool, init_redis_pool
+from app.routers import api_keys, executions, healthcheck, user, websocket, workflows
+from app.routers.streamable_mcp import (
+    handle_streamable_http,
+    session_manager,
+    tools_config,
+)
+
+logger = get_logger(__name__)
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+    """Context manager for application lifespan."""
+    # Initialize connections
+    # await create_db_and_tables()
+
+    await init_redis_pool()
+
+    #  WsManagerService 단일
+    worker_id = os.getpid()
+    await get_ws_service()
+    logger.info(f"WsManagerService singleton initialized for worker {worker_id}")
+
+    # 사용 async with 관리관리 session_manager 의명령
+    async with session_manager.run():
+        logger.info("Application started with StreamableHTTP session manager!")
+        try:
+            yield
+        finally:
+            logger.info("Application shutting down...")
+
+            # 관리 tools_config 연결
+            await tools_config.cleanup_connections()
+            logger.info("Tools config connections cleaned up")
+
+            await close_redis_pool()
+            logger.info(f"Worker {worker_id} shutting down")
+
+
+app = FastAPI(title="RPA OpenAPI", version="1.2.0", lifespan=lifespan)
+
+app.include_router(admin.router, prefix="/admin", tags=["admin"])
+
+app.include_router(workflows.router)
+app.include_router(executions.router)
+app.include_router(api_keys.router)
+app.include_router(healthcheck.router)
+app.include_router(user.router)
+app.include_router(websocket.router)
+app.mount("/mcp", handle_streamable_http)  # APISIX증가추가경로 , 해제307재지정제목
+
+app.add_middleware(RequestTracingMiddleware)
+
+
+@app.get("/")
+async def root():
+    logger.info("Root endpoint accessed!")
+
+    return {"message": "Hello Bigger Applications!"}
+
+
+if __name__ == "__main__":
+    uvicorn.run(
+        "app.main:app",
+        host="0.0.0.0",
+        port=8020,
+        proxy_headers=True,
+    )

@@ -1,0 +1,218 @@
+openapi: 3.0.0
+info:
+  title: 개사람 RPA 워크플로 API
+  version: 1.0.0
+servers:
+  - url: https://api.rpa-service.com/v1
+tags:
+  - name: workflow
+    description: 워크플로항목닫기연결항목
+  - name: api-key
+    description: API Key 관리관리연결항목
+paths:
+  /workflows:
+    get:
+      tags: [workflow]
+      summary: 가져오기모든워크플로
+      responses:
+        '200':
+          description: 성공가져오기워크플로목록
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Workflow'
+  /workflows/{projectId}:
+    get:
+      tags: [workflow]
+      summary: 가져오기항목지정워크플로항목
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 성공가져오기워크플로항목
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Workflow'
+        '404':
+          description: 워크플로아니오저장에서
+  /workflows/{projectId}/execute:
+    post:
+      tags: [workflow]
+      summary: 항목실행워크플로(대기결과)
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                parameters:
+                  type: object
+      responses:
+        '200':
+          description: 실행항목성공, 반환결과
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Execution'
+        '202':
+          description: 실행시간 초과, 생성항목사용예외항목연결항목
+  /workflows/{projectId}/execute-async:
+    post:
+      tags: [workflow]
+      summary: 예외항목실행워크플로(항목반환작업ID)
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                parameters:
+                  type: object
+      responses:
+        '202':
+          description: 완료연결항목, 반환작업ID
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  executionId:
+                    type: string
+  /executions/{executionId}:
+    get:
+      tags: [workflow]
+      summary: 조회예외항목실행의항목정도및결과
+      parameters:
+        - name: executionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 반환실행상태및결과
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Execution'
+        '404':
+          description: 실행항목기록아니오저장에서
+  /api-keys:
+    get:
+      tags: [api-key]
+      summary: 가져오기모든 API Key
+      responses:
+        '200':
+          description: 성공가져오기 API Key 목록
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ApiKey'
+    post:
+      tags: [api-key]
+      summary: 생성새의 API Key
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+      responses:
+        '201':
+          description: 성공생성 API Key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiKey'
+  /api-keys/{apiKeyId}:
+    delete:
+      tags: [api-key]
+      summary: 삭제항목지정의 API Key
+      parameters:
+        - name: apiKeyId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: 성공삭제 API Key
+components:
+  schemas:
+    Workflow:
+      type: object
+      properties:
+        projectId:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        version:
+          type: string
+        status:
+          type: integer
+          enum: [1, 0]
+    Execution:
+      type: object
+      properties:
+        id:
+          type: string
+        projectId:
+          type: string
+        status:
+          type: string
+          enum: [PENDING, RUNNING, COMPLETED, FAILED, CANCELLED]
+        startTime:
+          type: string
+          format: date-time
+        endTime:
+          type: string
+          format: date-time
+        parameters:
+          type: object
+        result:
+          type: object
+        error:
+          type: object
+    ApiKey:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        key:
+          type: string
+        createdAt:
+          type: string
+          format: date-time

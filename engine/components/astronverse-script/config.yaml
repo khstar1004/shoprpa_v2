@@ -1,0 +1,44 @@
+﻿atomic:
+  Script.process:
+    title: 실행하위 프로세스
+    comment: 실행하위 프로세스(@{process:하위 프로세스})
+    icon: run-sub-process
+    helpManual: ''
+    inputList:
+      - key: process
+        title: 선택하위 프로세스
+        tip: 선택할실행의하위 프로세스
+      - key: process_param
+        title: 입력매개변수
+        tip: ''
+    outputList:
+      - key: process_res
+        title: 저장프로세스출력결과
+        tip: ''
+  Script.module:
+    title: 실행Python모듈
+    comment: 실행Python모듈(@{content:Python모듈})
+    icon: run-python-module
+    helpManual: ''
+    inputList:
+      - key: content
+        title: 선택Python모듈
+        tip: ''
+      - key: module_param
+        title: 입력매개변수
+        tip: ''
+    outputList:
+      - key: program_script
+        title: ''
+        tip: ''
+  Script.component:
+    title: 실행컴포넌트
+    comment: 실행컴포넌트(@{component:컴포넌트})
+    icon: ''
+    helpManual: ''
+    inputList:
+      - key: component
+        title: 선택컴포넌트
+        tip: ''
+    outputList: []
+options: {}

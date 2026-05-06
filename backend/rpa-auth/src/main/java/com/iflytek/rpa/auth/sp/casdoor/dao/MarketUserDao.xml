@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.iflytek.rpa.auth.sp.casdoor.dao.MarketUserDao">
+
+    <!-- 가져오기마켓사용자목록(분)- 조회rpa데이터베이스의app_market_user테이블 -->
+    <select id="getMarketUserListFromRpa" resultType="com.iflytek.rpa.auth.core.entity.MarketDto">
+        select
+            amu.id id,
+            amu.user_type userType,
+            amu.creator_id creatorId,
+            amu.create_time createTime
+        from app_market_user amu
+        where
+            amu.market_id = #{dto.marketId}
+            and amu.deleted = 0
+            <choose>
+                <when test="dto.sortBy !=null and dto.sortBy != ''">
+                    <if test="dto.sortType == 'descend'.toString()">
+                        order by ${dto.sortBy} desc
+                    </if>
+                    <if test="dto.sortType == 'ascend'.toString() ">
+                        order by ${dto.sortBy} asc
+                    </if>
+                </when>
+                <otherwise>
+                    order by createTime desc
+                </otherwise>
+            </choose>
+    </select>
+
+    <!-- 가져오기마켓아래완료저장에서의사용자ID목록 -->
+    <select id="getExistingUserIdsByMarketId" resultType="java.lang.String">
+        select distinct creator_id
+        from app_market_user
+        where market_id = #{marketId}
+            and deleted = 0
+    </select>
+
+</mapper>

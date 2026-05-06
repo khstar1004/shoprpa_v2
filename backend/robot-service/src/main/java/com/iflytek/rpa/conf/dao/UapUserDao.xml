@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iflytek.rpa.conf.dao.UapUserDao">
+
+    <!-- 삽입사용자 -->
+    <insert id="insertUser">
+        INSERT INTO ${databaseName}.t_uap_user
+        (id, name, login_name, passowrd, pwd_update_time, user_type, user_source, status, org_id, org_name, phone, address, email, dn, remark, is_delete, birthday, create_time, update_time, id_number, face_auth, isvp_auth, profile, ext_info, third_ext_info)
+        VALUES(#{userId}, '', #{loginName}, #{password}, now(), -1, 1, 1, '', NULL, #{phone}, '', '', '', NULL, 0, NULL, now(), NULL, '', NULL, NULL, NULL, NULL, NULL)
+    </insert>
+
+    <!-- 삽입테넌트사용자닫기시스템 -->
+    <insert id="insertTenantUser">
+        INSERT INTO ${databaseName}.t_uap_tenant_user
+        (id, tenant_id, user_id, tenant_user_type)
+        VALUES(#{tenantUserId}, #{tenantId}, #{userId}, 2)
+    </insert>
+
+    <insert id="insertRoleUser">
+        INSERT INTO ${databaseName}.t_uap_user_role
+        (id, role_id, tenant_id, user_id)
+        VALUES(#{roleUserId}, #{roleId}, #{tenantId}, #{userId})
+    </insert>
+
+    <!-- 근거로그인이름또는휴대폰 번호조회사용자여부저장에서 -->
+    <select id="countUserByLoginNameOrPhone" resultType="java.lang.Integer">
+        SELECT COUNT(1)
+        FROM ${databaseName}.t_uap_user
+        WHERE (login_name = #{loginName} OR phone = #{phone})
+        AND is_delete = 0
+    </select>
+
+    <!-- 근거매칭필드이름조회매칭값 -->
+    <select id="getConfigValue" resultType="java.lang.String">
+        SELECT field_value
+        FROM ${databaseName}.t_uap_config
+        WHERE field_name = #{fieldName}
+    </select>
+
+    <!-- 근거로그인이름또는휴대폰 번호조회사용자ID -->
+    <select id="getUserIdByLoginNameOrPhone" resultType="java.lang.String">
+        SELECT id
+        FROM ${databaseName}.t_uap_user
+        WHERE (login_name = #{loginName} OR phone = #{phone})
+        AND is_delete = 0
+        LIMIT 1
+    </select>
+
+</mapper>

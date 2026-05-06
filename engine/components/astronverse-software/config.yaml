@@ -1,0 +1,42 @@
+﻿atomic:
+  Software.open:
+    title: 열기프로그램
+    comment: >-
+      열기경로로(@{app_absolute_path})의사용프로그램, 를결과출력로(@{software_open})
+    icon: open-program
+    helpManual: ''
+    inputList:
+      - key: app_absolute_path
+        title: 사용프로그램경로
+        tip: 입력필요열기의사용프로그램파일 경로
+      - key: app_arguments
+        title: 열기의사용프로그램매개변수
+        tip: 입력열기 사용프로그램시필요의매개변수
+    outputList:
+      - key: software_open
+        title: 사용프로그램경로
+        tip: 출력해당열기의사용프로그램경로
+  Software.close:
+    title: 닫기프로그램
+    comment: 닫기 사용프로그램경로로(@{app_absolute_path})의프로그램
+    icon: close-program
+    helpManual: ''
+    inputList:
+      - key: app_absolute_path
+        title: 사용프로그램경로
+        tip: 필요닫기의사용프로그램경로
+    outputList: []
+  Software.cmd:
+    title: Cmd명령
+    comment: 통신경과매칭cmd문자열(@{cmd}), 실행cmd명령, 실행 결과저장(@{exec_cmd})
+    icon: cmd-command
+    helpManual: ''
+    inputList:
+      - key: cmd
+        title: cmd문자열
+        tip: 입력cmd문자열
+    outputList:
+      - key: exec_cmd
+        title: 실행 결과
+        tip: 출력지정cmd명령실행후반환의객체결과
+options: {}

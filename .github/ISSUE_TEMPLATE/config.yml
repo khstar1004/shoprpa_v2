@@ -1,0 +1,25 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 📚 조회항목문서
+    url: https://github.com/shoprpa/shoprpa#-documentation
+    about: 조회항목목록문서, API 매개항목및사용 가이드
+
+  - name: 💬 커뮤니티 토론
+    url: https://github.com/shoprpa/shoprpa/discussions
+    about: 에서 GitHub Discussions 중및항목구성원항목항목법및항목검증
+
+  - name: 📧 기술 지원
+    url: mailto:support@shoprpa.com
+    about: 통신경과메일항목시스템기술 지원팀가져오기항목항목
+
+  - name: 🚀 빠른 시작
+    url: https://github.com/shoprpa/shoprpa/blob/main/docker/QUICK_START.md
+    about: 조회항목빠른 시작항목, 완료해제예항목부서항목및사용 Shoprpa
+
+  - name: 🔧 열기발송항목
+    url: https://github.com/shoprpa/shoprpa/tree/main/engine/components
+    about: 조회항목컴포넌트 개발항목, 항목예항목열기발송항목지정항목 RPA 컴포넌트
+
+  - name: 🐛 완료알림항목제목
+    url: https://github.com/shoprpa/shoprpa/labels/bug
+    about: 조회항목완료알림항목제목및정상에서항목관리의 Bug 목록

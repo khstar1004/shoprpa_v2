@@ -1,0 +1,1255 @@
+﻿atomic:
+  BrowserElement.wait_element:
+    title: 대기요소(web)
+    comment: 대기브라우저객체 @{browser_obj} 중요소 @{element_data} 의(@{ele_status})
+    icon: wait-element-web
+    helpManual: ''
+    inputList:
+      - key: browser_obj
+        title: 브라우저객체
+        tip: 선택지정의웹 페이지요소에서의브라우저객체
+      - key: element_data
+        title: 요소 선택
+        tip: 선택할대기의웹 페이지요소
+      - key: ele_status
+        title: 대기유형
+        tip: 대기출력또는대기실패
+      - key: element_timeout
+        title: 대기요소시간(초)
+        tip: 초과경과해당시간중지대기
+    outputList:
+      - key: wait_element
+        title: 대기결과
+        tip: 출력요소여부출력/실패, 출력/실패로true, 반대로false
+  BrowserElement.click:
+    title: 요소 클릭(web)
+    comment: 통신경과 @{button_type:클릭} 의방식클릭브라우저객체 @{browser_obj} 중의요소 @{element_data}
+    icon: click-element-web
+    helpManual: ''
+    inputList:
+      - key: browser_obj
+        title: 브라우저객체
+        tip: 선택할대기페이지에서의브라우저객체
+      - key: element_data
+        title: 선택요소
+        tip: 선택할의원정보
+      - key: simulate_flag
+        title: 사람클릭
+        tip: 사람클릭예사람로방식클릭, 아니오이면를근거선택요소의연결행클릭
+      - key: assistive_key
+        title: 
+        tip: 에서클릭시필요아래의키보드공가능
+      - key: button_type
+        title: 클릭위치
+        tip: 선택마우스클릭의방식
+      - key: element_timeout
+        title: 대기원출력시간(초)
+        tip: 초과경과해당시간중지대기
+      - key: scroll_into_center
+        title: 요소까지가능중
+        tip: 선택여부를요소까지가능중위치, 모듈분웹 페이지가능오류위치, 선택 가능닫기 공가능
+    outputList: []
+  BrowserElement.input:
+    title: 입력란(web)
+    comment: >-
+      에서지정의브라우저객체 @{browser_obj} 중선택입력란 @{element_data} , 으로 @{fill_type:키보드입력/입력}
+      의방식입력내용 , 를실행 결과출력 @{form_input}
+    icon: fill-input-web
+    helpManual: ''
+    inputList:
+      - key: browser_obj
+        title: 브라우저객체
+        tip: 선택할대기페이지에서의브라우저객체
+      - key: element_data
+        title: 선택입력란
+        tip: 선택할내용의입력란요소
+      - key: simulate_flag
+        title: 사람입력
+        tip: 사람입력예사람로방식입력, 아니오이면를근거요소의연결행입력
+      - key: fill_type
+        title: 입력유형
+        tip: 선택입력란의방식
+      - key: fill_input
+        title: 입력내용
+        tip: 입력란의내용
+      - key: fill_input_credential
+        title: 선택근거
+        tip: ''
+      - key: element_timeout
+        title: 대기원출력시간(초)
+        tip: 초과경과해당시간중지대기
+      - key: focus_time
+        title: 시간
+        tip: 중지시간(ms)
+      - key: write_gap_time
+        title: 입력
+        tip: 입력내용입력의시간(s)
+      - key: input_type
+        title: 추가 입력입력
+        tip: 입력란에 자동 입력행추가 입력입력
+      - key: scroll_into_center
+        title: 요소까지가능중
+        tip: 선택여부를요소까지가능중위치, 모듈분웹 페이지가능오류위치, 선택 가능닫기 공가능
+    outputList:
+      - key: form_input
+        title: 사용자 입력내용
+        tip: ''
+  BrowserElement.hover_over:
+    title: 마우스중지에서요소위(web)
+    comment: 마우스중지에서브라우저객체 @{browser_obj} 중의요소 @{element_data} 위
+    icon: mouse-hover-element-web
+    helpManual: ''
+    inputList:
+      - key: browser_obj
+        title: 브라우저객체
+        tip: 선택할대기페이지에서의브라우저객체
+      - key: element_data
+        title: 중지요소 선택
+        tip: 선택마우스필요중지의요소
+      - key: element_timeout
+        title: 대기원출력시간(초)
+        tip: 초과경과해당시간중지대기
+      - key: scroll_into_center
+        title: 요소까지가능중
+        tip: 선택여부를요소까지가능중위치, 모듈분웹 페이지가능오류위치, 선택 가능닫기 공가능
+    outputList: []
+  BrowserElement.screenshot:
+    title: 선택요소스크린샷(web)
+    comment: 선택브라우저객체 @{browser_obj} 의요소 @{element_data} 출력로이미지
+    icon: pick-element-screenshot-web
+    helpManual: ''
+    inputList:
+      - key: browser_obj
+        title: 브라우저객체
+        tip: 선택스크린샷요소에서의브라우저객체
+      - key: element_data
+        title: 선택요소
+        tip: 선택할스크린샷의요소
+      - key: file_path
+        title: 스크린샷저장경로
+        tip: 폴더 경로
+      - key: image_name
+        title: 이미지이름
+        tip: 후의이름예이미지.jpg
+      - key: element_timeout
+        title: 대기원출력시간(초)
+        tip: 초과경과해당시간중지대기
+    outputList:
+      - key: xpath_shot
+        title: 스크린샷파일 경로
+        tip: 스크린샷파일 경로
+  BrowserElement.position_screenshot:
+    title: 요소위치스크린샷(web)
+    comment: 가져오기브라우저객체 @{browser_obj} 의요소 @{element_data} 위치스크린샷출력로이미지
+    icon: element-position-screenshot-web
+    helpManual: ''
+    inputList:
+      - key: browser_obj
+        title: 브라우저객체
+        tip: ''
+      - key: element_data
+        title: 선택요소
+        tip: ''
+      - key: file_path
+        title: 스크린샷저장경로
+        tip: ''
+      - key: image_name
+        title: 이미지이름
+        tip: ''
+      - key: element_timeout
+        title: 대기원출력시간(초)
+        tip: ''
+    outputList:
+      - key: position_shot
+        title: 스크린샷파일 경로
+        tip: ''
+  BrowserElement.scroll:
+    title: 웹 페이지
+    comment: >-
+      통신경과 @{scroll_direction:가로/세로} 의방법, 에서(@{x_scroll_type||y_scroll_type})브라우저객체
+      @{browser_obj} 의
+    icon: mouse-scroll-webpage
+    helpManual: ''
+    inputList:
+      - key: browser_obj
+        title: 브라우저객체
+        tip: 선택할의웹 페이지에서브라우저객체
+      - key: scrollbar_type
+        title: 목록 
+        tip: 선택웹 페이지창또는지정웹 페이지위개요소
+      - key: element_data
+        title: 선택
+        tip: 선택할에서웹 페이지위의요소
+      - key: scroll_direction
+        title: 방법
+        tip: ''
+      - key: x_scroll_type
+        title: 가로위치
+        tip: ''
+      - key: x_custom_scroll_dis
+        title: 가로지정거리
+        tip: 단일위치로화면의분이미지px, 일로0-9999의데이터값
+      - key: y_scroll_type
+        title: 세로위치
+        tip: ''
+      - key: y_custom_scroll_dis
+        title: 세로지정거리
+        tip: 단일위치로화면의분이미지px, 일로0-9999의데이터값
+      - key: element_timeout
+        title: 대기원출력시간(초)
+        tip: 초과경과해당시간중지대기
+    outputList: []
+  BrowserElement.scroll_into_view:
+    title: 요소가능(web)
+    comment: 를웹 페이지요소 @{element_data} 가능
+    icon: element-to-visible-web
+    helpManual: ''
+    inputList:
+      - key: browser_obj
+        title: 브라우저객체
+        tip: 선택할가능의요소에서의브라우저객체
+      - key: element_data
+        title: 선택가능목록 
+        tip: 선택할가능의목록 요소
+      - key: element_timeout
+        title: 대기원출력시간(초)
+        tip: 초과경과해당시간중지대기
+      - key: scroll_into_center
+        title: 요소까지가능중
+        tip: 선택여부를요소까지가능중위치, 모듈분웹 페이지가능오류위치, 선택 가능닫기 공가능
+    outputList: []
+  BrowserElement.similar:
+    title: 가져오기 원목록(web)
+    comment: >-
+      가져오기브라우저객체 @{browser_obj} 중및선택까지의요소 @{element_data} 의요소, 를요소배열출력
+      @{get_similar_ele}
+    icon: get-similar-elements-web
+    helpManual: ''
+    inputList:
+      - key: browser_obj
+        title: 브라우저객체
+        tip: 선택요소에서의브라우저객체
+      - key: element_data
+        title: 요소 선택
+        tip: 에서웹 페이지위선택아니오위치의개요소
+      - key: get_type
+        title: 요소
+        tip: ''
+      - key: attribute_name
+        title: 속성이름
+        tip: ''
+      - key: element_timeout
+        title: 대기원출력시간(초)
+        tip: 초과경과해당시간중지대기
+    outputList:
+      - key: get_similar_ele
+        title: 원정보
+        tip: ''
+  BrowserElement.loop_similar:
+    title: 원목록(web)
+    comment: >-
+      가져오기브라우저객체 @{browser_obj} 중및선택까지의요소 @{element_data}
+      의요소, 에서@{start}까지결과@{end}행, 출력목록 @{item}, 여부출력위치로@{index}
+    icon: loop-similar-elements-web
+    helpManual: ''
+    inputList:
+      - key: browser_obj
+        title: 브라우저객체
+        tip: 선택요소에서의브라우저객체
+      - key: element_data
+        title: 요소 선택
+        tip: 에서웹 페이지위선택아니오위치의개요소
+      - key: get_type
+        title: 요소
+        tip: ''
+      - key: start
+        title: 위치
+        tip: 아래위치에서0열기 
+      - key: end
+        title: 결과위치
+        tip: 아래위치에서0열기 ,-1테이블후일개요소
+      - key: attribute_name
+        title: 속성이름
+        tip: ''
+      - key: element_timeout
+        title: 대기원출력시간(초)
+        tip: 초과경과해당시간중지대기
+    outputList:
+      - key: index
+        title: 위치
+        tip: 변수가능수정, 사용목록의변수검색데이터값
+      - key: item
+        title: 
+        tip: 변수가능수정, 사용목록의변수
+  BrowserElement.element_text:
+    title: 가져오기원텍스트내용(web)
+    comment: 가져오기브라우저객체 @{browser_obj} 웹 페이지중선택의요소 @{element_data} 텍스트내용, 를결과출력 @{data_pick}
+    icon: get-element-text-web
+    helpManual: ''
+    inputList:
+      - key: browser_obj
+        title: 브라우저객체
+        tip: 선택할가져오기텍스트의요소에서의브라우저객체
+      - key: element_data
+        title: 요소 선택
+        tip: 선택할가져오기텍스트의요소위치
+      - key: element_timeout
+        title: 대기원출력시간(초)
+        tip: 초과경과해당시간중지대기
+    outputList:
+      - key: data_pick
+        title: 출력변수
+        tip: 출력가져오기까지의현재웹 페이지제목문자열
+  BrowserElement.slider_hover:
+    title: 선택(web)
+    comment: >-
+      를 @{element_slider} 에서 @{drag_type}  @{drag_direction} 
+      @{percent_value} %
+    icon: pick-slider-drag-web
+    helpManual: ''
+    inputList:
+      - key: browser_obj
+        title: 브라우저객체
+        tip: ''
+      - key: element_slider
+        title: 선택
+        tip: ''
+      - key: element_progress
+        title: 선택
+        tip: ''
+      - key: percent_value
+        title: 
+        tip: ''
+      - key: drag_direction
+        title: 방법
+        tip: ''
+      - key: drag_type
+        title: 유형
+        tip: ''
+      - key: duration
+        title: 의시간
+        tip: ''
+    outputList: []
+  BrowserElement.get_select:
+    title: 가져오기드롭다운(web)
+    comment: 에서브라우저객체 @{browser_obj} 중가져오기드롭다운 @{element_data}
+    icon: get-dropdown-web
+    helpManual: ''
+    inputList:
+      - key: browser_obj
+        title: 브라우저객체
+        tip: ''
+      - key: element_data
+        title: 선택드롭다운
+        tip: ''
+      - key: current_content
+        title: 가져오기현재선택중내용
+        tip: 선택중내용또는모든내용
+      - key: element_timeout
+        title: 대기원출력시간(초)
+        tip: 초과경과해당시간중지대기
+    outputList:
+      - key: get_selected
+        title: 드롭다운선택중내용
+        tip: ''
+  BrowserElement.get_checked:
+    title: 가져오기복사선택(web)
+    comment: 에서브라우저객체 @{browser_obj} 중가져오기복사선택 @{element_data}
+    icon: get-checkbox-web
+    helpManual: ''
+    inputList:
+      - key: browser_obj
+        title: 브라우저객체
+        tip: ''
+      - key: element_data
+        title: 선택복사선택
+        tip: ''
+      - key: element_timeout
+        title: 대기원출력시간(초)
+        tip: 초과경과해당시간중지대기
+    outputList:
+      - key: get_checkbox_checked
+        title: 복사선택선택중내용
+        tip: ''
+  BrowserElement.set_select:
+    title: 드롭다운(web)
+    comment: 에서브라우저객체 @{browser_obj} 중가져오기드롭다운 @{element_data} , 통신경과 @{pattern} 선택 @{value}
+    icon: operate-dropdown-web
+    helpManual: ''
+    inputList:
+      - key: browser_obj
+        title: 브라우저객체
+        tip: ''
+      - key: element_data
+        title: 선택드롭다운
+        tip: ''
+      - key: pattern
+        title: 매칭방식
+        tip: ''
+      - key: value
+        title: 매칭내용
+        tip: ''
+      - key: solution
+        title: 순서
+        tip: ''
+      - key: element_timeout
+        title: 대기원출력시간(초)
+        tip: 초과경과해당시간중지대기
+    outputList: []
+  BrowserElement.set_checked:
+    title: 복사선택(web)
+    comment: 에서브라우저객체 @{browser_obj} 중가져오기복사선택 @{element_data} 후 @{checked_type}
+    icon: operate-checkbox-web
+    helpManual: ''
+    inputList:
+      - key: browser_obj
+        title: 브라우저객체
+        tip: ''
+      - key: element_data
+        title: 선택복사선택
+        tip: ''
+      - key: checked_type
+        title: 유형
+        tip: ''
+      - key: element_timeout
+        title: 대기원출력시간(초)
+        tip: 초과경과해당시간중지대기
+    outputList: []
+  BrowserElement.element_operation:
+    title: 요소(web)
+    comment: 에서브라우저객체 @{browser_obj} 중가져오기 @{element_data}  @{operation_type}
+    icon: element-operation-web
+    helpManual: ''
+    inputList:
+      - key: browser_obj
+        title: 브라우저객체
+        tip: ''
+      - key: element_data
+        title: 선택요소
+        tip: ''
+      - key: operation_type
+        title: 유형
+        tip: -가져오기-삭제정보
+      - key: get_type
+        title: 정보유형
+        tip: ''
+      - key: attribute_name
+        title: 속성이름
+        tip: 속성이름, 예: id, class, data-id대기
+      - key: position
+        title: 위치
+        tip: ''
+      - key: attribute_value
+        title: 속성값
+        tip: ''
+      - key: element_timeout
+        title: 대기원출력시간(초)
+        tip: 초과경과해당시간중지대기
+    outputList:
+      - key: get_ele_attr
+        title: 요소속성
+        tip: ''
+      - key: get_ele_value
+        title: 요소값
+        tip: ''
+      - key: get_ele_html
+        title: 요소코드
+        tip: ''
+      - key: get_ele_link
+        title: 요소연결주소
+        tip: ''
+      - key: get_ele_text
+        title: 원텍스트내용
+        tip: ''
+      - key: get_ele_position
+        title: 요소위치
+        tip: ''
+      - key: get_ele_selected
+        title: 원선택중상태
+        tip: ''
+      - key: get_ele_style
+        title: 원방식
+        tip: ''
+  BrowserElement.get_table:
+    title: 가져오기테이블데이터(web)
+    comment: 가져오기브라우저객체 @{browser_obj} 중의테이블 @{element_data} , 를결과출력로 @{table_pick}
+    icon: get-table-data-web
+    helpManual: ''
+    inputList:
+      - key: browser_obj
+        title: 브라우저객체
+        tip: 선택할대기페이지에서의브라우저객체
+      - key: element_data
+        title: 선택테이블
+        tip: 선택웹 페이지테이블중작업일셀요소, 없음선택개테이블
+      - key: to_excel
+        title: 저장까지테이블문서
+        tip: 가능직선연결저장로excel문서
+      - key: excel_path
+        title: 테이블문서경로
+        tip: 선택하세요문서저장경로
+      - key: element_timeout
+        title: 대기원출력시간(초)
+        tip: 초과경과해당시간중지대기
+    outputList:
+      - key: table_pick
+        title: 테이블객체
+        tip: 출력가져오기의테이블객체, 데이터 유형: 딕셔너리
+  BrowserElement.data_batch:
+    title: 데이터가져오기(web)
+    comment: 에서지정의브라우저객체 @{browser_obj} 중가져오기 @{batch_data} , 를결과출력로 @{table_pick}
+    icon: data-scraping-web
+    helpManual: ''
+    inputList:
+      - key: browser_obj
+        title: 브라우저객체
+        tip: 선택할대기페이지에서의브라우저객체
+      - key: batch_data
+        title: 가져오기객체
+        tip: 선택할가져오기의요소
+      - key: multi_page
+        title: 여부가져오기다중
+        tip: 선택할여부가져오기다중, 가져오기현재
+      - key: page_count
+        title: 가져오기 데이터
+        tip: 가져올의데이터, 예: 가져오기10, 이면10
+      - key: page_interval
+        title: 시간, 단일위치: 초
+        tip: 의시간, 시간경과짧음가져오기 페이지로드아니오전체, 가능증가추가시간
+      - key: element_data
+        title: 버튼
+        tip: 선택할의요소
+      - key: simulate_flag
+        title: 사람입력
+        tip: 사람입력예사람로방식입력, 아니오이면를근거요소의연결행입력
+      - key: button_type
+        title: 클릭위치
+        tip: 선택마우스클릭의방식
+      - key: to_excel
+        title: 저장까지테이블문서
+        tip: 가능직선연결저장로excel문서
+      - key: excel_path
+        title: 테이블문서경로
+        tip: 선택하세요문서저장경로
+      - key: element_timeout
+        title: 대기원출력시간(초)
+        tip: 초과경과해당시간중지대기
+      - key: output_type
+        title: 출력유형
+        tip: 선택테이블출력유형, 출력로행
+      - key: output_head
+        title: 여부출력테이블
+        tip: 선택여부출력테이블, 출력테이블
+      - key: output_filter_empty_col
+        title: 여부필터링빈열
+        tip: 선택여부필터링테이블중의빈열
+      - key: is_save_to_data_table
+        title: 여부저장까지데이터테이블
+        tip: 선택여부를데이터가져오기의결과저장까지데이터테이블중
+      - key: scroll_into_center
+        title: 요소까지가능중
+        tip: 선택여부를버튼요소까지가능중위치, 모듈분웹 페이지가능오류위치, 선택 가능닫기 공가능
+    outputList:
+      - key: table_pick
+        title: 테이블객체
+        tip: 출력가져오기의테이블객체, 데이터 유형: 딕셔너리
+      - key: table_path
+        title: 테이블경로
+        tip: 출력저장의테이블경로
+  BrowserElement.create_element:
+    title: 가져오기요소객체(web)
+    comment: >-
+      에서지정의브라우저객체 @{browser_obj} 중근거 @{locate_type}가져오기요소객체 , 를결과출력로요소객체
+      @{element_obj}
+    icon: get-element-object-web
+    helpManual: ''
+    inputList:
+      - key: browser_obj
+        title: 브라우저객체
+        tip: ''
+      - key: locate_type
+        title: 위치 지정방식
+        tip: 선택 Xpath/css선택기기/문서문자 위치 지정방식
+      - key: locate_value
+        title: Xpath/css선택기기/문서문자
+        tip: 입력위치 지정방식의 Xpath / css선택기기 / 문서문자내용
+      - key: return_type
+        title: 반환값유형
+        tip: 선택반환단일개요소객체예요소객체목록
+    outputList:
+      - key: element_obj
+        title: 요소객체
+        tip: 출력요소객체, 결과로단일개객체또는목록
+  BrowserElement.get_relative_element:
+    title: 가져오기닫기 요소(web)
+    comment: >-
+      에서지정의브라우저객체 @{browser_obj} 중가져오기 @{element_data} 닫기 의
+      @{relative_type}, 를결과출력로요소객체 @{element_obj}
+    icon: get-related-elements-web
+    helpManual: ''
+    inputList:
+      - key: browser_obj
+        title: 브라우저객체
+        tip: ''
+      - key: element_data
+        title: 요소객체
+        tip: 로의요소, 가능예단일개요소객체, 할 수 없음예목록
+      - key: relative_type
+        title: 닫기 유형
+        tip: 선택닫기 유형, 예: 요소, 단계요소, 단계요소대기
+      - key: child_element_type
+        title: 원유형
+        tip: 선택가져오기 요소의유형
+      - key: child_element_xpath
+        title: 요소xpath
+        tip: 요소의xpath, 가져오기단일개요소
+      - key: child_element_index
+        title: 요소위치
+        tip: 요소위치, 예: 0테이블일개요소
+      - key: sibling_element_type
+        title: 원유형
+        tip: 선택가져오기 요소의유형
+      - key: element_timeout
+        title: 대기원출력시간(초)
+        tip: 초과경과해당시간중지대기
+      - key: is_multiple
+        title: 여부반환다중개요소
+        tip: 제어사용xpath가져오기 요소시반환단일개/다중개요소
+    outputList:
+      - key: element_obj
+        title: 요소객체
+        tip: 출력요소객체, 결과로단일개객체또는목록
+  BrowserElement.element_exist:
+    title: 요소여부존재함(web)
+    comment: 브라우저객체 @{browser_obj} 중요소 @{element_data} 여부존재함
+    icon: wait-element-web
+    helpManual: ''
+    inputList:
+      - key: browser_obj
+        title: 브라우저객체
+        tip: 선택지정의웹 페이지요소에서의브라우저객체
+      - key: element_data
+        title: 요소 선택
+        tip: 선택할대기의웹 페이지요소
+    outputList:
+      - key: element_exist
+        title: 원존재함/찾을 수 없습니다
+        tip: 출력요소여부존재함, 존재함로True, 찾을 수 없습니다로False
+  BrowserScript.js_run:
+    title: Js본
+    comment: >-
+      통신경과 @{input_type:에서/외부모듈가져오기방식} 본내용 @{content||file_path}
+      , 실행JavaScript, 본실행 결과저장 @{program_script}
+    icon: js-script
+    helpManual: ''
+    inputList:
+      - key: browser_obj
+        title: 브라우저객체
+        tip: 선택js실행의브라우저객체
+      - key: input_type
+        title: 입력방식
+        tip: ''
+      - key: content
+        title: 본내용
+        tip: 필요실행의지정본
+      - key: file_path
+        title: 본경로
+        tip: ''
+      - key: params
+        title: 매개변수관리관리
+        tip: 입력본닫기의매개변수관리관리,비고매개변수 순서열,일지원하지 않음순서열의를오류
+      - key: element_data
+        title: iframe요소객체
+        tip: iframe중실행있음제목의, 가능으로가져오기iframe의요소객체iframe의본실행
+      - key: iframe_url
+        title: iframe주소
+        tip: iframe중실행있음제목, 가능으로가져오기iframe의src필드입력
+    outputList:
+      - key: program_script
+        title: 실행 결과
+        tip: ''
+  BrowserSoftware.browser_open:
+    title: 브라우저 열기
+    comment: 열기 @{browser_type:브라우저} 이동네트워크 @{url:네트워크} , 를결과출력로브라우저객체 @{web_open}
+    icon: open-browser
+    helpManual: ''
+    inputList:
+      - key: url
+        title: 네트워크
+        tip: 네트워크
+      - key: browser_type
+        title: 브라우저유형
+        tip: 선택브라우저유형,필요설치Shoprpa확장웹 페이지,경로: -확장설치
+      - key: browser_abs_path
+        title: 브라우저경로
+        tip: 브라우저프로그램설치 경로
+      - key: open_args
+        title: 브라우저시작매개변수
+        tip: 브라우저시작매개변수, 예--incognito
+      - key: open_with_incognito
+        title: 사용방식
+        tip: 요청 전를브라우저중`Shoprpa 브라우저 확장`로"에서없음방식아래사용"
+      - key: wait_load_success
+        title: 대기웹 페이지로드완료
+        tip: ''
+      - key: timeout
+        title: 로드지연시간(초)
+        tip: ''
+      - key: timeout_handle_type
+        title: 지연시간 초과후실행
+        tip: 지연관리방식, 종료중지웹 페이지로드, 건너뛰기건너뛰기대기로드, 아니오웹 페이지로드
+    outputList:
+      - key: web_open
+        title: 브라우저객체
+        tip: 출력열기의브라우저객체,사용웹 페이지객체가능웹 페이지
+  BrowserSoftware.browser_close:
+    title: 닫기브라우저
+    comment: 닫기브라우저객체 @{browser_obj}
+    icon: close-browser
+    helpManual: ''
+    inputList:
+      - key: browser_obj
+        title: 브라우저객체
+        tip: 선택할닫기의브라우저객체
+    outputList: []
+  BrowserSoftware.set_cookies:
+    title: Cookie
+    comment: 브라우저객체 @{browser_obj} 의 @{url} 의Cookie이름 @{cookie_name} 의값로 @{cookie_val}
+    icon: set-cookie
+    helpManual: ''
+    inputList:
+      - key: browser_obj
+        title: 브라우저객체
+        tip: 선택할Cookies의브라우저객체
+      - key: url
+        title: 목록 url
+        tip: ''
+      - key: cookie_name
+        title: cookie이름
+        tip: ''
+      - key: cookie_val
+        title: cookie값
+        tip: ''
+      - key: cookie_path
+        title: cookie경로
+        tip: 사용cookie 의path속성, 근거url까지domain후path, url중의path모듈분
+      - key: page_timeout
+        title: 대기페이지로드시간(초)
+        tip: 초과경과해당시간중지대기
+    outputList:
+      - key: cookie_input
+        title: cookie값
+        tip: ''
+  BrowserSoftware.get_cookies:
+    title: 가져오기Cookie
+    comment: >-
+      가져오기브라우저객체 @{browser_obj} 의 @{url} 의Cookie이름 @{cookie_name} 의값, 출력
+      @{get_cookie}
+    icon: get-cookie
+    helpManual: ''
+    inputList:
+      - key: browser_obj
+        title: 브라우저객체
+        tip: 선택할가져오기cookie값의브라우저객체
+      - key: url
+        title: 목록 url
+        tip: ''
+      - key: cookie_name
+        title: cookie이름
+        tip: ''
+      - key: cookie_path
+        title: cookie경로
+        tip: 사용cookie 의path속성, 근거url까지domain후path, url중의path모듈분
+      - key: page_timeout
+        title: 대기페이지로드시간(초)
+        tip: 초과경과해당시간중지대기
+    outputList:
+      - key: get_cookie
+        title: cookie값
+        tip: ''
+  BrowserSoftware.empty_cookies:
+    title: 지우기Cookie
+    comment: 지우기브라우저객체 @{browser_obj} @{url} 의Cookie데이터
+    icon: clear-cookie
+    helpManual: ''
+    inputList:
+      - key: browser_obj
+        title: 브라우저객체
+        tip: 선택할지우기cookie값의브라우저객체
+      - key: url
+        title: 목록 url
+        tip: ''
+      - key: cookie_path
+        title: cookie경로
+        tip: 사용cookie 의path속성, 근거url까지domain후path, url중의path모듈분
+      - key: page_timeout
+        title: 대기페이지로드시간(초)
+        tip: 초과경과해당시간중지대기
+    outputList: []
+  BrowserSoftware.web_open:
+    title: 열기새웹 페이지
+    comment: 브라우저 열기객체 @{browser_obj} 이동네트워크 @{new_tab_url} , 를결과출력로브라우저객체 @{web_new_page}
+    icon: open-new-webpage
+    helpManual: ''
+    inputList:
+      - key: browser_obj
+        title: 브라우저객체
+        tip: 선택할대기페이지에서의브라우저객체
+      - key: new_tab_url
+        title: 새탭네트워크
+        tip: 새열기탭에서의네트워크
+      - key: wait_page
+        title: 대기웹 페이지로드완료
+        tip: ''
+    outputList:
+      - key: web_new_page
+        title: 브라우저객체
+        tip: ''
+  BrowserSoftware.web_switch:
+    title: 까지완료존재함탭
+    comment: 통신경과 @{switch_type} 의매칭방식까지브라우저객체 @{browser_obj} 중의지정탭
+    icon: switch-existing-tab
+    helpManual: ''
+    inputList:
+      - key: browser_obj
+        title: 브라우저객체
+        tip: 선택할대기페이지에서의브라우저객체
+      - key: switch_type
+        title: 매칭방식
+        tip: 선택네트워크/제목/탭ID의매칭방식
+      - key: tab_url
+        title: 네트워크
+        tip: ''
+      - key: tab_title
+        title: 제목
+        tip: ''
+      - key: tab_id
+        title: 탭ID
+        tip: ''
+    outputList: []
+  BrowserSoftware.wait_web_load:
+    title: 대기페이지로드완료
+    comment: 대기브라우저객체 @{browser_obj} 중페이지로드완료
+    icon: wait-page-load
+    helpManual: ''
+    inputList:
+      - key: browser_obj
+        title: 브라우저객체
+        tip: 선택할대기페이지에서의브라우저객체
+      - key: timeout
+        title: 시간 초과시간(초)
+        tip: 초과경과해당시간중지대기
+    outputList: []
+  BrowserSoftware.stop_web_load:
+    title: 중지로드웹 페이지
+    comment: 중지로드웹 페이지 @{browser_obj}
+    icon: stop-loading-page
+    helpManual: ''
+    inputList:
+      - key: browser_obj
+        title: 브라우저객체
+        tip: 선택할중지로드의웹 페이지에서브라우저객체
+    outputList: []
+  BrowserSoftware.web_refresh:
+    title: 새로고침현재웹 페이지
+    comment: 새로고침현재웹 페이지 @{browser_obj}
+    icon: refresh-current-page
+    helpManual: ''
+    inputList:
+      - key: browser_obj
+        title: 브라우저객체
+        tip: 선택할새로고침현재웹 페이지에서의브라우저객체
+    outputList: []
+  BrowserSoftware.web_close:
+    title: 닫기웹 페이지
+    comment: 닫기브라우저객체 @{browser_obj} 의현재웹 페이지
+    icon: close-webpage
+    helpManual: ''
+    inputList:
+      - key: browser_obj
+        title: 브라우저객체
+        tip: 선택할닫기의탭에서의브라우저객체
+      - key: url
+        title: url
+        tip: 아니오이면닫기현재탭
+    outputList: []
+  BrowserSoftware.screenshot:
+    title: 웹 페이지스크린샷
+    comment: 를브라우저객체 @{browser_obj} 스크린샷, 저장경로 @{web_screen}
+    icon: webpage-screenshot
+    helpManual: ''
+    inputList:
+      - key: browser_obj
+        title: 브라우저객체
+        tip: 선택할스크린샷웹 페이지에서의브라우저객체
+      - key: shot_range
+        title: 스크린샷
+        tip: 선택스크린샷의유형, 선택전체, 완료개페이지의길이이미지
+      - key: image_path
+        title: 스크린샷저장경로
+        tip: 스크린샷저장의본폴더 경로
+      - key: image_name
+        title: 이미지이름
+        tip: 이미지이름, 가능으로또는아니오이름
+      - key: page_timeout
+        title: 대기페이지로드시간(초)
+        tip: 초과경과해당시간중지대기
+    outputList:
+      - key: web_screen
+        title: 파일 경로
+        tip: ''
+  BrowserSoftware.browser_forward:
+    title: 웹 페이지전
+    comment: 브라우저객체 @{browser_obj} 의현재웹 페이지전
+    icon: webpage-forward
+    helpManual: ''
+    inputList:
+      - key: browser_obj
+        title: 브라우저객체
+        tip: 선택할웹 페이지전에서의브라우저객체
+    outputList: []
+  BrowserSoftware.browser_back:
+    title: 웹 페이지후
+    comment: 브라우저객체 @{browser_obj} 의현재웹 페이지후
+    icon: webpage-backward
+    helpManual: ''
+    inputList:
+      - key: browser_obj
+        title: 브라우저객체
+        tip: 선택할웹 페이지후에서의브라우저객체
+    outputList: []
+  BrowserSoftware.get_current_obj:
+    title: 가져오기완료열기의브라우저객체
+    comment: 가져오기완료열기의브라우저프로그램 @{browser_type} 의브라우저객체, 를결과출력 @{browser_obj}
+    icon: get-open-browser-objects
+    helpManual: ''
+    inputList:
+      - key: browser_type
+        title: 브라우저유형
+        tip: 선택해당브라우저객체에서의브라우저유형
+    outputList:
+      - key: browser_obj
+        title: 브라우저객체
+        tip: 저장가져오기의브라우저객체,사용객체행웹 페이지
+  BrowserSoftware.get_current_url:
+    title: 가져오기웹 페이지URL
+    comment: 가져오기브라우저객체 @{browser_obj} 의URL값, 를결과출력 @{get_url}
+    icon: get-webpage-url
+    helpManual: ''
+    inputList:
+      - key: browser_obj
+        title: 브라우저객체
+        tip: 선택가져오기페이지URL에서의브라우저객체
+    outputList:
+      - key: get_url
+        title: 웹 페이지url
+        tip: ''
+  BrowserSoftware.get_current_title:
+    title: 가져오기웹 페이지제목
+    comment: 가져오기브라우저객체 @{browser_obj} 의제목, 를결과출력 @{get_page_title}
+    icon: get-webpage-title
+    helpManual: ''
+    inputList:
+      - key: browser_obj
+        title: 브라우저객체
+        tip: 선택가져오기페이지제목에서의브라우저객체
+    outputList:
+      - key: get_page_title
+        title: 웹 페이지제목
+        tip: ''
+  BrowserSoftware.get_current_tab_id:
+    title: 가져오기현재탭ID
+    comment: 가져오기브라우저객체 @{browser_obj}현재탭의일ID, 를결과출력 @{get_tab_id}
+    icon: get-current-tab-id
+    helpManual: ''
+    inputList:
+      - key: browser_obj
+        title: 브라우저객체
+        tip: 선택가져오기탭ID에서의브라우저객체
+    outputList:
+      - key: get_tab_id
+        title: 탭ID
+        tip: ''
+  BrowserSoftware.download_web_file:
+    title: 파일다운로드(web)
+    comment: 에서웹 페이지중클릭 @{element_data||link_str} 다운로드, 를저장 @{save_path}
+    icon: file-download-web
+    helpManual: ''
+    inputList:
+      - key: browser_obj
+        title: 브라우저객체
+        tip: 선택할클릭다운로드의웹 페이지요소에서의브라우저객체
+      - key: element_data
+        title: 선택클릭목록 
+        tip: 선택할클릭다운로드의웹 페이지요소
+      - key: download_mode
+        title: 다운로드
+        tip: ''
+      - key: link_str
+        title: 다운로드연결주소
+        tip: ''
+      - key: save_path
+        title: 저장경로
+        tip: 선택저장파일의폴더 경로
+      - key: custom_flag
+        title: 지정명령이름
+        tip: ''
+      - key: file_name
+        title: 지정파일이름
+        tip: 아니오입력할이름, 시스템추가이름[시스템생성열기 이름]
+      - key: simulate_flag
+        title: 사람클릭
+        tip: 사람클릭예사람로방식클릭, 아니오이면를근거선택요소의연결행클릭
+      - key: is_wait
+        title: 대기
+        tip: ''
+      - key: time_out
+        title: 길이대기시간
+        tip: 초과경과길이대기시간(초)이면중지대기
+    outputList:
+      - key: load_file
+        title: 문서경로
+        tip: ''
+  BrowserSoftware.upload_web_file:
+    title: 파일업로드(web)
+    comment: 에서웹 페이지중클릭 @{element_data} , 에서출력의파일선택대화상자중입력필요업로드의파일 경로 @{upload_path}
+    icon: file-upload-web
+    helpManual: ''
+    inputList:
+      - key: browser_obj
+        title: 브라우저객체
+        tip: 선택할클릭업로드의웹 페이지요소에서의브라우저객체
+      - key: element_data
+        title: 선택클릭목록 
+        tip: 선택할클릭업로드의웹 페이지요소
+      - key: upload_path
+        title: 업로드파일 경로
+        tip: 대기업로드파일경로, 필요선택다중개파일, 까지Python방식, 입력파일목록, :["파일1경로", "파일2경로"]
+      - key: simulate_flag
+        title: 사람클릭
+        tip: 사람클릭예사람로방식클릭, 아니오이면를근거선택요소의연결행클릭
+    outputList:
+      - key: download_file
+        title: 문서경로
+        tip: ''
+options:
+  WaitElementForStatusFlag:
+    - value: 'y'
+      label: 대기원출력
+    - value: 'n'
+      label: 대기요소실패
+  Bool:
+    - value: true
+      label: 예
+    - value: false
+      label: 아니오
+  ButtonForAssistiveKeyFlag:
+    - value: None
+      label: 없음
+    - value: Alt
+      label: Alt
+    - value: Ctrl
+      label: Ctrl
+    - value: Shift
+      label: Shift
+    - value: Win
+      label: Win
+  ButtonForClickTypeFlag:
+    - value: click
+      label: 왼쪽
+    - value: dbclick
+      label: 더블클릭
+    - value: right
+      label: 오른쪽
+  FillInputForFillTypeFlag:
+    - value: text
+      label: 키보드입력
+    - value: clipboard
+      label: 
+    - value: credential
+      label: 근거입력
+  FillInputForInputTypeFlag:
+    - value: append
+      label: 추가 입력
+    - value: overwrite
+      label: 덮어쓰기
+  ScrollbarType:
+    - value: window
+      label: 창
+    - value: customEle
+      label: 지정목록 
+  ScrollDirection:
+    - value: horizontal
+      label: 가로
+    - value: vertical
+      label: 세로
+  ScrollbarForXScrollTypeFlag:
+    - value: left
+      label: 왼쪽
+    - value: right
+      label: 오른쪽
+    - value: defined
+      label: 지정
+  ScrollbarForYScrollTypeFlag:
+    - value: top
+      label: 모듈
+    - value: bottom
+      label: 모듈
+    - value: defined
+      label: 지정
+  ElementGetAttributeHasSelfTypeFlag:
+    - value: getElement
+      label: 가져오기요소객체
+    - value: getText
+      label: 가져오기원텍스트내용
+    - value: getHtml
+      label: 가져오기요소코드
+    - value: getValue
+      label: 가져오기요소값
+    - value: getLink
+      label: 가져오기요소연결주소
+    - value: getAttribute
+      label: 가져오기요소속성
+    - value: getPosition
+      label: 가져오기요소위치
+    - value: getSelection
+      label: 가져오기원선택중상태
+    - value: getStyle
+      label: 가져오기원방식
+  ElementDragDirectionTypeFlag:
+    - value: left
+      label: 왼쪽
+    - value: right
+      label: 오른쪽
+    - value: up
+      label: 위
+    - value: down
+      label: 아래
+  ElementDragTypeFlag:
+    - value: start
+      label: 위치
+    - value: current
+      label: 현재위치
+  SelectionPartner:
+    - value: contains
+      label: 매칭
+    - value: equal
+      label: 매칭
+    - value: index
+      label: 순서매칭
+  ElementCheckedTypeFlag:
+    - value: checked
+      label: 선택
+    - value: unchecked
+      label: 가져오기 선택
+    - value: reversed
+      label: 반대선택
+  ElementAttributeOpTypeFlag:
+    - value: get
+      label: 가져오기속성
+    - value: set
+      label: 속성
+    - value: del
+      label: 삭제속성
+  ElementGetAttributeTypeFlag:
+    - value: getText
+      label: 가져오기원텍스트내용
+    - value: getHtml
+      label: 가져오기요소코드
+    - value: getValue
+      label: 가져오기요소값
+    - value: getLink
+      label: 가져오기요소연결주소
+    - value: getAttribute
+      label: 가져오기요소속성
+    - value: getPosition
+      label: 가져오기요소위치
+    - value: getSelection
+      label: 가져오기원선택중상태
+    - value: getStyle
+      label: 가져오기원방식
+  RelativePosition:
+    - value: screenLeft
+      label: 화면왼쪽위
+    - value: webPageLeft
+      label: 페이지왼쪽위
+  TablePickType:
+    - value: row
+      label: 행출력
+    - value: column
+      label: 열출력
+  LocateType:
+    - value: xpath
+      label: xpath
+    - value: cssSelector
+      label: css선택기기
+    - value: text
+      label: 문서문자
+  ElementCreateReturnType:
+    - value: single
+      label: 단일개요소객체
+    - value: list
+      label: 요소객체목록
+  RelativeType:
+    - value: child
+      label: 요소
+    - value: parent
+      label: 요소
+    - value: sibling
+      label: 요소
+  ChildElementType:
+    - value: all
+      label: 모든요소
+    - value: index
+      label: n개요소
+    - value: xpath
+      label: 요소xpath
+    - value: last
+      label: 후일개요소
+  SiblingElementType:
+    - value: all
+      label: 모든요소
+    - value: next
+      label: 아래일개요소
+    - value: prev
+      label: 위일개요소
+  InputType:
+    - value: content
+      label: 에서
+    - value: file
+      label: 외부모듈가져오기
+  CommonForBrowserType:
+    - value: chrome
+      label: Chrome
+    - value: edge
+      label: Edge
+    - value: 360se
+      label: 360설치전체브라우저
+    - value: 360ChromeX
+      label: 360브라우저X
+    - value: firefox
+      label: Firefox
+    - value: chromium
+      label: 내부브라우저
+  CommonForTimeoutHandleType:
+    - value: execError
+      label: 종료
+    - value: stopLoad
+      label: 건너뛰기
+  WebSwitchType:
+    - value: url
+      label: 네트워크
+    - value: title
+      label: 제목
+    - value: tabId
+      label: 탭ID
+  ScreenShotForShotRangeFlag:
+    - value: visual
+      label: 가능
+    - value: all
+      label: 전체웹 페이지
+  DownloadModeForFlag:
+    - value: click
+      label: 클릭다운로드
+    - value: link
+      label: 연결다운로드

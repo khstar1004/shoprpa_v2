@@ -1,0 +1,1005 @@
+import { log } from '../3rd/log'
+
+import { ErrorMessage, StatusCode } from './constant'
+import { Cookie } from './cookie'
+import DataTable from './data_table'
+import { frameFind } from './iframe'
+import { getSimilarElement, isSameIdStart } from './similar'
+import { Tabs } from './tab'
+import { Utils } from './utils'
+import { WindowControl } from './window'
+// import { sendNativeMessage } from './native'
+
+globalThis.activeElement = null
+
+function contentMessageHandler(request, sender: chrome.runtime.MessageSender, _sendResponse: (args) => void) {
+  if (request.type === 'element' && sender.tab) {
+    const info = {
+      tabTitle: sender.tab.title,
+      tabUrl: sender.tab.url,
+      // favIconUrl: sender.tab.favIconUrl,// different in chrome and firefox
+      isFrame: sender.frameId !== 0,
+      frameId: sender.frameId,
+    }
+    globalThis.activeElement = { ...request.data, ...info }
+  }
+  if (request.type === 'requestFrameId' && sender.tab) {
+    _sendResponse(sender.frameId)
+  }
+  if (request.type === 'keepBackgroundAlive' && sender.tab) {
+    _sendResponse(true)
+  }
+  if (request.type === 'contentLoaded' && sender.tab) {
+    _sendResponse(true)
+  }
+  // if (request.type === 'nativeMessage') {
+  //   sendNativeMessage(request.data);
+  // }
+  return true
+}
+
+/**
+ * Processes a sequence of frames within a browser tab, executing a function on each frame to retrieve iframe element information.
+ *
+ * For each frame in the `framePath`, this function calls `Tabs.executeFuncOnFrame` to execute a handler that retrieves iframe element data.
+ * The position `p` is updated at each step based on the returned `nextPos` from the frame.
+ * If an error occurs during processing, the function returns an array containing the `activeElement`.
+ * Otherwise, it returns an array of iframe depth information collected from each frame.
+ *
+ * @param tab - The Chrome tab object where the frames are located.
+ * @param framePath - An array of frame identifiers representing the path through nested iframes.
+ * @param p - The current position, which is updated as frames are processed.
+ * @param activeElement - Information about the currently active element, returned if processing fails.
+ * @returns A promise that resolves to an array of iframe depth information, or an array containing the active element if an error occurs.
+ */
+async function processFrames(tab: chrome.tabs.Tab, framePath: number[], p: Point, activeElement: ElementInfo) {
+  const iframeDepthInfo = []
+  for (const frame of framePath) {
+    try {
+      const res = await Tabs.executeFuncOnFrame(tab.id, frame, (arg) => {
+        // @ts-expect-error window in content_script
+        return window.handleSync({
+          key: 'getIframeElement',
+          data: arg,
+        })
+      }, [p])
+
+      iframeDepthInfo.push(res)
+      const { nextPos } = res as { nextPos: Point }
+      p.x = nextPos.x
+      p.y = nextPos.y
+    }
+    catch {
+      return [activeElement]
+    }
+  }
+  return iframeDepthInfo
+}
+
+/**
+ * Retrieves detailed information about an iframe element based on a given point and active element.
+ * This function calculates the iframe path and adjusts the element's rectangle coordinates relative to nested iframes.
+ * If the element is within nested iframes, it updates the `iframeXpath` and rectangle properties to reflect its position.
+ *
+ * @param p - The point (coordinates) used to locate the element within the frame hierarchy.
+ * @param activeElement - The information about the currently active element, including its frame and xpath.
+ * @returns A promise that resolves to an updated `ElementInfo` object with iframe path and adjusted rectangle,
+ *          or the original `activeElement` if no iframe nesting is detected.
+ */
+async function getIframeElement(p: Point, activeElement: ElementInfo) {
+  const tab = await Tabs.getActiveTab()
+  const frames = await Tabs.getAllFrames(tab.id)
+  const iframeElementInfo = JSON.parse(JSON.stringify(activeElement))
+
+  let targetFrame = frames.find(frame => frame.frameId === activeElement.frameId)
+  const framePath: number[] = []
+  // get the position of the frame relative to the parent frame
+  while (targetFrame) {
+    framePath.unshift(targetFrame.frameId)
+    targetFrame = frames.find(frame => frame.frameId === targetFrame.parentFrameId)
+  }
+  const iframeDepthInfo = await processFrames(tab, framePath, p, activeElement)
+
+  if (iframeDepthInfo.length > 0) {
+    const lastElement = iframeDepthInfo[iframeDepthInfo.length - 1]
+    const isPathEqual = lastElement.xpath === activeElement.xpath
+    const isUrlEqual = lastElement.url === activeElement.url
+    if (!isPathEqual || !isUrlEqual) {
+      iframeDepthInfo[iframeDepthInfo.length - 1] = iframeElementInfo
+    }
+    iframeDepthInfo.forEach((frameInfo, index) => {
+      if (index === 0) {
+        iframeElementInfo.iframeXpath = frameInfo.xpath
+      }
+      else {
+        iframeElementInfo.iframeXpath = `${iframeElementInfo.iframeXpath}/$iframe$${frameInfo.xpath}`
+      }
+      if (frameInfo.iframeContentRect) {
+        iframeElementInfo.rect.x += frameInfo.iframeContentRect.x
+        iframeElementInfo.rect.y += frameInfo.iframeContentRect.y
+      }
+    })
+    // iframeElementInfo left, top, right, bottom,
+    iframeElementInfo.rect.left = iframeElementInfo.rect.x
+    iframeElementInfo.rect.top = iframeElementInfo.rect.y
+    iframeElementInfo.rect.right = iframeElementInfo.rect.x + iframeElementInfo.rect.width
+    iframeElementInfo.rect.bottom = iframeElementInfo.rect.y + iframeElementInfo.rect.height
+
+    iframeElementInfo.iframeXpath = iframeElementInfo.iframeXpath.split('/$iframe$').slice(0, -1).join('/$iframe$')
+
+    return iframeElementInfo
+  }
+  else {
+    return activeElement
+  }
+}
+
+function findFrameByUrl(frames: FrameDetails[], url: string) {
+  return frames.find(frame => frame.url.includes(url))
+}
+
+/**
+ * Finds a frame within a list of frames by traversing the hierarchy using an iframe XPath.
+ *
+ * The function splits the provided `iframeXpath` into segments using the delimiter `/$iframe$`,
+ * then iteratively searches for child frames matching each segment, starting from the root frame
+ * (where `frameId === 0`). If any segment does not match a frame in the hierarchy, the function returns `null`.
+ *
+ * @param frames - An array of `FrameDetails` objects representing all available frames.
+ * @param iframeXpath - A string representing the hierarchical XPath to the target iframe, delimited by `/$iframe$`.
+ * @returns The `FrameDetails` object corresponding to the target frame if found; otherwise, `null`.
+ */
+function findFrameByXpath(frames: FrameDetails[], iframeXpath: string) {
+  if (!iframeXpath || !Array.isArray(frames) || frames.length === 0)
+    return null
+
+  const segments = iframeXpath
+    .split('/$iframe$')
+    .map(s => s.trim())
+    .filter(Boolean)
+  if (segments.length === 0)
+    return null
+
+  const rootFrame = frames.find(f => f.frameId === 0)
+  if (!rootFrame)
+    return null
+
+  let current: FrameDetails | null = rootFrame
+  for (const seg of segments) {
+    const next = frames.find(f => f.iframeXpath === seg && f.parentFrameId === current!.frameId)
+    if (!next)
+      return null
+    current = next
+  }
+  return current
+}
+
+function getFramePath(frames: FrameDetails[], targetFrame: FrameDetails) {
+  const framePath: FrameDetails[] = []
+  while (targetFrame) {
+    framePath.unshift(targetFrame)
+    targetFrame = frames.find(frame => frame.frameId === targetFrame.parentFrameId)
+  }
+  return framePath
+}
+
+/**
+ * Calculates the absolute position of a nested frame within a browser tab by aggregating the positions of each frame in the provided `framePath`.
+ *
+ * For each frame (except the last one) in the `framePath`, this function executes a position retrieval function on the corresponding frame,
+ * then sums up all the positions to determine the absolute position relative to the top-level document.
+ *
+ * @param tabId - The ID of the browser tab containing the frames.
+ * @param framePath - An array of `FrameDetails` representing the hierarchy of frames, from the top-level frame to the target frame.
+ * @returns A promise that resolves to a `Point` object containing the absolute `x` and `y` coordinates.
+ */
+async function calculateAbsolutePosition(tabId: number, framePath: FrameDetails[]) {
+  const posPromises = framePath.slice(0, -1).map((frame, index) => {
+    const nextFrame = framePath[index + 1]
+    const args = [{
+      iframeXpath: nextFrame.iframeXpath,
+      url: nextFrame.url,
+    }]
+    return Tabs.executeFuncOnFrame(tabId, frame.frameId, (arg) => {
+      // @ts-expect-error window in content_script
+      return window.handleSync({
+        key: 'getFramePosition',
+        data: arg,
+      })
+    }, args)
+  })
+
+  const posRes = await Promise.all(posPromises) as Point[]
+  return posRes.reduce(
+    (acc, pos) => {
+      acc.x += pos.x
+      acc.y += pos.y
+      return acc
+    },
+    { x: 0, y: 0 },
+  )
+}
+
+function adjustPosition(rect: DOMRectT | DOMRectT[], absolutePos: Point) {
+  if (Array.isArray(rect)) {
+    rect.forEach(r => adjustRectPosition(r, absolutePos))
+  }
+  else {
+    adjustRectPosition(rect, absolutePos)
+  }
+}
+
+function adjustRectPosition(rect: DOMRectT, absolutePos: Point) {
+  rect.x += absolutePos.x
+  rect.y += absolutePos.y
+  rect.left = rect.x
+  rect.top = rect.y
+  rect.right = rect.x + rect.width
+  rect.bottom = rect.y + rect.height
+}
+
+/**
+ * Finds the target browser tab and frame based on the provided parameters.
+ *
+ * @param params - The parameters containing information about the tab and frame to locate.
+ * @returns An object containing the found tab and the corresponding frame ID.
+ *          If `isFrame` is false, returns the tab and frame ID 0.
+ *          If `isFrame` is true, attempts to locate the frame by XPath or URL.
+ *          If the frame is not found, returns the tab and `Number.NaN` as the frame ID.
+ * @throws {Error} If the active tab cannot be found or activated.
+ */
+async function findTabAndFrame(params: ElementParams) {
+  const { url, iframeXpath, isFrame, tabUrl } = params.data
+  let tab = await Tabs.getActiveTab()
+  if (!tab) {
+    tab = await Tabs.activeTargetTabByTabUrl(tabUrl)
+    if (!tab || !Utils.isSupportProtocal(tab.url)) {
+      throw new Error(ErrorMessage.ACTIVE_TAB_ERROR)
+    }
+  }
+  if (!isFrame) {
+    return { tab, frameId: 0 }
+  }
+  else {
+    const frameId = await frameFinder(tab, url, iframeXpath)
+    return { tab, frameId }
+  }
+}
+
+async function frameFinder(tab, url, iframeXpath: string) {
+  const frames = await Tabs.getAllFrames(tab.id)
+  let targetFrame = null
+  if (iframeXpath) {
+    targetFrame = findFrameByXpath(frames, iframeXpath)
+  }
+  else {
+    targetFrame = findFrameByUrl(frames, url)
+  }
+  if (targetFrame) {
+    return targetFrame.frameId
+  }
+  else {
+    const frameId = await frameFind(iframeXpath)
+    return frameId !== null ? frameId : Number.NaN
+  }
+}
+
+const Handlers = {
+  tabsHandler() {
+    return {
+      async reloadTab() {
+        const res = await Tabs.reload()
+        return Utils.success(res)
+      },
+      async stopLoad() {
+        const res = await Tabs.stopLoad()
+        return Utils.success(res)
+      },
+      async openNewTab(params) {
+        const tab = await Tabs.create(params.data)
+        return Utils.success(tab)
+      },
+      async closeTab(params) {
+        let { url, id } = params.data
+        let tab: chrome.tabs.Tab
+        if (id && typeof id !== 'number') {
+          try {
+            id = Number.parseInt(id, 10)
+            if (Number.isNaN(id)) {
+              return Utils.fail(ErrorMessage.NUMBER_ID_ERROR)
+            }
+          }
+          catch {
+            return Utils.fail(ErrorMessage.NUMBER_ID_ERROR)
+          }
+          await Tabs.remove(id)
+          return Utils.success(true)
+        }
+        if (url) {
+          tab = await Tabs.getTab(url)
+        }
+        if (!tab) {
+          tab = await Tabs.getActiveTab()
+        }
+        if (!tab) {
+          return Utils.fail('tab not found')
+        }
+        await Tabs.remove(tab.id)
+        return Utils.success(true)
+      },
+      async updateTab(params) {
+        const { url } = params.data
+        const tab = await Tabs.getActiveTab()
+        if (tab) {
+          await Tabs.update(tab.id, { url })
+          return Utils.success(true)
+        }
+        else {
+          return Utils.fail('tab not found')
+        }
+      },
+      async activeTab(params) {
+        const { url } = params.data
+        const tab = await Tabs.getTab(url)
+        await Tabs.activeTargetTab(tab.id)
+        return Utils.success(true)
+      },
+      async getActiveTab() {
+        const tab = await Tabs.getActiveTab()
+        if (!tab) {
+          return Utils.fail(ErrorMessage.ACTIVE_TAB_ERROR)
+        }
+        return Utils.success(tab)
+      },
+      async switchTab(params) {
+        let { url, title, id } = params.data
+        if (id && typeof id !== 'number') {
+          try {
+            id = Number.parseInt(id, 10)
+            if (Number.isNaN(id)) {
+              return Utils.fail(ErrorMessage.NUMBER_ID_ERROR)
+            }
+          }
+          catch {
+            return Utils.fail(ErrorMessage.NUMBER_ID_ERROR)
+          }
+        }
+        const tab = await Tabs.switchTab(url, title, id)
+        if (tab) {
+          return Utils.success(tab)
+        }
+        else {
+          return Utils.fail(ErrorMessage.TAB_GET_ERROR)
+        }
+      },
+
+      async getAllTabs() {
+        const tabs = await Tabs.getAllTabs()
+        return Utils.success(tabs)
+      },
+
+      async backward() {
+        const res = await Tabs.goBack()
+        return Utils.success(res)
+      },
+      async forward() {
+        const res = await Tabs.goForward()
+        return Utils.success(res)
+      },
+
+      async maxWindow() {
+        const wind = await WindowControl.getCurrent()
+        const maxWin = await WindowControl.update(wind.id, {
+          state: 'maximized',
+        })
+        if (maxWin) {
+          return Utils.success(true)
+        }
+        const { lastError } = chrome.runtime
+        if (lastError) {
+          return Utils.fail(lastError.message, StatusCode.EXECUTE_ERROR)
+        }
+      },
+      async minWindow() {
+        const wind = await WindowControl.getCurrent()
+        const minWin = await WindowControl.update(wind.id, {
+          state: 'minimized',
+        })
+        if (minWin) {
+          return Utils.success(true)
+        }
+        const { lastError } = chrome.runtime
+        if (lastError) {
+          return Utils.fail(lastError.message, StatusCode.EXECUTE_ERROR)
+        }
+      },
+      async executeScriptOnFrame(params) {
+        const { url, code } = params.data
+        const tab = await Tabs.getActiveTab()
+        if (!tab) {
+          return Utils.fail(ErrorMessage.ACTIVE_TAB_ERROR)
+        }
+        const frames = await Tabs.getAllFrames(tab.id)
+        const frame = frames.find(frame => frame.url === url)
+        const frameId = frame ? frame.frameId : 0
+        const res = await Tabs.executeScriptOnFrame(tab.id, frameId, code)
+        return Utils.success(res)
+      },
+      async getTitle() {
+        const title = await Tabs.getTitle()
+        return Utils.success(title)
+      },
+      async getUrl() {
+        const title = await Tabs.getUrl()
+        return Utils.success(title)
+      },
+      async captureScreen() {
+        const res = await Tabs.captureScreen()
+        if (res) {
+          return Utils.success(res)
+        }
+      },
+      async capturePage() {
+        const res = await Tabs.capturePage()
+        if (res) {
+          return Utils.success(res)
+        }
+      },
+      async loadComplete() {
+        const { lastError } = chrome.runtime
+        const activeTab = await Tabs.getActiveTab()
+        if (!activeTab) {
+          return Utils.fail(ErrorMessage.ACTIVE_TAB_ERROR)
+        }
+        if (lastError) {
+          return Utils.fail(lastError.message, StatusCode.EXECUTE_ERROR)
+        }
+        if (activeTab.status === 'complete') {
+          return Utils.success(true)
+        }
+        else {
+          return Utils.success(false)
+        }
+      },
+      async getFrames() {
+        const tab = await Tabs.getActiveTab()
+        if (!tab) {
+          return Utils.fail(ErrorMessage.ACTIVE_TAB_ERROR)
+        }
+        const frames = await Tabs.getAllFrames(tab.id)
+        return frames
+      },
+      async getExtFrames() {
+        const tab = await Tabs.getActiveTab()
+        if (!tab) {
+          return Utils.fail(ErrorMessage.ACTIVE_TAB_ERROR)
+        }
+        const frames = await Tabs.getExtFrames(tab.id)
+        return frames
+      },
+      async resetZoom() {
+        const tab = await Tabs.getActiveTab()
+        if (!tab) {
+          return Utils.fail(ErrorMessage.ACTIVE_TAB_ERROR)
+        }
+        const res = await Tabs.resetZoom(tab.id)
+        return res
+      },
+      async getTabId() {
+        const tab = await Tabs.getActiveTab()
+        if (!tab) {
+          return Utils.fail(ErrorMessage.ACTIVE_TAB_ERROR)
+        }
+        return Utils.success(tab.id)
+      },
+      async getFrameTree() {
+        const tab = await Tabs.getActiveTab()
+        if (!tab) {
+          return Utils.fail(ErrorMessage.ACTIVE_TAB_ERROR)
+        }
+        const res = await Tabs.getFrameTree(tab.id)
+        return Utils.success(res)
+      },
+      async printPage(params: PrintOptions) {
+        const tab = await Tabs.getActiveTab()
+        if (!tab) {
+          return Utils.fail(ErrorMessage.ACTIVE_TAB_ERROR)
+        }
+        const res = await Tabs.printPage(tab.id, params)
+        return Utils.success(res)
+      },
+    }
+  },
+
+  elementHandler() {
+    return {
+      async getElement(params) {
+        const activeElement = globalThis.activeElement
+        if (activeElement && activeElement.isFrame) {
+          const { x, y } = params.data
+          if (!x || !y) {
+            return Utils.success(activeElement)
+          }
+          const result = await getIframeElement({ x, y }, activeElement)
+          return Utils.success(result)
+        }
+        return Utils.success(activeElement)
+      },
+      async getOuterHTML(params) {
+        try {
+          const result = await Handlers.elementHandler().getElement(params)
+          params.data = result?.data || globalThis.activeElement
+          const { tab, frameId } = await findTabAndFrame({ ...params })
+          const htmlResult = await Tabs.sendTabFrameMessage(tab.id, params, frameId)
+          const mergedInfo = { ...params.data, ...htmlResult.data }
+          return Utils.success(mergedInfo)
+        }
+        catch (error) {
+          console.log('ignore getOuterHTML error: ', error)
+          const elementInfo = globalThis.activeElement
+          return Utils.success(elementInfo)
+        }
+      },
+      async handleInContent(params: ElementParams) {
+        const { tab, frameId } = await findTabAndFrame(params)
+        if (Number.isNaN(frameId)) {
+          return Utils.fail(ErrorMessage.FRAME_GET_ERROR, StatusCode.ELEMENT_NOT_FOUND)
+        }
+        if (!Utils.isSupportProtocal(tab.url)) {
+          return Utils.fail(`${tab.url} ${ErrorMessage.CURRENT_TAB_UNSUPPORT_ERROR}`)
+        }
+        const result = await Tabs.sendTabFrameMessage(tab.id, params, frameId)
+        if (result === null) {
+          return Utils.fail(ErrorMessage.CONTENT_MESSAGE_ERROR, StatusCode.UNKNOWN_ERROR)
+        }
+        if (result.code !== StatusCode.SUCCESS) {
+          return Utils.fail(result.msg, result.code)
+        }
+        else {
+          return Utils.success(result.data)
+        }
+      },
+      async getElementPos(params: ElementParams) {
+        const { isFrame } = params.data
+        const { tab, frameId } = await findTabAndFrame(params)
+
+        if (!Utils.isSupportProtocal(tab.url)) {
+          return Utils.fail(`${tab.url} ${ErrorMessage.CURRENT_TAB_UNSUPPORT_ERROR}`)
+        }
+        if (!isFrame) {
+          const result = await Tabs.sendTabFrameMessage(tab.id, params, frameId)
+          return Utils.result(result.data, result.msg, result.code)
+        }
+
+        const frames = await Tabs.getAllFrames(tab.id)
+        const targetFrame = frames.find(frame => frame.frameId === frameId)
+
+        if (!targetFrame) {
+          return Utils.fail(ErrorMessage.FRAME_GET_ERROR, StatusCode.ELEMENT_NOT_FOUND)
+        }
+
+        const framePath = getFramePath(frames, targetFrame)
+
+        const absolutePos = await calculateAbsolutePosition(tab.id, framePath)
+
+        const elementPosResult = await Tabs.sendTabFrameMessage(tab.id, params, targetFrame.frameId)
+
+        if (elementPosResult.code !== StatusCode.SUCCESS) {
+          return Utils.fail(elementPosResult.msg, elementPosResult.code)
+        }
+
+        adjustPosition(elementPosResult.data.rect, absolutePos)
+
+        return Utils.success(elementPosResult.data)
+      },
+      async checkElement(params: ElementParams) {
+        const res = await Handlers.elementHandler().getElementPos(params)
+        return res
+      },
+      async scrollIntoView(params: ElementParams) {
+        if (params.data?.openSourcePage) {
+          const activeTab = await Tabs.getActiveTab()
+          if (!activeTab || activeTab.url !== params.data.tabUrl) {
+            await Tabs.openTab(params.data.url)
+          }
+        }
+        const res = await Handlers.elementHandler().handleInContent(params)
+        return res
+      },
+
+      async similarElement(params: ElementParams) {
+        let activeElement = globalThis.activeElement
+        const { tabUrl } = params.data
+        let activeTab = await Tabs.getActiveTab()
+        if (!activeTab) {
+          return Utils.fail(ErrorMessage.ACTIVE_TAB_ERROR)
+        }
+        if (activeTab.url !== tabUrl) {
+          activeTab = await Tabs.getTab(tabUrl)
+        }
+        try {
+          const isSameId = isSameIdStart(params.data.pathDirs, activeElement.pathDirs)
+          if (!isSameId) {
+            const res = await Handlers.elementHandler().handleInContent({
+              ...params,
+              key: 'reSimilarElement',
+              data: { ...activeElement, preData: params.data },
+            })
+            log.info('reSimilarElement result: ', res)
+            if (res.data) {
+              params.data = res.data.preData
+              activeElement = res.data
+              delete params.data.preData
+            }
+          }
+          const similarElementInfo = getSimilarElement(params.data, activeElement)
+          if (similarElementInfo) {
+            const res = await Handlers.elementHandler().handleInContent({
+              ...params,
+              data: similarElementInfo,
+            })
+            similarElementInfo.similarCount = res.data?.similarCount || 0
+            return Utils.success(similarElementInfo)
+          }
+          else {
+            return Utils.fail(ErrorMessage.NOT_SIMILAR_ELEMENT, StatusCode.ELEMENT_NOT_FOUND)
+          }
+        }
+        catch (error) {
+          return Utils.fail(error.toString(), StatusCode.EXECUTE_ERROR)
+        }
+      },
+
+      async elementFromSelect(params: ElementParams) {
+        const res = await Handlers.elementHandler().handleInContent(params)
+        return res
+      },
+
+      async elementIsRender(params: ElementParams) {
+        const { tab, frameId } = await findTabAndFrame(params)
+        if (Number.isNaN(frameId)) {
+          return Utils.success(false)
+        }
+        const result = await Tabs.sendTabFrameMessage(tab.id, params, frameId)
+        if (result) {
+          return Utils.success(result.data)
+        }
+        else {
+          return Utils.success(false)
+        }
+      },
+
+      async elementIsReady(params: ElementParams) {
+        const activeTab = await Tabs.getActiveTab()
+        const { tab, frameId } = await findTabAndFrame(params)
+        if (Number.isNaN(frameId)) {
+          return Utils.success(false)
+        }
+        const result = await Tabs.sendTabFrameMessage(tab.id, params, frameId)
+        const complete = activeTab.status === 'complete'
+        if (result) {
+          return Utils.success(result.data && complete)
+        }
+        else {
+          return Utils.success(false)
+        }
+      },
+
+      async elementIsTable(params: ElementParams) {
+        if (!params.data.xpath) {
+          params.data = globalThis.activeElement
+        }
+        const res = await Handlers.elementHandler().handleInContent(params)
+        const isTable = !!res.data
+        const elementResult = { isTable, ...params.data }
+        return Utils.success(elementResult)
+      },
+
+      async tableDataBatch(params: ElementParams) {
+        if (!('xpath' in params.data)) {
+          params.data = globalThis.activeElement
+        }
+        const res = await Handlers.elementHandler().handleInContent(params)
+        const values = res.data?.values || []
+        const dataTable = new DataTable(res.data, values, 'table')
+        const table = dataTable.getTable()
+        return Utils.success(table)
+      },
+
+      async tableColumnDataBatch(params: ElementParams) {
+        if (!('xpath' in params.data)) {
+          params.data = globalThis.activeElement
+        }
+        const res = await Handlers.elementHandler().handleInContent(params)
+        const value = res.data?.value || []
+        const dataTable = new DataTable(res.data, value, 'similar')
+        const table = dataTable.getTable()
+        return Utils.success(table)
+      },
+
+      async similarBatch(params: ElementParams) {
+        if (!('xpath' in params.data)) {
+          params.data = globalThis.activeElement
+        }
+        if ('batchType' in params.data && ['similar', 'similarAdd'].includes(params.data.batchType)) {
+          const res = await Handlers.elementHandler().similarElement(params)
+          if (res.code !== StatusCode.SUCCESS) {
+            return res
+          }
+          params.data = res.data
+        }
+        const res = await Handlers.elementHandler().handleInContent(params)
+        const value = res.data?.value || []
+        const dataTable = new DataTable(res.data, value, 'similar')
+        const table = dataTable.getTable()
+        return Utils.success(table)
+      },
+
+      async tableHeaderBatch(params: ElementParams) {
+        if (!('xpath' in params.data)) {
+          params.data = globalThis.activeElement
+        }
+        const res = await Handlers.elementHandler().handleInContent(params)
+        return res
+      },
+
+      async simalarListBatch(params: ElementParams) {
+        const res = await Handlers.elementHandler().handleInContent(params)
+        return res
+      },
+
+      async highLightColumn(params: ElementParams) {
+        const res = await Handlers.elementHandler().handleInContent(params)
+        return res
+      },
+
+      async getBatchData(params: { key: string, data: BatchElementParams }) {
+        if (params.data?.openSourcePage) {
+          const activeTab = await Tabs.getActiveTab()
+          if (!activeTab || activeTab.url !== params.data.tabUrl) {
+            await Tabs.openTab(params.data.tabUrl)
+          }
+        }
+        await Utils.wait(3)
+        if (params.data && params.data.produceType === 'similar') {
+          params.key = 'simalarListBatch'
+          const res = await Handlers.elementHandler().simalarListBatch(params)
+          return res
+        }
+        else {
+          params.key = 'tableDataBatch'
+          const res = await Handlers.elementHandler().tableDataBatch(params)
+          return res
+        }
+      },
+
+      async elementShot(params: ElementParams) {
+        // 1, scrollToTop 2, resetZoom 3, getElementPos 4, debugger attach  5, capture 6, debugger detach 7, return data
+        params.key = 'scrollToTop'
+        await Handlers.elementHandler().scrollToTop(params)
+        await Handlers.tabsHandler().resetZoom()
+        params.key = 'getElementPos'
+        const res = await Handlers.elementHandler().getElementPos(params)
+        const { x, y, width, height } = res.data?.rect
+        const data = await Tabs.captureElement({ x, y, width, height })
+        return Utils.success(data)
+      },
+
+      async scrollToTop(params: ElementParams) {
+        const res = await Handlers.elementHandler().handleInContent(params)
+        return Utils.success(res)
+      },
+
+      async getSimilarIterator(params: ElementParams) {
+        params.key = 'elementFromSelect'
+        const index = params.data?.index || 0
+        const count = params.data?.count || 1
+        const res = await Handlers.elementHandler().elementFromSelect(params)
+        if (res.data && Array.isArray(res.data)) {
+          if (index < res.data.length) {
+            let data = [res.data[index]]
+            if (index + count <= res.data.length) {
+              data = res.data.slice(index, index + count)
+            }
+            else {
+              data = res.data.slice(index)
+            }
+            data = data.map((item, index) => {
+              item.index += index
+              return { ...item, similarCount: res.data.length }
+            })
+            return Utils.success(data)
+          }
+          else {
+            return Utils.success([])
+          }
+        }
+        else {
+          return Utils.fail(ErrorMessage.SIMILAR_NOT_FOUND, StatusCode.ELEMENT_NOT_FOUND)
+        }
+      },
+
+      async getRelativeElement(params: ElementParams) {
+        const { relativeOptions } = params.data
+        if (!relativeOptions) {
+          return Utils.fail(ErrorMessage.RELATIVE_ELEMENT_PARAMS_ERROR)
+        }
+        const res = await Handlers.elementHandler().handleInContent(params)
+        return res
+      },
+
+      async generateElement(params: { key: string, data: GenerateParamsT }) {
+        const tab = await Tabs.getActiveTab()
+        if (!tab) {
+          return Utils.fail(ErrorMessage.ACTIVE_TAB_ERROR)
+        }
+        const result = await Tabs.sendTabFrameMessage(tab.id, params, 0)
+        return result
+      },
+
+      async getParentElement(params: ElementParams) {
+        const res = await Handlers.elementHandler().handleInContent(params)
+        return res
+      },
+      async getChildElement(params: ElementParams) {
+        const res = await Handlers.elementHandler().handleInContent(params)
+        return res
+      },
+      // --------------- v3
+      async clickElement(params: ElementParams) {
+        const res = await Handlers.elementHandler().handleInContent(params)
+        return res
+      },
+
+      async inputElement(params: ElementParams) {
+        const res = await Handlers.elementHandler().handleInContent(params)
+        return res
+      },
+
+      async getElementText(params: ElementParams) {
+        const res = await Handlers.elementHandler().handleInContent(params)
+        return res
+      },
+
+      async getElementAttrs(params: ElementParams) {
+        const res = await Handlers.elementHandler().handleInContent(params)
+        return res
+      },
+
+      async removeElementAttr(params: ElementParams) {
+        const res = await Handlers.elementHandler().handleInContent(params)
+        return res
+      },
+
+      async setElementAttr(params: ElementParams) {
+        const res = await Handlers.elementHandler().handleInContent(params)
+        return res
+      },
+
+      async getElementChecked(params: ElementParams) {
+        const res = await Handlers.elementHandler().handleInContent(params)
+        return res
+      },
+
+      async setElementChecked(params: ElementParams) {
+        const res = await Handlers.elementHandler().handleInContent(params)
+        return res
+      },
+
+      async getElementSelected(params: ElementParams) {
+        const res = await Handlers.elementHandler().handleInContent(params)
+        return res
+      },
+
+      async setElementSelected(params: ElementParams) {
+        const res = await Handlers.elementHandler().handleInContent(params)
+        return res
+      },
+
+      async getTableData(params: ElementParams) {
+        const res = await Handlers.elementHandler().handleInContent(params)
+        return res
+      },
+
+      async scrollWindow(params: ElementParams) {
+        const res = await Handlers.elementHandler().handleInContent(params)
+        return res
+      },
+    }
+  },
+
+  jsHandler() {
+    return {
+
+      async runJS(params: ElementParams) {
+        const { tab, frameId } = await findTabAndFrame(params)
+        if (Number.isNaN(frameId)) {
+          return Utils.fail(ErrorMessage.FRAME_GET_ERROR, StatusCode.ELEMENT_NOT_FOUND)
+        }
+        if (frameId !== 0) { // get frames when frameId not 0
+          await Tabs.getAllFrames(tab.id)
+        }
+        try {
+          const result = await Tabs.runJS(tab.id, frameId, params)
+          return Utils.success(result)
+        }
+        catch (error) {
+          return Utils.fail(error.toString(), StatusCode.EXECUTE_ERROR)
+        }
+      },
+    }
+  },
+
+  cookieHandler() {
+    return { ...Cookie }
+  },
+
+  otherHandler() {
+    return {
+      currentExtension() {
+        return new Promise((resolve) => {
+          chrome.management.getSelf((info) => {
+            resolve(info)
+          })
+        })
+      },
+      backgroundInject() {
+        return Utils.success(true)
+      },
+      contentInject() {
+        return Utils.success(true)
+      },
+    }
+  },
+
+  noHandler() {
+    return Utils.fail(ErrorMessage.UNSUPPORT_ERROR, StatusCode.VERSION_ERROR)
+  },
+}
+
+async function bgHandler(params) {
+  let result = null
+  const { key } = params
+  const handlers = Handlers
+  try {
+    if (handlers[key]) {
+      result = await handlers[key](params)
+      return result
+    }
+    else if (handlers.tabsHandler()[key]) {
+      result = await handlers.tabsHandler()[key](params)
+      return result
+    }
+    else if (handlers.elementHandler()[key]) {
+      if (params.data && 'produceType' in params.data && params.data.produceType === 'similar') {
+        params.data = { ...params.data, ...params.data.values[0] }
+      }
+      result = await handlers.elementHandler()[key](params)
+      return result
+    }
+    else if (handlers.jsHandler()[key]) {
+      result = await handlers.jsHandler()[key](params)
+      return result
+    }
+    else if (handlers.cookieHandler()[key]) {
+      result = await handlers.cookieHandler()[key](params.data)
+      return result
+    }
+    else if (handlers.otherHandler()[key]) {
+      result = await handlers.otherHandler()[key](params.data)
+      return result
+    }
+    else {
+      result = handlers.noHandler()
+      return result
+    }
+  }
+  catch (error) {
+    if (error.toString().includes('connection')) {
+      return Utils.fail(ErrorMessage.CONTEXT_NOT_FOUND, StatusCode.UNKNOWN_ERROR)
+    }
+    return Utils.fail(error.toString(), StatusCode.EXECUTE_ERROR)
+  }
+}
+
+export { bgHandler, contentMessageHandler }

@@ -1,0 +1,40 @@
+﻿types:
+  Any:
+    desc: "작업유형"
+  Float:
+    desc: "데이터값"
+  Int:
+    desc: "정수"
+  Bool:
+    desc: "불리언"
+  Str:
+    desc: "문자열"
+  List:
+    desc: "목록"
+  Dict:
+    desc: "딕셔너리"
+  Date:
+    desc: "날짜시간"
+  PATH:
+    desc: "파일 경로"
+  URL:
+    desc: "주소"
+  Pick:
+    desc: "요소"
+  WebPick:
+    desc: "웹 페이지요소"
+  WinPick:
+    desc: "Win요소"
+  DialogResult:
+    desc: "대화상자출력결과"
+options:
+  bool:
+    - value: "True"
+      label: "예"
+    - value: "False"
+      label: "아니요"
+  Bool:
+    - value: "True"
+      label: "예"
+    - value: "False"
+      label: "아니요"

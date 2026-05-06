@@ -1,0 +1,157 @@
+﻿atomic:
+  Encrypt.md5_encrypt:
+    title: MD5암호화
+    comment: 문자열(@{source_str})행MD5암호화
+    icon: md5-encrypt
+    helpManual: ''
+    inputList:
+      - key: source_str
+        title: 필요암호화의문자열
+        tip: ''
+      - key: md5_method
+        title: 암호화위치데이터
+        tip: ''
+      - key: case_method
+        title: 크기선택
+        tip: ''
+    outputList:
+      - key: md5_encrypted_result
+        title: MD5암호화결과
+        tip: ''
+  Encrypt.sha_encrypt:
+    title: SHA암호화
+    comment: 문자열(@{source_str})행SHA암호화
+    icon: sha-encrypt
+    helpManual: ''
+    inputList:
+      - key: source_str
+        title: 필요암호화의문자열
+        tip: ''
+      - key: sha_method
+        title: SHA암호화방법법
+        tip: ''
+      - key: case_method
+        title: 크기선택
+        tip: ''
+    outputList:
+      - key: sha_encrypted_result
+        title: SHA암호화결과
+        tip: ''
+  Encrypt.symmetric_encrypt:
+    title: 명칭암호화
+    comment: 문자열(@{source_str})행명칭암호화
+    icon: symmetric-encrypt
+    helpManual: ''
+    inputList:
+      - key: source_str
+        title: 필요암호화의문자열
+        tip: ''
+      - key: password
+        title: 암호화키
+        tip: ''
+    outputList:
+      - key: symmetric_encrypted_result
+        title: 명칭암호화결과
+        tip: ''
+  Encrypt.symmetric_decrypt:
+    title: 명칭복호화
+    comment: 문자열(@{source_str})행명칭복호화
+    icon: symmetric-decrypt
+    helpManual: ''
+    inputList:
+      - key: source_str
+        title: 필요복호화의문자열
+        tip: ''
+      - key: password
+        title: 복호화키
+        tip: ''
+    outputList:
+      - key: symmetric_decrypted_result
+        title: 명칭복호화결과
+        tip: ''
+  Encrypt.base64_encoding:
+    title: Base64코드
+    comment: 가져오기문자열또는이미지파일코드로Base64문자열, 반환코드후의문자열(@{encoded_string})
+    icon: base64-encode
+    helpManual: ''
+    inputList:
+      - key: encode_type
+        title: 코드유형
+        tip: ''
+      - key: string_data
+        title: 문자열데이터
+        tip: ''
+      - key: file_path
+        title: 파일 경로
+        tip: ''
+    outputList:
+      - key: encoded_string
+        title: 코드후의문자열
+        tip: ''
+  Encrypt.base64_decoding:
+    title: Base64해제코드
+    comment: 가져오기Base64문자열(@{string_data}), 해제코드로문자열또는이미지파일
+    icon: base64-decode
+    helpManual: ''
+    inputList:
+      - key: decode_type
+        title: 해제코드유형
+        tip: ''
+      - key: string_data
+        title: Base64문자열
+        tip: ''
+      - key: file_path
+        title: 이미지저장폴더
+        tip: ''
+      - key: file_name
+        title: 이미지파일이름
+        tip: ''
+      - key: exist_handle_type
+        title: 저장된 이름파일관리방식
+        tip: 선택존재함파일관리방식, 지원덮어쓰기기존있음파일, 생성파일본, 건너뛰기저장
+    outputList:
+      - key: decoded_string
+        title: 해제코드후의문자열/이미지경로
+        tip: ''
+options:
+  MD5bitsType:
+    - value: '32'
+      label: 32위치
+    - value: '16'
+      label: 16위치
+  EncryptCaseType:
+    - value: lower
+      label: 소문자
+    - value: upper
+      label: 대문자
+  SHAType:
+    - value: sha1
+      label: sha1
+    - value: sha224
+      label: sha224
+    - value: sha256
+      label: sha256
+    - value: sha384
+      label: sha384
+    - value: sha512
+      label: sha512
+    - value: sha3_224
+      label: sha3_224
+    - value: sha3_256
+      label: sha3_256
+    - value: sha3_384
+      label: sha3_384
+    - value: sha3_512
+      label: sha3_512
+  Base64CodeType:
+    - value: string
+      label: 문자열
+    - value: picture
+      label: 이미지
+  FileExistenceType:
+    - value: overwrite
+      label: 덮어쓰기기존있음파일
+    - value: rename
+      label: 생성파일본
+    - value: cancel
+      label: 건너뛰기저장

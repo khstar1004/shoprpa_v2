@@ -1,0 +1,235 @@
+name: 🚀 기능 요청
+description: 생성항목일개새공가능또는수정항목
+title: "[Feature]: "
+labels: ["enhancement", "feature-request"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        항목항목의기능 제안!항목의항목법항목수정항목 Shoprpa 항목있음가격값.
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: 항목항목단일
+      description: 에서제출기능 요청항목전, 확인하세요으로아래항목
+      options:
+        - label: 항목완료항목검색완료항목있음의 Issues 및 Discussions, 항목항목아니오예재복사요청항목
+          required: true
+        - label: 항목완료항목항목완료항목목록문서및경로항목이미지
+          required: true
+        - label: 항목개공가능기호합치기항목목록의목록항목및항목
+          required: false
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: 🎯 공가능유형항목
+      description: 선택항목기호합치기항목요청항목의유형항목
+      options:
+        - 🎨 사용자항목/사용자항목검증
+        - 🤖 RPA 항목항목가능항목
+        - 🔧 열기발송도구및 API
+        - 📊 항목및분항목
+        - 🔒 설치전체및권한
+        - 🚀 항목가능항목
+        - 🌐 평면항목지원
+        - 📱 항목단말지원
+        - 🔌 항목성공및항목
+        - 📚 문서및항목
+        - 🛠️ 열기발송항목검증
+        - 항목
+      default: 0
+    validations:
+      required: true
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: 🧩 항목닫기컴포넌트
+      description: 선택항목필요항목의컴포넌트
+      options:
+        - 전단말 Web 항목사용
+        - 전단말데스크톱 앱
+        - 전단말브라우저 확장
+        - 후단말 robot-service (Java)
+        - 후단말 ai-service (Python)
+        - 후단말 openapi-service (Python)
+        - 후단말 resource-service (Java)
+        - RPA 엔진 코어
+        - RPA 컴포넌트 - rpasystem
+        - RPA 컴포넌트 - rpabrowser
+        - RPA 컴포넌트 - rpagui
+        - RPA 컴포넌트 - rpaexcel
+        - RPA 컴포넌트 - rpacv
+        - RPA 컴포넌트 - rpaai
+        - RPA 컴포넌트 - rpadatabase
+        - RPA 컴포넌트 - 항목컴포넌트
+        - 부서항목및실행항목
+        - 문서
+        - 전체영역공가능
+        - 새컴포넌트
+      default: 0
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: 🤔 항목제목설명
+      description: 항목항목해제항목항목제목?목록전의항목예항목?
+      placeholder: |
+        설명항목까지의항목제목또는아니오항목항목...
+        항목예: 
+        - 현재프로세스항목, 필요다중개항목
+        - 항목적음항목개닫기항목공가능
+        - 항목있음공가능아니오항목항목
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: 💡 해결 방법
+      description: 항목생성항목의해결 방법예항목?
+      placeholder: |
+        항목설명항목의기능 요청...
+        항목예: 
+        - 추가일개새의컴포넌트항목관리...
+        - 에서항목있음항목위증가추가...
+        - 항목새의 API 연결항목...
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: 🔄 항목방법항목
+      description: 항목여부항목경과항목해결 방법?
+      placeholder: |
+        설명항목항목경과의항목방법항목...
+        또는항목에서의항목시해제항목방법법...
+
+  - type: textarea
+    id: use-cases
+    attributes:
+      label: 📋 사용항목
+      description: 항목설명항목개공가능의사용항목및사용자항목
+      placeholder: |
+        사용자항목예시: 
+        항목로 [사용자역할], 
+        항목항목가능항목 [실행항목개항목], 
+        으로항목 [항목까지항목개목록항목].
+        
+        항목항목: 
+        1. 항목일: ...
+        2. 항목이: ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: examples
+    attributes:
+      label: 🎯 예시또는기존유형
+      description: 항목항목의예시, 스크린샷, 기존유형항목계획또는매개항목항목
+      placeholder: |
+        - 항목기존유형이미지
+        - 항목코드예시
+        - 매개항목항목제품품목의유형항목공가능
+        - API 연결항목계획항목이미지
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: ✅ 검증항목항목
+      description: 항목로항목항목의항목항목성공?
+      placeholder: |
+        공가능항목성공의항목: 
+        - [ ] 가능항목항목...
+        - [ ] 사용자가능으로통신경과...항목
+        - [ ] 항목가능항목까지...항목
+        - [ ] 항목내용...항목
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: 📊 항목단계
+      description: 항목개공가능항목있음다중재필요?
+      options:
+        - 🔥 닫기항목 - 항목목록항목필요공가능
+        - 🔶 높음 - 항목항목상승항목
+        - 🔷 중 - 있음사용의증가강함
+        - 🔹 낮음 - 가능있음가능없음
+      default: 2
+
+  - type: dropdown
+    id: effort
+    attributes:
+      label: ⏱️ 항목항목량
+      description: 항목로항목개공가능의항목항목정도예항목?
+      options:
+        - 🟢 항목단일 - 항목시간내부
+        - 🟡 중대기 - 항목내부
+        - 🟠 복사항목 - 항목내부
+        - 🔴 항목 - 항목개월내부
+        - 🤷 아니오항목지정
+      default: 4
+
+  - type: textarea
+    id: impact
+    attributes:
+      label: 📈 항목항목
+      description: 항목개공가능항목항목항목가격값?항목항목사용자?
+      placeholder: |
+        항목개공가능를항목: 
+        - 항목...유형의사용자
+        - 항목상승...방법항목의항목
+        - 해제항목...항목의항목제목
+        - 항목낮음...성공본
+
+  - type: textarea
+    id: considerations
+    attributes:
+      label: ⚠️ 항목항목
+      description: 여부있음항목의항목필요항목, 항목또는항목항목?
+      placeholder: |
+        - 항목가능필요항목
+        - 항목내용항목필요항목
+        - 설치전체항목
+        - 아키텍처항목
+
+  - type: textarea
+    id: resources
+    attributes:
+      label: 📚 항목닫기항목
+      description: 항목항목닫기의매개항목항목, 문서또는항목연결
+      placeholder: |
+        - 항목닫기문서 링크
+        - 항목항목
+        - 항목품목분항목
+        - 항목항목문서
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: 🤝 항목항목
+      description: 항목여부항목매개및항목개공가능의열기발송?
+      options:
+        - label: 항목항목제출 PR 항목항목개공가능
+          required: false
+        - label: 항목가능으로항목항목계획또는기존유형
+          required: false
+        - label: 항목가능으로항목항목시도및검증인증
+          required: false
+        - label: 항목가능으로항목항목항목문의
+          required: false
+        - label: 항목가능으로항목항목필요항목문서
+          required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: 📝 금액외부정보
+      description: 추가작업항목항목닫기정보또는항목법
+      placeholder: 작업항목항목있음항목관리해제및항목항목개공가능의정보

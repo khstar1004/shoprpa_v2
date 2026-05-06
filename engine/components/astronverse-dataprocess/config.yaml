@@ -1,0 +1,1055 @@
+﻿atomic:
+  DataProcess.set_variable_value:
+    title: 변수 값
+    comment: 값 @{value} 변수 @{variable_var}
+    icon: set-variable-value
+    helpManual: ''
+    inputList:
+      - key: value
+        title: 변수 값
+        tip: 입력필요의변수 값
+      - key: variable_type
+        title: 변수유형
+        tip: 선택할의변수유형
+    outputList:
+      - key: variable_var
+        title: 후의변수 값
+        tip: ''
+  DataConvertProcess.json_convertor:
+    title: JSON문자열변환
+    comment: >-
+      를입력텍스트 @{input_data} 에서JSON형식변환로문자열또는에서문자열형식변환로JSON형식, 반환변환후의텍스트
+      @{json_convert_data}
+    icon: json-string-convert
+    helpManual: ''
+    inputList:
+      - key: input_data
+        title: 입력내용
+        tip: ''
+      - key: convert_type
+        title: 변환유형
+        tip: ''
+    outputList:
+      - key: json_convert_data
+        title: 변환결과
+        tip: ''
+  DataConvertProcess.other_to_str:
+    title: 형식변환텍스트
+    comment: 를입력내용 @{input_data} 변환로텍스트(문자열)형식, 반환변환후의결과 @{other_convert_str}
+    icon: format-to-text
+    helpManual: ''
+    inputList:
+      - key: input_data
+        title: 입력내용
+        tip: ''
+    outputList:
+      - key: other_convert_str
+        title: 변환결과
+        tip: ''
+  DataConvertProcess.str_to_other:
+    title: 텍스트변환형식
+    comment: 를입력텍스트(문자열) @{input_data} 변환로형식, 반환변환후의결과 @{str_convert_other}
+    icon: text-convert-format
+    helpManual: ''
+    inputList:
+      - key: input_data
+        title: 입력내용
+        tip: ''
+      - key: convert_type
+        title: 변환유형
+        tip: ''
+    outputList:
+      - key: str_convert_other
+        title: 변환결과
+        tip: ''
+  DictProcess.create_new_dict:
+    title: 생성새딕셔너리
+    comment: 생성일개딕셔너리, 반환생성의딕셔너리 @{created_new_dict_data}
+    icon: create-new-dict
+    helpManual: ''
+    inputList:
+      - key: dict_data
+        title: 딕셔너리데이터
+        tip: ''
+    outputList:
+      - key: created_new_dict_data
+        title: 새생성의딕셔너리
+        tip: ''
+  DictProcess.set_value_to_dict:
+    title: 딕셔너리값
+    comment: >-
+      딕셔너리 @{dict_data} 의로 @{dict_key} , 값로 @{value} , 반환후의딕셔너리
+      @{inserted_dict_data}
+    icon: dict-set-value
+    helpManual: ''
+    inputList:
+      - key: dict_data
+        title: 딕셔너리데이터
+        tip: ''
+      - key: dict_key
+        title: (key)
+        tip: ''
+      - key: value
+        title: 값(value)
+        tip: ''
+    outputList:
+      - key: inserted_dict_data
+        title: 후의딕셔너리
+        tip: ''
+  DictProcess.delete_value_from_dict:
+    title: 딕셔너리삭제값
+    comment: 에서딕셔너리 @{dict_data} 중삭제로 @{dict_key} 의값, 반환삭제후의딕셔너리 @{deleted_dict_data}
+    icon: dict-delete-value
+    helpManual: ''
+    inputList:
+      - key: dict_data
+        title: 딕셔너리데이터
+        tip: ''
+      - key: dict_key
+        title: (key)
+        tip: ''
+    outputList:
+      - key: deleted_dict_data
+        title: 삭제후의딕셔너리
+        tip: ''
+  DictProcess.get_value_from_dict:
+    title: 딕셔너리가져오기값
+    comment: 가져오기딕셔너리 @{dict_data} 의로 @{dict_key} 의값 @{get_dict_value}
+    icon: dict-get-value
+    helpManual: ''
+    inputList:
+      - key: dict_data
+        title: 딕셔너리데이터
+        tip: ''
+      - key: dict_key
+        title: (key)
+        tip: ''
+      - key: fail_option
+        title: 찾을 수 없습니다시관리방식
+        tip: 찾을 수 없습니다시여부출력예외또는반환값
+      - key: default_value
+        title: 값
+        tip: ''
+    outputList:
+      - key: get_dict_value
+        title: 딕셔너리값
+        tip: ''
+  DictProcess.get_keys_from_dict:
+    title: 가져오기딕셔너리모든
+    comment: 가져오기딕셔너리 @{dict_data} 의모든 @{get_dict_keys}
+    icon: get-dict-all-keys
+    helpManual: ''
+    inputList:
+      - key: dict_data
+        title: 딕셔너리데이터
+        tip: ''
+    outputList:
+      - key: get_dict_keys
+        title: 목록
+        tip: ''
+  DictProcess.get_values_from_dict:
+    title: 가져오기딕셔너리모든값
+    comment: 가져오기딕셔너리 @{dict_data} 의모든값 @{get_dict_values}
+    icon: get-dict-all-values
+    helpManual: ''
+    inputList:
+      - key: dict_data
+        title: 딕셔너리데이터
+        tip: ''
+    outputList:
+      - key: get_dict_values
+        title: 값목록
+        tip: ''
+  ListProcess.create_new_list:
+    title: 생성새목록
+    comment: 생성일개 @{list_type} 유형의목록, 반환생성의목록 @{created_list_data}
+    icon: create-new-list
+    helpManual: ''
+    inputList:
+      - key: list_type
+        title: 목록유형
+        tip: ''
+      - key: size
+        title: 목록길이정도
+        tip: ''
+      - key: value
+        title: 목록 값
+        tip: ''
+      - key: custom_list
+        title: 지정목록
+    outputList:
+      - key: created_list_data
+        title: 생성의목록
+        tip: ''
+  ListProcess.clear_list:
+    title: 빈목록
+    comment: 빈목록 @{list_data} , 반환빈후의목록 @{cleared_list_data}
+    icon: list-clear
+    helpManual: ''
+    inputList:
+      - key: list_data
+        title: 목록 데이터
+        tip: ''
+    outputList:
+      - key: cleared_list_data
+        title: 빈후의목록
+        tip: ''
+  ListProcess.insert_value_to_list:
+    title: 목록삽입값
+    comment: >-
+      를값 @{value} 삽입까지목록 @{list_data} 의 @{insert_method} 위치 @{index} , 반환삽입후의목록
+      @{inserted_list_data}
+    icon: list-insert-value
+    helpManual: ''
+    inputList:
+      - key: list_data
+        title: 목록 데이터
+        tip: ''
+      - key: value
+        title: 삽입값
+        tip: ''
+      - key: insert_method
+        title: 삽입방식
+        tip: ''
+      - key: index
+        title: 삽입위치
+        tip: ''
+    outputList:
+      - key: inserted_list_data
+        title: 삽입후의목록
+        tip: ''
+  ListProcess.change_value_in_list:
+    title: 목록수정값
+    comment: >-
+      를목록 @{list_data} 의 @{index} 위치의값수정로 @{new_value} , 반환수정후의목록
+      @{changed_list_data}
+    icon: list-modify-value
+    helpManual: ''
+    inputList:
+      - key: list_data
+        title: 목록 데이터
+        tip: ''
+      - key: index
+        title: 위치검색
+        tip: 필요수정값의위치검색, 에서0열기 , 수정일개값검색로0, 수정이개값검색로1, 으로유형
+      - key: new_value
+        title: 새값
+        tip: ''
+    outputList:
+      - key: changed_list_data
+        title: 수정후의목록
+        tip: ''
+  ListProcess.get_list_position:
+    title: 가져오기값에서목록위치
+    comment: 가져오기값 @{value} 에서목록 @{list_data} 의위치 @{get_list_position}
+    icon: get-value-position
+    helpManual: ''
+    inputList:
+      - key: list_data
+        title: 목록 데이터
+        tip: ''
+      - key: value
+        title: 값
+        tip: ''
+    outputList:
+      - key: get_list_position
+        title: 위치검색
+        tip: ''
+  ListProcess.remove_value_from_list:
+    title: 목록삭제값
+    comment: >-
+      으로 @{del_mode} 삭제@{list_data}@{del_value||del_pos}의내용, 반환삭제후의목록
+      @{removed_list_data}
+    icon: list-remove-value
+    helpManual: ''
+    inputList:
+      - key: list_data
+        title: 목록 데이터
+        tip: ''
+      - key: del_mode
+        title: 삭제방식
+        tip: ''
+      - key: del_value
+        title: 삭제값
+        tip: ''
+      - key: del_pos
+        title: 삭제위치
+        tip: 가능지정단일개또는다중개위치데이터, 다중개위치검색사용열기, 예: 1,3,5
+    outputList:
+      - key: removed_list_data
+        title: 삭제후의목록
+        tip: ''
+  ListProcess.sort_list:
+    title: 목록정렬
+    comment: 목록 @{list_data} 행 @{sort_method} 정렬, 반환정렬후의목록 @{sorted_list_data}
+    icon: list-sort
+    helpManual: ''
+    inputList:
+      - key: list_data
+        title: 목록 데이터
+        tip: ''
+      - key: sort_method
+        title: 정렬방식
+        tip: ''
+    outputList:
+      - key: sorted_list_data
+        title: 정렬후의목록
+        tip: ''
+  ListProcess.random_shuffle_list:
+    title: 목록 기기열기 순서
+    comment: 목록 @{list_data} 행기기열기 순서, 반환열기 순서후의목록 @{shuffled_list_data}
+    icon: list-shuffle
+    helpManual: ''
+    inputList:
+      - key: list_data
+        title: 목록 데이터
+        tip: ''
+    outputList:
+      - key: shuffled_list_data
+        title: 열기 순서후의목록
+        tip: ''
+  ListProcess.filter_elements_from_list:
+    title: 제거목록중의다중
+    comment: 에서목록 @{list_data_1} 중제거목록 @{list_data_2} 중의요소, 반환제거후의목록 @{filter_list_data}
+    icon: list-remove-multiple
+    helpManual: ''
+    inputList:
+      - key: list_data_1
+        title: 대기관리목록
+        tip: 필요관리의목록
+      - key: list_data_2
+        title: 제거원목록
+        tip: 필요제거의원목록, 결과가대기관리목록중있음제거원목록중의요소, 이면제거
+    outputList:
+      - key: filter_list_data
+        title: 제거후의목록
+        tip: 반환제거후의목록
+  ListProcess.reverse_list:
+    title: 목록반대변환
+    comment: 를목록 @{list_data} 반대변환, 반환반대변환후의목록 @{reversed_list_data}
+    icon: list-reverse
+    helpManual: ''
+    inputList:
+      - key: list_data
+        title: 목록 데이터
+        tip: ''
+    outputList:
+      - key: reversed_list_data
+        title: 반대변환후의목록
+        tip: ''
+  ListProcess.merge_list:
+    title: 목록병합
+    comment: 를목록 @{list_data_1} 및목록 @{list_data_2} 병합로일개목록 @{merged_list_data}
+    icon: list-merge
+    helpManual: ''
+    inputList:
+      - key: list_data_1
+        title: 일개목록
+        tip: ''
+      - key: list_data_2
+        title: 이개목록
+        tip: ''
+    outputList:
+      - key: merged_list_data
+        title: 병합후의목록
+        tip: ''
+  ListProcess.get_unique_list:
+    title: 목록 재
+    comment: 를목록 @{list_data} 재, 반환재후의목록 @{unique_list_data}
+    icon: list-remove-duplicates
+    helpManual: ''
+    inputList:
+      - key: list_data
+        title: 목록 데이터
+        tip: ''
+    outputList:
+      - key: unique_list_data
+        title: 재후의목록
+        tip: ''
+  ListProcess.get_common_elements_from_list:
+    title: 가져오기 개목록의재복사
+    comment: 가져오기목록 @{list_data_1} 및목록 @{list_data_2} 의재복사, 반환재복사목록 @{common_list_data}
+    icon: get-list-duplicates
+    helpManual: ''
+    inputList:
+      - key: list_data_1
+        title: 일개목록
+        tip: ''
+      - key: list_data_2
+        title: 이개목록
+        tip: ''
+    outputList:
+      - key: common_list_data
+        title: 재복사목록
+        tip: ''
+  ListProcess.get_value_from_list:
+    title: 근거검색가져오기목록값
+    comment: 근거검색 @{index} 가져오기목록 @{list_data} 의값 @{get_list_value}
+    icon: get-list-value-by-index
+    helpManual: ''
+    inputList:
+      - key: list_data
+        title: 목록 데이터
+        tip: ''
+      - key: index
+        title: 검색
+        tip: ''
+    outputList:
+      - key: get_list_value
+        title: 값
+        tip: ''
+  ListProcess.get_length_of_list:
+    title: 가져오기목록길이정도
+    comment: 가져오기목록 @{list_data} 의길이정도 @{get_list_length}
+    icon: get-list-length
+    helpManual: ''
+    inputList:
+      - key: list_data
+        title: 목록 데이터
+        tip: ''
+    outputList:
+      - key: get_list_length
+        title: 길이정도
+        tip: ''
+  MathProcess.generate_random_number:
+    title: 완료기기데이터
+    comment: >-
+      완료 @{number_type} 유형 @{size} 개기기데이터, 로 @{start} 까지 @{end} , 반환완료의기기데이터
+      @{generated_random_numbers}
+    icon: generate-random-number
+    helpManual: ''
+    inputList:
+      - key: number_type
+        title: 기기데이터유형
+        tip: ''
+      - key: size
+        title: 기기데이터개데이터
+        tip: ''
+      - key: start
+        title: 열기 
+        tip: ''
+      - key: end
+        title: 결과
+        tip: ''
+    outputList:
+      - key: generated_random_numbers
+        title: 완료의기기데이터
+        tip: ''
+  MathProcess.get_rounding_number:
+    title: 사오입력
+    comment: 를숫자 @{number} 사오입력 @{precision} 위치, 반환사오입력후의숫자 @{rounding_number}
+    icon: round-number
+    helpManual: ''
+    inputList:
+      - key: number
+        title: 기존있음데이터
+        tip: ''
+      - key: precision
+        title: 정도
+        tip: 가능소데이터위치데이터, 예2, 이면사오입력까지소데이터후2위치;지요소데이터및0, 예-2, 이면사오입력까지소데이터전2위치.
+    outputList:
+      - key: rounding_number
+        title: 사오입력후의숫자
+        tip: ''
+  MathProcess.self_calculation_number:
+    title: 증가
+    comment: 숫자 @{number} 증가또는 @{add_sub_number} , 반환계획후의결과 @{self_calculation_number}
+    icon: increment-decrement
+    helpManual: ''
+    inputList:
+      - key: number
+        title: 기존데이터
+        tip: ''
+      - key: add_sub
+        title: 증가/
+        tip: 선택예증가예: 
+      - key: add_sub_number
+        title: 증가또는의숫자
+        tip: ''
+    outputList:
+      - key: self_calculation_number
+        title: 증가후의결과
+        tip: ''
+  MathProcess.get_absolute_number:
+    title: 가져오기 값
+    comment: 가져오기숫자 @{raw_number} 의값 @{absolute_number}
+    icon: get-absolute-value
+    helpManual: ''
+    inputList:
+      - key: raw_number
+        title: 기존데이터
+        tip: ''
+    outputList:
+      - key: absolute_number
+        title: 기존데이터값
+        tip: ''
+  MathProcess.calculate_expression:
+    title: 데이터계획
+    comment: 행본의데이터계획 @{left}  @{operator}  @{right} , 반환계획결과 @{calculation_number}
+    icon: math-calculation
+    helpManual: ''
+    inputList:
+      - key: left
+        title: 실행기호왼쪽값
+        tip: ''
+      - key: operator
+        title: 실행기호
+        tip: ''
+      - key: right
+        title: 실행기호오른쪽값
+        tip: ''
+      - key: handle_method
+        title: 반환값관리방식
+        tip: ''
+      - key: precision
+        title: 사오입력보관위치데이터
+        tip: ''
+    outputList:
+      - key: calculation_number
+        title: 계획결과
+        tip: ''
+  StringProcess.extract_content_from_string:
+    title: 텍스트가져오기내용
+    comment: 에서텍스트 @{text} 중가져오기 @{extract_type} 유형의내용
+    icon: text-extract-content
+    helpManual: ''
+    inputList:
+      - key: text
+        title: 기존텍스트
+        tip: 입력가져올내용의텍스트
+      - key: extract_type
+        title: 가져오기유형
+        tip: 선택할가져오기의유형
+      - key: regex_formula
+        title: 정규식
+        tip: 정규식을 입력하세요. 예: [\\uac00-\\ud7a3]은 한글, \\d는 숫자, [a-zA-Z]는 영문을 추출합니다
+      - key: first_flag
+        title: 가져오기 일매칭내용
+        tip: 여부가져오기 일매칭내용
+    outputList:
+      - key: extract_from_string
+        title: 가져오기내용
+        tip: 반환가져오기의내용
+  StringProcess.replace_content_in_string:
+    title: 텍스트내용
+    comment: 를텍스트 @{text} 중의 @{replace_type} 유형내용 로 @{new_value}
+    icon: text-replace-content
+    helpManual: ''
+    inputList:
+      - key: text
+        title: 기존텍스트
+        tip: 입력필요내용의텍스트
+      - key: replace_type
+        title: 유형
+        tip: 선택할의유형
+      - key: replaced_string
+        title: 필요의문자열
+        tip: 입력필요의문자열
+      - key: regex_formula
+        title: 사용정규식
+        tip: 입력정규식사용내용
+      - key: new_value
+        title: 로
+        tip: 입력새값
+      - key: first_flag
+        title: 일매칭내용
+        tip: 여부일매칭내용
+      - key: ignore_case_flag
+        title: 크기
+        tip: 여부크기
+    outputList:
+      - key: replaced_content_string
+        title: 후의텍스트
+        tip: 반환후의텍스트
+  StringProcess.merge_list_to_string:
+    title: 목록 합치기로텍스트
+    comment: 를목록 @{list_data} 중의내용 합치기로텍스트 @{merged_string_from_list}
+    icon: list-to-text
+    helpManual: ''
+    inputList:
+      - key: list_data
+        title: 목록 데이터
+        tip: 입력필요합치기의목록 데이터
+      - key: separator
+        title: 분기호
+        tip: 입력분기호
+    outputList:
+      - key: merged_string_from_list
+        title: 합치기후의텍스트
+        tip: 반환합치기후의텍스트
+  StringProcess.split_string_to_list:
+    title: 텍스트분로목록
+    comment: 를텍스트 @{string_data}  @{separator} 분로목록 @{split_list_from_string}
+    icon: text-split-to-list
+    helpManual: ''
+    inputList:
+      - key: string_data
+        title: 텍스트데이터
+        tip: 입력필요분의텍스트데이터
+      - key: separator
+        title: 분기호
+        tip: 입력분기호
+    outputList:
+      - key: split_list_from_string
+        title: 분후의목록
+        tip: 반환분후의목록
+  StringProcess.concatenate_string:
+    title: 텍스트병합
+    comment: 를 @{string_data_1} 및 @{string_data_2} 병합로 @{concat_string}
+    icon: text-merge
+    helpManual: ''
+    inputList:
+      - key: string_data_1
+        title: 일개텍스트
+        tip: 입력필요병합의일개텍스트
+      - key: string_data_2
+        title: 이개텍스트
+        tip: 입력필요병합의이개텍스트
+      - key: concat_type
+        title: 병합유형
+        tip: 선택할병합의유형, 가능으로지정분기호
+      - key: separator
+        title: 분기호
+        tip: 입력분기호
+    outputList:
+      - key: concat_string
+        title: 병합후의텍스트
+        tip: 반환병합후의텍스트
+  StringProcess.fill_string_to_length:
+    title: 텍스트지정길이정도
+    comment: 를텍스트 @{string_data}  @{total_length} 길이정도, 방식로 @{fill_type}
+    icon: text-pad-to-length
+    helpManual: ''
+    inputList:
+      - key: string_data
+        title: 텍스트데이터
+        tip: 입력필요의텍스트데이터
+      - key: add_str
+        title: 문자
+        tip: ''
+      - key: total_length
+        title: 길이정도
+        tip: 입력필요의길이정도
+      - key: fill_type
+        title: 방식
+        tip: 선택방식, 가능으로선택왼쪽, 오른쪽
+    outputList:
+      - key: complete_string
+        title: 후의텍스트
+        tip: ''
+  StringProcess.strip_string:
+    title: 텍스트제거공백
+    comment: 를텍스트 @{string_data} 의공백제거 @{stripped_string}
+    icon: text-trim-spaces
+    helpManual: ''
+    inputList:
+      - key: string_data
+        title: 텍스트데이터
+        tip: ''
+      - key: strip_method
+        title: 제거방식
+        tip: ''
+    outputList:
+      - key: stripped_string
+        title: 제거공백후의텍스트
+        tip: ''
+  StringProcess.cut_string_to_length:
+    title: 가져오기 지정길이정도텍스트
+    comment: >-
+      를텍스트 @{string_data} 가져오기 @{length} 길이정도, 가져오기방식로 @{cut_type} , 반환가져오기후의텍스트
+      @{cut_string}
+    icon: screenshot-fixed-text
+    helpManual: ''
+    inputList:
+      - key: string_data
+        title: 가져오기텍스트
+        tip: ''
+      - key: length
+        title: 가져오기길이정도
+        tip: ''
+      - key: cut_type
+        title: 가져오기유형
+        tip: ''
+      - key: index
+        title: 에서개문자열기 가져오기
+        tip: ''
+      - key: find_str
+        title: 필요검색의문자열
+        tip: ''
+    outputList:
+      - key: cut_string
+        title: 가져오기후의텍스트
+        tip: ''
+  StringProcess.change_case_of_string:
+    title: 변경수정텍스트크기
+    comment: 를텍스트 @{string_data} 의크기변경수정로 @{case_type} , 반환변경수정후의텍스트 @{change_case_string}
+    icon: change-text-case
+    helpManual: ''
+    inputList:
+      - key: string_data
+        title: 텍스트데이터
+        tip: ''
+      - key: case_type
+        title: 크기유형
+        tip: ''
+    outputList:
+      - key: change_case_string
+        title: 변경수정후의텍스트
+        tip: ''
+  StringProcess.get_string_length:
+    title: 가져오기텍스트길이정도
+    comment: 가져오기텍스트 @{string_data} 의길이정도 @{string_length}
+    icon: get-text-length
+    helpManual: ''
+    inputList:
+      - key: string_data
+        title: 텍스트데이터
+        tip: ''
+    outputList:
+      - key: string_length
+        title: 텍스트길이정도
+        tip: ''
+  TimeProcess.get_current_time:
+    title: 가져오기현재시간
+    comment: 가져오기현재시간, 형식로 @{time_format}, 반환현재시간객체 @{current_time}
+    icon: get-current-time
+    helpManual: ''
+    inputList:
+      - key: time_format
+        title: 시간형식
+        tip: ''
+    outputList:
+      - key: current_time
+        title: 현재시간객체
+        tip: 반환값로시간객체, 가능통신경과빠름데이터또는변환기존가능출력문자열방식
+  TimeProcess.set_time:
+    title: 시간
+    comment: 시간 @{time}, 방식로 @{change_type}, 반환후의시간객체 @{set_time}
+    icon: set-time
+    helpManual: ''
+    inputList:
+      - key: time
+        title: 시간객체
+        tip: ''
+      - key: change_type
+        title: 날짜조정방식
+        tip: ''
+      - key: seconds
+        title: 초
+        tip: ''
+      - key: minutes
+        title: 분
+        tip: ''
+      - key: hours
+        title: 시
+        tip: ''
+      - key: days
+        title: 
+        tip: ''
+      - key: months
+        title: 월
+        tip: ''
+      - key: years
+        title: 년
+        tip: ''
+    outputList:
+      - key: set_time
+        title: 시간객체
+        tip: ''
+  TimeProcess.time_to_timestamp:
+    title: 시간객체변환시간
+    comment: >-
+      를시간객체 @{time} 변환로 @{timestamp_unit} 정도의시간, 반환변환후의시간
+      @{converted_timestamp}
+    icon: datetime-to-timestamp
+    helpManual: ''
+    inputList:
+      - key: time
+        title: 시간객체
+        tip: ''
+      - key: timestamp_unit
+        title: 시간정도
+        tip: ''
+    outputList:
+      - key: converted_timestamp
+        title: 시간
+        tip: ''
+  TimeProcess.timestamp_to_time:
+    title: 시간변환시간객체
+    comment: 를시간 @{timestamp} 변환로시간객체 @{converted_time}
+    icon: timestamp-to-datetime
+    helpManual: ''
+    inputList:
+      - key: timestamp
+        title: 시간
+        tip: ''
+      - key: time_zone
+        title: 선택시
+        tip: ''
+    outputList:
+      - key: converted_time
+        title: 시간객체
+        tip: ''
+  TimeProcess.get_time_difference:
+    title: 가져오기시간
+    comment: 가져오기 @{time_1} 및 @{time_2} 의시간, 단일위치로 @{time_unit}, 반환시간 @{time_difference}
+    icon: get-time-difference
+    helpManual: ''
+    inputList:
+      - key: time_1
+        title: 시간객체1
+        tip: ''
+      - key: time_2
+        title: 시간객체2
+        tip: ''
+      - key: time_unit
+        title: 시간단일위치
+        tip: ''
+    outputList:
+      - key: time_difference
+        title: 시간
+        tip: ''
+  TimeProcess.format_datetime:
+    title: 출력지정형식시간텍스트
+    comment: 를시간객체 @{time} 지정형식 @{format_type} 출력텍스트 @{format_datetime}
+    icon: output-formatted-time
+    helpManual: ''
+    inputList:
+      - key: time
+        title: 시간객체
+        tip: ''
+      - key: format_type
+        title: 시간형식
+        tip: ''
+    outputList:
+      - key: format_datetime
+        title: 시간텍스트
+        tip: ''
+options:
+  VariableType:
+    - value: str
+      label: 문자열
+    - value: int
+      label: 정수
+    - value: float
+      label: 데이터
+    - value: bool
+      label: 불리언
+    - value: list
+      label: 목록
+    - value: dict
+      label: 딕셔너리
+    - value: json
+      label: JSON
+    - value: tuple
+      label: 원그룹
+    - value: other
+      label: 
+  JSONConvertType:
+    - value: json_to_str
+      label: JSON변환문자열
+    - value: str_to_json
+      label: 문자열변환JSON
+  StringConvertType:
+    - value: str_to_list
+      label: 문자열변환목록
+    - value: str_to_dict
+      label: 문자열변환딕셔너리
+    - value: str_to_tuple
+      label: 문자열변환원그룹
+    - value: str_to_bool
+      label: 문자열변환불리언
+    - value: str_to_int
+      label: 문자열변환정수
+    - value: str_to_float
+      label: 문자열변환데이터
+  NoKeyOptionType:
+    - value: raise_error
+      label: 출력예외
+    - value: return_default
+      label: 반환값
+  ListType:
+    - value: empty
+      label: 빈목록
+    - value: same_data
+      label: 원목록
+    - value: user_defined
+      label: 사용자지정목록
+  InsertMethodType:
+    - value: append
+      label: 추가 입력
+    - value: index
+      label: 위치 지정삽입
+  DeleteMethodType:
+    - value: index
+      label: 위치 지정삭제
+    - value: value
+      label: 지정값삭제
+  SortMethodType:
+    - value: asc
+      label: 상승순서
+    - value: desc
+      label: 순서
+  NumberType:
+    - value: integer
+      label: 정수
+    - value: float
+      label: 데이터
+  AddSubType:
+    - value: add
+      label: 추가
+    - value: sub
+      label: 
+  MathOperatorType:
+    - value: +
+      label: 추가
+    - value: '-'
+      label: 
+    - value: '*'
+      label: 
+    - value: /
+      label: 제거
+  MathRoundType:
+    - value: round
+      label: 사오입력
+    - value: ceil
+      label: 위가져오기 
+    - value: floor
+      label: 아래가져오기 
+    - value: none
+      label: 아니오
+  ExtractType:
+    - value: phone_number
+      label: 중대휴대폰 번호
+    - value: email
+      label: 메일함주소
+    - value: url
+      label: 네트워크
+    - value: digit
+      label: 숫자
+    - value: id_number
+      label: 중대인증코드
+    - value: regex
+      label: 정규식
+  Bool:
+    - value: true
+      label: 예
+    - value: false
+      label: 아니오
+  ReplaceType:
+    - value: string
+      label: 문자열
+    - value: phone_number
+      label: 중대휴대폰 번호
+    - value: email
+      label: 메일함주소
+    - value: url
+      label: 네트워크
+    - value: digit
+      label: 숫자
+    - value: id_number
+      label: 중대인증코드
+    - value: regex
+      label: 정규식
+  ConcatStringType:
+    - value: none
+      label: 아니오사용분기호
+    - value: linebreak
+      label: 행기호
+    - value: space
+      label: 공백( )
+    - value: hyphen
+      label: 문자(-)
+    - value: underline
+      label: 아래계획(_)
+    - value: other
+      label: 지정
+  FillStringType:
+    - value: right
+      label: 오른쪽
+    - value: left
+      label: 왼쪽
+  StripStringType:
+    - value: left
+      label: 왼쪽
+    - value: right
+      label: 오른쪽
+    - value: both
+      label: 
+  CutStringType:
+    - value: first
+      label: 에서일개문자열기 가져오기
+    - value: index
+      label: 에서위치 지정열기 가져오기
+    - value: string
+      label: 에서지정문자열열기 가져오기
+  CaseChangeType:
+    - value: upper
+      label: 전체대
+    - value: lower
+      label: 전체소
+    - value: caps
+      label: 문자대
+  TimeFormatType:
+    - value: '%Y-%m-%d'
+      label: 년-월-일
+    - value: '%Y-%m-%d %H:%M:%S'
+      label: 년-월-일 시:분:초
+    - value: '%Y-%m-%d %H:%M'
+      label: 년-월-일 시:분
+    - value: '%Y/%m/%d'
+      label: 년/월/일
+    - value: '%Y/%m/%d %H:%M'
+      label: 년/월/일 시:분
+    - value: '%Y/%m/%d %H:%M:%S'
+      label: 년/월/일 시:분:초
+    - value: '%Y%m%d'
+      label: 년월일
+    - value: '%H:%M'
+      label: 시:분
+    - value: '%H:%M:%S'
+      label: 시:분:초
+    - value: '%w'
+      label: 일의
+    - value: '%j'
+      label: 일년의
+    - value: '%W'
+      label: 일년의
+    - value: '%Y년%m월%d일'
+      label: XXXX년XX월XX일
+    - value: '%Y년%m월%d일 %H:%M'
+      label: XXXX년XX월XX일 XX:XX
+    - value: '%Y년%m월%d일 %H:%M:%S'
+      label: XXXX년XX월XX일 XX:XX:XX
+  TimeChangeType:
+    - value: maintain
+      label: 보관아니오변수
+    - value: add
+      label: 증가추가시간
+    - value: sub
+      label: 적음시간
+  TimestampUnitType:
+    - value: second
+      label: 초
+    - value: millisecond
+      label: 초
+    - value: microsecond
+      label: 초
+  TimeZoneType:
+    - value: UTC
+      label: UTC시간
+    - value: local
+      label: 본시간
+  TimeUnitType:
+    - value: second
+      label: 초
+    - value: minute
+      label: 분
+    - value: hour
+      label: 시
+    - value: day
+      label: 
+    - value: month
+      label: 월
+    - value: year
+      label: 년

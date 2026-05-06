@@ -1,0 +1,96 @@
+﻿atomic:
+  VerifyCode.picture_code:
+    title: 통신사용데이터인증 코드
+    comment: 브라우저중의인증 코드 @{picture_pick} , 반환결과 @{code_result}
+    icon: captcha-text
+    helpManual: ''
+    inputList:
+      - key: browser_obj
+        title: 브라우저객체
+        tip: ''
+      - key: picture_pick
+        title: 선택인증 코드객체
+        tip: ''
+      - key: code_type
+        title: 인증 코드유형
+        tip: ''
+      - key: input_flag
+        title: 입력란에 자동 입력
+        tip: ''
+      - key: input_box
+        title: 입력란객체
+        tip: ''
+    outputList:
+      - key: code_result
+        title: 결과
+        tip: ''
+  VerifyCode.slider_code:
+    title: 통신사용인증 코드
+    comment: >-
+      에서이미지로 @{picture_pick} 의인증 코드위,  @{slider_pick} 위치 지정, 거리로
+      @{drag_distance}
+    icon: captcha-slider
+    helpManual: ''
+    inputList:
+      - key: browser_obj
+        title: 브라우저객체
+        tip: ''
+      - key: picture_pick
+        title: 이미지객체
+        tip: ''
+      - key: slider_pick
+        title: 선택객체
+        tip: ''
+      - key: unmatched_flag
+        title: 여부로변수인증 코드
+        tip: ''
+      - key: move_pic_pick
+        title: 선택이미지객체
+        tip: ''
+      - key: mini_step
+        title: 조정길이(px)
+        tip: ''
+      - key: offset
+        title: 량(px)
+        tip: 가능으로근거량
+    outputList:
+      - key: drag_distance
+        title: 거리
+        tip: ''
+  VerifyCode.click_code:
+    title: 통신사용클릭인증 코드
+    comment: 에서이미지로 @{picture_pick} 의클릭인증 코드위, 클릭위치
+    icon: captcha-click
+    helpManual: ''
+    inputList:
+      - key: browser_obj
+        title: 브라우저객체
+        tip: ''
+      - key: picture_pick
+        title: 이미지 클릭객체
+        tip: 필요패키지대의이미지 클릭및소의순서의이미지
+      - key: hint_position
+        title: 순서의이미지대이미지의위치
+        tip: 결과가순서의이미지대이미지에서아래, 이면선택아래, 반대선택위
+    outputList:
+      - key: click_positions
+        title: 클릭위치
+        tip: 반환인증 코드클릭의위치
+options:
+  PictureCodeType:
+    - value: '10110'
+      label: 통신사용데이터인증 코드1-4위치
+    - value: '10111'
+      label: 통신사용데이터인증 코드5-8위치
+    - value: '10211'
+      label: 통신사용데이터인증 코드()
+  Bool:
+    - value: true
+      label: 예
+    - value: false
+      label: 아니오
+  HintPosition:
+    - value: bottom
+      label: 아래
+    - value: top
+      label: 위

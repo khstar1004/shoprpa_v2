@@ -1,0 +1,3 @@
+types:
+  DocxObj:
+    desc: Word객체

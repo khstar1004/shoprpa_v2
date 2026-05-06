@@ -1,0 +1,8 @@
+types:
+  Browser:
+    desc: 브라우저객체
+    funcList:
+      - key: Browser.get_url
+        funcDesc: 해당웹 페이지의주소
+      - key: Browser.get_title
+        funcDesc: 해당웹 페이지의제목

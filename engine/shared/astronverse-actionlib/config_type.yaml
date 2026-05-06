@@ -1,0 +1,39 @@
+﻿types:
+  Date:
+    desc: "날짜시간"
+  PATH:
+    desc: "파일 경로"
+    funcList:
+      - key: "PATH.root"
+        funcDesc: "디렉터리"
+      - key: "PATH.directory"
+        funcDesc: "디렉터리"
+      - key: "PATH.file_name"
+        funcDesc: "파일이름"
+      - key: "PATH.file_name_without_extension"
+        funcDesc: "파일이름(아니요이름)"
+      - key: "PATH.file_extension"
+        funcDesc: "파일이름"
+  URL:
+    desc: "주소"
+  Pick:
+    desc: "요소"
+  WebPick:
+    desc: "웹 페이지요소"
+  WinPick:
+    desc: "Win요소"
+  FeishuBaseInstance:
+    desc: "Shoprpa서객체"
+  DialogResult:
+    desc: "대화상자출력결과"
+options:
+  bool:
+    - value: "True"
+      label: "예"
+    - value: "False"
+      label: "아니요"
+  Bool:
+    - value: "True"
+      label: "예"
+    - value: "False"
+      label: "아니요"

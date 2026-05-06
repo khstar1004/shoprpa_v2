@@ -1,0 +1,71 @@
+﻿atomic:
+  Window.exist:
+    title: 창 존재 여부
+    comment: 선택창(@{pick})여부(@{check_type}), 예실행으로아래
+    icon: check-window-exists
+    helpManual: ''
+    inputList:
+      - key: pick
+        title: 창선택
+        tip: 선택할여부존재함의창객체
+      - key: check_type
+        title: 방식
+        tip: 선택방식, 로존재함
+      - key: wait_time
+        title: 대기시간(초)
+        tip: 대기결과의시간
+    outputList: []
+  Window.top:
+    title: 창
+    comment: 창객체(@{pick})
+    icon: pin-window
+    helpManual: ''
+    inputList:
+      - key: pick
+        title: 창선택
+        tip: 선택할의창객체
+    outputList: []
+  Window.close:
+    title: 창 닫기
+    comment: 닫기 프로그램창객체(@{pick})
+    icon: close-window
+    helpManual: ''
+    inputList:
+      - key: pick
+        title: 창선택
+        tip: 선택할의창객체
+    outputList: []
+  Window.set_size:
+    title: 창 크기 조정
+    comment: >-
+      조정선택까지의창(@{pick})크기, 통신경과(@{size_type:지정})의방식를창너비정도및높이정도분로(@{width})
+      (@{height})
+    icon: resize-window
+    helpManual: ''
+    inputList:
+      - key: pick
+        title: 창선택
+        tip: 선택할조정크기의프로그램창
+      - key: size_type
+        title: 조정방식
+        tip: ''
+      - key: width
+        title: 창너비정도
+        tip: 지정창너비정도값, 단일위치로화면의분이미지px, 일로0-9999의데이터값
+      - key: height
+        title: 창높이정도
+        tip: 지정창높이정도값, 단일위치로화면의분이미지px, 일로0-9999의데이터값
+    outputList: []
+options:
+  WindowExistType:
+    - value: exist
+      label: 존재함
+    - value: not_exist
+      label: 찾을 수 없습니다
+  WindowSizeType:
+    - value: custom
+      label: 지정
+    - value: max
+      label: 대
+    - value: min
+      label: 소

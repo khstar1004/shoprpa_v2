@@ -1,0 +1,22 @@
+﻿atomic:
+  Report.print:
+    title: 로그인쇄
+    comment: 를변수(@{msg})인쇄
+    icon: log-print
+    helpManual: ''
+    inputList:
+      - key: report_type
+        title: 로그유형
+        tip: ''
+      - key: msg
+        title: 로그내용
+        tip: 인쇄실행경과중출력의변수
+    outputList: []
+options:
+  ReportLevelType:
+    - value: info
+      label: 정보
+    - value: warning
+      label: 경고
+    - value: error
+      label: 오류

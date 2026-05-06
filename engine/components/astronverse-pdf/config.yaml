@@ -1,0 +1,288 @@
+﻿atomic:
+  PDF.get_pages_num:
+    title: 가져오기PDF문서데이터
+    comment: 가져오기경로로 @{file_path} 의PDF문서데이터 @{pdf_pages_num}
+    icon: pdf-get-page-count
+    helpManual: ''
+    inputList:
+      - key: file_path
+        title: PDF파일 경로
+        tip: 입력PDF파일 경로
+      - key: password
+        title: PDF파일비밀번호
+        tip: 입력PDF파일비밀번호, 결과가있음비밀번호이면빈
+    outputList:
+      - key: pdf_pages_num
+        title: PDF문서데이터
+        tip: 반환PDF문서데이터
+  PDF.get_pdf_text:
+    title: 가져오기PDF문서텍스트
+    comment: 가져오기경로로 @{file_path} 의PDF문서텍스트, 반환로문자열또는목록 @{pdf_text}
+    icon: pdf-extract-text
+    helpManual: ''
+    inputList:
+      - key: file_path
+        title: PDF파일 경로
+        tip: 입력PDF파일 경로
+      - key: password
+        title: PDF파일비밀번호
+        tip: 입력PDF파일비밀번호, 결과가있음비밀번호이면빈
+      - key: select_range
+        title: 선택
+        tip: 선택, 지원전체페이지및지정페이지
+      - key: page_range
+        title: 지정페이지
+        tip: 입력페이지, 형식로1-3,5,7-9,11, 테이블에서1까지3, 5, 7까지9, 11
+      - key: text_save_type
+        title: 여부저장로파일
+        tip: 선택여부저장가져오기의텍스트로파일, 가능저장로Word또는텍스트파일형식
+      - key: save_dir
+        title: 저장파일 경로
+        tip: 선택저장파일의폴더 경로
+      - key: save_file_name
+        title: 저장파일이름
+        tip: 입력저장파일이름, 아니오입력이면사용파일이름
+      - key: exist_handle_type
+        title: 저장된 이름파일관리방식
+        tip: 선택존재함파일관리방식, 지원덮어쓰기기존있음파일, 생성파일본, 건너뛰기저장
+    outputList:
+      - key: pdf_text
+        title: 가져오기의PDF문서텍스트
+        tip: 가져오기의PDF문서텍스트, 으로목록방식저장반환
+  PDF.get_pdf_images:
+    title: 가져오기PDF문서이미지
+    comment: 가져오기경로로 @{file_path} 의PDF문서이미지, 저장까지 @{save_dir} 폴더
+    icon: pdf-extract-images
+    helpManual: ''
+    inputList:
+      - key: file_path
+        title: PDF파일 경로
+        tip: ''
+      - key: pwd
+        title: PDF파일비밀번호
+        tip: 결과가PDF파일필요비밀번호, 입력하세요비밀번호, 아니오이면빈
+      - key: select_range
+        title: 선택
+        tip: 선택, 지원전체페이지및지정페이지
+      - key: page_range
+        title: 지정페이지
+        tip: 입력페이지, 형식로1-3,5,7-9,11, 테이블에서1까지3, 5, 7까지9, 11
+      - key: image_type
+        title: 이미지형식
+        tip: 선택이미지형식, 지원JPEG, PNG대기형식
+      - key: save_dir
+        title: 저장파일 경로
+        tip: 선택저장파일의폴더 경로
+      - key: prefix
+        title: 이미지파일이름전
+        tip: 입력이미지파일이름전, 아니오입력이면사용기존파일이름전
+      - key: exist_handle_type
+        title: 저장된 이름파일관리방식
+        tip: 선택존재함파일관리방식, 지원덮어쓰기기존있음파일, 생성파일본, 건너뛰기저장
+    outputList: []
+  PDF.merge_pdf_files:
+    title: 병합PDF파일
+    comment: 병합PDF파일로일개PDF파일, 저장까지 @{pdf_merge_file_path} 경로
+    icon: merge-pdf-files
+    helpManual: ''
+    inputList:
+      - key: merge_type
+        title: 병합방식
+        tip: 선택병합방식, 지요소폴더병합또는파일병합
+      - key: file_folder_path
+        title: 병합폴더
+        tip: 를병합폴더중모든의PDF파일
+      - key: files_path
+        title: 병합파일
+        tip: 를병합선택의모든PDF파일
+      - key: save_dir
+        title: 저장파일 경로
+        tip: 선택저장파일의폴더 경로
+      - key: new_file_name
+        title: 병합파일이름
+        tip: 입력병합파일이름, 아니오입력이면사용파일이름
+      - key: new_pwd_flag
+        title: 여부새PDF파일비밀번호
+        tip: 선택여부비밀번호
+      - key: new_pwd
+        title: 새PDF파일비밀번호
+        tip: 입력새PDF파일비밀번호
+      - key: exist_handle_type
+        title: 저장된 이름파일관리방식
+        tip: 선택존재함파일관리방식, 지원덮어쓰기기존있음파일, 생성파일본, 건너뛰기저장
+    outputList:
+      - key: pdf_merge_file_path
+        title: 병합후의PDF파일 경로
+        tip: 병합후의PDF파일 경로
+  PDF.extract_pdf_file:
+    title: 가져오기PDF지정
+    comment: 가져오기경로로 @{file_path} 의PDF문서지정, 저장까지 @{extract_file_path} 폴더
+    icon: pdf-extract-page
+    helpManual: ''
+    inputList:
+      - key: file_path
+        title: PDF파일 경로
+        tip: 선택할가져오기의PDF파일 경로
+      - key: pwd
+        title: PDF파일비밀번호
+        tip: 결과가PDF파일필요비밀번호, 입력하세요비밀번호, 아니오이면빈
+      - key: page_range
+        title: 지정페이지
+        tip: 입력페이지, 형식로1-3,5,7-9,11, 테이블에서1까지3, 5, 7까지9, 11
+      - key: save_dir
+        title: 저장파일 경로
+        tip: 선택저장파일의폴더 경로
+      - key: new_file_name
+        title: 가져오기후새PDF파일이름
+        tip: 입력새파일이름, 아니오입력이면사용파일이름
+      - key: new_pwd_flag
+        title: 여부새PDF파일비밀번호
+        tip: 선택여부비밀번호
+      - key: new_pwd
+        title: 새PDF파일비밀번호
+        tip: 입력새PDF파일비밀번호
+      - key: exist_handle_type
+        title: 저장된 이름파일관리방식
+        tip: 선택존재함파일관리방식, 지원덮어쓰기기존있음파일, 생성파일본, 건너뛰기저장
+    outputList:
+      - key: extract_file_path
+        title: 가져오기후의PDF파일 경로
+        tip: 가져오기후의PDF파일 경로
+  PDF.extract_forms_from_pdf:
+    title: 가져오기PDF테이블까지Excel
+    comment: 가져오기경로로 @{file_path} 의PDF문서중의테이블, 저장까지 @{forms_file_path} 폴더
+    icon: pdf-extract-table-to-excel
+    helpManual: ''
+    inputList:
+      - key: file_path
+        title: PDF파일 경로
+        tip: 선택할가져오기테이블의PDF파일 경로
+      - key: pwd
+        title: PDF파일비밀번호
+        tip: 결과가PDF파일필요비밀번호, 입력하세요비밀번호, 아니오이면빈
+      - key: select_range
+        title: 선택
+        tip: 선택, 지원전체페이지및지정페이지
+      - key: page_range
+        title: 지정페이지
+        tip: 입력페이지, 형식로1-3,5,7-9,11, 테이블에서1까지3, 5, 7까지9, 11
+      - key: combine_flag
+        title: 여부필요병합다중개테이블
+        tip: 출력의테이블시, 가능으로선택여부병합성공일개테이블, 생성테이블시선택병합
+      - key: save_dir
+        title: 저장파일 경로
+        tip: 선택저장파일의폴더 경로
+      - key: new_file_name
+        title: 테이블파일이름
+        tip: 입력테이블파일이름, 아니오입력이면사용파일이름
+      - key: exist_handle_type
+        title: 저장된 이름파일관리방식
+        tip: 선택존재함파일관리방식, 지원덮어쓰기기존있음파일, 생성파일본, 건너뛰기저장
+    outputList:
+      - key: forms_file_path
+        title: 가져오기후의Excel경로
+        tip: 가져오기후의Excel경로
+  PDF.convert_pdf_to_img:
+    title: PDF페이지변환이미지
+    comment: 변환경로로 @{file_path} 의PDF문서로이미지, 저장까지 @{save_dir} 폴더
+    icon: pdf-page-to-image
+    helpManual: ''
+    inputList:
+      - key: file_path
+        title: PDF파일 경로
+        tip: 선택할변환의PDF파일 경로
+      - key: pwd
+        title: PDF파일비밀번호
+        tip: 결과가PDF파일필요비밀번호, 입력하세요비밀번호, 아니오이면빈
+      - key: image_type
+        title: 이미지형식
+        tip: 선택이미지형식, 지원JPEG, PNG대기형식
+      - key: select_range
+        title: 선택
+        tip: 선택, 지원전체페이지및지정페이지
+      - key: page_range
+        title: 지정페이지
+        tip: 입력페이지, 형식로1-3,5,7-9,11, 테이블에서1까지3, 5, 7까지9, 11
+      - key: save_dir
+        title: 저장파일 경로
+        tip: 선택저장파일의폴더 경로
+      - key: prefix
+        title: 이미지파일이름전
+        tip: 입력이미지파일이름전, 아니오입력이면사용기존파일이름전
+      - key: exist_handle_type
+        title: 저장된 이름파일관리방식
+        tip: 선택존재함파일관리방식, 지원덮어쓰기기존있음파일, 생성파일본, 건너뛰기저장
+    outputList: []
+  PDF.convert_img_to_pdf:
+    title: 이미지변환PDF페이지
+    comment: 변환경로로 @{image_files} 의이미지로PDF파일, 저장까지 @{save_dir} 폴더
+    icon: pdf-page-to-image
+    helpManual: ''
+    inputList:
+      - key: image_files
+        title: 이미지파일
+        tip: ''
+      - key: save_dir
+        title: 저장PDF파일 경로
+        tip: ''
+      - key: new_file_name
+        title: PDF파일이름
+        tip: ''
+      - key: layout_type
+        title: PDF파일영역
+        tip: ''
+      - key: new_pwd_flag
+        title: 여부비밀번호
+        tip: ''
+      - key: new_pwd
+        title: 비밀번호
+        tip: ''
+      - key: exist_handle_type
+        title: 저장된 이름파일관리방식
+        tip: ''
+    outputList:
+      - key: pdf_file_path
+        title: PDF파일 경로
+        tip: ''
+options:
+  SelectRangeType:
+    - value: all
+      label: 모든페이지
+    - value: part
+      label: 지정페이지
+  TextSaveType:
+    - value: none
+      label: 아니오저장
+    - value: word
+      label: Word파일
+    - value: txt
+      label: 텍스트파일
+    - value: word_and_txt
+      label: Word파일및텍스트파일
+  FileExistenceType:
+    - value: overwrite
+      label: 덮어쓰기기존있음파일
+    - value: rename
+      label: 생성파일본
+    - value: cancel
+      label: 건너뛰기저장
+  PictureType:
+    - value: png
+      label: PNG
+    - value: jpeg
+      label: JPEG
+  MergeType:
+    - value: folder
+      label: 폴더병합
+    - value: file
+      label: 파일병합
+  ImageLayoutType:
+    - value: single_page
+      label: 일일이미지
+    - value: multiple_pages
+      label: 일다중이미지
+  Bool:
+    - value: true
+      label: 예
+    - value: false
+      label: 아니오

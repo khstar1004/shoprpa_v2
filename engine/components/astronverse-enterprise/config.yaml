@@ -1,0 +1,44 @@
+﻿atomic:
+  Enterprise.upload_to_sharefolder:
+    title: 업로드파일공유폴더
+    comment: 업로드 @{file_path} 의파일, 반환업로드결과 @{upload_result}
+    icon: upload-to-shared-folder
+    helpManual: ''
+    inputList:
+      - key: file_path
+        title: 업로드파일 경로
+        tip: ''
+    outputList:
+      - key: upload_result
+        title: 업로드파일결과
+        tip: ''
+  Enterprise.download_from_sharefolder:
+    title: 에서공유폴더다운로드파일
+    comment: 다운로드 @{file_path} 의파일까지 @{save_folder}, 반환다운로드결과 @{download_result}
+    icon: download-from-shared-folder
+    helpManual: ''
+    inputList:
+      - key: file_path
+        title: 공유폴더파일
+        tip: ''
+      - key: save_folder
+        title: 파일저장경로
+        tip: ''
+    outputList:
+      - key: download_result
+        title: 다운로드결과
+        tip: ''
+  Enterprise.get_shared_variable:
+    title: 가져오기공유 변수
+    comment: 가져오기공유 변수 @{shared_variable} 변수 @{variable_data}
+    icon: get-shared-variable
+    helpManual: ''
+    inputList:
+      - key: shared_variable
+        title: 공유 변수 이름
+        tip: 선택할의공유 변수
+    outputList:
+      - key: variable_data
+        title: 저장공유 변수
+        tip: ''
+options: {}

@@ -1,0 +1,248 @@
+name: ❓ 질문
+description: 항목출력사용항목제목또는항목항목
+title: "[Question]: "
+labels: ["question", "help wanted"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        항목항목!항목항목항목항목해제항목 Shoprpa 항목닫기의항목제목.
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: 항목항목단일
+      description: 에서제출항목제목항목전, 확인하세요으로아래항목
+      options:
+        - label: 항목완료항목검색완료항목있음의 Issues, Discussions 및문서
+          required: true
+        - label: 항목완료항목조회항목완료항목닫기의사용자항목및 API 문서
+          required: true
+        - label: 항목예일개사용항목제목, 항목아니오예 Bug 항목알림또는기능 요청
+          required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: 🎯 항목제목유형
+      description: 선택항목기호합치기항목제목의유형항목
+      options:
+        - 🛠️ 설치및부서항목
+        - 🚀 빠른 시작및입력문
+        - 🎨 항목사용및항목
+        - 🤖 RPA 프로세스항목계획
+        - 🧩 컴포넌트사용및매칭항목
+        - 🔧 API 항목성공및열기발송
+        - 🐍 Python 항목본항목
+        - ☕ Java 서비스서비스매칭항목
+        - 🌐 웹 페이지항목항목
+        - 📊 Excel 데이터 처리
+        - 🖼️ 이미지 인식및 OCR
+        - 🤖 AI 공가능사용
+        - 🗄️ 데이터근거라이브러리항목
+        - 📧 메일항목관리
+        - 🔒 권한및설치전체
+        - 📊 항목및로그
+        - 🐳 Docker 내용기기항목
+        - 🔄 CI/CD 항목성공
+        - 📚 항목항목
+        - 항목
+      default: 0
+    validations:
+      required: true
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: 🧩 항목닫기컴포넌트
+      description: 선택항목필요항목의컴포넌트(예결과항목사용)
+      options:
+        - 아니오항목지정/통신사용항목제목
+        - 전단말 Web 항목사용
+        - 전단말데스크톱 앱
+        - 전단말브라우저 확장
+        - 후단말 robot-service
+        - 후단말 ai-service
+        - 후단말 openapi-service
+        - 후단말 resource-service
+        - RPA 엔진 코어
+        - rpasystem 시스템시스템컴포넌트
+        - rpabrowser 브라우저컴포넌트
+        - rpagui GUI 항목항목
+        - rpaexcel Excel 컴포넌트
+        - rpacv 컴퓨터 비전
+        - rpaai AI 컴포넌트
+        - rpadatabase 데이터근거라이브러리컴포넌트
+        - rpaemail 메일컴포넌트
+        - rpadocx Word 컴포넌트
+        - rpapdf PDF 컴포넌트
+        - rpaencrypt 암호화컴포넌트
+        - 항목 RPA 컴포넌트
+        - Docker 부서항목
+        - 문서
+      default: 0
+
+  - type: dropdown
+    id: experience
+    attributes:
+      label: 👤 항목검증수평평면
+      description: 항목에서 RPA 및항목닫기항목방법항목의항목검증예항목?
+      options:
+        - 🌱 새항목 - 항목열기항목항목 RPA
+        - 🌿 항목단계 - 있음일항목항목알림항목
+        - 🌳 중단계 - 있음항목항목검증
+        - 🌲 높음단계 - 항목일반항목
+      default: 0
+
+  - type: textarea
+    id: question
+    attributes:
+      label: ❓ 항목항목제목
+      description: 요청항목항목설명항목의항목제목
+      placeholder: |
+        항목설명항목까지의항목제목또는필요항목의항목방법...
+        
+        항목예: 
+        - 항목항목...공가능, 항목아니오알림항목예항목...
+        - 항목항목문서항목, 항목예...
+        - 항목에서사용...컴포넌트시항목까지완료...
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: 🎯 사용항목
+      description: 설명항목필요항목의목록항목및사용항목
+      placeholder: |
+        항목필요항목항목: 
+        - 항목서비스목록항목: ...
+        - 항목항목: ...
+        - 항목결과: ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: attempts
+    attributes:
+      label: 🔍 항목시도경과의방법법
+      description: 항목완료항목시도완료항목해제항목방법법?
+      placeholder: |
+        항목완료항목시도완료: 
+        1. 조회항목완료...문서
+        2. 항목시도완료...방법법
+        3. 검색완료...항목닫기정보
+        
+        항목까지의항목제목: 
+        - ...
+
+  - type: dropdown
+    id: environment
+    attributes:
+      label: 🖥️ 실행항목
+      description: 항목의실행항목
+      options:
+        - Windows 10
+        - Windows 11
+        - macOS
+        - Linux Ubuntu
+        - Linux CentOS
+        - Docker 내용기기
+        - 항목
+      default: 0
+
+  - type: input
+    id: version
+    attributes:
+      label: 📋 버전정보
+      description: 항목사용의 Shoprpa 버전
+      placeholder: 항목예: v1.0.0
+
+  - type: textarea
+    id: code
+    attributes:
+      label: 💻 항목닫기항목코드
+      description: 예결과있음항목닫기항목코드, 요청붙여넣기에서항목(요청제거항목정보)
+      placeholder: |
+        ```python
+        # 항목의항목코드예시
+        ```
+        
+        또는
+        
+        ```javascript
+        // 항목의항목코드예시
+        ```
+
+  - type: textarea
+    id: config
+    attributes:
+      label: ⚙️ 매칭항목파일
+      description: 항목닫기의매칭항목파일내용(요청제거항목정보)
+      placeholder: |
+        ```yaml
+        # 매칭항목파일내용
+        ```
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: 📋 로그정보
+      description: 항목닫기의로그또는오류정보
+      placeholder: |
+        ```
+        로그내용또는오류정보
+        ```
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: 📸 스크린샷또는이미지
+      description: 예결과있음항목설명항목제목, 요청추가스크린샷
+      placeholder: 항목이미지파일까지항목, 또는붙여넣기이미지항목연결
+
+  - type: dropdown
+    id: urgency
+    attributes:
+      label: ⏰ 항목항목정도
+      description: 항목개항목제목의항목항목정도예항목?
+      options:
+        - 🔥 항목 - 항목중지항목목록항목
+        - 🔶 높음 - 항목열기발송계획계획
+        - 🔷 중 - 항목항목빠름해제항목
+        - 🔹 낮음 - 있음시간항목해제항목
+      default: 2
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: 💭 항목의항목
+      description: 항목항목까지항목항목의항목?
+      placeholder: |
+        항목항목: 
+        - 항목까지항목의항목항목
+        - 완료해제항목항목
+        - 가져오기항목코드예시
+        - 권장항목닫기항목
+        - 항목...
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: 🤝 돌아가기항목항목
+      description: 해제항목제목후, 항목여부항목항목항목사용자?
+      options:
+        - label: 항목항목공유해결 방법
+          required: false
+        - label: 항목가능으로항목수정항목닫기문서
+          required: false
+        - label: 항목항목돌아가기항목유형항목제목
+          required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: 📝 항목정보
+      description: 작업항목항목있음항목관리해제항목제목의정보
+      placeholder: 항목항목닫기의항목정보, 제한제어항목파일또는항목필요항목

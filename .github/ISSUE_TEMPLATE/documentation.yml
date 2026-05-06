@@ -1,0 +1,185 @@
+name: 📚 문서수정항목
+description: 항목알림문서항목제목또는생성항목문서수정항목
+title: "[Docs]: "
+labels: ["documentation", "improvement"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        항목항목항목수정항목 Shoprpa 의문서!항목의문서예항목목록성공의닫기항목.
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: 항목항목단일
+      description: 에서제출문서항목제목항목전, 확인하세요으로아래항목
+      options:
+        - label: 항목완료항목검색완료항목있음의문서항목닫기 Issues
+          required: true
+        - label: 항목완료항목조회항목완료항목새버전의문서
+          required: true
+
+  - type: dropdown
+    id: doc_type
+    attributes:
+      label: 📖 문서유형
+      description: 선택항목닫기의문서유형
+      options:
+        - README 파일
+        - 설치및배포 가이드
+        - 사용자사용항목
+        - API 문서
+        - 컴포넌트 개발문서
+        - 아키텍처항목계획문서
+        - 문제 해결항목
+        - 항목코드비고항목
+        - 매칭항목설명
+        - 예시및항목
+        - 항목
+      default: 0
+    validations:
+      required: true
+
+  - type: dropdown
+    id: issue_type
+    attributes:
+      label: 🎯 항목제목유형
+      description: 선택문서항목제목의유형
+      options:
+        - 📝 내용항목실패 - 항목적음재필요정보
+        - ❌ 내용오류 - 정보아니오항목
+        - 🔄 내용경과시 - 필요업데이트
+        - 😕 테이블항목아니오항목 - 항목으로관리해제
+        - 🔗 항목연결실패항목 - 항목연결또는항목사용오류
+        - 🎨 형식항목제목 - 정렬버전또는형식오류
+        - 🌍 항목항목제목 - 다중항목항목닫기
+        - 💡 수정항목생성항목 - 가능으로항목변경항목
+        - 📋 추가필요항목 - 필요새의문서
+      default: 0
+    validations:
+      required: true
+
+  - type: input
+    id: doc_location
+    attributes:
+      label: 📍 문서위치항목
+      description: 요청항목항목닫기문서의경로또는항목연결
+      placeholder: 항목예: README.md, docs/api.md, https://example.com/docs
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: 📝 항목제목설명
+      description: 항목설명문서항목제목또는수정항목생성항목
+      placeholder: |
+        요청항목설명: 
+        - 항목에서의문서있음항목항목제목?
+        - 항목적음완료항목정보?
+        - 항목내용항목사람항목?
+        - 있음항목수정항목생성항목?
+    validations:
+      required: true
+
+  - type: textarea
+    id: current_content
+    attributes:
+      label: 📄 현재내용
+      description: 예결과항목사용, 요청항목사용현재의문서내용
+      placeholder: |
+        ```
+        현재문서중의항목닫기내용...
+        ```
+
+  - type: textarea
+    id: suggested_content
+    attributes:
+      label: ✏️ 생성항목내용
+      description: 항목생성항목의수정항목내용또는추가내용
+      placeholder: |
+        ```
+        생성항목의문서내용...
+        ```
+
+  - type: textarea
+    id: context
+    attributes:
+      label: 🎯 사용항목
+      description: 설명사용자에서항목항목아래항목필요항목개문서
+      placeholder: |
+        사용자항목: 
+        - 새사용자항목설치시...
+        - 열기발송항목성공 API 시...
+        - 사용자항목까지항목제목시...
+
+  - type: dropdown
+    id: audience
+    attributes:
+      label: 👥 목록항목항목
+      description: 항목개문서항목필요항목항목유형사용자?
+      options:
+        - 🌱 항목항목사용자
+        - 👤 항목통신사용자
+        - 👨‍💻 열기발송항목
+        - 🏢 항목사용자
+        - 🔧 실행항목사람원
+        - 📚 문서항목항목
+        - 🎯 모든사용자
+      default: 6
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: 📊 항목단계
+      description: 항목개문서항목제목의재필요항목정도
+      options:
+        - 🔥 높음 - 항목사용자사용
+        - 🔶 중 - 항목사용자항목검증
+        - 🔹 낮음 - 항목항목
+      default: 1
+
+  - type: textarea
+    id: additional_resources
+    attributes:
+      label: 📚 매개항목항목
+      description: 항목닫기의매개항목항목또는예시
+      placeholder: |
+        - 항목닫기의항목코드파일
+        - 매개항목항목목록의문서
+        - 있음사용의외부부서항목연결
+        - 스크린샷또는이미지테이블
+
+  - type: checkboxes
+    id: languages
+    attributes:
+      label: 🌍 항목버전
+      description: 항목항목버전필요업데이트?
+      options:
+        - label: 한국어
+          required: false
+        - label: English
+          required: false
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: 🤝 항목항목
+      description: 항목여부항목항목수정항목문서?
+      options:
+        - label: 항목항목제출 PR 항목수정항목문서
+          required: false
+        - label: 항목가능으로항목변경다중항목정보
+          required: false
+        - label: 항목가능으로항목검토문서수정
+          required: false
+        - label: 항목가능으로항목항목항목
+          required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: 📝 항목정보
+      description: 작업항목항목있음항목수정항목문서의정보
+      placeholder: 항목생성항목, 항목법또는항목닫기정보

@@ -1,0 +1,15 @@
+﻿atomic:
+  Smart.run_code:
+    title: 실행코드
+    comment: AI완료Python본
+    icon: magic-command
+    helpManual: ''
+    inputList:
+      - key: smart_component
+        title: 코드[없음, 완료]
+        tip: ''
+    outputList:
+      - key: smart_result
+        title: 반환값[없음, 완료]
+        tip: ''
+options: {}

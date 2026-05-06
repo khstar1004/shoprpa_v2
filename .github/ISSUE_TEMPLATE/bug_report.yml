@@ -1,0 +1,184 @@
+name: 🐛 Bug 항목알림
+description: 항목알림일개 Bug 으로항목항목수정항목
+title: "[Bug]: "
+labels: ["bug", "triage"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        항목항목시간항목항목개 Bug 항목알림!요청항목가능가능항목항목설명항목제목.
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: 항목항목단일
+      description: 에서제출 Bug 항목알림항목전, 확인하세요으로아래항목
+      options:
+        - label: 항목완료항목검색완료항목있음의 Issues, 항목항목아니오예재복사항목알림
+          required: true
+        - label: 항목완료항목항목완료항목닫기문서
+          required: true
+        - label: 항목사용의예항목새버전
+          required: false
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: 🧩 항목의컴포넌트
+      description: 선택항목항목의항목필요컴포넌트
+      options:
+        - 전단말 Web 항목사용
+        - 전단말데스크톱 앱
+        - 전단말브라우저 확장
+        - 후단말 robot-service (Java)
+        - 후단말 ai-service (Python)
+        - 후단말 openapi-service (Python)
+        - 후단말 resource-service (Java)
+        - RPA 엔진 코어
+        - RPA 컴포넌트 - rpasystem
+        - RPA 컴포넌트 - rpabrowser
+        - RPA 컴포넌트 - rpagui
+        - RPA 컴포넌트 - rpaexcel
+        - RPA 컴포넌트 - rpacv
+        - RPA 컴포넌트 - rpaai
+        - RPA 컴포넌트 - rpadatabase
+        - RPA 컴포넌트 - 항목컴포넌트
+        - Docker 부서항목
+        - 문서
+        - 항목
+      default: 0
+    validations:
+      required: true
+
+  - type: dropdown
+    id: environment
+    attributes:
+      label: 🖥️ 실행항목
+      description: 선택항목의실행항목
+      options:
+        - Windows 10
+        - Windows 11
+        - macOS
+        - Linux Ubuntu
+        - Linux CentOS
+        - Docker 내용기기
+        - 항목
+      default: 0
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: 📋 버전정보
+      description: 요청항목항목의버전정보
+      placeholder: 항목예: v1.0.0 또는 commit hash
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: 🐛 Bug 설명
+      description: 항목, 항목항목설명 Bug 예항목
+      placeholder: 설명항목까지의항목제목
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: 🔄 복사항목항목
+      description: 설명예항목복사항목개 Bug
+      placeholder: |
+        1. 열기 '...'
+        2. 클릭 '...'
+        3. 항목까지 '...'
+        4. 항목까지오류
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: ✅ 항목행로
+      description: 설명항목항목발송항목항목
+      placeholder: 항목해당발송항목항목
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: ❌ 항목행로
+      description: 설명항목발송항목완료항목
+      placeholder: 항목발송항목완료항목
+    validations:
+      required: true
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: 📸 스크린샷또는항목
+      description: 예결과항목사용, 요청추가스크린샷또는기록항목항목해제항목의항목제목
+      placeholder: 항목이미지또는항목파일까지항목, 또는붙여넣기이미지항목연결
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: 📋 항목닫기로그
+      description: 요청붙여넣기항목닫기의오류로그또는항목제어항목출력
+      placeholder: |
+        ```
+        요청에서항목붙여넣기로그내용
+        ```
+
+  - type: textarea
+    id: config
+    attributes:
+      label: ⚙️ 매칭항목정보
+      description: 항목닫기의매칭항목파일내용(요청제거항목정보)
+      placeholder: |
+        ```yaml
+        # 매칭항목파일내용
+        ```
+
+  - type: textarea
+    id: workaround
+    attributes:
+      label: 🔧 항목시해결 방법
+      description: 예결과항목까지완료항목시해결 방법, 요청설명
+      placeholder: 설명작업항목시해결 방법또는변수통신방법법
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: 📊 항목단계
+      description: 항목개 Bug 항목의항목항목정도
+      options:
+        - 🔥 항목재 - 항목중지항목공가능
+        - 🔶 높음 - 항목재필요공가능
+        - 🔷 중 - 항목항목필요공가능
+        - 🔹 낮음 - 항목항목
+      default: 2
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: 📝 금액외부정보
+      description: 추가작업항목항목있음항목해제항목제목의위아래문서또는정보
+      placeholder: 작업항목항목닫기정보
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: 🤝 항목항목
+      description: 항목여부항목항목해제항목개항목제목?
+      options:
+        - label: 항목항목제출 PR 항목복사항목개 Bug
+          required: false
+        - label: 항목가능으로항목변경다중항목시도정보
+          required: false
+        - label: 항목가능으로항목검증인증항목복사
+          required: false

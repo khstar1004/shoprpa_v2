@@ -1,0 +1,200 @@
+﻿import { app, ipcMain, protocol, session } from 'electron'
+import path from 'node:path'
+
+import type { W2WType } from '../types'
+
+import logger from './log'
+import { envJson } from './env'
+import { listenRender } from './event'
+import { checkPythonRpaProcess, closeSubProcess, startBackend } from './server'
+import { changeTray, createTray } from './tray'
+import { createSubWindow, createMainWindow as createWindow, electronInfo, getWindowFromLabel, getMainWindow, WindowStack } from './window'
+import { rendererPath, windowBaseUrl, extensionHost } from './path'
+import { getExtensionResourcePath } from './extension'
+
+const startTime = Date.now()
+globalThis.MainWindowLoaded = false
+
+app.commandLine.appendSwitch('ignore-certificate-errors')
+app.commandLine.appendSwitch('disable-web-security')
+app.disableHardwareAcceleration()
+app.setAppUserModelId('com.shoprpa.app')
+/**
+ *  rpa 회원가입로`권한`,  standard 및 secure 대기권한
+ * 있음의브라우저위아래문서(localStorage, fetch, ServiceWorker 대기).
+ */
+protocol.registerSchemesAsPrivileged([
+  {
+    scheme: 'rpa',
+    privileges: {
+      secure: true,
+      standard: true,
+      supportFetchAPI: true,
+      corsEnabled: true,
+      allowServiceWorkers: true,
+    },
+  },
+])
+
+function createMainWindow() {
+  const mainWindow = createWindow()
+  const url = windowBaseUrl + 'boot.html'
+  logger.info(`app load url: ${url}`)
+
+  mainWindow.loadURL(url).then(() => electronInfo(mainWindow)).catch(() => {
+    logger.error('Failed to load URL')
+    logger.info('Retry loading URL after 10 seconds...')
+    setTimeout(() => {
+      mainWindow.loadURL(url).then(() => electronInfo(mainWindow))
+    }, 10 * 1000)
+  })
+  mainWindow.once('ready-to-show', () => {
+    WindowStack.set('main', mainWindow)
+    mainWindow.show()
+    logger.info(`app show: ${`${Date.now() - startTime}ms`}`)
+  })
+  createTray(mainWindow)
+}
+
+function sessionHanlder() {
+  let setCookieKey = ''
+  let jsessionIdValue = ''
+  const pattern = /jwt=(.*?);/i
+  session.defaultSession.webRequest.onHeadersReceived(
+    {
+      urls: envJson.REQUEST_WHITE_URL,
+    },
+    (details, callback) => {
+      if (details.responseHeaders && details.responseHeaders['Set-Cookie']) {
+        setCookieKey = 'Set-Cookie'
+      }
+      else {
+        setCookieKey = 'set-cookie'
+      }
+      if (details.responseHeaders && details.responseHeaders[setCookieKey] && details.responseHeaders[setCookieKey].length) {
+        for (let i = 0; i < details.responseHeaders[setCookieKey].length; i++) {
+          details.responseHeaders[setCookieKey][i] += '; SameSite=None; Secure'
+          const match = details.responseHeaders[setCookieKey][i].match(pattern)
+          const val = match && match[1]
+          jsessionIdValue = val || ''
+        }
+      }
+      callback({ responseHeaders: details.responseHeaders })
+    },
+  )
+  session.defaultSession.webRequest.onBeforeSendHeaders(
+    {
+      urls: envJson.REQUEST_WHITE_URL,
+    },
+    (details, callback) => {
+      const headers = details.requestHeaders
+      headers.Cookie = `jwt=${jsessionIdValue};`
+      callback({ cancel: false, requestHeaders: headers })
+    },
+  )
+}
+
+function registerRpaProtocol() {
+  // 회원가입지정 rpa://localhost/boot.html 까지본 rendererPath/boot.html
+  protocol.registerFileProtocol('rpa', (request, callback) => {
+    const u = new URL(request.url)
+    try {
+      if (u.hostname === extensionHost) {
+        const paths = u.pathname.split('/')
+        const extensionName = paths[1]
+        const resourcePath = getExtensionResourcePath(extensionName)
+        const filePath = path.join(resourcePath, ...paths.slice(2))
+        callback({ path: filePath })
+      } else {
+        const filePath = path.join(rendererPath, u.pathname)
+        callback({ path: filePath })
+      }
+    }
+    catch (err) {
+      logger.error('rpa protocol file resolve error:', err)
+    }
+  })
+}
+
+async function ready() {
+  logger.info('app ready')
+  await checkProcess()
+  sessionHanlder()
+  registerRpaProtocol()
+  listenRender()
+  createMainWindow()
+}
+
+async function checkProcess() {
+  const isRunning = await checkPythonRpaProcess()
+  if (isRunning) {
+    logger.warn(`Another python setup is already running.`)
+    app.quit()
+  }
+  else {
+    logger.info(`No other python setup found.`)
+  }
+}
+
+const gotTheLock = app.requestSingleInstanceLock()
+if (!gotTheLock) {
+  app.quit()
+}
+else {
+  app.on('second-instance', () => {
+    // 까지완료있음창
+    const mainWindow = getMainWindow()
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) mainWindow.restore()
+      mainWindow.focus()
+    }
+  });
+  // 에서Electron완료시트리거
+  app.whenReady().then(ready).catch((err) => {
+    logger.error('app ready error', err.toString())
+  })
+}
+
+app.on('window-all-closed', () => {
+  app.quit()
+})
+
+let isQuitting = false
+app.on('before-quit', async (e) => {
+  if (isQuitting) return
+  e.preventDefault()
+  isQuitting = true
+  await closeSubProcess()
+  app.exit()
+})
+
+ipcMain.handle('ipcCreateWindow', (_event, options) => {
+  const local_win = createSubWindow(options)
+  const id = local_win.id
+  const mainWindow = getMainWindow()
+  local_win.once('close', () => {
+    mainWindow?.webContents.send('window-close', id)
+    options.label && WindowStack.delete(options.label)
+  })
+  return id
+})
+
+ipcMain.handle('w2w', (_event, arg: W2WType) => {
+  logger.info('w2w', JSON.stringify(arg))
+  const targetWin = getWindowFromLabel(arg.target) || getMainWindow()
+  targetWin?.webContents.send('w2w', arg)
+  return true
+})
+
+ipcMain.handle('main_window_onload', (_event) => {
+  if (globalThis.MainWindowLoaded)
+    return true
+  startBackend()
+  globalThis.MainWindowLoaded = true
+  return true
+})
+
+ipcMain.handle('tray_change', (_event, { mode, status }) => {
+  const mainWindow = getMainWindow()
+  mainWindow && changeTray(mainWindow, mode, status)
+})

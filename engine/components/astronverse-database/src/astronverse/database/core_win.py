@@ -1,0 +1,132 @@
+﻿import sqlite3
+
+import cx_Oracle
+import psycopg2
+import pymysql
+import pyodbc
+from astronverse.database import DatabaseType
+from astronverse.database.core import IDatabaseCore
+
+# try:
+#     import ibm_db_dbi
+# except Exception as e:
+#     logger.error(f"로드ibm_db_dll출력오류: {str(e)}")
+
+
+class DatabaseCore(IDatabaseCore):
+    @staticmethod
+    def connect(db_info_dict: dict, db_type: DatabaseType = DatabaseType.MySQL):
+        if db_type == DatabaseType.MySQL:
+            if db_info_dict.get("PORT", ""):
+                db_info_dict["port"] = int(db_info_dict.get("PORT", 3306))
+            db_conn = pymysql.connect(
+                host=db_info_dict["host"],
+                port=int(db_info_dict.get("port", 3306)),
+                user=db_info_dict["user"],
+                password=db_info_dict["password"],
+                database=db_info_dict["database"],
+                charset=db_info_dict.get("charset", "utf8").replace("-", ""),
+            )
+        elif db_type == DatabaseType.SQLServer:
+            server = "{},{}".format(db_info_dict.get("host", ""), int(db_info_dict.get("port", 1433)))
+            # 연결문자열
+            conn_str = (
+                r"DRIVER={SQL Server};"
+                rf"SERVER={server};"
+                rf"DATABASE={db_info_dict.get('database', '')};"
+                rf"UID={db_info_dict.get('user', '')};"
+                rf"PWD={db_info_dict.get('password', '')};"
+            )
+            # 연결데이터베이스
+            db_conn = pyodbc.connect(conn_str)
+        elif db_type == DatabaseType.Oracle:
+            if db_info_dict.get("service_type", "") == "service":
+                service = db_info_dict.get("service", "")
+            else:
+                service = db_info_dict.get("sid", "")
+            db_conn = cx_Oracle.connect(
+                user=db_info_dict.get("user", ""),
+                password=db_info_dict.get("password", ""),
+                dsn=f"{db_info_dict.get('host', '')}:{int(db_info_dict.get('port', 1521))}/{service}",
+            )
+        elif db_type == DatabaseType.PostgreSQL:
+            db_conn = psycopg2.connect(
+                database=db_info_dict.get("database", ""),
+                user=db_info_dict.get("user", ""),
+                password=db_info_dict.get("password", ""),
+                host=db_info_dict.get("host", ""),
+                port=int(db_info_dict.get("port", 5432)),
+            )
+        elif db_type == DatabaseType.SQLite:
+            db_conn = sqlite3.connect(f"{db_info_dict.get('sqlite_path', '')}")
+        elif db_type == DatabaseType.Access:
+            conn_str = (
+                r"DRIVER={Driver do Microsoft Access (*.mdb)};"
+                rf"DBQ={db_info_dict.get('access_path', '')};"
+                rf"PWD={db_info_dict.get('password', '')};"
+            )
+            db_conn = pyodbc.connect(conn_str)
+        elif db_type == DatabaseType.DB2:
+            pass
+            # db_conn = ibm_db_dbi.connect(
+            #     f"PORT={int(db_info_dict.get('port', 50000))};PROTOCOL=TCPIP;",
+            #     database=db_info_dict.get("database", ""),
+            #     user=db_info_dict.get("user", ""),
+            #     password=db_info_dict.get("password", ""),
+            #     host=db_info_dict.get("host", ""),
+            # )
+        else:
+            raise Exception("아니오까지해당데이터베이스유형!")
+
+    @staticmethod
+    def disconnect(db_conn: object):
+        db_conn.close()
+
+    @staticmethod
+    def execute(db_conn: object, sql_str: str) -> bool:
+        cursor = db_conn.cursor()
+        try:
+            cursor.execute(sql_str)
+            db_conn.commit()
+        except:
+            db_conn.rollback()
+            return False
+        return True
+
+    @staticmethod
+    def query(db_conn: object, sql_str: str) -> str:
+        import datetime
+        import json
+        from decimal import Decimal
+
+        cursor = db_conn.cursor()
+        res_list = []
+
+        cursor.execute(sql_str)
+        key_info = cursor.description
+        key_tup = [key[0] for key in key_info]
+
+        result_arr = cursor.fetchall()
+
+        for results in result_arr:
+            new_result = []
+            # 조회결과의유형행변환
+            for result in results:
+                if isinstance(result, datetime.datetime):
+                    new_result.append(result.strftime("%Y-%m-%d %H:%M:%S"))
+                elif isinstance(result, datetime.date):
+                    new_result.append(result.strftime("%Y-%m-%d"))
+                elif isinstance(result, Decimal):
+                    # 개사용문자열, 사용float완료정도실패
+                    new_result.append(str(result))
+                else:
+                    new_result.append(result)
+            row_data = dict(zip(key_tup, new_result))
+
+            res_list.append(row_data)
+        try:
+            res_list = json.dumps(res_list, ensure_ascii=False)
+        except Exception as e:
+            pass
+        # 예순서열오류, 이면반환기존데이터
+        return res_list

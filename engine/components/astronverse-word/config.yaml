@@ -1,0 +1,692 @@
+﻿atomic:
+  Docx.open_docx:
+    title: 열기Word
+    comment: 열기경로로 @{file_path} 의Word, 반환Word객체 @{doc_obj}
+    icon: word-open-document
+    helpManual: ''
+    inputList:
+      - key: file_path
+        title: 문서경로
+        tip: Word의경로
+      - key: default_application
+        title: 드라이버방식
+        tip: 선택Word의열기방식, 예Word또는WPS
+      - key: visible_flag
+        title: 여부가능
+        tip: 여부Word창
+      - key: encoding
+        title: 코드방식
+        tip: 선택문서의코드방식, 예UTF-8또는GBK
+      - key: open_pwd_flag
+        title: 여부Word열기비밀번호
+        tip: 선택여부입력할비밀번호열기문서
+      - key: open_pwd
+        title: Word열기비밀번호
+        tip: 입력Word열기비밀번호
+      - key: write_pwd_flag
+        title: 여부Word입력비밀번호
+        tip: 선택여부입력할비밀번호입력문서
+      - key: write_pwd
+        title: Word입력비밀번호
+        tip: 입력Word입력비밀번호
+    outputList:
+      - key: doc_obj
+        title: Word객체
+        tip: 반환Word객체, 사용후
+  Docx.read_docx:
+    title: 가져오기Word내용
+    comment: 가져오기Word객체 @{doc} 내용, 반환문서내용 @{doc_data}
+    icon: word-read-content
+    helpManual: ''
+    inputList:
+      - key: doc
+        title: Word객체
+        tip: 본프로그램전순서기존가능(예열기, 생성)반환의Word객체
+      - key: select_range
+        title: 가져오기 
+        tip: 선택가져오기문서의, 예개문서또는선택중
+    outputList:
+      - key: doc_data
+        title: 문서내용
+        tip: ''
+  Docx.create_docx:
+    title: 생성Word
+    comment: >-
+      생성Word, 저장까지경로로 @{file_path} 의위치, 파일이름로 @{file_name} , 반환Word객체 @{doc_obj}
+      및저장경로 @{doc_create_path}
+    icon: word-new-document
+    helpManual: ''
+    inputList:
+      - key: file_path
+        title: 문서저장폴더
+        tip: Word의저장폴더 경로
+      - key: file_name
+        title: 문서이름
+        tip: Word의이름
+      - key: default_application
+        title: 드라이버방식
+        tip: 선택Word의열기방식, 예Word또는WPS
+      - key: visible_flag
+        title: 여부가능
+        tip: 여부Word창
+      - key: exist_handle_type
+        title: 저장된 이름파일관리방식
+        tip: 선택존재함파일관리방식, 지원덮어쓰기기존있음파일, 생성파일본, 건너뛰기저장
+    outputList:
+      - key: doc_obj
+        title: Word객체
+        tip: ''
+      - key: doc_create_path
+        title: 문서저장경로
+        tip: 저장의Word의경로
+  Docx.save_docx:
+    title: 저장Word
+    comment: 저장Word객체 @{doc} , 저장방식로 @{save_type}, 출력저장경로 @{save_file_path}
+    icon: word-save-document
+    helpManual: ''
+    inputList:
+      - key: doc
+        title: Word객체
+        tip: 본프로그램전순서기존가능(예열기, 생성)반환의Word객체
+      - key: save_type
+        title: 저장유형
+        tip: 선택저장유형, 예저장, 저장로, 아니오저장
+      - key: file_path
+        title: 문서경로
+        tip: Word의저장경로
+      - key: file_name
+        title: 문서이름
+        tip: Word의이름
+      - key: exist_handle_type
+        title: 저장된 이름파일관리방식
+        tip: 선택존재함파일관리방식, 지원덮어쓰기기존있음파일, 생성파일본, 건너뛰기저장
+      - key: close_flag
+        title: 여부닫기문서
+        tip: 선택여부닫기문서창
+    outputList:
+      - key: save_file_path
+        title: 저장경로
+        tip: 저장의Word의경로
+  Docx.close_docx:
+    title: 닫기Word
+    comment: 닫기Word객체 @{doc}
+    icon: word-close-document
+    helpManual: ''
+    inputList:
+      - key: doc
+        title: Word객체
+        tip: 본프로그램전순서기존가능(예열기, 생성)반환의Word객체
+      - key: close_range_flag
+        title: 닫기문서
+        tip: 선택닫기문서의, 예닫기현재문서또는닫기모든문서
+      - key: save_type
+        title: 저장유형
+        tip: 선택저장유형, 예저장, 저장로, 아니오저장
+      - key: file_path
+        title: 저장로문서경로
+        tip: Word의저장경로
+      - key: file_name
+        title: 저장로문서이름
+        tip: Word의이름
+      - key: exist_handle_type
+        title: 저장된 이름파일관리방식
+        tip: 선택존재함파일관리방식, 지원덮어쓰기기존있음파일, 생성파일본, 건너뛰기저장
+      - key: pkill_flag
+        title: 여부결과Word또는WPS
+        tip: 선택여부결과Word또는WPS
+    outputList: []
+  Docx.insert_docx:
+    title: 삽입텍스트까지Word
+    comment: Word객체 @{doc} 삽입텍스트 @{text}
+    icon: word-insert-text
+    helpManual: ''
+    inputList:
+      - key: doc
+        title: Word객체
+        tip: 본프로그램전순서기존가능(예열기, 생성)반환의Word객체
+      - key: text_source
+        title: 입력방식
+        tip: 선택직선연결입력또는에서파일가져오기
+      - key: text
+        title: 삽입텍스트
+        tip: 필요삽입의텍스트
+      - key: text_file_path
+        title: 텍스트파일 경로
+        tip: 선택할가져오기의텍스트파일
+      - key: enter_flag
+        title: 여부에서삽입전행
+        tip: 선택여부에서삽입전행
+      - key: font_size
+        title: 문자크기
+        tip: 문자크기
+      - key: bold_flag
+        title: 여부추가
+        tip: 선택여부추가
+      - key: italic_flag
+        title: 여부
+        tip: 선택여부
+      - key: underline_flag
+        title: 여부추가아래계획
+        tip: 선택여부추가아래계획
+      - key: font_name
+        title: 문자이름
+        tip: 문자이름
+      - key: font_color
+        title: 문자색상
+        tip: 선택문자색상
+    outputList: []
+  Docx.select_text:
+    title: 선택Word텍스트
+    comment: 에서Word객체 @{doc} 중선택텍스트
+    icon: word-select-text
+    helpManual: ''
+    inputList:
+      - key: doc
+        title: Word객체
+        tip: 본프로그램전순서기존가능(예열기, 생성)반환의Word객체
+      - key: select_type
+        title: 선택텍스트방식
+        tip: 지원선택전체문서, , 행
+      - key: p_start
+        title: 
+        tip: 입력
+      - key: p_end
+        title: 결과
+        tip: 입력결과
+      - key: r_start
+        title: 행
+        tip: 입력행
+      - key: r_end
+        title: 끝 행
+        tip: 입력끝 행
+    outputList: []
+  Docx.get_cursor_position:
+    title: 위치 지정Word
+    comment: 에서Word객체 @{doc} 중위치 지정위치
+    icon: word-position-cursor
+    helpManual: ''
+    inputList:
+      - key: doc
+        title: Word객체
+        tip: 본프로그램전순서기존가능(예열기, 생성)반환의Word객체
+      - key: by
+        title: 위치 지정방식
+        tip: 선택위치 지정까지전체문서, , 행, 텍스트
+      - key: pos
+        title: 위치
+        tip: 선택내용 전/선택내용 후
+      - key: content
+        title: 텍스트내용
+        tip: 결과가선택위치 지정텍스트, 입력텍스트내용
+      - key: c_idx
+        title: 텍스트순서
+        tip: 입력위치 지정텍스트의순서
+      - key: p_idx
+        title: 
+        tip: 입력위치 지정
+      - key: r_idx
+        title: 행
+        tip: 선택위치 지정의행
+    outputList: []
+  Docx.move_cursor:
+    title: Word
+    comment: 에서Word객체 @{doc} 중
+    icon: word-move-cursor
+    helpManual: ''
+    inputList:
+      - key: doc
+        title: Word객체
+        tip: 본프로그램전순서기존가능(예열기, 생성)반환의Word객체
+      - key: direction
+        title: 방법
+        tip: 선택 가능위, 아래, 왼쪽, 오른쪽
+      - key: unitupdown
+        title: 위아래단일위치
+        tip: 선택 가능행, 
+      - key: unitleftright
+        title: 왼쪽오른쪽단일위치
+        tip: 선택 가능문자, 단일
+      - key: distance
+        title: 거리
+        tip: 입력의거리
+      - key: with_shift
+        title: 여부아래Shift
+        tip: 선택여부아래Shift
+    outputList: []
+  Docx.insert_sep:
+    title: Word삽입/
+    comment: 에서Word객체 @{doc} 중삽입/
+    icon: word-insert-page
+    helpManual: ''
+    inputList:
+      - key: doc
+        title: Word객체
+        tip: 본프로그램전순서기존가능(예열기, 생성)반환의Word객체
+      - key: sep_type
+        title: 삽입유형
+        tip: 선택, 
+    outputList: []
+  Docx.insert_hyperlink:
+    title: Word삽입초과연결
+    comment: 에서Word객체 @{doc} 중삽입초과연결
+    icon: word-insert-hyperlink
+    helpManual: ''
+    inputList:
+      - key: doc
+        title: Word객체
+        tip: 본프로그램전순서기존가능(예열기, 생성)반환의Word객체
+      - key: url
+        title: 연결
+        tip: 입력삽입의연결
+      - key: display
+        title: 텍스트
+        tip: 입력필요의텍스트
+    outputList: []
+  Docx.insert_img:
+    title: Word삽입이미지
+    comment: 에서Word객체 @{doc} 중, 에서경로 @{img_path} 또는삽입이미지
+    icon: word-insert-image
+    helpManual: ''
+    inputList:
+      - key: doc
+        title: Word객체
+        tip: 본프로그램전순서기존가능(예열기, 생성)반환의Word객체
+      - key: img_from
+        title: 이미지
+        tip: 선택통신경과파일 경로, 
+      - key: img_path
+        title: 파일 경로
+        tip: 입력파일 경로
+      - key: scale
+        title: (%)
+        tip: 로100%, 가능으로입력값, 아니오입력할분
+      - key: newline
+        title: 여부행
+        tip: 선택삽입전여부행
+    outputList: []
+  Docx.read_table:
+    title: Word가져오기테이블
+    comment: 에서Word객체 @{doc} 중, 가져오기테이블내용 반환테이블데이터객체 @{table_content}
+    icon: word-read-table
+    helpManual: ''
+    inputList:
+      - key: doc
+        title: Word객체
+        tip: 본프로그램전순서기존가능(예열기, 생성)반환의Word객체
+      - key: search_type
+        title: 조회테이블방식
+        tip: 선택조회테이블방식
+      - key: idx
+        title: 순서
+        tip: 입력조회테이블의순서
+      - key: text
+        title: 텍스트
+        tip: 입력조회테이블의텍스트
+    outputList:
+      - key: table_content
+        title: 테이블내용
+        tip: ''
+  Docx.insert_table:
+    title: Word삽입테이블
+    comment: 에서Word객체 @{doc} 중, 삽입테이블내용
+    icon: word-insert-table
+    helpManual: ''
+    inputList:
+      - key: doc
+        title: Word객체
+        tip: 본프로그램전순서기존가능(예열기, 생성)반환의Word객체
+      - key: table_content
+        title: 테이블내용
+        tip: 필요생성의테이블내용,형식로이배열또는로가져오기의Excel테이블내용
+      - key: table_behavior
+        title: 테이블크기
+        tip: 선택예크기
+      - key: alignment
+        title: 텍스트왼쪽오른쪽위치
+        tip: 선택왼쪽, 중, 오른쪽
+      - key: v_alignment
+        title: 텍스트수직직선위치
+        tip: 선택모듈, 중, 모듈
+      - key: border
+        title: 테이블가장자리
+        tip: 선택여부있음가장자리
+      - key: if_change_font
+        title: 여부수정변수문자
+        tip: 선택여부수정변수문자
+      - key: font_size
+        title: 크기
+        tip: 선택문자크기
+      - key: font_color
+        title: 색상
+        tip: 선택문자색상
+      - key: font_set
+        title: 문자
+        tip: 선택문자
+      - key: font_bold
+        title: 추가
+        tip: 선택여부추가
+      - key: font_italic
+        title: 
+        tip: 선택여부
+      - key: underline
+        title: 아래계획
+        tip: 선택여부아래계획
+      - key: newline
+        title: 에서새의일행삽입
+        tip: 선택여부에서새의일행삽입
+    outputList: []
+  Docx.delete:
+    title: Word삭제내용
+    comment: 에서Word객체 @{doc} 중, 삭제내용
+    icon: word-delete-content
+    helpManual: ''
+    inputList:
+      - key: doc
+        title: Word객체
+        tip: 본프로그램전순서기존가능(예열기, 생성)반환의Word객체
+      - key: delete_mode
+        title: 삭제방식
+        tip: 선택삭제방식
+      - key: delete_str
+        title: 텍스트
+        tip: 선택할삭제의텍스트
+      - key: delete_idx
+        title: 순서
+        tip: 선택삭제개텍스트
+      - key: str_delete_all
+        title: 삭제모든까지의텍스트
+        tip: 선택삭제 여부모든까지의텍스트
+      - key: p_start
+        title: 
+        tip: 입력
+      - key: c_start
+        title: 문자
+        tip: 입력문자
+      - key: p_end
+        title: 결과
+        tip: 입력결과
+      - key: c_end
+        title: 결과문자
+        tip: 입력결과문자
+    outputList: []
+  Docx.replace:
+    title: Word내용
+    comment: 에서Word객체 @{doc} 중, 조회내용 
+    icon: word-replace-content
+    helpManual: ''
+    inputList:
+      - key: doc
+        title: Word객체
+        tip: 본프로그램전순서기존가능(예열기, 생성)반환의Word객체
+      - key: origin_word
+        title: 조회내용
+        tip: 입력필요조회의내용
+      - key: replace_type
+        title: 로
+        tip: 선택로이미지또는텍스트
+      - key: new_word
+        title: 새내용
+        tip: 입력필요로의내용
+      - key: img_path
+        title: 이미지경로
+        tip: 선택이미지경로
+      - key: replace_method
+        title: 방식
+        tip: 선택전체, 개
+      - key: ignore_case
+        title: 크기
+        tip: 선택여부크기
+    outputList: []
+  Docx.create_comment:
+    title: Word생성비고
+    comment: 에서Word객체 @{doc} 중, 생성비고
+    icon: word-create-comment
+    helpManual: ''
+    inputList:
+      - key: doc
+        title: Word객체
+        tip: 본프로그램전순서기존가능(예열기, 생성)반환의Word객체
+      - key: comment
+        title: 비고내용
+        tip: 입력비고내용
+      - key: comment_type
+        title: 비고객체
+        tip: 선택지정예지정내용
+      - key: paragraph_idx
+        title: 
+        tip: 입력생성비고의
+      - key: start
+        title: 문자순서
+        tip: 입력비고의문자순서
+      - key: end
+        title: 결과문자순서
+        tip: 입력비고의결과문자순서
+      - key: target_str
+        title: 목록내용
+        tip: 입력비고의목록내용
+      - key: comment_all
+        title: 전체비고
+        tip: 선택여부전체비고
+      - key: comment_index
+        title: 순서
+        tip: 선택비고내용의순서
+    outputList: []
+  Docx.delete_comment:
+    title: Word삭제비고
+    comment: 에서Word객체 @{doc} 중, 삭제지정비고
+    icon: word-delete-comment
+    helpManual: ''
+    inputList:
+      - key: doc
+        title: Word객체
+        tip: 본프로그램전순서기존가능(예열기, 생성)반환의Word객체
+      - key: delete_all
+        title: 삭제전체
+        tip: 선택삭제 여부전체비고
+      - key: comment_index
+        title: 비고순서
+        tip: 입력삭제할비고의순서
+    outputList: []
+  Docx.convert_format:
+    title: Word내보내기로PDF/TXT
+    comment: 에서Word객체 @{doc} 중, 내보내기지정내용로PDF또는TXT파일
+    icon: word-export-pdf-txt
+    helpManual: ''
+    inputList:
+      - key: doc
+        title: Word객체
+        tip: 본프로그램전순서기존가능(예열기, 생성)반환의Word객체
+      - key: output_path
+        title: 내보내기경로
+        tip: 선택할내보내기의폴더
+      - key: default_name
+        title: 여부사용이름
+        tip: 선택여부사용이름
+      - key: output_name
+        title: 내보내기파일이름
+        tip: 입력아니오형식후의파일이름
+      - key: output_file_type
+        title: 내보내기파일형식
+        tip: 선택중내보내기로pdf예txt
+      - key: page_type
+        title: 페이지
+        tip: 선택할내보내기전체페이지, 지정페이지, 현재페이지, 현재선택중내용
+      - key: page_start
+        title: 페이지
+        tip: 입력내보내기의페이지
+      - key: page_end
+        title: 결과페이지
+        tip: 입력필요내보내기의결과페이지
+      - key: save_type
+        title: 재이름저장방식
+        tip: 선택존재함재이름파일시오류, 덮어쓰기, 이름 변경
+    outputList: []
+options:
+  ApplicationType:
+    - value: Word
+      label: Word
+    - value: WPS
+      label: WPS
+    - value: Default
+      label: 프로그램
+  Bool:
+    - value: true
+      label: 예
+    - value: false
+      label: 아니오
+  EncodingType:
+    - value: utf-8
+      label: utf-8
+    - value: gbk
+      label: gbk
+  SelectRangeType:
+    - value: all
+      label: 개문서
+    - value: selected
+      label: 선택중
+  FileExistenceType:
+    - value: overwrite
+      label: 덮어쓰기기존있음파일
+    - value: rename
+      label: 생성파일본
+    - value: cancel
+      label: 건너뛰기저장
+  SaveType:
+    - value: save
+      label: 저장
+    - value: save_as
+      label: 저장로
+    - value: abort
+      label: 아니오저장
+  CloseRangeType:
+    - value: one
+      label: 닫기현재문서
+    - value: all
+      label: 닫기모든문서
+  UnderLineStyle:
+    - value: 0
+      label: 없음아래계획
+    - value: 1
+      label: 있음아래계획
+  SelectTextType:
+    - value: all
+      label: 전체문서
+    - value: paragraph
+      label: 
+    - value: row
+      label: 행
+  CursorPointerType:
+    - value: all
+      label: 문서
+    - value: paragraph
+      label: 
+    - value: row
+      label: 행
+    - value: content
+      label: 텍스트내용
+  CursorPositionType:
+    - value: head
+      label: 선택내용 전
+    - value: tail
+      label: 선택내용 후
+  MoveDirectionType:
+    - value: up
+      label: 위
+    - value: down
+      label: 아래
+    - value: left
+      label: 왼쪽
+    - value: right
+      label: 오른쪽
+  MoveUpDownType:
+    - value: paragraph
+      label: 
+    - value: row
+      label: 행
+  MoveLeftRightType:
+    - value: character
+      label: 문자
+    - value: word
+      label: 단일
+  InsertionType:
+    - value: page
+      label: 
+    - value: paragraph
+      label: 
+  InsertImgType:
+    - value: file
+      label: 파일
+    - value: clipboard
+      label: 
+  SearchTableType:
+    - value: text
+      label: 텍스트
+    - value: idx
+      label: 순서
+  TableBehavior:
+    - value: 0
+      label: 
+    - value: 1
+      label: 크기
+  RowAlignment:
+    - value: 0
+      label: 왼쪽
+    - value: 1
+      label: 중
+    - value: 2
+      label: 오른쪽
+  VerticalAlignment:
+    - value: 0
+      label: 모듈
+    - value: 1
+      label: 중
+    - value: 3
+      label: 모듈
+  DeleteMode:
+    - value: all
+      label: 전체
+    - value: content
+      label: 지정텍스트
+    - value: range
+      label: 지정
+  ReplaceType:
+    - value: img
+      label: 이미지
+    - value: str
+      label: 텍스트
+  ReplaceMethodType:
+    - value: first
+      label: 개
+    - value: all
+      label: 전체
+  CommentType:
+    - value: position
+      label: 위치 지정
+    - value: content
+      label: 지정내용
+  FileType:
+    - value: pdf
+      label: PDF
+    - value: txt
+      label: TXT
+  ConvertPageType:
+    - value: 0
+      label: 전체페이지
+    - value: 2
+      label: 현재페이지
+    - value: 3
+      label: 지정페이지
+    - value: 1
+      label: 선택중내용
+  SaveFileType:
+    - value: warn
+      label: 재이름안내
+    - value: generate
+      label: 완료이름
+    - value: overwrite
+      label: 덮어쓰기이름파일
+  TextInputSourceType:
+    - value: input
+      label: 직선연결입력
+    - value: file
+      label: 파일가져오기

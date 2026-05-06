@@ -1,0 +1,207 @@
+name: 🔒 보안 문제 보고
+description: 항목알림설치전체항목또는설치전체항목닫기항목제목
+title: "[Security]: "
+labels: ["security", "vulnerability"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ⚠️ **재필요항목**: 예결과항목발송항목완료항목재의설치전체항목, 요청아니오필요에서항목공유 Issue 중항목.
+        요청직선연결전송메일항목 security@shoprpa.com 항목행항목비밀항목알림.
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: 항목항목단일
+      description: 에서제출설치전체항목제목항목전, 확인하세요으로아래항목
+      options:
+        - label: 항목아니오예일개항목재의설치전체항목(항목재항목요청항목비밀항목알림)
+          required: true
+        - label: 항목완료항목검색완료항목있음의설치전체항목닫기 Issues
+          required: true
+        - label: 항목완료해제항목개항목알림를예항목열기의
+          required: true
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: 🚨 항목재항목정도
+      description: 항목설치전체항목제목의항목재항목정도
+      options:
+        - 🟢 낮음 - 항목설치전체수정항목생성항목
+        - 🟡 중 - 항목에서설치전체항목
+        - 🟠 높음 - 항목의설치전체항목제목
+        - 🔴 항목재 - 요청항목비밀항목알림
+      default: 0
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: 🎯 항목제목유형항목
+      description: 선택설치전체항목제목의유형항목
+      options:
+        - 🔐 항목인증항목제목
+        - 🛡️ 권한항목제어항목제목
+        - 📡 데이터근거항목입출력설치전체
+        - 💾 데이터근거저장항목설치전체
+        - 🔍 입력검증인증항목제목
+        - 🚫 항목서비스서비스 (DoS)
+        - 📝 로그및항목
+        - 🔧 매칭항목설치전체
+        - 📦 항목항목설치전체
+        - 🌐 네트워크설치전체
+        - 🔄 항목관리관리
+        - 📊 정보항목
+        - 항목
+      default: 0
+    validations:
+      required: true
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: 🧩 항목컴포넌트
+      description: 선택항목항목의항목필요컴포넌트
+      options:
+        - 전단말 Web 항목사용
+        - 전단말데스크톱 앱
+        - 전단말브라우저 확장
+        - 후단말 robot-service
+        - 후단말 ai-service
+        - 후단말 openapi-service
+        - 후단말 resource-service
+        - RPA 엔진 코어
+        - 데이터근거라이브러리항목
+        - API 연결항목
+        - 항목인증 서비스
+        - 파일항목관리
+        - 네트워크통신
+        - Docker 매칭항목
+        - 항목개시스템시스템
+        - 아니오항목지정
+      default: 15
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: 📝 항목제목설명
+      description: 항목설명설치전체항목제목또는항목
+      placeholder: |
+        요청설명: 
+        - 발송항목의설치전체항목제목또는항목
+        - 가능가능의항목및후결과
+        - 항목제목의항목테이블항목
+        
+        비고항목: 요청아니오필요패키지항목항목정보또는항목의항목항목사용방법법
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: 🔄 재항목항목
+      description: 예항목재항목개설치전체항목제목(요청항목패키지항목항목의항목방법법)
+      placeholder: |
+        일항목의재항목항목: 
+        1. 에서...항목아래
+        2. 실행...항목
+        3. 항목까지...항목
+        
+        비고항목: 요청항목설치전체의재항목방법법, 아니오필요패키지항목항목의항목항목코드
+
+  - type: textarea
+    id: impact
+    attributes:
+      label: 💥 항목에서항목
+      description: 항목개설치전체항목제목가능가능항목성공항목항목?
+      placeholder: |
+        가능가능의항목: 
+        - 데이터근거항목항목
+        - 시스템시스템가능사용항목항목
+        - 권한항목상승항목
+        - 항목설치전체항목
+
+  - type: dropdown
+    id: environment
+    attributes:
+      label: 🖥️ 항목항목
+      description: 항목개항목제목항목항목항목?
+      options:
+        - 모든항목
+        - 운영 환경
+        - 항목시도항목
+        - 열기발송항목
+        - 항목지정매칭항목항목
+        - 아니오항목지정
+      default: 0
+
+  - type: input
+    id: version
+    attributes:
+      label: 📋 버전정보
+      description: 발송항목제목의버전
+      placeholder: 항목예: v1.0.0
+    validations:
+      required: true
+
+  - type: textarea
+    id: mitigation
+    attributes:
+      label: 🛠️ 항목시항목해제항목
+      description: 여부있음항목시의항목해제또는항목항목?
+      placeholder: |
+        가능가능의항목해제항목: 
+        - 매칭항목조정항목
+        - 권한제한제어
+        - 네트워크항목
+        - 항목항목항목
+
+  - type: textarea
+    id: references
+    attributes:
+      label: 📚 매개항목항목
+      description: 항목닫기의설치전체항목, CVE 번호또는매개항목문서
+      placeholder: |
+        - 항목닫기 CVE 번호
+        - 설치전체항목매개항목
+        - 항목문서 링크
+        - 유형항목제목의항목알림
+
+  - type: checkboxes
+    id: disclosure
+    attributes:
+      label: 📢 항목항목
+      description: 닫기항목제목항목의항목
+      options:
+        - label: 항목항목에서항목제목항목복사후항목열기항목
+          required: false
+        - label: 항목항목에서설치전체항목알림중항목항목(예항목사용)
+          required: false
+        - label: 항목가능으로항목검증인증항목복사방법항목
+          required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: 📝 항목정보
+      description: 작업항목항목있음항목관리해제및해제항목제목의정보
+      placeholder: |
+        항목항목닫기정보: 
+        - 발송항목경과항목
+        - 항목시도항목항목
+        - 항목닫기매칭항목정보(요청제거항목내용)
+
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        
+        **항목항목**: 
+        - 🔴 항목재설치전체항목요청전송메일항목 security@shoprpa.com
+        - ⚠️ 요청아니오필요에서항목공유 Issue 중패키지항목항목의항목방법법
+        - 🤝 항목항목항목수정항목 Shoprpa 의설치전체항목

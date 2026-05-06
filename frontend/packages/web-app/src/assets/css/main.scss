@@ -1,0 +1,92 @@
+﻿#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  width: 100%;
+  height: 100vh;
+}
+
+#nav {
+  padding-top: 60px;
+  height: calc(100vh);
+  box-sizing: border-box;
+}
+
+.modal-ant-operation {
+  .ant-modal-content {
+    .ant-modal-header {
+      .ant-modal-title {
+        font-size: 14px;
+      }
+    }
+  }
+
+  .ant-form label {
+    font-size: 12px;
+  }
+
+  .ant-input {
+    font-size: 12px;
+  }
+
+  .ant-form-explain {
+    font-size: 12px;
+  }
+}
+
+// 시스템일가장자리역할
+.ant-drawer-content-wrapper {
+  margin: 8px;
+  .ant-drawer-content {
+    border-radius: 10px;
+  }
+}
+
+// 사용 안 함 drawer 덮어쓰기의공가능, 확인 drawer 의닫기버튼가능으로정상일반클릭
+.ant-drawer {
+  -webkit-app-region: no-drag;
+}
+
+// 수정antd-picker의높음정도
+.ant-picker {
+  height: 32px;
+}
+
+// 전체영역방식
+* {
+  // Webkit 브라우저(Chrome, Safari, Edge대기)
+  &::-webkit-scrollbar {
+    width: 8px; // 수직직선너비정도
+    height: 8px; // 수평평면높음정도
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(243, 243, 247, 1);
+    border-radius: 4px;
+
+    &:hover {
+      background: rgba(243, 243, 247, 1);
+    }
+  }
+}
+
+// 색상제목방식
+.dark {
+  // Webkit 브라우저
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.08);
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+  }
+}

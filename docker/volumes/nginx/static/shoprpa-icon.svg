@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" role="img" aria-label="Shoprpa">
+  <defs>
+    <linearGradient id="shoprpaIcon" x1="14" y1="12" x2="82" y2="84" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7c3aed"/>
+      <stop offset="1" stop-color="#0ea5a4"/>
+    </linearGradient>
+  </defs>
+  <rect width="96" height="96" rx="22" fill="#f8fafc"/>
+  <path d="M48 14 78 31v34L48 82 18 65V31L48 14Z" fill="url(#shoprpaIcon)"/>
+  <path d="M48 20 71 33 48 46 25 33 48 20Z" fill="#ffffff" opacity=".34"/>
+  <path d="M25 38 45 49.5v25L25 63V38Z" fill="#ffffff" opacity=".18"/>
+  <path d="M71 38 51 49.5v25L71 63V38Z" fill="#000000" opacity=".12"/>
+</svg>
