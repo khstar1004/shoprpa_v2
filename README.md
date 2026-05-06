@@ -1,229 +1,114 @@
-# shoprpa
+# ShopRPA
 
-<div align="center">
+ShopRPA는 업무 자동화를 위한 데스크톱 RPA 프로그램입니다. 사용자는 화면 조작, 브라우저 작업, 파일 처리, 엑셀/문서 작업, API 연동 같은 반복 업무를 워크플로우로 구성하고 실행할 수 있습니다.
 
-![shoprpa Logo](./frontend/public/icons/128x128.png)
+이 저장소에는 데스크톱 클라이언트, RPA 실행 엔진, 백엔드 서비스, Docker 기반 서버 구성이 함께 들어 있습니다.
 
-**🤖 Pioneering Open-Source Enterprise RPA Desktop Application**
+## 주요 기능
 
-<p align="center">
-  <a href="https://www.shoprpa.com">shoprpa Official Site</a> ·
-  <a href="./BUILD_GUIDE.md">Deployment Guide</a> ·
-  <a href="https://www.shoprpa.com/docs/">User Documentation</a> ·
-  <a href="./FAQ.md">FAQ</a>
-</p>
+- Windows 데스크톱 프로그램 자동화
+- Chrome, Edge 등 브라우저 기반 웹 업무 자동화
+- 엑셀, PDF, Word, 파일, 폴더 작업 자동화
+- 이미지 인식과 화면 요소 기반 클릭/입력 처리
+- 예약 실행, 원격 실행, 실행 로그 확인
+- 팀 단위 로봇 공유와 서버 기반 관리
+- AI 서비스와 연동 가능한 자동화 구성
 
-[![Version](https://img.shields.io/github/v/release/Shoprpa/shoprpa)](https://github.com/shoprpa/shoprpa/releases)
-[![Python](https://img.shields.io/badge/python-3.13+-blue.svg)](https://www.python.org/)
-[![GitHub Stars](https://img.shields.io/github/stars/Shoprpa/shoprpa?style=social)](https://github.com/shoprpa/shoprpa/stargazers)
+## 저장소 구성
 
-</div>
+| 경로 | 내용 |
+| --- | --- |
+| `frontend/` | Electron 데스크톱 앱과 Vue 기반 화면 |
+| `engine/` | Python 기반 RPA 실행 엔진과 자동화 컴포넌트 |
+| `backend/` | Java/Python 백엔드 서비스 |
+| `docker/` | 서버 실행용 Docker Compose 구성 |
+| `resources/` | 클라이언트 실행 리소스와 기본 설정 |
+| `docs/` | 부가 문서와 이미지 자료 |
 
-## 📋 Overview
+## 실행 방식
 
-Shoprpa is an enterprise-grade Robotic Process Automation (RPA) desktop application. Through a visual designer, it supports low-code/no-code development, enabling users to rapidly build workflows and automate desktop software and web pages.
+ShopRPA는 보통 서버와 클라이언트를 함께 사용합니다.
 
-[Shoprpa Agent](https://github.com/shoprpa/shoprpa-agent) is the native Agent platform supported by this project. Users can directly call RPA workflow nodes in Shoprpa Agent, and also use Agent workflows in Shoprpa, achieving efficient collaboration between automation processes and intelligent agent systems, empowering broader business automation scenarios.
+- 서버: 사용자, 인증, 워크플로우, 실행 기록, 파일 리소스 등을 관리합니다.
+- 클라이언트: 사용자가 워크플로우를 만들고 실행하는 데스크톱 프로그램입니다.
+- 엔진: 클라이언트 내부에서 실제 화면 조작과 자동화 작업을 수행합니다.
 
-### 🎯 Why Choose Shoprpa?
+## 서버 실행
 
-- **🛠️ Comprehensive Automation Support**: Comprehensive coverage of Windows desktop applications and web page automation. Supports common office software like WPS and Office, financial and ERP systems like Kingdee and YonYou, and various browsers like IE, Edge, and Chrome, enabling end-to-end cross-application automation.
-- **🧩 Highly Component-based**: 300+ pre-built atomic capabilities covering UI operations, data processing, and system interactions. Supports visual orchestration and custom component extensions with high flexibility and maintainability.
-- **🏭 Enterprise-grade Security & Collaboration**: Built-in excellence center and team marketplace with enterprise modules. Provides terminal monitoring, scheduling modes, robot team sharing and collaborative functions. Build a complete enterprise automation management ecosystem with process security, permission control, and cross-team collaboration.
-- **👨‍💻 Developer-friendly Experience**: Low-code, visual process design and debugging environment. Quickly build automation workflows through intuitive drag-and-drop methods, reducing development barriers, improving development efficiency, and enabling business users to participate in automation creation.
-- **🤖 Native Agent Empowerment**: Deep integration with Shoprpa Agent platform supporting bi-directional calls between automation processes and AI agents with capability fusion. Achieve seamless connection between task reasoning, decision making, and automated execution, expanding automation boundaries.
-- **🌐 Multi-channel Trigger Integration**: Supports direct execution, scheduled tasks, scheduling modes, API calls, and MCP services. Flexible integration capabilities to quickly respond to third-party system integration needs and easily embed in complex business scenarios.
+서버는 `docker/` 폴더의 Docker Compose 구성으로 실행합니다.
 
-## 🚀 Quick Start
-
-### System Requirements
-- 💻 **Client Operating System**: Windows 10/11 (primary support)
-- 🧠 **RAM** >= 8 GiB
-
-### **Server**: Deploy with Docker
-
-Recommended for quick deployment:
-
-```bash
-# Clone the repository
-git clone https://github.com/shoprpa/shoprpa.git
-cd shoprpa
-
-# Enter docker directory
+```powershell
 cd docker
-
-# Copy .env
-cp .env.example .env
-
-# Modify casdoor service configuration in .env (8000 is the default port)
-CASDOOR_EXTERNAL_ENDPOINT="http://{YOUR_SERVER_IP}:8000"
-
-# 🚀 Start all services
 docker compose up -d
+```
 
-# 📊 Check service status
+실행 상태 확인:
+
+```powershell
 docker compose ps
 ```
 
-- After all services have started, open your browser and go to: `http://{YOUR_SERVER_IP}:32742/api/rpa-auth/user/login-check` (32742 is the default port; change it if you modified the configuration).
-- If you see `{"code":"900001","data":null,"message":"unauthorized"}`, it means the deployment is correct and the connection is working properly.
-- Open your browser and go to: `http://{YOUR_SERVER_IP}:8000` (8000 is the default port; change it if you modified the configuration).
-- If you see the Casdoor login page, it means Casdoor is deployed correctly.
-- For production deployment and security hardening, refer to the [Deployment Guide](./docker/QUICK_START.md).
+기본 설정은 `docker/.env`에서 관리합니다. 서버 주소, 포트, 인증 서비스 주소를 운영 환경에 맞게 조정한 뒤 실행합니다.
 
-### **Client**: Source Deployment/Binary Deployment
+## 클라이언트 설정
 
-#### Environment Dependencies
-| Tool | Version | Description |
-|-----|---------|------------|
-| **Node.js** | >= 22 | JavaScript runtime |
-| **Python** | 3.13.x | RPA engine core |
-| **Java** | JDK 8+ | Backend runtime |
-| **pnpm** | >= 9 | Node.js package manager |
-| **UV** | 0.8+ | Python package management tool |
-| **7-Zip** | - | Create deployment archives |
-| **SWIG** | - | Connect Python with C/C++ |
+클라이언트는 `resources/conf.yaml`의 서버 주소를 기준으로 백엔드에 연결합니다.
 
-For specific installation instructions and common issues, refer to [Build Guide](./BUILD_GUIDE.md).
+```yaml
+remote_addr: http://YOUR_SERVER_ADDRESS:32742/
+skip_engine_start: false
+```
 
-#### Direct Download (Recommended)
+- `remote_addr`: 연결할 ShopRPA 서버 주소
+- `skip_engine_start`: 클라이언트 실행 시 내장 엔진을 함께 실행할지 여부
 
-Download the latest [Release Package](https://github.com/shoprpa/shoprpa/releases)
+설치된 프로그램에서 사용할 때도 동일하게 설치 경로의 `resources/conf.yaml`을 확인하면 됩니다.
 
-#### One-Click Build
+## 소스 기준 실행 및 빌드
 
-1. **Prepare Python Environment**
-   ```bash
-   # Prepare a Python 3.13.x installation directory (can be a local folder or system installation path)
-   # The script will copy this directory to create python_core
-   ```
+소스에서 직접 실행하거나 설치 파일을 만들 때는 루트의 `build.bat`을 사용합니다.
 
-2. **Run Build Script**
-   ```bash
-   # Full build (engine + frontend + desktop app) from project root directory
-   ./build.bat --python-exe "C:\Program Files\Python313\python.exe"
-   
-   # Or use default configuration (if Python is in default path)
-   ./build.bat
-   
-   # Wait for completion
-   # Build successful when console displays "Full Build Complete!"
-   ```
+```powershell
+.\build.bat
+```
 
-   > **Note:** Please ensure the specified Python interpreter is a clean installation without additional third-party packages to minimize package size.
+Python 경로를 명시해야 하는 경우:
 
-   **Build process includes:**
-   1. ✅ Detect/copy Python environment to `build/python_core`
-   2. ✅ Install RPA engine dependencies
-   3. ✅ Compress Python core to `resources/python_core.7z`
-   4. ✅ Install frontend dependencies
-   5. ✅ Build frontend web application
-   6. ✅ Build desktop application
+```powershell
+.\build.bat --python-exe "C:\Program Files\Python313\python.exe"
+```
 
-3. 📦 Install the packaged client
+빌드 과정에서는 엔진 리소스 준비, 프론트엔드 빌드, 데스크톱 앱 패키징이 함께 수행됩니다.
 
-#### ⚙️ After installation, modify the server address in `resources/conf.yaml` in the installation directory:
+## 로그 확인
 
-    ```yaml
-    # 32742 is the default port; change it if you modified the configuration
-    remote_addr: http://YOUR_SERVER_ADDRESS:32742/
-    skip_engine_start: false
-    ```
+문제가 생기면 먼저 아래 위치를 확인합니다.
 
-## 🏗️ Architecture Overview
+| 위치 | 내용 |
+| --- | --- |
+| `logs/` | 로컬 실행 로그 |
+| `.run-logs/` | 개발/실행 보조 로그 |
+| `docker compose logs` | 서버 컨테이너 로그 |
 
-The project adopts a frontend-backend separation architecture. The frontend is built with Vue 3 + TypeScript and Electron for desktop applications; the backend uses Java Spring Boot and Python FastAPI to build microservices supporting business and AI capabilities. The engine layer is based on Python, integrating 20+ RPA components with support for image recognition and UI automation. The entire system is deployed via Docker with high observability and scalability, designed for complex RPA scenarios.
+Docker 서버 로그 예시:
 
-![Architecture Overview](./docs/images/Structure.png "Architecture Overview")
+```powershell
+cd docker
+docker compose logs -f
+```
 
-## 📦 Component Ecosystem
+## 기본 운영 흐름
 
-### Core Component Packages
-- **astronverse.system**: System operations, process management, screenshots
-- **astronverse.browser**: Browser automation, web page operations
-- **astronverse.gui**: GUI automation, mouse and keyboard operations
-- **astronverse.excel**: Excel spreadsheet operations, data processing
-- **astronverse.vision**: Computer vision, image recognition
-- **astronverse.ai**: AI intelligent service integration
-- **astronverse.network**: Network requests, API calls
-- **astronverse.email**: Email sending and receiving
-- **astronverse.docx**: Word document processing
-- **astronverse.pdf**: PDF document operations
-- **astronverse.encrypt**: Encryption and decryption functions
+1. 서버를 실행합니다.
+2. 클라이언트의 `resources/conf.yaml`에서 서버 주소를 맞춥니다.
+3. 클라이언트를 실행합니다.
+4. 워크플로우를 만들거나 불러옵니다.
+5. 실행 후 로그와 결과를 확인합니다.
 
-### Execution Framework
-- **astronverse.actionlib**: Atomic operation definition and execution
-- **astronverse.executor**: Workflow execution engine
-- **astronverse.picker**: Workflow element picker engine
-- **astronverse.scheduler**: Engine scheduler
-- **astronverse.trigger**: Engine trigger
+## 참고 파일
 
-### Shared Libraries
-- **astronverse.baseline**: RPA framework core
-- **astronverse.websocketserver**: WebSocket communication
-- **astronverse.websocketclient**: WebSocket communication
-- **astronverse.locator**: Element locating technology
-
-
-## 📚 Documentation
-
-- [📖 User Guide](https://www.shoprpa.com/docs/)
-- [🚀 Deployment Guide](docker/QUICK_START.md)
-- [📖 API Documentation](backend/openapi-service/api.yaml)
-- [🔧 Component Development Guide](engine/components/)
-- [🐛 Troubleshooting](docs/TROUBLESHOOTING.md)
-- [📝 Changelog](CHANGELOG.md)
-
-## 🤝 Contributing
-
-We welcome any form of contribution! Please check [Contributing Guide](CONTRIBUTING.md)
-
-### Development Guidelines
-- ✅ Follow existing code style
-- ✅ Add necessary test cases
-- ✅ Update relevant documentation
-- ✅ Ensure all checks pass
-
-### Contributing Steps
-1. 🍴 Fork the repository
-2. 🌿 Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. 💾 Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. 🚀 Push to the branch (`git push origin feature/AmazingFeature`)
-5. 📝 Open a Pull Request
-
-## 🌟 Star History
-
-<div align="center">
-  <img src="https://api.star-history.com/svg?repos=shoprpa/shoprpa&type=Date" alt="Star History Chart" width="600">
-</div>
-
-## 💖 Sponsorship
-
-<div align="center">
-  <a href="https://github.com/sponsors/shoprpa">
-    <img src="https://img.shields.io/badge/Sponsor-GitHub%20Sponsors-pink?style=for-the-badge&logo=github" alt="GitHub Sponsors">
-  </a>
-  <a href="https://opencollective.com/shoprpa">
-    <img src="https://img.shields.io/badge/Sponsor-Open%20Collective-blue?style=for-the-badge&logo=opencollective" alt="Open Collective">
-  </a>
-</div>
-
-## 📞 Getting Help
-
-- 📧 **Technical Support**: [support@shoprpa.com](mailto:support@shoprpa.com)
-- 💬 **Community Discussion**: [GitHub Discussions](https://github.com/shoprpa/shoprpa/discussions)
-- 🐛 **Bug Reports**: [Issues](https://github.com/shoprpa/shoprpa/issues)
-<div align="center">
-
-**Developed and maintained by Shoprpa**
-
-[![Follow](https://img.shields.io/github/followers/shoprpa?style=social&label=Follow)](https://github.com/Shoprpa)
-[![Star](https://img.shields.io/github/stars/Shoprpa/shoprpa?style=social&label=Star)](https://github.com/shoprpa/shoprpa)
-[![Fork](https://img.shields.io/github/forks/Shoprpa/shoprpa?style=social&label=Fork)](https://github.com/shoprpa/shoprpa/fork)
-[![Watch](https://img.shields.io/github/watchers/Shoprpa/shoprpa?style=social&label=Watch)](https://github.com/shoprpa/shoprpa/watchers)
-
-**Shoprpa** - Making RPA development simple and powerful!
-
-If you find this project helpful, please give us a ⭐ Star!
-
-</div>
+- `BUILD_GUIDE.md`: 상세 빌드 정보
+- `FAQ.md`: 자주 발생하는 문제
+- `backend/openapi-service/api.yaml`: OpenAPI 정의
+- `docker/`: 서버 실행 구성
+- `resources/conf.yaml`: 클라이언트 연결 설정
