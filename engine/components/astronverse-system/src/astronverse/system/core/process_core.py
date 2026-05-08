@@ -107,7 +107,7 @@ class ProcessCoreWin(IProcessCore):
         except psutil.TimeoutExpired:
             raise ValueError(f" {pid} 미완료에서시간 초과시간내부종료.")
         except Exception as e:
-            raise ValueError(f" {pid} 종료시발송오류: {e}")
+            raise ValueError(f"{pid} 종료 중 오류: {e}")
 
 
 class ProcessCoreLinux(IProcessCore):
@@ -180,4 +180,4 @@ class ProcessCoreLinux(IProcessCore):
         except psutil.TimeoutExpired:
             raise ValueError(f" {pid} 미완료에서시간 초과시간내부종료.")
         except Exception as e:
-            raise ValueError(f" {pid} 종료시발송오류: {e}")
+            raise ValueError(f"{pid} 종료 중 오류: {e}")

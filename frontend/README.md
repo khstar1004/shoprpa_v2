@@ -1,4 +1,4 @@
-# shoprpa Frontend
+# ShopRPA Frontend
 
 <div align="center">
 
@@ -14,7 +14,7 @@
 
 ## 📑 Table of Contents
 
-- [shoprpa Frontend](#shoprpa-frontend)
+- [ShopRPA Frontend](#shoprpa-frontend)
   - [📑 Table of Contents](#-table-of-contents)
   - [📋 Overview](#-overview)
   - [✨ Key Features](#-key-features)
@@ -31,7 +31,7 @@
 
 ## 📋 Overview
 
-shoprpa Frontend is a modern frontend platform built for RPA applications. It provides a comprehensive solution for building both web-based and desktop RPA applications with a unified codebase.
+ShopRPA Frontend is a modern frontend platform built for RPA applications. It provides a comprehensive solution for building both web-based and desktop RPA applications with a unified codebase.
 
 The platform features a monorepo architecture using pnpm workspaces, supporting multiple application types including web applications, desktop applications, and browser plugins, all sharing common components and utilities.
 
@@ -69,8 +69,8 @@ The platform features a monorepo architecture using pnpm workspaces, supporting 
 
 ```bash
 # Clone the repository
-git clone https://github.com/shoprpa/shoprpa.git
-cd shoprpa/frontend
+git clone <your-shoprpa-repository-url>
+cd astron-rpa/frontend
 
 # Install dependencies
 pnpm install
@@ -92,7 +92,14 @@ pnpm dev:desktop
 pnpm build:web
 
 # Build desktop application
+pnpm verify:release
 pnpm build:desktop
+
+# Check whether this host can create the Windows installer
+pnpm doctor:installer
+
+# Build Windows NSIS installer
+pnpm build:installer
 
 # Run tests
 pnpm test
@@ -140,7 +147,7 @@ Frontend Monorepo
 ├── node_modules/         # Dependencies
 ├── package.json          # Root Package Config
 ├── pnpm-workspace.yaml   # Workspace Configuration
-└── vitest.config.ts      # Test Configuration
+└── vitest.config.mts     # Test Configuration
 ```
 
 ### Technology Stack Details

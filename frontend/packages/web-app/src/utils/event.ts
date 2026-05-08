@@ -1,4 +1,4 @@
-﻿function contextmenuPreventDefault(e: MouseEvent) {
+function contextmenuPreventDefault(e: MouseEvent) {
   // 중지행로
   e.preventDefault()
   // 실행

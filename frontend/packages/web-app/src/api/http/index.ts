@@ -1,4 +1,4 @@
-﻿import { message } from 'ant-design-vue'
+import { message } from 'ant-design-vue'
 import type {
   AxiosInstance,
   AxiosRequestConfig,
@@ -8,6 +8,8 @@ import type {
 import axios, { AxiosHeaders } from 'axios'
 import i18next from 'i18next'
 import { isNil } from 'lodash-es'
+
+import { getPublicLanguage } from '@/plugins/i18next'
 
 import { promiseWithResolvers } from '@/utils/common'
 
@@ -76,7 +78,7 @@ class HttpClient {
   private HTTP_READY_KEY = 'httpReady'
   private instance: AxiosInstance
 
-  // 모든의 http 요청 , 있음에서 readyPromise  resolve 시전송요청 
+  // 모든의 http 요청 , 있음에서 readyPromise  resolve 시전송요청
   private readyPromise = promiseWithResolvers<void>()
 
   // 허용외부부서호출의방법법, 사용에서로드완료후, 를 readyPromise 로완료완료
@@ -118,36 +120,32 @@ class HttpClient {
             status: 200,
             statusText: 'OK',
             headers: new AxiosHeaders({ 'content-type': 'application/json' }),
-            config, // 패키지기존의요청 매칭
+            config,
           })
         }
       }
 
-      // 에서가능으로추가요청 기기의, 예추가요청 , 관리요청 매개변수대기
       if (config.loading) {
-        // TODO: 추가전체영역 loading
+        // Reserved for a global request loading indicator.
       }
 
-      config.headers['Accept-Language'] = i18next.language
+      config.headers['Accept-Language'] = getPublicLanguage(i18next.language)
 
       return config
     })
 
     this.instance.interceptors.response.use(
       (response: Response) => {
-        // 에서가능으로추가기기의, 예관리데이터, 관리오류대기
         if (response.config.loading) {
-          // 닫기loading
+          // Reserved for closing a global request loading indicator.
         }
 
         if (response.config.responseType === 'blob') {
           response.data = { code: '0000', data: response.data }
 
-          // TODO: 직선연결반환여부필요
           return response
         }
 
-        // toast 열기시작, 가능으로통신경과 config.toast 제어여부
         normalizeErrorPayload(response.data)
 
         if (!SUCCESS_CODES.includes(response.data.code) && response.config.toast !== false) {

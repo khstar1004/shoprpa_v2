@@ -1,7 +1,9 @@
 import importlib
 import sys
+import unittest
 from enum import Enum
 from types import ModuleType, SimpleNamespace
+from unittest.mock import patch
 
 
 class _AtomicFormType(Enum):
@@ -96,15 +98,19 @@ class FakeEmailImap4Receive:
         self.masked_mail_id = num
 
 
-def test_receive_email_returns_latest_messages_first(monkeypatch):
-    monkeypatch.setattr(core_imap4_receive, "EmailImap4Receive", FakeEmailImap4Receive)
+class TestReceiveEmail(unittest.TestCase):
+    def test_receive_email_returns_latest_messages_first(self):
+        with patch.object(core_imap4_receive, "EmailImap4Receive", FakeEmailImap4Receive):
+            result = Email.receive_email(
+                mail_server=EmailServerType.QQ,
+                user_mail="user@example.com",
+                user_password="password",
+                max_return_num=2,
+                folder_name="INBOX",
+            )
 
-    result = Email.receive_email(
-        mail_server=EmailServerType.QQ,
-        user_mail="user@example.com",
-        user_password="password",
-        max_return_num=2,
-        folder_name="INBOX",
-    )
+        self.assertEqual([item["subject"] for item in result], ["subject-1", "subject-3"])
 
-    assert [item["subject"] for item in result] == ["subject-1", "subject-3"]
+
+if __name__ == "__main__":
+    unittest.main()

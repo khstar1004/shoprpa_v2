@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { refDebounced } from '@vueuse/core'
 import hotkeys from 'hotkeys-js'
 import { escapeRegExp, isArray } from 'lodash-es'
@@ -26,163 +26,162 @@ const flowStore = useFlowStore()
 
 // 검색결과표시표시
 const searchResults = computed(() => {
- if (!showSearch.value || !debouncedSearchKeyword.value)
- return []
+  if (!showSearch.value || !debouncedSearchKeyword.value)
+    return []
 
- const searchRegex = new RegExp(escapeRegExp(debouncedSearchKeyword.value), 'i')
- const dataWithComments = flowStore.simpleFlowUIData.map((item, index) => {
- const comment = renderAtomRemark(item)
- const commentText = isArray(comment)
- ? comment.map(i => (i.variable ? decodeHtml(i.sr[2]) : i)).join('')
- : comment
- return { id: item.id, title: item.alias, commentText, item, index }
- })
+  const searchRegex = new RegExp(escapeRegExp(debouncedSearchKeyword.value), 'i')
+  const dataWithComments = flowStore.simpleFlowUIData.map((item, index) => {
+    const comment = renderAtomRemark(item)
+    const commentText = isArray(comment)
+      ? comment.map(i => (i.variable ? decodeHtml(i.sr[2]) : i)).join('')
+      : comment
+    return { id: item.id, title: item.alias, commentText, item, index }
+  })
 
- return dataWithComments.filter(
- it => searchRegex.test(it.title) || searchRegex.test(it.commentText),
- )
+  return dataWithComments.filter(
+    it => searchRegex.test(it.title) || searchRegex.test(it.commentText),
+  )
 })
 
 // 현재의검색결과
 const activeSearchAtom = computed(() => {
- return searchResults.value[activeIndex.value]
+  return searchResults.value[activeIndex.value]
 })
 
 // 열기패키지현재검색결과의그룹
 function expandContainingGroups(atomIndex: number) {
- const groupKeys = Object.keys(flowStore.nodeContactMap)
- groupKeys.forEach((groupId) => {
- const groupStartIdx = flowStore.simpleFlowUIData.findIndex(node => node.id === groupId)
- const groupEndIdx = backContainNodeIdx(groupId)
+  const groupKeys = Object.keys(flowStore.nodeContactMap)
+  groupKeys.forEach((groupId) => {
+    const groupStartIdx = flowStore.simpleFlowUIData.findIndex(node => node.id === groupId)
+    const groupEndIdx = backContainNodeIdx(groupId)
 
- if (groupStartIdx > -1 && groupStartIdx <= atomIndex && groupEndIdx >= atomIndex) {
- toggleFold(flowStore.simpleFlowUIData[groupStartIdx])
- }
- })
+    if (groupStartIdx > -1 && groupStartIdx <= atomIndex && groupEndIdx >= atomIndex) {
+      toggleFold(flowStore.simpleFlowUIData[groupStartIdx])
+    }
+  })
 }
 
 // 관리검색결과자르기교체
 function handleSearchResultChange(atomId: string | undefined) {
- if (!atomId) {
- activeIndex.value = 0
- return
- }
+  if (!atomId) {
+    activeIndex.value = 0
+    return
+  }
 
- const canvas = document.querySelector<HTMLElement>('.postTask-content-canvas')
- if (canvas) {
- canvas.scrollTop = 0
- }
- changeSelectAtoms(atomId, null, false)
- expandContainingGroups(activeSearchAtom.value.index)
- nextTick(() => atomScrollIntoView(atomId))
+  const canvas = document.querySelector<HTMLElement>('.postTask-content-canvas')
+  if (canvas) {
+    canvas.scrollTop = 0
+  }
+  changeSelectAtoms(atomId, null, false)
+  expandContainingGroups(activeSearchAtom.value.index)
+  nextTick(() => atomScrollIntoView(atomId))
 }
 
 // 검색파일
 function showSearchWidget() {
- showSearch.value = true
- // 지정위아래키빠름키
- hotkeys(ARROW_UP_KEY, SCOPE, handleArrowUp)
- hotkeys(ARROW_DOWN_KEY, SCOPE, handleArrowDown)
- nextTick(() => searchWidget.value?.focus())
+  showSearch.value = true
+  // 지정위아래키빠름키
+  hotkeys(ARROW_UP_KEY, SCOPE, handleArrowUp)
+  hotkeys(ARROW_DOWN_KEY, SCOPE, handleArrowDown)
+  nextTick(() => searchWidget.value?.focus())
 }
 
 function closeSearchWidget() {
- showSearch.value = false
- searchKeyword.value = ''
- activeIndex.value = 0
- // 가져오기메시지지정위아래키빠름키
- hotkeys.unbind(ARROW_UP_KEY, SCOPE)
- hotkeys.unbind(ARROW_DOWN_KEY, SCOPE)
+  showSearch.value = false
+  searchKeyword.value = ''
+  activeIndex.value = 0
+  // 가져오기메시지지정위아래키빠름키
+  hotkeys.unbind(ARROW_UP_KEY, SCOPE)
+  hotkeys.unbind(ARROW_DOWN_KEY, SCOPE)
 }
 
 function next() {
- if (searchResults.value.length === 0)
- return
- const total = searchResults.value.length
- activeIndex.value = (activeIndex.value + 1) % total
+  if (searchResults.value.length === 0)
+    return
+  const total = searchResults.value.length
+  activeIndex.value = (activeIndex.value + 1) % total
 }
 
 function previous() {
- if (searchResults.value.length === 0)
- return
- const total = searchResults.value.length
- activeIndex.value = activeIndex.value === 0 ? total - 1 : activeIndex.value - 1
+  if (searchResults.value.length === 0)
+    return
+  const total = searchResults.value.length
+  activeIndex.value = activeIndex.value === 0 ? total - 1 : activeIndex.value - 1
 }
 
 // 위아래키관리함수데이터
 function handleArrowUp() {
- console.log('handleArrowUp')
- previous()
+  previous()
 }
 
 function handleArrowDown() {
- next()
+  next()
 }
 
 // 검색결과변수
 watch(
- () => activeSearchAtom.value?.id,
- handleSearchResultChange,
+  () => activeSearchAtom.value?.id,
+  handleSearchResultChange,
 )
 
 // 빠름키지정
 onMounted(() => {
- hotkeys(SEARCH_HOTKEY, SCOPE, showSearchWidget)
+  hotkeys(SEARCH_HOTKEY, SCOPE, showSearchWidget)
 })
 
 onBeforeUnmount(() => {
- hotkeys.unbind(SEARCH_HOTKEY, SCOPE)
- hotkeys.unbind(ARROW_UP_KEY, SCOPE)
- hotkeys.unbind(ARROW_DOWN_KEY, SCOPE)
+  hotkeys.unbind(SEARCH_HOTKEY, SCOPE)
+  hotkeys.unbind(ARROW_UP_KEY, SCOPE)
+  hotkeys.unbind(ARROW_DOWN_KEY, SCOPE)
 })
 </script>
 
 <template>
- <div class="search">
- <Transition name="search-fade">
- <SearchWidget
- v-if="showSearch"
- ref="searchWidget"
- v-model:value="searchKeyword"
- class="search-widget"
- :active="activeIndex + 1"
- :total="searchResults.length"
- @next="next"
- @previous="previous"
- @close="closeSearchWidget"
- />
- </Transition>
- </div>
+  <div class="search">
+    <Transition name="search-fade">
+      <SearchWidget
+        v-if="showSearch"
+        ref="searchWidget"
+        v-model:value="searchKeyword"
+        class="search-widget"
+        :active="activeIndex + 1"
+        :total="searchResults.length"
+        @next="next"
+        @previous="previous"
+        @close="closeSearchWidget"
+      />
+    </Transition>
+  </div>
 </template>
 
 <style scoped lang="scss">
 .search {
- width: 100%;
- position: relative;
- z-index: 1;
+  width: 100%;
+  position: relative;
+  z-index: 1;
 
- .search-widget {
- position: absolute;
- right: 10px;
- top: 20px;
- }
+  .search-widget {
+    position: absolute;
+    right: 10px;
+    top: 20px;
+  }
 }
 
 // 완화완화출력동작
 .search-fade-enter-active,
 .search-fade-leave-active {
- transition:
- opacity 0.3s ease-in-out,
- transform 0.3s ease-in-out;
+  transition:
+    opacity 0.3s ease-in-out,
+    transform 0.3s ease-in-out;
 }
 
 .search-fade-enter-from {
- opacity: 0;
- transform: translateY(-10px);
+  opacity: 0;
+  transform: translateY(-10px);
 }
 
 .search-fade-leave-to {
- opacity: 0;
- transform: translateY(-10px);
+  opacity: 0;
+  transform: translateY(-10px);
 }
 </style>

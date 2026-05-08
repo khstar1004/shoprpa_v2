@@ -1,4 +1,4 @@
-﻿import type { Attachment } from '@/components/AttachmentUpload/index.vue'
+import type { Attachment } from '@/components/AttachmentUpload/index.vue'
 import { DEFAULT_COLOR } from '@/constants/avatar'
 
 export interface FormState {
@@ -7,7 +7,7 @@ export interface FormState {
   name: string // 이름
   icon: string // 아이콘
   color: string // 아이콘색상
-  introduction: string // 
+  introduction: string //
   useDescription: string // 사용설명
   video: Attachment[] // 주소id
   appendix: Attachment[] // 파일주소id

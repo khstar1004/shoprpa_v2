@@ -1,4 +1,4 @@
-﻿import { computed, defineComponent, h } from 'vue'
+import { computed, defineComponent, h } from 'vue'
 
 import { ALREADY_MOUNTED, MODAL_REGISTRY } from './contants'
 import { useModalContext } from './store'

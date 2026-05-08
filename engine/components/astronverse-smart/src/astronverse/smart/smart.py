@@ -17,11 +17,11 @@ class Smart:
         except SyntaxError as e:
             raise e
         except Exception as e:
-            raise BaseException(MODULE_IMPORT_ERROR.format(path), f"불가가져오기모듈 {path}: {str(e)}")
+            raise BaseException(MODULE_IMPORT_ERROR.format(path), f"모듈을 가져올 수 없습니다: {path}: {str(e)}")
 
         main_func = next((obj for _, obj in inspect.getmembers(process_module, inspect.isfunction)), None)
         if not main_func or not callable(main_func):
-            raise BaseException(MODULE_MAIN_FUNCTION_NOT_FOUND.format(path), f"모듈 {path} 지정되지 않았습니다가능호출의 main 데이터")
+            raise BaseException(MODULE_MAIN_FUNCTION_NOT_FOUND.format(path), f"모듈 {path}에서 호출 가능한 main 함수를 찾을 수 없습니다.")
 
         res = main_func(**kwargs)
 
@@ -30,18 +30,18 @@ class Smart:
     @staticmethod
     def _get_auto_context() -> (dict, str):
         """
-        가져오기호출의위아래문서변수, 모든호출중의변수
+        호출 컨텍스트의 변수와 패키지 정보를 가져옵니다.
         """
         try:
             frame = inspect.currentframe()
             if frame is None:
                 return {}, ""
 
-            # 모든호출중의변수
+            # 호출 체인에서 main 함수의 로컬 변수를 찾는다.
             all_vars = {}
             package = ""
 
-            # 건너뛰기현재(_get_auto_context 본)
+            # 현재 함수 프레임은 건너뛴다.
             frame = frame.f_back
             if frame is None:
                 return {}, ""
@@ -49,18 +49,14 @@ class Smart:
             # 모든호출, 까지외부로main의
             cframe = None
             while frame is not None:
-                # 가져오기현재의영역모듈변수
                 if frame.f_code.co_name == "main":
-                    # 까지 main 데이터, 사용해당
                     cframe = frame
                     break
                 else:
                     frame = frame.f_back
 
-            # 가져오기영역모듈변수및전역 변수
             if cframe is not None:
                 local_vars = cframe.f_locals
-                # 병합변수, 영역모듈변수(덮어쓰기전역 변수)
                 all_vars.update(local_vars)
                 package = cframe.f_globals.get("__package__")
             return all_vars, package
@@ -75,7 +71,7 @@ class Smart:
     )
     def run_code(smart_component: dict, **code_params) -> Any:
         """
-        실행 AI 완료의코드, 지원웹 페이지및데이터 처리유형.
+        스마트 컴포넌트의 Python 코드를 실행합니다.
         """
         code_params = {k: v for k, v in code_params.items() if v is not None and not k.startswith("__")}
 
@@ -96,7 +92,7 @@ class Smart:
                 web_browser = WebBrowser(get_browser_instance())
                 code_params["browser"] = web_browser
 
-            # WebPick유형변환로WebElement유형
+            # WebPick 값을 WebElement 객체로 변환한다.
             for key, value in code_params.items():
                 if isinstance(value, dict) and value.get("elementData"):
                     code_params[key] = web_browser.get_element_by_web_pick(value)

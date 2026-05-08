@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { useTranslation } from 'i18next-vue'
 import { storeToRefs } from 'pinia'
 import type { Ref } from 'vue'
@@ -92,7 +92,7 @@ onMounted(() => {
             <span class="text-[12px]">{{ $t(title) }}</span>
           </template>
         </a-segmented>
-        <rpa-hint-icon :name="sidebarWide ? 'sidebar-wide' : 'sidebar-narrow'" :title="sidebarWide ? '까지버전' : '까지너비버전'" class="ml-[12px]" width="16px" height="16px" enable-hover-bg @click="toggleWidth" />
+        <rpa-hint-icon :name="sidebarWide ? 'sidebar-wide' : 'sidebar-narrow'" :title="sidebarWide ? '좁게 보기' : '넓게 보기'" class="ml-[12px]" width="16px" height="16px" enable-hover-bg @click="toggleWidth" />
       </div>
       <article
         v-for="item in atomTab[activeKey]?.params" :key="item.key"

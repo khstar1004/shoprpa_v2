@@ -2304,7 +2304,8 @@ public class CasdoorUserServiceImpl implements UserService {
         //            log.error("OAuth로그인예외", e);
         //            return AppResponse.error(ErrorCodeEnum.E_SERVICE, "OAuth로그인예외: " + e.getMessage());
         //        }
-        return null;
+        log.warn("Casdoor OAuth code login is not enabled. Use the password/session login API instead.");
+        return AppResponse.error(ErrorCodeEnum.E_SERVICE, "Casdoor OAuth 로그인은 현재 활성화되어 있지 않습니다");
     }
 
     /**

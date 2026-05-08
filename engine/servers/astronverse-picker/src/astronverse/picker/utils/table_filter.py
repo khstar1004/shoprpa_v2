@@ -117,9 +117,7 @@ class DataFilter:
         self.data_json = data_json
         self.produceType = data_json.get("produceType")
         self.data_values = data_json.get("values")
-        # print(f"self.data_values: {self.data_values}")
         self.value_types = list(map(lambda x: x.get("value_type"), self.data_values))
-        # print(f"self.value_types: {self.value_types}")
         self.data_list = list(map(lambda x: x["value"], self.data_values))
         self.cell_filterConfig_list = list(map(lambda x: x.get("colFilterConfig"), self.data_values))
         self.filterConfig_list = list(map(lambda x: x.get("filterConfig"), self.data_values))
@@ -162,7 +160,6 @@ class DataFilter:
         data_table = pd.DataFrame(text_values).T
         data_table.reset_index(inplace=True)
         self.hightLightIndex_list = [list(data_table["index"]) for _ in range(len(text_values))]
-        # print(self.hightLightIndex_list )
 
         return data_table
 
@@ -195,7 +192,7 @@ class DataFilter:
                     self.data_table[index].update(filter_result)
                 except Exception as e:
                     logger.error(f"cell_filter: {str(e)}")
-                    raise ValueError(f"지원하지 않음해당선택파일: {str(e)}")
+                    raise ValueError(f"지원하지 않는 셀 필터 조건입니다: {str(e)}")
 
     def table_filter(self):
         """
@@ -222,7 +219,7 @@ class DataFilter:
                     self.data_table = self.data_table[eval(filter_condition)]
                 except Exception as e:
                     logger.error(f"table_filter: {str(e)}")
-                    raise ValueError(f"지원하지 않음해당선택파일: {str(e)}")
+                    raise ValueError(f"지원하지 않는 테이블 필터 조건입니다: {str(e)}")
         for index in range(len(self.hightLightIndex_list)):
             self.hightLightIndex_list[index] = [
                 self.hightLightIndex_list[index][i] for i in list(self.data_table["index"])
@@ -273,7 +270,7 @@ class DataFilter:
                 if isinstance(parameter, list):
                     filter_logic_str = f"({filter_col_str} >= '{parameter[0]}')&({filter_col_str} <= '{parameter[1]}')"
                 else:
-                    raise ValueError("파일예외, 입력하세요정상의파일!")
+                    raise ValueError("시간 범위 필터 매개변수가 올바르지 않습니다")
         elif logical == "regular":
             filter_logic_str = f'{filter_col_str}.astype(str).str.contains(r"{parameter}", regex=True)'
         elif logical == "enumerate":
@@ -282,7 +279,7 @@ class DataFilter:
             if isinstance(parameter, list):
                 filter_logic_str = f"{filter_col_str}.isin({parameter})"
             else:
-                raise ValueError("파일예외, 입력하세요정상의파일!")
+                raise ValueError("열거 필터 매개변수가 올바르지 않습니다")
         else:
             filter_logic_str = None
 
@@ -379,7 +376,7 @@ class DataFilter:
                         "Regular",
                     ]:
                         if not parameters:
-                            raise ValueError(f"{index + 1}열데이터 처리적음매개변수")
+                            raise ValueError(f"{index + 1}열 데이터 처리 매개변수가 부족합니다")
                     try:
                         if process_type == "Trim":
                             self.trim(index, parameters)
@@ -396,7 +393,7 @@ class DataFilter:
                         elif process_type == "Suffix":
                             self.suffix(index, parameters)
                     except Exception as e:
-                        raise ValueError(f"매개변수예외, 입력하세요정상의매개변수!{process_type}{e}")
+                        raise ValueError(f"{process_type} 매개변수가 올바르지 않습니다: {e}")
 
     def data_filter_main(self):
         if any(self.cell_filterConfig_list):
@@ -428,8 +425,6 @@ class DataFilter:
         """
 
         for list_index in range(len(self.hightLightIndex_list)):
-            # print(list_index)
-            # print(self.data_json["values"][list_index])
             self.data_json["values"][list_index].update(
                 {
                     "value": [

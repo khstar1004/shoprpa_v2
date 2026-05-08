@@ -38,6 +38,54 @@ function getNodeText(element: HTMLElement) {
   return nodeText
 }
 
+function rectToPlainObject(rect: DOMRect | ClientRect): DOMRectT {
+  return {
+    left: rect.left,
+    top: rect.top,
+    width: rect.width,
+    height: rect.height,
+    right: rect.right,
+    bottom: rect.bottom,
+    x: 'x' in rect ? rect.x : rect.left,
+    y: 'y' in rect ? rect.y : rect.top,
+  }
+}
+
+function getPlainBoundingClientRect(element: Element): DOMRectT {
+  const rect = element.getBoundingClientRect()
+  const jsonRect = 'toJSON' in rect && typeof rect.toJSON === 'function' ? rect.toJSON() : rectToPlainObject(rect)
+  return jsonRect as DOMRectT
+}
+
+function parseTransformScale(transform: string) {
+  if (!transform || transform === 'none') {
+    return { scaleX: 1, scaleY: 1 }
+  }
+
+  const matrixMatch = transform.match(/^matrix\(([^)]+)\)$/)
+  if (matrixMatch) {
+    const values = matrixMatch[1].split(',').map(value => Number.parseFloat(value.trim()))
+    return {
+      scaleX: Number.isFinite(values[0]) ? values[0] : 1,
+      scaleY: Number.isFinite(values[3]) ? values[3] : 1,
+    }
+  }
+
+  const scaleMatch = transform.match(/^scale\(([^)]+)\)$/)
+  if (scaleMatch) {
+    const values = scaleMatch[1].split(',').map(value => Number.parseFloat(value.trim()))
+    const scaleX = Number.isFinite(values[0]) ? values[0] : 1
+    const scaleY = Number.isFinite(values[1]) ? values[1] : scaleX
+    return { scaleX, scaleY }
+  }
+
+  return { scaleX: 1, scaleY: 1 }
+}
+
+function getPropertyOrAttribute(element: HTMLElement, attrName: string, propertyValue: unknown) {
+  return (typeof propertyValue === 'string' && propertyValue) || element.getAttribute(attrName)
+}
+
 export function textAttrFromElement(ele: HTMLElement) {
   const text = getText(ele).replace(/[\x00-\x1F\x7F]/g, '')
   const src = getAttr(ele, 'src')
@@ -58,24 +106,28 @@ export function textAttrFromElement(ele: HTMLElement) {
   return value
 }
 
-export function getAttr(element: HTMLElement, attrName: string) {
-  const attrMap = {
+export function getAttrs(element: HTMLElement) {
+  return {
     'accept': element.getAttribute('accept'),
     'id': element.getAttribute('id'),
     'class': element.getAttribute('class'),
     'name': element.getAttribute('name'),
     'type': element.getAttribute('type'),
-    'value': (element as HTMLInputElement).value,
-    'href': (element as HTMLAnchorElement).href,
-    'src': (element as HTMLImageElement | HTMLSourceElement).src,
-    'title': element.title,
+    'value': getPropertyOrAttribute(element, 'value', (element as HTMLInputElement).value),
+    'href': getPropertyOrAttribute(element, 'href', (element as HTMLAnchorElement).href),
+    'src': getPropertyOrAttribute(element, 'src', (element as HTMLImageElement | HTMLSourceElement).src),
+    'title': getPropertyOrAttribute(element, 'title', element.title),
     'text': getNodeText(element),
-    'placeholder': (element as HTMLInputElement | HTMLTextAreaElement).placeholder,
+    'placeholder': getPropertyOrAttribute(element, 'placeholder', (element as HTMLInputElement | HTMLTextAreaElement).placeholder),
     'dataset': JSON.parse(JSON.stringify(element.dataset)),
     'readonly': String((element as HTMLInputElement).readOnly),
     'role': element.getAttribute('role'),
     'aria-label': element.getAttribute('aria-label'),
   }
+}
+
+export function getAttr(element: HTMLElement, attrName: string) {
+  const attrMap = getAttrs(element)
   if (attrName in attrMap) {
     return attrMap[attrName] || ''
   }
@@ -140,6 +192,9 @@ function pickClass(element: HTMLElement) {
 }
 
 function elementFromPoint(x: number, y: number, docu: Document | ShadowRoot) {
+  if (!docu.elementFromPoint) {
+    return null
+  }
   const element = docu.elementFromPoint(x, y)
   return element
 }
@@ -623,7 +678,6 @@ function checkElementsByRegular(searchElements: HTMLElement[], elementDirectory:
 function directoryFindElement(elementDirectory: ElementDirectory[], onlyPosition: boolean = false) {
   let searchElements: HTMLElement[] = []
   const xpath = generateXPath(elementDirectory, onlyPosition)
-  // console.log('directoryFindElement generateXPath xpath: ', xpath)
   searchElements = getElementsByXpath(xpath, onlyPosition)
   if (searchElements && searchElements.length > 0) {
     searchElements = checkElementsByRegular(searchElements, elementDirectory)
@@ -766,12 +820,12 @@ export function highlightElements(elements: HTMLElement[]) {
 }
 
 export function getElementsByPosition(x: number, y: number) {
-  const elements = document.elementsFromPoint(x, y)
+  const elements = document.elementsFromPoint ? document.elementsFromPoint(x, y) : Array.from(document.querySelectorAll('*'))
   const positions = elements.map((element) => {
-    const rect = element.getBoundingClientRect()
+    const rect = getPlainBoundingClientRect(element)
     return {
       element,
-      ...rect.toJSON(),
+      ...rect,
     }
   })
   return positions
@@ -811,7 +865,7 @@ export function getAllElementsPositionInBody(body: HTMLElement | ShadowRoot = do
     }
     positions.push({
       element,
-      ...rect.toJSON(),
+      ...rectToPlainObject(rect),
     })
   })
   positions.push(...shadowPositions)
@@ -867,6 +921,9 @@ export function getIFramesElements() {
 
 export function getElementsFromPoints(a: { x: number, y: number }, b: { x: number, y: number }) {
   const elements = []
+  if (!document.elementFromPoint) {
+    return getAllElements()
+  }
   for (let x = a.x; x <= b.x; x++) {
     for (let y = a.y; y <= b.y; y++) {
       const element = document.elementFromPoint(x, y)
@@ -913,12 +970,12 @@ export function getClosestElementByPoint(target: Point) {
   const ele = elementFromPoint(target.x, target.y, document)
   const eles = document.elementsFromPoint ? getElementsByPosition(target.x, target.y) : getAllElementsPositionInBody()
   if (!eles.length)
-    return ele
+    return ele || undefined
   const pointEles = eles.filter((item) => {
     return item.left <= target.x && item.top <= target.y && item.right >= target.x && item.bottom >= target.y
   })
   if (!pointEles.length)
-    return ele
+    return ele || undefined
   const closestElement = pointEles.reduce((prev, curr) => {
     const prevDistance = Math.hypot(prev.left - target.x, prev.top - target.y, prev.right - target.x, prev.bottom - target.y)
     const currDistance = Math.hypot(curr.left - target.x, curr.top - target.y, curr.right - target.x, curr.bottom - target.y)
@@ -993,7 +1050,7 @@ export function getBoundingClientRect(element: HTMLElement): DOMRectT {
   const iframeTransform = window.currentFrameInfo.iframeTransform
   const { scaleX = 1, scaleY = 1 } = iframeTransform
   const safeNum = 8
-  const rect = element.getBoundingClientRect().toJSON()
+  const rect = getPlainBoundingClientRect(element)
   const dpr = window.devicePixelRatio
   const { left, top, width, height, right, bottom, x, y } = rect
   return {
@@ -1027,13 +1084,14 @@ export function getFrameContentRect(element: HTMLElement) {
 
 export function getIframeTransform(element: Element) {
   const style = window.getComputedStyle(element)
-  const matrix = new DOMMatrix(style.transform)
-  const scaleX = matrix.a
-  const scaleY = matrix.d
-  return {
-    scaleX,
-    scaleY,
+  if ('DOMMatrix' in window && typeof window.DOMMatrix === 'function') {
+    const matrix = new DOMMatrix(style.transform)
+    return {
+      scaleX: matrix.a,
+      scaleY: matrix.d,
+    }
   }
+  return parseTransformScale(style.transform)
 }
 
 export function getElementByElementInfo(params: ElementInfo): HTMLElement[] | null {

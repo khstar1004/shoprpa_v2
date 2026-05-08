@@ -1,4 +1,4 @@
-﻿import { useAsyncState, useDebounceFn } from '@vueuse/core'
+import { useAsyncState, useDebounceFn } from '@vueuse/core'
 import { message } from 'ant-design-vue'
 import { isEmpty } from 'lodash-es'
 import { defineStore } from 'pinia'
@@ -96,7 +96,7 @@ export const useProcessStore = defineStore('process', () => {
     return isPy ? { moduleId: activeProcessId.value } : { processId: activeProcessId.value }
   })
 
-  // 새로고침후요청 
+  // 새로고침후요청
   watchEffect(async () => {
     if (project.value.id && activeProcessId.value) {
       parameters.value = await getConfigParams({

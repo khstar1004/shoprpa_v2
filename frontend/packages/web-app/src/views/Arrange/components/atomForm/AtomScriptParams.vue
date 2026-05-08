@@ -1,4 +1,4 @@
-﻿<script lang="ts" setup>
+<script lang="ts" setup>
 import { message } from 'ant-design-vue'
 import { useTranslation } from 'i18next-vue'
 import { nanoid } from 'nanoid'
@@ -21,7 +21,6 @@ const emit = defineEmits(['refresh'])
 
 const gird = shallowRef()
 const paramsData = ref(tranformToFront(JSON.parse(props?.params?.value as string || '[]')))
-// console.log('paramsData', paramsData.value)
 const { t } = useTranslation()
 
 const gridOptions: VxeGridProps<PARAM_MAP> = {
@@ -67,7 +66,6 @@ function tranformToEnd(paramsData) {
       value: item.varValue.value,
     },
   }))
-  // console.log('tranformToEnd', res)
   return res
 }
 
@@ -107,12 +105,10 @@ function addParam() {
 }
 
 function deleteParam(id: string) {
-  console.log(id)
   paramsData.value = paramsData.value.filter(item => item.id !== id)
 }
 
 function handleBlur(row: PARAM_MAP) {
-  console.log(row)
   // 조회여부저장에서재이름의매개변수
   const index = paramsData.value.findIndex(item => item.varName === row.varName && item.id !== row.id)
   if (index !== -1) {
@@ -161,7 +157,7 @@ function handleBlur(row: PARAM_MAP) {
   overflow: hidden;
   width: 100%;
 
-  :deep(.vxe-table--body) {
+  .vxe-table--body {
     --vxe-ui-table-cell-padding-left: 0;
     --vxe-ui-table-cell-padding-right: 0;
   }

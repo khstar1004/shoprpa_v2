@@ -1,4 +1,4 @@
-﻿import type { Bus as Emittery } from '@/utils/eventBus'
+import type { Bus as Emittery } from '@/utils/eventBus'
 
 import type { ProcessNode } from '@/corobot/type'
 

@@ -1,4 +1,4 @@
-﻿<script lang="ts" setup>
+<script lang="ts" setup>
 import { throttle } from 'lodash-es'
 
 import { usePickStore } from '@/stores/usePickStore'
@@ -11,14 +11,14 @@ const usePick = usePickStore()
 
 // 선택새요소
 const pickNewElement = throttle(() => {
- usePick.newPick('')
+  usePick.newPick('')
 }, 1000, { leading: true, trailing: false })
 </script>
 
 <template>
- <ElementManageHeader :placeholder="$t('searchElements')">
- <template #btns>
- <ElementBtns :loading="usePick.isPicking" :disabled="usePick.isPicking" @click="pickNewElement" />
- </template>
- </ElementManageHeader>
+  <ElementManageHeader :placeholder="$t('searchElements')">
+    <template #btns>
+      <ElementBtns :loading="usePick.isPicking" :disabled="usePick.isPicking" @click="pickNewElement" />
+    </template>
+  </ElementManageHeader>
 </template>

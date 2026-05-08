@@ -1,4 +1,4 @@
-﻿import { message } from 'ant-design-vue'
+import { message } from 'ant-design-vue'
 import { useTranslation } from 'i18next-vue'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
@@ -21,7 +21,6 @@ export const useCvPickStore = defineStore('cvPickStore', () => {
     isPicking.value = false
     RpaCvPicker.destroy()
     windowManager.maximizeWindow(true)
-    console.log('finishPick')
   }
   // 검증결과
   function finishCheck() {
@@ -53,7 +52,6 @@ export const useCvPickStore = defineStore('cvPickStore', () => {
     // 지정메시지
     RpaCvPicker.bindMessage((res) => {
       const { key, data, err_msg } = res || {} // key: 'success' | 'error' | 'ping'
-      console.log('bindMessage: ', res)
       if (key === 'success' && data) {
         const dataObj = JSON.parse(data)
         callback && callback({
@@ -87,7 +85,6 @@ export const useCvPickStore = defineStore('cvPickStore', () => {
   }
   // 열기 검증
   const startCvCheck = (type: string, data: any, callback: (params: { success: boolean, data: any }) => void) => {
-    // console.log('startCheck: ', data)
     isChecking.value = true
     // 시작검증
     RpaCvPicker.create(() => {

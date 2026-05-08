@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import Card from '../card.vue'
 
-import { useBrowerPlugin } from './hooks/useBrowerPlugin'
+import { useBrowserPlugin } from './hooks/useBrowserPlugin'
 import PluginButton from './pluginButton.vue'
 
 // 확장목록
-const { pluginList, safeInstallBrowerPlugin } = useBrowerPlugin()
+const { pluginList, safeInstallBrowserPlugin } = useBrowserPlugin()
 </script>
 
 <template>
@@ -24,7 +24,7 @@ const { pluginList, safeInstallBrowerPlugin } = useBrowerPlugin()
         <PluginButton
           :item="plugin"
           :index="index"
-          @click="() => safeInstallBrowerPlugin(plugin)"
+          @click="() => safeInstallBrowserPlugin(plugin)"
         />
       </template>
     </Card>

@@ -1,4 +1,4 @@
-﻿<script lang="ts" setup>
+<script lang="ts" setup>
 import { NiceModal } from '@rpa/components'
 import { isEmpty } from 'lodash-es'
 import { inject } from 'vue'
@@ -11,33 +11,33 @@ const emit = defineEmits(['saveData', 'close'])
 const { dialogData } = inject('dialogData') as { dialogData: any }
 
 function togglePreView() {
- const { title, buttonType } = dialogData.value
- const { itemList, formModel } = transDataForPreview(dialogData.value)
- NiceModal.show(UserFormDialogModal, {
- option: { mode: 'modal', title, buttonType, itemList, formModel },
- })
+  const { title, buttonType } = dialogData.value
+  const { itemList, formModel } = transDataForPreview(dialogData.value)
+  NiceModal.show(UserFormDialogModal, {
+    option: { mode: 'modal', title, buttonType, itemList, formModel },
+  })
 }
 
 function handleOk() {
- const formList = dialogData.value?.formList
- // 필요있음일개테이블단일파일저장에서일개, 이면required필드로true, 백엔드필요
- const required = formList.some((item: any) => item?.required?.value)
- dialogData.value.table_required = required
- const saveData = isEmpty(formList) ? '' : JSON.stringify(dialogData.value)
- emit('saveData', saveData)
+  const formList = dialogData.value?.formList
+  // 필요있음일개테이블단일파일저장에서일개, 이면required필드로true, 백엔드필요
+  const required = formList.some((item: any) => item?.required?.value)
+  dialogData.value.table_required = required
+  const saveData = isEmpty(formList) ? '' : JSON.stringify(dialogData.value)
+  emit('saveData', saveData)
 }
 </script>
 
 <template>
- <div class="dialog-modal_footer">
- <a-button type="primary" ghost @click="togglePreView">
- {{ $t('preview') }}
- </a-button>
- <a-button @click="() => emit('close')">
- {{ $t('cancel') }}
- </a-button>
- <a-button type="primary" @click="handleOk">
- {{ $t('confirm') }}
- </a-button>
- </div>
+  <div class="dialog-modal_footer">
+    <a-button type="primary" ghost @click="togglePreView">
+      {{ $t('preview') }}
+    </a-button>
+    <a-button @click="() => emit('close')">
+      {{ $t('cancel') }}
+    </a-button>
+    <a-button type="primary" @click="handleOk">
+      {{ $t('confirm') }}
+    </a-button>
+  </div>
 </template>

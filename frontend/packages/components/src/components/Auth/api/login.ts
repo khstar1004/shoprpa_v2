@@ -1,4 +1,4 @@
-﻿import { message } from 'ant-design-vue'
+import { message } from 'ant-design-vue'
 import i18next from 'i18next'
 
 import type { ConsultFormData, LoginFormData, RegisterFormData, TenantItem } from '../interface'
@@ -38,7 +38,7 @@ export async function isHistory(params: LoginFormData) {
   return data
 }
 
-// 
+//
 export async function preAuthenticate(params: PreAuthenticateData) {
   const { data } = await http.post('/rpa-auth/pre-authenticate', params)
   return data

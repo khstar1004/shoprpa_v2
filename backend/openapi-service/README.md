@@ -1,8 +1,8 @@
-# RPA OpenAPI Service - RPA Workflow Management Service
+# ShopRPA OpenAPI Service - Workflow Integration API
 
 ## 📖 Project Introduction
 
-RPA OpenAPI Service is an RPA workflow management service built on FastAPI, providing workflow creation, execution, monitoring, and API key management functions. The service integrates WebSocket real-time communication, MCP (Model Context Protocol) support, Redis caching, request tracing and other modern technology stacks, providing complete API service capabilities for the RPA platform.
+ShopRPA OpenAPI Service is the workflow integration API for ShopRPA. It provides workflow creation, execution, monitoring, API key management, WebSocket communication, MCP (Model Context Protocol) support, Redis caching, and request tracing for the ShopRPA platform.
 
 ### ✨ Key Features
 
@@ -137,7 +137,7 @@ rpa-openapi-service/
 
 ### Environment Requirements
 
-- Python 3.11+
+- Python 3.13+
 - MySQL 8.0+
 - Redis 7.0+
 - Docker & Docker Compose (optional)
@@ -145,14 +145,11 @@ rpa-openapi-service/
 ### 1. Install Dependencies
 
 ```bash
-# Install using pip
-pip install -e .
-
-# Or use uv (recommended)
-uv sync
+# Install locked runtime and development dependencies
+uv sync --locked
 ```
 
-> It is recommended to use [uv](https://github.com/astral-sh/uv) for dependency management. The `uv.lock` file has locked dependency versions to ensure environment consistency.
+> Use [uv](https://github.com/astral-sh/uv) for dependency management. The `uv.lock` file is the source of truth for reproducible runtime versions.
 
 ### 2. Configure Environment Variables
 
@@ -168,7 +165,9 @@ DATABASE_URL=mysql+aiomysql://username:password@localhost:3306/rpa_openapi
 REDIS_URL=redis://localhost:6379/0
 
 # Application name
-APP_NAME="RPA OpenAPI Service"
+APP_NAME="ShopRPA OpenAPI Service"
+INTERNAL_ADMIN_API_KEY="change-me-before-production"
+REGISTER_BEARER_TOKEN="change-me-before-production"
 ```
 
 ### 3. Start Service

@@ -127,7 +127,7 @@ class EncryptCore:  # pylint: disable=too-few-public-methods
         """Base64 코드.가능관리문자열또는파일.
 
          encode_type == PICTURE 시, 증가추가 data URI 전."""
-        if file_path:
+        if encode_type == Base64CodeType.PICTURE:
             input_content = Path(file_path).read_bytes()
         else:
             input_content = string_data.encode("utf-8")

@@ -24,7 +24,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * 이름단일관리관리연결
+ * 사용자 차단 목록 관리 API
  *
  * @author system
  * @date 2025-12-16
@@ -39,21 +39,20 @@ public class BlacklistController {
     private final UserBlacklistDao userBlacklistDao;
 
     /**
-     * 추가사용자까지이름단일
+     * 사용자를 차단 목록에 추가합니다.
      *
-     * @param dto 추가이름단일 DTO
+     * @param dto 차단 추가 DTO
      * @param request HTTP 요청 
-     * @return 이름단일기록
+     * @return 차단 기록
      */
     @PostMapping("/add")
     public AppResponse<BlacklistVo> add(@RequestBody @Validated AddBlacklistDto dto, HttpServletRequest request) {
         try {
-            // 가져오기현재사람
             UapUser loginUser = UapUserInfoAPI.getLoginUser(request);
             String operator = loginUser != null ? loginUser.getLoginName() : "ADMIN";
 
             log.info(
-                    "추가이름단일, userId: {}, username: {}, reason: {}, operator: {}",
+                    "사용자 차단 추가 요청, userId: {}, username: {}, reason: {}, operator: {}",
                     dto.getUserId(),
                     dto.getUsername(),
                     dto.getReason(),
@@ -64,65 +63,63 @@ public class BlacklistController {
 
             return AppResponse.success(convertToVo(blacklist));
         } catch (Exception e) {
-            log.error("추가이름단일실패", e);
-            return AppResponse.error(ErrorCodeEnum.E_SERVICE, "추가이름단일실패: " + e.getMessage());
+            log.error("사용자 차단 추가 실패", e);
+            return AppResponse.error(ErrorCodeEnum.E_SERVICE, "사용자 차단 추가 실패: " + e.getMessage());
         }
     }
 
     /**
-     * 해제사용자
+     * 사용자 차단을 해제합니다.
      *
      * @param dto 해제 DTO
      * @param request HTTP 요청 
-     * @return 여부성공
+     * @return 성공 여부
      */
     @PostMapping("/unban")
     public AppResponse<Boolean> unban(@RequestBody @Validated UnbanDto dto, HttpServletRequest request) {
         try {
-            // 가져오기현재사람
             UapUser loginUser = UapUserInfoAPI.getLoginUser(request);
             String operator = loginUser != null ? loginUser.getLoginName() : "ADMIN";
 
-            log.info("해제사용자, userId: {}, operator: {}", dto.getUserId(), operator);
+            log.info("사용자 차단 해제 요청, userId: {}, operator: {}", dto.getUserId(), operator);
 
             boolean success = blackListService.unban(dto.getUserId(), operator);
             return AppResponse.success(success);
         } catch (Exception e) {
-            log.error("해제사용자실패", e);
-            return AppResponse.error(ErrorCodeEnum.E_SERVICE, "해제사용자실패: " + e.getMessage());
+            log.error("사용자 차단 해제 실패", e);
+            return AppResponse.error(ErrorCodeEnum.E_SERVICE, "사용자 차단 해제 실패: " + e.getMessage());
         }
     }
 
     /**
-     * 조회사용자여부에서이름단일중
+     * 사용자가 현재 차단 중인지 조회합니다.
      *
      * @param userId 사용자ID
-     * @return 이름단일정보
+     * @return 차단 정보
      */
     @GetMapping("/check")
     public AppResponse<BlacklistCacheDto> check(@RequestParam @NotBlank(message = "사용자 ID는 비워 둘 수 없습니다") String userId) {
         try {
-            log.info("조회사용자이름단일상태, userId: {}", userId);
+            log.info("사용자 차단 상태 조회, userId: {}", userId);
             BlacklistCacheDto blacklist = blackListService.isBlocked(userId);
             return AppResponse.success(blacklist);
         } catch (Exception e) {
-            log.error("조회이름단일실패", e);
-            return AppResponse.error(ErrorCodeEnum.E_SERVICE, "조회이름단일실패: " + e.getMessage());
+            log.error("사용자 차단 상태 조회 실패", e);
+            return AppResponse.error(ErrorCodeEnum.E_SERVICE, "사용자 차단 상태 조회 실패: " + e.getMessage());
         }
     }
 
     /**
-     * 조회이름단일목록(분)
+     * 사용자 차단 목록을 페이지 단위로 조회합니다.
      *
-     * @param queryDto 조회파일
-     * @return 이름단일목록
+     * @param queryDto 조회 조건
+     * @return 차단 목록
      */
     @PostMapping("/list")
     public AppResponse<IPage<BlacklistVo>> list(@RequestBody BlacklistQueryDto queryDto) {
         try {
-            log.info("조회이름단일목록, 파일: {}", queryDto);
+            log.info("사용자 차단 목록 조회, query: {}", queryDto);
 
-            // 생성조회파일
             LambdaQueryWrapper<UserBlacklist> wrapper = new LambdaQueryWrapper<>();
 
             if (!StringUtils.isEmpty(queryDto.getUserId())) {
@@ -139,22 +136,20 @@ public class BlacklistController {
 
             wrapper.orderByDesc(UserBlacklist::getCreateTime);
 
-            // 분조회
             Page<UserBlacklist> page = new Page<>(queryDto.getPageNum(), queryDto.getPageSize());
             IPage<UserBlacklist> result = userBlacklistDao.selectPage(page, wrapper);
 
-            // 변환로 VO
             IPage<BlacklistVo> voPage = result.convert(this::convertToVo);
 
             return AppResponse.success(voPage);
         } catch (Exception e) {
-            log.error("조회이름단일목록실패", e);
-            return AppResponse.error(ErrorCodeEnum.E_SERVICE, "조회이름단일목록실패: " + e.getMessage());
+            log.error("사용자 차단 목록 조회 실패", e);
+            return AppResponse.error(ErrorCodeEnum.E_SERVICE, "사용자 차단 목록 조회 실패: " + e.getMessage());
         }
     }
 
     /**
-     * 조회사용자의
+     * 사용자의 차단 이력을 조회합니다.
      *
      * @param userId 사용자ID
      * @return 목록
@@ -162,40 +157,37 @@ public class BlacklistController {
     @GetMapping("/history")
     public AppResponse<List<BlacklistVo>> getHistory(@RequestParam @NotBlank(message = "사용자 ID는 비워 둘 수 없습니다") String userId) {
         try {
-            log.info("조회사용자, userId: {}", userId);
+            log.info("사용자 차단 이력 조회, userId: {}", userId);
             List<UserBlacklist> history = blackListService.getHistory(userId);
             List<BlacklistVo> voList = history.stream().map(this::convertToVo).collect(Collectors.toList());
             return AppResponse.success(voList);
         } catch (Exception e) {
-            log.error("조회실패", e);
-            return AppResponse.error(ErrorCodeEnum.E_SERVICE, "조회실패: " + e.getMessage());
+            log.error("사용자 차단 이력 조회 실패", e);
+            return AppResponse.error(ErrorCodeEnum.E_SERVICE, "사용자 차단 이력 조회 실패: " + e.getMessage());
         }
     }
 
     /**
-     * 트리거량해제완료경과사용자
+     * 만료된 사용자 차단을 일괄 해제합니다.
      *
-     * @return 해제수
+     * @return 해제 수
      */
     @PostMapping("/batch-unban-expired")
     public AppResponse<Integer> batchUnbanExpired() {
         try {
-            log.info("트리거량해제");
+            log.info("만료된 사용자 차단 일괄 해제 요청");
             int count = blackListService.batchUnbanExpired();
             return AppResponse.success(count);
         } catch (Exception e) {
-            log.error("량해제실패", e);
-            return AppResponse.error(ErrorCodeEnum.E_SERVICE, "량해제실패: " + e.getMessage());
+            log.error("만료된 사용자 차단 일괄 해제 실패", e);
+            return AppResponse.error(ErrorCodeEnum.E_SERVICE, "만료된 사용자 차단 일괄 해제 실패: " + e.getMessage());
         }
     }
 
-    /**
-     * 변환로이미지객체
-     */
     private BlacklistVo convertToVo(UserBlacklist blacklist) {
         LocalDateTime now = LocalDateTime.now();
         long remainingSeconds = 0;
-        String remainingTimeDesc = "완료경과";
+        String remainingTimeDesc = "만료됨";
 
         if (blacklist.getStatus() == 1 && blacklist.getEndTime().isAfter(now)) {
             remainingSeconds = Duration.between(now, blacklist.getEndTime()).getSeconds();
@@ -216,15 +208,12 @@ public class BlacklistController {
                 .remainingSeconds(remainingSeconds)
                 .remainingTimeDesc(remainingTimeDesc)
                 .status(blacklist.getStatus())
-                .statusDesc(blacklist.getStatus() == 1 ? "중" : "완료해제")
+                .statusDesc(blacklist.getStatus() == 1 ? "차단 중" : "해제됨")
                 .operator(blacklist.getOperator())
                 .createTime(blacklist.getCreateTime())
                 .build();
     }
 
-    /**
-     * 형식시길이
-     */
     private String formatDuration(long seconds) {
         if (seconds <= 0) {
             return "0초";
@@ -237,15 +226,24 @@ public class BlacklistController {
 
         StringBuilder sb = new StringBuilder();
         if (days > 0) {
-            sb.append(days).append("");
+            sb.append(days).append("일");
         }
         if (hours > 0) {
+            if (sb.length() > 0) {
+                sb.append(" ");
+            }
             sb.append(hours).append("시간");
         }
         if (minutes > 0) {
+            if (sb.length() > 0) {
+                sb.append(" ");
+            }
             sb.append(minutes).append("분");
         }
         if (secs > 0 && days == 0 && hours == 0) {
+            if (sb.length() > 0) {
+                sb.append(" ");
+            }
             sb.append(secs).append("초");
         }
 

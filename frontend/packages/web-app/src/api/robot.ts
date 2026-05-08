@@ -1,4 +1,4 @@
-﻿import { pickBy } from 'lodash-es'
+import { pickBy } from 'lodash-es'
 
 import type { ITableResponse } from '@/types/normalTable'
 

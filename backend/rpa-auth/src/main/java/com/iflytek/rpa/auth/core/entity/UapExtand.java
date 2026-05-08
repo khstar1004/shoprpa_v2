@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * @desc: TODO
+ * @desc: ShopRPA authentication compatibility component.
  * @author: weilai <laiwei3@iflytek.com>
  * @create: 2025/12/4 10:17
  */

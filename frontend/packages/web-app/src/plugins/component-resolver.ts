@@ -1,4 +1,4 @@
-﻿import type { ComponentResolver } from 'unplugin-vue-components/types'
+import type { ComponentResolver } from 'unplugin-vue-components/types'
 
 /**
  * 지정컴포넌트파싱기기, 사용 a-modal 로 GlobalModal

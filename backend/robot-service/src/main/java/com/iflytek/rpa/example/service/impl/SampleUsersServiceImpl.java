@@ -1,6 +1,5 @@
 package com.iflytek.rpa.example.service.impl;
 
-import static com.iflytek.rpa.example.constants.ExampleConstants.WORKFLOWS_UPSERT_URL;
 import static com.iflytek.rpa.robot.constants.RobotConstant.EXECUTOR;
 
 import com.alibaba.fastjson.JSON;
@@ -99,6 +98,9 @@ public class SampleUsersServiceImpl extends ServiceImpl<SampleUsersDao, SampleUs
 
     @Value("${example.expoUserId}")
     private String expoUserId;
+
+    @Value("${openapi.workflows-upsert-url:http://openapi-service:8020/workflows/upsert}")
+    private String workflowsUpsertUrl;
 
     // type 까지삽입의
     private Map<String, Function<Object, Integer>> typeInsertMap = new HashMap<>();
@@ -200,15 +202,15 @@ public class SampleUsersServiceImpl extends ServiceImpl<SampleUsersDao, SampleUs
         // 발송 POST 요청 
         try {
             ResponseEntity<String> response =
-                    restTemplate.exchange(WORKFLOWS_UPSERT_URL, HttpMethod.POST, requestEntity, String.class);
+                    restTemplate.exchange(workflowsUpsertUrl, HttpMethod.POST, requestEntity, String.class);
 
             log.info(
                     "OpenAPI 요청완료, URL: {}, 상태: {}, : {}",
-                    WORKFLOWS_UPSERT_URL,
+                    workflowsUpsertUrl,
                     response.getStatusCode(),
                     response.getBody());
         } catch (Exception e) {
-            log.error("OpenAPI 요청 실패, URL: {}, 오류정보: {}", WORKFLOWS_UPSERT_URL, e.getMessage(), e);
+            log.error("OpenAPI 요청 실패, URL: {}, 오류정보: {}", workflowsUpsertUrl, e.getMessage(), e);
             throw e;
         }
     }
@@ -441,15 +443,15 @@ public class SampleUsersServiceImpl extends ServiceImpl<SampleUsersDao, SampleUs
         // 발송 POST 요청 
         try {
             ResponseEntity<String> response =
-                    restTemplate.exchange(WORKFLOWS_UPSERT_URL, HttpMethod.POST, requestEntity, String.class);
+                    restTemplate.exchange(workflowsUpsertUrl, HttpMethod.POST, requestEntity, String.class);
 
             log.info(
                     "OpenAPI 요청완료, URL: {}, 상태: {}, : {}",
-                    WORKFLOWS_UPSERT_URL,
+                    workflowsUpsertUrl,
                     response.getStatusCode(),
                     response.getBody());
         } catch (Exception e) {
-            log.error("OpenAPI 요청 실패, URL: {}, 오류정보: {}", WORKFLOWS_UPSERT_URL, e.getMessage(), e);
+            log.error("OpenAPI 요청 실패, URL: {}, 오류정보: {}", workflowsUpsertUrl, e.getMessage(), e);
             throw e;
         }
     }

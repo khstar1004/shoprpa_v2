@@ -1,4 +1,4 @@
-﻿import type { Ref } from 'vue'
+import type { Ref } from 'vue'
 
 import BUS from '@/utils/eventBus'
 

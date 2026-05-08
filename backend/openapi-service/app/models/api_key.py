@@ -1,10 +1,10 @@
-﻿from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String
 
 from app.database import Base
 
 
 class OpenAPIDB(Base):
-    """OpenAPI데이터베이스유형"""
+    """Stored OpenAPI credential hash."""
 
     __tablename__ = "openapi_auth"
     id = Column(Integer, primary_key=True, index=True)
@@ -18,7 +18,7 @@ class OpenAPIDB(Base):
 
 
 class ShoprpaAgentDB(Base):
-    """ShoprpaAgent데이터베이스유형"""
+    """Stored ShopRPA Agent credential."""
 
     __tablename__ = "astron_agent_auth"
     id = Column(Integer, primary_key=True, index=True)

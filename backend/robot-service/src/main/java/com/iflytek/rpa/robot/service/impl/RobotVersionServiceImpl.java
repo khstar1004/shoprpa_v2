@@ -523,7 +523,7 @@ public class RobotVersionServiceImpl extends ServiceImpl<RobotVersionDao, RobotV
         // 위지정버전
         boolean b = robotVersionDao.enableVersion(robotId, version, userId, tenantId);
         if (b) return AppResponse.success("위새버전성공");
-        else throw new Exception();
+        else throw new ServiceException("지정한 버전을 활성화하지 못했습니다");
     }
 
     @Override
@@ -616,7 +616,9 @@ public class RobotVersionServiceImpl extends ServiceImpl<RobotVersionDao, RobotV
         processDao.deleteOldEditVersion(robotId, userId);
 
         List<CProcess> processList = processDao.getProcess(robotId, version, userId);
-        if (CollectionUtils.isEmpty(processList)) throw new Exception();
+        if (CollectionUtils.isEmpty(processList)) {
+            throw new ServiceException("복구할 버전의 프로세스를 찾을 수 없습니다");
+        }
 
         for (CProcess process : processList) {
 

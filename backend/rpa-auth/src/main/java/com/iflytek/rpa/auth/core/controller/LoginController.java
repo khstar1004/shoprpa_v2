@@ -66,8 +66,10 @@ public class LoginController {
      * @return
      */
     @GetMapping("/token")
-    public String getToken(HttpServletRequest request) {
-        return "Not supported in SaaS";
+    public AppResponse<String> getToken(HttpServletRequest request) {
+        return AppResponse.error(
+                com.iflytek.rpa.auth.utils.ErrorCodeEnum.E_SERVICE_NOT_SUPPORT,
+                "현재 인증 모드는 별도 토큰 발급을 지원하지 않습니다");
         //        return UapManagementClientUtil.getToken(request);
     }
 
@@ -189,7 +191,7 @@ public class LoginController {
     /**
      * 사용자회원가입(일)
      * 입력휴대폰 번호, 인증 코드, 사용자명
-     * 에서Shoprpa계정및UAP생성사용자(사용비밀번호)
+     * 에서ShopRPA 계정및UAP생성사용자(사용비밀번호)
      * 반환시인증사용후비밀번호
      *
      * @param registerDto 회원가입요청 매개변수
@@ -214,7 +216,7 @@ public class LoginController {
 
     /**
      * 비밀번호
-     * 사용자비밀번호후, 업데이트Shoprpa계정및UAP비밀번호
+     * 사용자비밀번호후, 업데이트ShopRPA 계정및UAP비밀번호
      *
      * @param setPasswordDto 비밀번호요청 매개변수
      * @param request        HTTP요청 
@@ -262,7 +264,7 @@ public class LoginController {
     }
 
     /**
-     * 삭제Shoprpa계정
+     * 삭제ShopRPA 계정
      *
      * @param phone 휴대폰 번호
      * @return 삭제결과

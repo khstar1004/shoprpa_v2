@@ -6,13 +6,13 @@ function gen_event_id() {
   });
 }
 function get_navigator_user_agent() {
-  const isChorme = /Chrome/.test(navigator.userAgent);
+  const isChrome = /Chrome/.test(navigator.userAgent);
   const isFirefox = /Firefox/.test(navigator.userAgent);
   const isEdge = /Edg/.test(navigator.userAgent);
 
   if (isFirefox) return "$firefox$";
   if (isEdge) return "$edge$";
-  if (isChorme) return "$chrome$";
+  if (isChrome) return "$chrome$";
   return "$unknown$";
 }
 function custom_agent() {

@@ -6,6 +6,7 @@ from typing import Any
 
 from astronverse.actionlib import DynamicsItem
 from astronverse.actionlib.atomic import atomicMg
+from astronverse.actionlib.types import Ciphertext
 from astronverse.dataprocess import VariableType
 from astronverse.dataprocess.error import *
 
@@ -62,3 +63,22 @@ class DataProcess:
         except Exception as e:
             raise BaseException(VALUE_ERROR_FORMAT.format(e), "입력데이터 유형있음오류, 불가로변수")
         return result
+
+    @staticmethod
+    def get_shared_variable(shared_variable: dict):
+        sub_var_list = shared_variable.get("subVarList", []) if shared_variable else []
+        if not sub_var_list:
+            return None
+
+        result = {}
+        for sub_var in sub_var_list:
+            var_name = sub_var.get("varName")
+            if not var_name:
+                continue
+            if sub_var.get("encrypt"):
+                cipher = Ciphertext(sub_var.get("varValue"))
+                cipher.set_key(sub_var.get("key"))
+                result[var_name] = cipher
+            else:
+                result[var_name] = sub_var.get("varValue")
+        return result or None

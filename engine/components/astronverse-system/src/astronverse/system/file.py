@@ -777,7 +777,7 @@ class File:
                 dynamics=[
                     DynamicsItem(
                         key="$this.sort_type.show",
-                        expression="return $this.sort_method.value ['{}', '{}']".format(
+                        expression="return ['{}', '{}'].includes($this.sort_method.value)".format(
                             SortMethod.CTIME.value, SortMethod.MTIME.value
                         ),
                     )
@@ -797,7 +797,7 @@ class File:
         output_type: OutputType = OutputType.LIST,
         excel_path: str = "",
         state_type: StateType = StateType.ERROR,
-        excel_name: str = "1.xlsx",
+        excel_name: str = "file_list.xlsx",
         sort_method: SortMethod = SortMethod.NONE,
         sort_type: SortType = SortType.ASCENDING,
     ) -> list:
@@ -859,6 +859,8 @@ class File:
                 else:
                     raise NotImplementedError()
 
+            if not excel_name:
+                excel_name = "file_list.xlsx"
             if not os.path.splitext(excel_name)[1] == ".xlsx":
                 if os.path.splitext(excel_name)[1]:
                     excel_name = get_file_name_only(excel_name)

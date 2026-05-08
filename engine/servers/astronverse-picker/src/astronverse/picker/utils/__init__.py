@@ -123,7 +123,7 @@ class ServiceContext:
             start_time -= 0.1
             if self.pick_server and self.pick_server.start_time and time.time() - self.pick_server.start_time > 15:
                 self.event_core.close()  # 닫기 
-                raise RpaBaseException(TIMEOUT_LAG, "선택초과경과15s, 요청 출력기기후다시 이동")
+                raise RpaBaseException(TIMEOUT_LAG, "선택 대기가 15초를 초과했습니다. 선택 창을 다시 열고 시도하세요")
         if start_time <= 0:
             raise RpaBaseException(TIMEOUT, "선택시간 초과")
 

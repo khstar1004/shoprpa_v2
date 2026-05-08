@@ -1,109 +1,155 @@
-﻿#!/usr/bin/env python3
-"""
-사용pytest의시도파일
-예사용fixture적음mock의사용
-"""
+#!/usr/bin/env python3
+
+import unittest
 
 from astronverse.script.script import Script
 
 
-class TestScriptModulePytest:
-    """사용pytest시도Script.module기존가능"""
+class MockEnv:
+    def __init__(self, params):
+        self.params = params
 
-    def test_module_with_main_function(self, basic_env, sample_script_content):
-        """시도패키지main데이터의본실행"""
-        result = Script.module(content=sample_script_content, __env__=basic_env)
-
-        expected = {"result": "value1_value2", "status": "success"}
-        assert result == expected
-
-    def test_module_without_main_function(self, basic_env, no_main_script_content):
-        """시도아니오패키지main데이터의본실행"""
-        result = Script.module(content=no_main_script_content, __env__=basic_env)
-
-        assert result is None
-
-    def test_module_with_mathematical_operations(self, math_env, math_script_content):
-        """시도데이터실행본"""
-        result = Script.module(content=math_script_content, __env__=math_env)
-
-        expected = {"sum": 13, "product": 30, "difference": 7, "quotient": 10 / 3}
-        assert result == expected
-
-    def test_module_with_list_operations(self, list_env, list_script_content):
-        """시도목록 본"""
-        result = Script.module(content=list_script_content, __env__=list_env)
-
-        expected = {"result": [1, 1, 3, 4, 5]}
-        assert result == expected
-
-    def test_module_with_string_operations(self, string_env, string_script_content):
-        """시도문자열본"""
-        result = Script.module(content=string_script_content, __env__=string_env)
-
-        expected = {"result": "HELLO WORLD"}
-        assert result == expected
-
-    def test_module_with_conditional_logic(self, grade_env, grade_script_content):
-        """시도파일본"""
-        result = Script.module(content=grade_script_content, __env__=grade_env)
-
-        expected = {"score": 85, "grade": "B"}
-        assert result == expected
-
-    def test_module_with_real_world_scenario(self, data_processing_env, data_processing_script_content):
-        """시도"""
-        result = Script.module(content=data_processing_script_content, __env__=data_processing_env)
-
-        expected = {
-            "original_count": 7,
-            "filtered_count": 4,
-            "average": 27.5,
-            "max": 40,
-            "min": 15,
-        }
-        assert result == expected
+    def to_dict(self):
+        return self.params
 
 
-class TestScriptModuleParameterFormat:
-    """시도기존가능매개변수형식의내용 """
+class TestScriptModulePytestScenarios(unittest.TestCase):
+    def test_module_with_main_function(self):
+        result = Script.module(
+            content="""
+def main(param1, param2):
+    return {"result": f"{param1}_{param2}", "status": "success"}
+""",
+            __env__=MockEnv({"param1": "value1", "param2": "value2"}),
+        )
 
+        self.assertEqual(result, {"result": "value1_value2", "status": "success"})
+
+    def test_module_without_main_function(self):
+        result = Script.module(
+            content="""
+x = 10
+y = 20
+""",
+            __env__=MockEnv({"param1": "value1", "param2": "value2"}),
+        )
+
+        self.assertIsNone(result)
+
+    def test_module_with_mathematical_operations(self):
+        result = Script.module(
+            content="""
+def main(a, b):
+    return {"sum": a + b, "product": a * b, "difference": a - b, "quotient": a / b}
+""",
+            __env__=MockEnv({"a": 10, "b": 3}),
+        )
+
+        self.assertEqual(result, {"sum": 13, "product": 30, "difference": 7, "quotient": 10 / 3})
+
+    def test_module_with_list_operations(self):
+        result = Script.module(
+            content="""
+def main(items):
+    return {"result": [1] + items[1:]}
+""",
+            __env__=MockEnv({"items": [1, 1, 3, 4, 5]}),
+        )
+
+        self.assertEqual(result, {"result": [1, 1, 3, 4, 5]})
+
+    def test_module_with_string_operations(self):
+        result = Script.module(
+            content="""
+def main(text):
+    return {"result": text.upper()}
+""",
+            __env__=MockEnv({"text": "hello world"}),
+        )
+
+        self.assertEqual(result, {"result": "HELLO WORLD"})
+
+    def test_module_with_conditional_logic(self):
+        result = Script.module(
+            content="""
+def main(score):
+    if score >= 90:
+        grade = "A"
+    elif score >= 80:
+        grade = "B"
+    else:
+        grade = "C"
+    return {"score": score, "grade": grade}
+""",
+            __env__=MockEnv({"score": 85}),
+        )
+
+        self.assertEqual(result, {"score": 85, "grade": "B"})
+
+    def test_module_with_real_world_scenario(self):
+        result = Script.module(
+            content="""
+def main(values):
+    filtered = [value for value in values if value >= 15]
+    return {
+        "original_count": len(values),
+        "filtered_count": len(filtered),
+        "average": sum(filtered) / len(filtered),
+        "max": max(filtered),
+        "min": min(filtered),
+    }
+""",
+            __env__=MockEnv({"values": [5, 10, 15, 25, 30, 40, 45]}),
+        )
+
+        self.assertEqual(
+            result,
+            {
+                "original_count": 7,
+                "filtered_count": 5,
+                "average": 31.0,
+                "max": 45,
+                "min": 15,
+            },
+        )
+
+
+class TestScriptModuleParameterFormat(unittest.TestCase):
     def test_atomic_parameter_format(self):
-        """시도기존가능매개변수형식(a=a,b=b)의내용 """
-        test_content = """
+        result = Script.module(
+            content="""
 def main(a, b):
     return {"sum": a + b, "product": a * b}
-"""
+""",
+            __env__=MockEnv({"a": 5, "b": 3}),
+        )
 
-        env = type("MockEnv", (), {"to_dict": lambda: {"a": 5, "b": 3}})()
-
-        result = Script.module(content=test_content, __env__=env)
-
-        expected = {"sum": 8, "product": 15}
-        assert result == expected
+        self.assertEqual(result, {"sum": 8, "product": 15})
 
 
-class TestScriptModuleEdgeCases:
-    """시도가장자리"""
-
+class TestScriptModuleEdgeCases(unittest.TestCase):
     def test_module_with_none_values(self):
-        """시도패키지None값의"""
-        test_content = """
+        result = Script.module(
+            content="""
 def main(value1, value2):
     return {
         "value1_is_none": value1 is None,
         "value2_is_none": value2 is None,
         "combined": f"{value1}_{value2}" if value1 and value2 else "empty"
     }
-"""
+""",
+            __env__=MockEnv({"value1": None, "value2": "test"}),
+        )
 
-        env = type("MockEnv", (), {"to_dict": lambda: {"value1": None, "value2": "test"}})()
+        self.assertEqual(
+            result,
+            {
+                "value1_is_none": True,
+                "value2_is_none": False,
+                "combined": "empty",
+            },
+        )
 
-        result = Script.module(content=test_content, __env__=env)
 
-        expected = {
-            "value1_is_none": True,
-            "value2_is_none": False,
-            "combined": "empty",
-        }
-        assert result == expected
+if __name__ == "__main__":
+    unittest.main()

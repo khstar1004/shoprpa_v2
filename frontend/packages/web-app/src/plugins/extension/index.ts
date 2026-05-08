@@ -1,17 +1,39 @@
 import { getExtensions, initializePluginManager, loadPlugins } from './utils'
 
-class ExtensionManager {
-  public extensions: ReturnType<typeof getExtensions> = null
+type Extensions = ReturnType<typeof getExtensions>
 
-  constructor() {
-    this.init()
+class ExtensionManager {
+  public extensions: Extensions | null = null
+  private initPromise: Promise<Extensions | null> | null = null
+
+  async init(): Promise<Extensions | null> {
+    if (this.extensions) {
+      return this.extensions
+    }
+
+    this.initPromise ??= this.load()
+    return this.initPromise
   }
 
-  async init() {
-    await initializePluginManager()
-    await loadPlugins()
+  private async load(): Promise<Extensions | null> {
+    try {
+      await initializePluginManager()
 
-    this.extensions = getExtensions()
+      try {
+        await loadPlugins()
+      }
+      catch (error) {
+        console.warn('[pluginManager] Optional plugin load failed:', error)
+      }
+
+      this.extensions = getExtensions()
+      return this.extensions
+    }
+    catch (error) {
+      console.error('[pluginManager] Plugin manager initialization failed:', error)
+      this.initPromise = null
+      return null
+    }
   }
 }
 

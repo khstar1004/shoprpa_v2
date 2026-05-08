@@ -1,4 +1,4 @@
-﻿import { useTranslation } from 'i18next-vue'
+import { useTranslation } from 'i18next-vue'
 
 import { baseUrl } from '@/utils/env'
 
@@ -7,58 +7,58 @@ import { windowManager } from '@/platform'
 import type { CreateWindowOptions } from '@/platform'
 
 export function useRecordWindow() {
- const { t } = useTranslation()
+  const { t } = useTranslation()
 
- // 가능기록제어창
- const openRecordWindow = async () => {
- const options: CreateWindowOptions = {
- url: `${baseUrl}/record.html`,
- title: t('smartRecording'),
- label: WINDOW_NAME.RECORD,
- alwaysOnTop: false,
- position: 'right_center', // 사용자 지정매개변수
- offset: 40,
- width: 392,
- height: 572,
- resizable: false,
- decorations: false,
- fileDropEnabled: false,
- maximizable: false,
- transparent: true,
- }
+  // 가능기록제어창
+  const openRecordWindow = async () => {
+    const options: CreateWindowOptions = {
+      url: `${baseUrl}/record.html`,
+      title: t('smartRecording'),
+      label: WINDOW_NAME.RECORD,
+      alwaysOnTop: false,
+      position: 'right_center', // 사용자 지정매개변수
+      offset: 40,
+      width: 392,
+      height: 572,
+      resizable: false,
+      decorations: false,
+      fileDropEnabled: false,
+      maximizable: false,
+      transparent: true,
+    }
 
- await windowManager.createWindow(options, () => {
- windowManager.showWindow()
- })
+    await windowManager.createWindow(options, () => {
+      windowManager.showWindow()
+    })
 
- windowManager.hideWindow()
- }
+    windowManager.hideWindow()
+  }
 
- const openRecordMenuWindow = async () => {
- const options: CreateWindowOptions = {
- url: `${baseUrl}/recordmenu.html`,
- title: t('smartRecording'),
- label: WINDOW_NAME.RECORD_MENU,
- alwaysOnTop: true,
- position: 'center',
- width: 20,
- height: 20,
- resizable: false,
- decorations: false,
- fileDropEnabled: false,
- maximizable: false,
- transparent: true,
- show: false,
- skipTaskbar: true,
- }
+  const openRecordMenuWindow = async () => {
+    const options: CreateWindowOptions = {
+      url: `${baseUrl}/recordmenu.html`,
+      title: t('smartRecording'),
+      label: WINDOW_NAME.RECORD_MENU,
+      alwaysOnTop: true,
+      position: 'center',
+      width: 20,
+      height: 20,
+      resizable: false,
+      decorations: false,
+      fileDropEnabled: false,
+      maximizable: false,
+      transparent: true,
+      show: false,
+      skipTaskbar: true,
+    }
 
- await windowManager.createWindow(options)
- }
+    await windowManager.createWindow(options)
+  }
 
- const open = () => {
- openRecordWindow()
- openRecordMenuWindow()
- }
+  const open = () => {
+    openRecordWindow()
+    openRecordMenuWindow()
+  }
 
- return { open }
+  return { open }
 }

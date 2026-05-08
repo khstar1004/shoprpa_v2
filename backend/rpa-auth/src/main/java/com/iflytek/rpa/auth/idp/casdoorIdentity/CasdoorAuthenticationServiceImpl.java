@@ -13,7 +13,9 @@ import com.iflytek.rpa.auth.sp.casdoor.mapper.CasdoorUserMapper;
 import com.iflytek.rpa.auth.sp.casdoor.service.extend.CasdoorLoginExtendService;
 import com.iflytek.rpa.auth.sp.casdoor.service.extend.CasdoorUserExtendService;
 import com.iflytek.rpa.auth.utils.AppResponse;
+import com.iflytek.rpa.auth.utils.ErrorCodeEnum;
 import com.iflytek.rpa.auth.utils.RedisUtils;
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -26,6 +28,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.casbin.casdoor.util.http.CasdoorResponse;
 
 @Slf4j
 @Service
@@ -56,6 +59,55 @@ public class CasdoorAuthenticationServiceImpl implements AuthenticationService {
     private final CasdoorLoginExtendService casdoorLoginExtendService;
     private final CasdoorUserMapper casdoorUserMapper;
     private final TenantService tenantService;
+
+    private String tempTokenCacheKey(String tempToken) {
+        return TEMP_TOKEN_PREFIX + tempToken;
+    }
+
+    private String storeTempLoginInfo(LoginDto loginDto) throws IOException {
+        String tempToken = UUID.randomUUID().toString().replace("-", "");
+        RedisUtils.set(tempTokenCacheKey(tempToken), objectMapper.writeValueAsString(loginDto), TEMP_TOKEN_EXPIRE_SECONDS);
+        return tempToken;
+    }
+
+    private org.casbin.casdoor.entity.User findCasdoorUser(String loginName, String phone) throws IOException {
+        if (StringUtils.hasText(loginName)) {
+            org.casbin.casdoor.entity.User user = casdoorUserExtendService.getUser(loginName);
+            if (user != null && StringUtils.hasText(user.name)) {
+                return user;
+            }
+        }
+
+        if (StringUtils.hasText(phone)) {
+            org.casbin.casdoor.entity.User user = casdoorUserExtendService.getUserByPhone(phone);
+            if (user != null && StringUtils.hasText(user.name)) {
+                return user;
+            }
+        }
+
+        return null;
+    }
+
+    private void updateCasdoorPassword(org.casbin.casdoor.entity.User user, String password) throws IOException {
+        if (user == null || !StringUtils.hasText(user.name)) {
+            throw new ServiceException("계정찾을 수 없습니다");
+        }
+        if (!StringUtils.hasText(password)) {
+            throw new ServiceException("비밀번호는 비워 둘 수 없습니다");
+        }
+
+        user.password = password;
+        user.passwordSalt = "";
+
+        CasdoorResponse<String, Object> response = casdoorUserExtendService.updateUser(user);
+        if (response == null) {
+            throw new ServiceException("Casdoor 비밀번호 업데이트응답이 비어 있습니다");
+        }
+        if (response.getStatus() != null && !"ok".equals(response.getStatus())) {
+            throw new ServiceException("Casdoor 비밀번호 업데이트실패: "
+                    + (response.getMsg() != null ? response.getMsg() : response.getStatus()));
+        }
+    }
 
     @Override
     public String preAuthenticate(LoginDto loginDto, HttpServletRequest request) {
@@ -106,11 +158,8 @@ public class CasdoorAuthenticationServiceImpl implements AuthenticationService {
                 throw new ServiceException("계정또는비밀번호오류");
             }
 
-            String tempToken = UUID.randomUUID().toString().replace("-", "");
-            String cacheKey = TEMP_TOKEN_PREFIX + tempToken;
-
             // 저장사용자로그인정보, 후정상방식로그인시가져오기출력
-            RedisUtils.set(cacheKey, objectMapper.writeValueAsString(loginDto), TEMP_TOKEN_EXPIRE_SECONDS);
+            String tempToken = storeTempLoginInfo(loginDto);
 
             log.info("Casdoor 인증 성공, 사용자명: {}, 휴대폰 번호: {}, 시인증완료완료", loginName, phone);
             return tempToken;
@@ -197,12 +246,28 @@ public class CasdoorAuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public User login(LoginDto loginDto, HttpServletRequest servletRequest) {
-        return null;
+        String tempToken = preAuthenticate(loginDto, servletRequest);
+        String tenantId = StringUtils.hasText(loginDto.getTenantId()) ? loginDto.getTenantId() : organizationName;
+        return loginWithTenant(tempToken, tenantId, servletRequest);
     }
 
     @Override
     public String getPhoneByTempToken(String tempToken) {
-        return "";
+        LoginDto loginDto = getLoginInfoByTempToken(tempToken);
+        if (StringUtils.hasText(loginDto.getPhone())) {
+            return loginDto.getPhone();
+        }
+
+        try {
+            org.casbin.casdoor.entity.User user = findCasdoorUser(loginDto.getLoginName(), null);
+            if (user != null && StringUtils.hasText(user.phone)) {
+                return user.phone;
+            }
+        } catch (Exception e) {
+            log.warn("시인증에서휴대폰 번호조회실패, 시인증: {}", tempToken, e);
+        }
+
+        throw new ServiceException("시인증에휴대폰 번호정보가 없습니다");
     }
 
     @Override
@@ -211,7 +276,7 @@ public class CasdoorAuthenticationServiceImpl implements AuthenticationService {
             throw new ServiceException("시인증비워 둘 수 없습니다");
         }
         try {
-            String cacheKey = TEMP_TOKEN_PREFIX + tempToken;
+            String cacheKey = tempTokenCacheKey(tempToken);
             Object cachedUserInfo = RedisUtils.get(cacheKey);
             if (cachedUserInfo == null) {
                 throw new ServiceException("시인증완료경과또는없음");
@@ -249,6 +314,13 @@ public class CasdoorAuthenticationServiceImpl implements AuthenticationService {
             throw new ServiceException("회원가입매개변수비워 둘 수 없습니다");
         }
 
+        String username = StringUtils.hasText(registerDto.getLoginName())
+                ? registerDto.getLoginName()
+                : registerDto.getPhone();
+        if (!StringUtils.hasText(username)) {
+            throw new ServiceException("사용자명또는휴대폰 번호는 비워 둘 수 없습니다");
+        }
+
         if (!StringUtils.hasText(registerDto.getPassword())) {
             throw new ServiceException("비밀번호는 비워 둘 수 없습니다");
         }
@@ -266,9 +338,6 @@ public class CasdoorAuthenticationServiceImpl implements AuthenticationService {
             signupDto.setApplication(applicationName);
             signupDto.setOrganization(organizationName);
             // 결과가있음로그인이름, 사용휴대폰 번호로로그인이름
-            String username = StringUtils.hasText(registerDto.getLoginName())
-                    ? registerDto.getLoginName()
-                    : registerDto.getPhone();
             signupDto.setUsername(username);
             signupDto.setName(username); // name필드사용사용자명
             signupDto.setPassword(registerDto.getPassword());
@@ -285,19 +354,17 @@ public class CasdoorAuthenticationServiceImpl implements AuthenticationService {
             }
 
             // 3. 완료시인증저장회원가입정보
-            String tempToken = UUID.randomUUID().toString().replace("-", "");
-            String cacheKey = TEMP_TOKEN_PREFIX + tempToken;
-
             // 에서회원가입정보중가져오기로그인정보, 후를로그인정보및테넌트ID저장, 사용후입력.(열기 버전테넌트있음일개)
             LoginDto loginDto = new LoginDto();
-            loginDto.setLoginName(registerDto.getLoginName());
+            loginDto.setLoginName(username);
+            loginDto.setPhone(registerDto.getPhone());
             loginDto.setPassword(registerDto.getPassword());
             loginDto.setLoginType(LoginTypeEnum.PASSWORD);
             loginDto.setTenantId(organizationName);
             loginDto.setScene("login");
             loginDto.setPlatform("client");
 
-            RedisUtils.set(cacheKey, objectMapper.writeValueAsString(loginDto), TEMP_TOKEN_EXPIRE_SECONDS);
+            String tempToken = storeTempLoginInfo(loginDto);
 
             String userId = signupResult.getUserId();
             log.info("Casdoor회원가입성공, 사용자ID: {}, 휴대폰 번호: {}, 테넌트ID: {}", userId, registerDto.getPhone(), organizationName);
@@ -313,7 +380,9 @@ public class CasdoorAuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public User setPasswordAndLogin(String tempToken, String password, String tenantId, HttpServletRequest request) {
-        return null;
+        setPassword(tempToken, password, tenantId, request);
+        String resolvedTenantId = StringUtils.hasText(tenantId) ? tenantId : organizationName;
+        return loginWithTenant(tempToken, resolvedTenantId, request);
     }
 
     @Override
@@ -325,8 +394,7 @@ public class CasdoorAuthenticationServiceImpl implements AuthenticationService {
         try {
             log.debug("조회사용자여부저장에서, 로그인이름: {}", loginName);
 
-            // 호출getUser조회사용자여부저장에서
-            org.casbin.casdoor.entity.User user = casdoorUserExtendService.getUser(loginName);
+            org.casbin.casdoor.entity.User user = findCasdoorUser(loginName, loginName);
             boolean exists = user != null && StringUtils.hasText(user.name);
 
             log.debug("사용자저장된 조회결과, 로그인이름: {}, 저장에서: {}", loginName, exists);
@@ -340,7 +408,32 @@ public class CasdoorAuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public boolean setPassword(String tempToken, String password, String tenantId, HttpServletRequest request) {
-        return false;
+        try {
+            LoginDto loginDto = getLoginInfoByTempToken(tempToken);
+            org.casbin.casdoor.entity.User user = findCasdoorUser(loginDto.getLoginName(), loginDto.getPhone());
+            if (user == null) {
+                throw new ServiceException("계정찾을 수 없습니다");
+            }
+
+            updateCasdoorPassword(user, password);
+
+            loginDto.setLoginName(user.name);
+            if (StringUtils.hasText(user.phone)) {
+                loginDto.setPhone(user.phone);
+            }
+            loginDto.setPassword(password);
+            loginDto.setLoginType(LoginTypeEnum.PASSWORD);
+            if (StringUtils.hasText(tenantId)) {
+                loginDto.setTenantId(tenantId);
+            }
+            RedisUtils.set(tempTokenCacheKey(tempToken), objectMapper.writeValueAsString(loginDto), TEMP_TOKEN_EXPIRE_SECONDS);
+            return true;
+        } catch (ServiceException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("Casdoor 비밀번호설정예외, 시인증: {}", tempToken, e);
+            throw new ServiceException("Casdoor 비밀번호설정예외: " + e.getMessage());
+        }
     }
 
     @Override
@@ -412,12 +505,15 @@ public class CasdoorAuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public AppResponse<Boolean> refreshToken(HttpServletRequest request, String accessToken) {
-        return null;
+        if (checkLoginStatus(request)) {
+            return AppResponse.success(true);
+        }
+        return AppResponse.error(ErrorCodeEnum.E_NOT_LOGIN, "로그인되지 않았습니다");
     }
 
     @Override
     public String getVerificationCode(String phone, String scene) {
-        return "";
+        throw new UnsupportedOperationException("Casdoor 모드는 인증 코드 로그인을 지원하지 않습니다");
     }
 
     @Override
@@ -465,11 +561,78 @@ public class CasdoorAuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public AppResponse<String> changePassword(ChangePasswordDto changePasswordDto) {
-        return null;
+        if (changePasswordDto == null) {
+            return AppResponse.error(ErrorCodeEnum.E_PARAM_LOSE, "수정비밀번호매개변수비워 둘 수 없습니다");
+        }
+
+        try {
+            org.casbin.casdoor.entity.User user =
+                    findCasdoorUser(changePasswordDto.getLoginName(), changePasswordDto.getPhone());
+            if (user == null) {
+                return AppResponse.error(ErrorCodeEnum.E_NO_ACCOUNT, "계정찾을 수 없습니다");
+            }
+
+            user.password = changePasswordDto.getOldPassword();
+            if (!casdoorUserExtendService.checkUserPassword(user)) {
+                return AppResponse.error(ErrorCodeEnum.E_PARAM, "기존비밀번호가 올바르지 않습니다");
+            }
+
+            updateCasdoorPassword(user, changePasswordDto.getNewPassword());
+
+            LoginDto loginDto = new LoginDto();
+            loginDto.setLoginName(user.name);
+            loginDto.setPhone(user.phone);
+            loginDto.setPassword(changePasswordDto.getNewPassword());
+            loginDto.setLoginType(LoginTypeEnum.PASSWORD);
+            loginDto.setTenantId(organizationName);
+            loginDto.setScene("login");
+            loginDto.setPlatform("client");
+            return AppResponse.success(storeTempLoginInfo(loginDto));
+        } catch (ServiceException e) {
+            return AppResponse.error(e.getCode(), e.getMessage());
+        } catch (Exception e) {
+            log.error("Casdoor 수정비밀번호예외", e);
+            return AppResponse.error(ErrorCodeEnum.E_SERVICE, "수정비밀번호실패: " + e.getMessage());
+        }
     }
 
     @Override
     public AppResponse<String> addUser(AddUserDto user, HttpServletRequest request) {
-        return null;
+        if (user == null) {
+            return AppResponse.error(ErrorCodeEnum.E_PARAM_LOSE, "사용자매개변수비워 둘 수 없습니다");
+        }
+        if (!StringUtils.hasText(user.getPassword())) {
+            return AppResponse.error(ErrorCodeEnum.E_PARAM_LOSE, "초기비밀번호는 비워 둘 수 없습니다");
+        }
+        if (StringUtils.hasText(user.getConfirmPassword()) && !user.getPassword().equals(user.getConfirmPassword())) {
+            return AppResponse.error(ErrorCodeEnum.E_PARAM, "입력한 비밀번호가 올바르지 않습니다");
+        }
+
+        String username = StringUtils.hasText(user.getLoginName()) ? user.getLoginName() : user.getPhone();
+        if (!StringUtils.hasText(username)) {
+            return AppResponse.error(ErrorCodeEnum.E_PARAM_LOSE, "사용자명또는휴대폰 번호는 비워 둘 수 없습니다");
+        }
+
+        try {
+            CasdoorSignupDto signupDto = new CasdoorSignupDto();
+            signupDto.setApplication(applicationName);
+            signupDto.setOrganization(organizationName);
+            signupDto.setUsername(username);
+            signupDto.setName(username);
+            signupDto.setPassword(user.getPassword());
+            if (StringUtils.hasText(user.getPhone())) {
+                signupDto.setPhone(user.getPhone());
+                signupDto.setCountryCode("CN");
+            }
+
+            CasdoorLoginResult signupResult = casdoorLoginExtendService.signup(signupDto);
+            if (signupResult == null || !StringUtils.hasText(signupResult.getUserId())) {
+                return AppResponse.error(ErrorCodeEnum.E_SERVICE, "Casdoor사용자생성실패: 가져올 수 없는 사용자ID");
+            }
+            return AppResponse.success(signupResult.getUserId());
+        } catch (Exception e) {
+            log.error("Casdoor 사용자생성예외, 사용자명: {}", username, e);
+            return AppResponse.error(ErrorCodeEnum.E_SERVICE, "사용자생성실패: " + e.getMessage());
+        }
     }
 }

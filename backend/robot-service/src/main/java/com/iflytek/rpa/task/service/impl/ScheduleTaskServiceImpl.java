@@ -397,7 +397,7 @@ public class ScheduleTaskServiceImpl extends ServiceImpl<ScheduleTaskDao, Schedu
         ScheduleTask task = getRecentlyTask(userId, tenantId);
         //        ScheduleTask task = scheduleTaskDao.getTaskListOrderByNextTime(userId, tenantId);
         if (null == task || null == task.getNextTime()) {
-            return AppResponse.success(null);
+            return AppResponse.error(ErrorCodeEnum.E_SQL_EMPTY, "실행할 예약 작업이 없습니다");
         }
         task.setPullTime(new Date());
         task.setLastTime(task.getNextTime());

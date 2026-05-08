@@ -8,7 +8,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 /**
- * 사용자이름단일 Mapper 연결
+ * 사용자 차단 목록 Mapper
  *
  * @author system
  * @date 2025-12-16
@@ -17,7 +17,7 @@ import org.apache.ibatis.annotations.Param;
 public interface UserBlacklistDao extends BaseMapper<UserBlacklist> {
 
     /**
-     * 조회사용자현재의기록
+     * 현재 차단 중인 사용자 기록을 조회합니다.
      *
      * @param userId 사용자ID
      * @return 기록
@@ -25,7 +25,15 @@ public interface UserBlacklistDao extends BaseMapper<UserBlacklist> {
     UserBlacklist findActiveBlacklist(@Param("userId") String userId);
 
     /**
-     * 조회완료경과의기록
+     * status=1 상태로 남아 있는 최신 차단 기록을 조회합니다.
+     *
+     * @param userId 사용자ID
+     * @return 기록
+     */
+    UserBlacklist findLatestEnabledBlacklist(@Param("userId") String userId);
+
+    /**
+     * 만료된 차단 기록을 조회합니다.
      *
      * @param now 현재시간
      * @param limit 제한제어수
@@ -34,7 +42,7 @@ public interface UserBlacklistDao extends BaseMapper<UserBlacklist> {
     List<UserBlacklist> findExpiredBlacklist(@Param("now") LocalDateTime now, @Param("limit") int limit);
 
     /**
-     * 해제사용자(업데이트상태로완료해제)
+     * 사용자의 차단 상태를 해제 처리합니다.
      *
      * @param id 기록ID
      * @return 행데이터
@@ -42,7 +50,7 @@ public interface UserBlacklistDao extends BaseMapper<UserBlacklist> {
     int unban(@Param("id") Long id);
 
     /**
-     * 조회사용자의기록
+     * 사용자의 차단 이력을 조회합니다.
      *
      * @param userId 사용자ID
      * @return 목록

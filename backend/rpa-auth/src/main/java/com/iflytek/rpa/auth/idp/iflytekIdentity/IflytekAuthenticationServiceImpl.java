@@ -132,7 +132,7 @@ public class IflytekAuthenticationServiceImpl implements AuthenticationService {
     private final ObjectMapper objectMapper;
     private final IflytekAccountClientFactory accountClientFactory;
 
-    // Shoprpa계정클라이언트(단일복사사용, 재복사생성)
+    // ShopRPA 계정클라이언트(단일복사사용, 재복사생성)
     private CAccountClient accountClient;
 
     @Override
@@ -143,7 +143,7 @@ public class IflytekAuthenticationServiceImpl implements AuthenticationService {
         try {
             log.info("열기 인증, 휴대폰 번호: {}", loginDto.getPhone());
 
-            // 1. 호출Shoprpa계정인증사용자
+            // 1. 호출ShopRPA 계정인증사용자
             CAccountClient client = getAccountClient();
             String traceId = generateTraceId();
             IflytekLoginModeEnum loginMode = resolveLoginMode(loginDto);
@@ -221,7 +221,7 @@ public class IflytekAuthenticationServiceImpl implements AuthenticationService {
     }
 
     /**
-     * 삭제Shoprpa계정
+     * 삭제ShopRPA 계정
      *
      * @param phone 휴대폰 번호
      */
@@ -231,15 +231,15 @@ public class IflytekAuthenticationServiceImpl implements AuthenticationService {
         }
 
         try {
-            log.info("열기 삭제Shoprpa계정, 휴대폰 번호: {}", phone);
+            log.info("열기 삭제ShopRPA 계정, 휴대폰 번호: {}", phone);
 
-            // 1. 근거휴대폰 번호가져오기Shoprpa계정의 userid(에서 UAP 사용자의 third_ext_info 필드가져오기)
+            // 1. 근거휴대폰 번호가져오기ShopRPA 계정의 userid(에서 UAP 사용자의 third_ext_info 필드가져오기)
             String iflytekUserId = getIflytekUserIdByPhone(phone);
             if (!StringUtils.hasText(iflytekUserId)) {
-                throw new ServiceException("찾을 수 없는 해당휴대폰 번호의Shoprpa계정ID");
+                throw new ServiceException("찾을 수 없는 해당휴대폰 번호의ShopRPA 계정ID");
             }
 
-            // 2. 호출Shoprpa계정삭제연결
+            // 2. 호출ShopRPA 계정삭제연결
             CAccountClient client = getAccountClient();
             String traceId = generateTraceId();
             byte[] requestBody = buildDeleteUserRequest(iflytekUserId, traceId);
@@ -248,7 +248,7 @@ public class IflytekAuthenticationServiceImpl implements AuthenticationService {
             String code = responseDto.getCode();
 
             if (isSuccessCode(code)) {
-                log.info("삭제Shoprpa계정성공, 휴대폰 번호: {}, userid: {}", phone, iflytekUserId);
+                log.info("삭제ShopRPA 계정성공, 휴대폰 번호: {}, userid: {}", phone, iflytekUserId);
                 return;
             }
 
@@ -261,16 +261,16 @@ public class IflytekAuthenticationServiceImpl implements AuthenticationService {
         } catch (ServiceException e) {
             throw e;
         } catch (Exception e) {
-            log.error("삭제Shoprpa계정예외, 휴대폰 번호: {}", phone, e);
-            throw new ServiceException("삭제Shoprpa계정예외: " + e.getMessage());
+            log.error("삭제ShopRPA 계정예외, 휴대폰 번호: {}", phone, e);
+            throw new ServiceException("삭제ShopRPA 계정예외: " + e.getMessage());
         }
     }
 
     /**
-     * 근거휴대폰 번호가져오기Shoprpa계정의 userid(에서 UAP 사용자의 third_ext_info 필드가져오기)
+     * 근거휴대폰 번호가져오기ShopRPA 계정의 userid(에서 UAP 사용자의 third_ext_info 필드가져오기)
      *
      * @param phone 휴대폰 번호
-     * @return Shoprpa계정의 userid
+     * @return ShopRPA 계정의 userid
      */
     private String getIflytekUserIdByPhone(String phone) {
         try {
@@ -278,14 +278,14 @@ public class IflytekAuthenticationServiceImpl implements AuthenticationService {
             String thirdExtInfo = userDao.queryThirdExtInfoByPhone(phone, databaseName);
 
             if (!StringUtils.hasText(thirdExtInfo)) {
-                log.warn("사용자지정되지 않았습니다Shoprpa계정ID, 휴대폰 번호: {}", phone);
+                log.warn("사용자지정되지 않았습니다ShopRPA 계정ID, 휴대폰 번호: {}", phone);
                 return null;
             }
 
             return thirdExtInfo;
 
         } catch (Exception e) {
-            log.error("가져오기Shoprpa계정ID실패, 휴대폰 번호: {}", phone, e);
+            log.error("가져오기ShopRPA 계정ID실패, 휴대폰 번호: {}", phone, e);
             return null;
         }
     }
@@ -431,7 +431,7 @@ public class IflytekAuthenticationServiceImpl implements AuthenticationService {
             throw new ServiceException("찾을 수 없는 해당사용자또는휴대폰 번호가 비어 있습니다");
         }
 
-        // 업데이트Shoprpa계정비밀번호
+        // 업데이트ShopRPA 계정비밀번호
         updateIflytekPassword(phone, newPassword);
 
         // 업데이트 UAP 비밀번호
@@ -530,7 +530,7 @@ public class IflytekAuthenticationServiceImpl implements AuthenticationService {
     @Override
     public LoginDto getLoginInfoByTempToken(String tempToken) {
         if (!StringUtils.hasText(tempToken)) {
-            return null;
+            throw new ServiceException("시인증비워 둘 수 없습니다");
         }
 
         try {
@@ -564,7 +564,7 @@ public class IflytekAuthenticationServiceImpl implements AuthenticationService {
     @Override
     public String getPhoneByTempToken(String tempToken) {
         if (!StringUtils.hasText(tempToken)) {
-            return null;
+            throw new ServiceException("시인증비워 둘 수 없습니다");
         }
 
         try {
@@ -756,7 +756,7 @@ public class IflytekAuthenticationServiceImpl implements AuthenticationService {
      * 에서인증조회사용자여부에서UAP저장에서, 결과가찾을 수 없습니다이면회원가입
      *
      * @param loginDto      로그인정보
-     * @param iflytekUserId Shoprpa계정의userId
+     * @param iflytekUserId ShopRPA 계정의userId
      * @param request       HTTP요청 (사용회원가입UAP사용자)
      */
     private void ensureUapUserExistsAndRegister(LoginDto loginDto, String iflytekUserId, HttpServletRequest request) {
@@ -769,7 +769,7 @@ public class IflytekAuthenticationServiceImpl implements AuthenticationService {
         String loginName = userDao.queryLoginNameByPhone(phone, databaseName);
         if (!StringUtils.hasText(loginName)) {
             // 사용자를 찾을 수 없습니다, 회원가입까지UAP
-            log.info("UAP에 사용자가 없어 회원가입을 시작합니다, 휴대폰 번호: {}, Shoprpa계정userId: {}", phone, iflytekUserId);
+            log.info("UAP에 사용자가 없어 회원가입을 시작합니다, 휴대폰 번호: {}, ShopRPA 계정userId: {}", phone, iflytekUserId);
 
             RegisterDto registerDto = RegisterDto.builder()
                     .phone(phone)
@@ -784,13 +784,13 @@ public class IflytekAuthenticationServiceImpl implements AuthenticationService {
                 throw new ServiceException("회원가입UAP사용자실패: " + message);
             }
 
-            // 를Shoprpa계정의userId저장까지UAP사용자의third_ext_info필드
+            // 를ShopRPA 계정의userId저장까지UAP사용자의third_ext_info필드
             if (StringUtils.hasText(iflytekUserId)) {
                 try {
                     userDao.updateThirdExtInfo(phone, iflytekUserId, databaseName);
-                    log.info("완료저장Shoprpa계정userId까지UAP사용자필드, 로그인이름: {}, userId: {}", phone, iflytekUserId);
+                    log.info("완료저장ShopRPA 계정userId까지UAP사용자필드, 로그인이름: {}, userId: {}", phone, iflytekUserId);
                 } catch (Exception e) {
-                    log.error("저장Shoprpa계정userId까지UAP사용자필드실패, 로그인이름: {}, userId: {}", phone, iflytekUserId, e);
+                    log.error("저장ShopRPA 계정userId까지UAP사용자필드실패, 로그인이름: {}, userId: {}", phone, iflytekUserId, e);
                     // 아니요출력예외, 원인로회원가입완료완료, 예정보저장실패
                 }
             }
@@ -849,7 +849,7 @@ public class IflytekAuthenticationServiceImpl implements AuthenticationService {
         try {
             log.info("열기 회원가입, 휴대폰 번호: {}", registerDto.getPhone());
 
-            // 1. 에서Shoprpa계정회원가입(사용빈비밀번호)
+            // 1. 에서ShopRPA 계정회원가입(사용빈비밀번호)
             CAccountClient client = getAccountClient();
             String traceId = generateTraceId();
             byte[] requestBody = buildRegisterRequest(registerDto, traceId);
@@ -890,13 +890,13 @@ public class IflytekAuthenticationServiceImpl implements AuthenticationService {
                     tenantId = registerUapUser(registerDto, request);
                 }
 
-                // 2.1 를Shoprpa계정의 userId 저장까지 UAP 사용자의 third_ext_info 필드
+                // 2.1 를ShopRPA 계정의 userId 저장까지 UAP 사용자의 third_ext_info 필드
                 String finalLoginName = StringUtils.hasText(loginName) ? loginName : phone;
                 try {
                     userDao.updateThirdExtInfo(finalLoginName, iflytekUserId, databaseName);
-                    log.info("완료저장Shoprpa계정 userId 까지 UAP 사용자필드, 로그인이름: {}, userId: {}", finalLoginName, iflytekUserId);
+                    log.info("완료저장ShopRPA 계정 userId 까지 UAP 사용자필드, 로그인이름: {}, userId: {}", finalLoginName, iflytekUserId);
                 } catch (Exception e) {
-                    log.error("저장Shoprpa계정 userId 까지 UAP 사용자필드실패, 로그인이름: {}, userId: {}", finalLoginName, iflytekUserId, e);
+                    log.error("저장ShopRPA 계정 userId 까지 UAP 사용자필드실패, 로그인이름: {}, userId: {}", finalLoginName, iflytekUserId, e);
                     // 아니요출력예외, 원인로회원가입완료완료, 예정보저장실패
                 }
 
@@ -951,7 +951,7 @@ public class IflytekAuthenticationServiceImpl implements AuthenticationService {
         try {
             log.info("열기 회원가입, 휴대폰 번호: {}", registerDto.getPhone());
 
-            // 1. 에서Shoprpa계정회원가입(사용빈비밀번호)
+            // 1. 에서ShopRPA 계정회원가입(사용빈비밀번호)
             CAccountClient client = getAccountClient();
             String traceId = generateTraceId();
             byte[] requestBody = buildRegisterRequest(registerDto, traceId);
@@ -992,13 +992,13 @@ public class IflytekAuthenticationServiceImpl implements AuthenticationService {
                     tenantId = registerUapUser(registerDto, request);
                 }
 
-                // 2.1 를Shoprpa계정의 userId 저장까지 UAP 사용자의 third_ext_info 필드
+                // 2.1 를ShopRPA 계정의 userId 저장까지 UAP 사용자의 third_ext_info 필드
                 String finalLoginName = StringUtils.hasText(loginName) ? loginName : phone;
                 try {
                     userDao.updateThirdExtInfo(finalLoginName, iflytekUserId, databaseName);
-                    log.info("완료저장Shoprpa계정 userId 까지 UAP 사용자필드, 로그인이름: {}, userId: {}", finalLoginName, iflytekUserId);
+                    log.info("완료저장ShopRPA 계정 userId 까지 UAP 사용자필드, 로그인이름: {}, userId: {}", finalLoginName, iflytekUserId);
                 } catch (Exception e) {
-                    log.error("저장Shoprpa계정 userId 까지 UAP 사용자필드실패, 로그인이름: {}, userId: {}", finalLoginName, iflytekUserId, e);
+                    log.error("저장ShopRPA 계정 userId 까지 UAP 사용자필드실패, 로그인이름: {}, userId: {}", finalLoginName, iflytekUserId, e);
                     // 아니요출력예외, 원인로회원가입완료완료, 예정보저장실패
                 }
 
@@ -1089,7 +1089,7 @@ public class IflytekAuthenticationServiceImpl implements AuthenticationService {
 
             log.info("비밀번호, 휴대폰 번호: {}, 로그인이름: {}", phone, loginName);
 
-            // 3. 업데이트Shoprpa계정비밀번호
+            // 3. 업데이트ShopRPA 계정비밀번호
             updateIflytekPassword(loginName, password);
 
             // 4. 업데이트UAP비밀번호
@@ -1164,7 +1164,7 @@ public class IflytekAuthenticationServiceImpl implements AuthenticationService {
 
             log.info("비밀번호, 휴대폰 번호: {}, 로그인이름: {}", phone, loginName);
 
-            // 3. 업데이트Shoprpa계정비밀번호
+            // 3. 업데이트ShopRPA 계정비밀번호
             updateIflytekPassword(loginName, password);
 
             // 4. 업데이트UAP비밀번호, login연결중사용의UAP비밀로그인, 으로일
@@ -1189,12 +1189,12 @@ public class IflytekAuthenticationServiceImpl implements AuthenticationService {
     }
 
     /**
-     * 업데이트Shoprpa계정비밀번호(회원가입후비밀번호)
+     * 업데이트ShopRPA 계정비밀번호(회원가입후비밀번호)
      * 회원가입시사용의예빈비밀번호, 으로비밀번호사용빈문자열
      */
     private void updateIflytekPassword(String loginName, String newPassword) {
         try {
-            log.info("업데이트Shoprpa계정비밀번호, 로그인이름: {}", loginName);
+            log.info("업데이트ShopRPA 계정비밀번호, 로그인이름: {}", loginName);
 
             // 회원가입시결과가있음비밀번호, 사용의예빈문자열
             // 으로비밀번호사용빈문자열
@@ -1205,12 +1205,12 @@ public class IflytekAuthenticationServiceImpl implements AuthenticationService {
             CAccountClient client = getAccountClient();
             String traceId = generateTraceId();
             byte[] requestBody = buildUpdatePasswordRequest(loginName, traceId, oldPwdMd5, newPwdMd5);
-            byte[] responseBytes = executePost(client, UPDATE_PASSWORD_PATH, requestBody, "업데이트Shoprpa계정비밀번호");
+            byte[] responseBytes = executePost(client, UPDATE_PASSWORD_PATH, requestBody, "업데이트ShopRPA 계정비밀번호");
             IflytekAccountResponse<Void> responseDto = parseResponse(responseBytes, Void.class);
             String code = responseDto.getCode();
 
             if (isSuccessCode(code)) {
-                log.info("업데이트Shoprpa계정비밀번호성공, 로그인이름: {}", loginName);
+                log.info("업데이트ShopRPA 계정비밀번호성공, 로그인이름: {}", loginName);
                 return;
             }
 
@@ -1226,8 +1226,8 @@ public class IflytekAuthenticationServiceImpl implements AuthenticationService {
         } catch (ServiceException e) {
             throw e;
         } catch (Exception e) {
-            log.error("업데이트Shoprpa계정비밀번호실패, 로그인이름: {}", loginName, e);
-            throw new ServiceException("업데이트Shoprpa계정비밀번호실패: " + e.getMessage());
+            log.error("업데이트ShopRPA 계정비밀번호실패, 로그인이름: {}", loginName, e);
+            throw new ServiceException("업데이트ShopRPA 계정비밀번호실패: " + e.getMessage());
         }
     }
 
@@ -1524,7 +1524,7 @@ public class IflytekAuthenticationServiceImpl implements AuthenticationService {
     /**
      * 생성삭제사용자요청 
      *
-     * @param userid  Shoprpa계정의 userid
+     * @param userid  ShopRPA 계정의 userid
      * @param traceId ID
      * @return 요청 문자배열
      */
@@ -1577,19 +1577,19 @@ public class IflytekAuthenticationServiceImpl implements AuthenticationService {
     }
 
     /**
-     * Shoprpa계정클라이언트
+     * ShopRPA 계정클라이언트
      * 사용 @PostConstruct 비고해제에서 Bean 후실행
      * 에서매요청 시재복사생성 client 
      */
     @javax.annotation.PostConstruct
     private void initAccountClient() {
-        log.info("Shoprpa계정클라이언트, accountHost: {}", accountHost);
+        log.info("ShopRPA 계정클라이언트, accountHost: {}", accountHost);
         this.accountClient =
                 accountClientFactory.create(accountHost, TIME_OUT, accessKey, accessSecret, USE_AES_ENCRYPT);
     }
 
     /**
-     * 가져오기Shoprpa계정클라이언트(단일복사사용)
+     * 가져오기ShopRPA 계정클라이언트(단일복사사용)
      */
     private CAccountClient getAccountClient() {
         return accountClient;

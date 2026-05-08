@@ -243,7 +243,6 @@ class OpenpyxlWrapper:
             data (list): The list of data to write.
             start_col (int): The starting column index (1-based).
         """
-        print(f"Writing data to row {row_index} starting at column {start_col}: {data}")
         for i, value in enumerate(data):
             self.sheet.cell(row=row_index, column=start_col + i, value=value)
 
@@ -476,8 +475,24 @@ class OpenpyxlWrapper:
 
         min_col, min_row, max_col, max_row = range_boundaries(range_str)
 
-        # Sort the data
-        sorted_data = sorted(data, key=lambda x: x[sort_column_index], reverse=reverse)
+        def sort_value(row):
+            if sort_column_index >= len(row):
+                return None
+            return row[sort_column_index]
+
+        def sort_key(row):
+            value = sort_value(row)
+            if isinstance(value, bool):
+                return (0, int(value))
+            if isinstance(value, (int, float)):
+                return (1, float(value))
+            if value is None:
+                return (9, "")
+            return (2, str(value).casefold())
+
+        rows_with_value = [row for row in data if sort_value(row) is not None]
+        rows_without_value = [row for row in data if sort_value(row) is None]
+        sorted_data = sorted(rows_with_value, key=sort_key, reverse=reverse) + rows_without_value
 
         # Write the sorted data back to the sheet
         for r_idx, row_data in enumerate(sorted_data):

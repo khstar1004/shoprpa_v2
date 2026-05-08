@@ -138,7 +138,6 @@ class AnchorMatch:
 
         # 결과가원존재함
         if element is not None:
-            # 매칭목록 위치,화면대기
             # w, h = int(element.shape[1]), int(element.shape[0])
             # w, h = int(w*rw), int(h*rh)
             w, h = int(element.shape[1] * rw), int(element.shape[0] * rh)
@@ -148,7 +147,6 @@ class AnchorMatch:
                 small_gray = cv2.Canny(small_gray, 50, 250)
 
             if anchor is not None:
-                # 필요에서화면일
                 anchor_gray = cv2.cvtColor(anchor, cv2.COLOR_RGB2GRAY)
                 anchor_threshold = match_similarity
                 if canny_flag:
@@ -160,16 +158,13 @@ class AnchorMatch:
                 anchor_match_res = cv2.matchTemplate(gray, anchor_gray, cv2.TM_CCORR_NORMED)
                 _, anchor_max_val, _, anchor_pos = cv2.minMaxLoc(anchor_match_res)
 
-                # TODO 실행의시찾을 수 없습니다완료, 필요관리, 실행의시가져오기 변수의
                 logger.info(f"현재목록 요소아니오일또는정보정도낮음, 필요, 정보정도로{anchor_max_val}")
                 if anchor_max_val < anchor_threshold:
-                    logger.info("화면위아니오저장된 요소또는현재이미지경과낮음가져오기 아니오까지요소")
-                    # gr.Info("화면위아니오저장된 요소또는현재이미지경과낮음가져오기 아니오까지요소")
+                    logger.info("저장된 요소가 화면에 없거나 현재 이미지의 유사도가 낮아 요소를 찾을 수 없습니다")
+                    # gr.Info("저장된 요소가 화면에 없거나 현재 이미지의 유사도가 낮아 요소를 찾을 수 없습니다")
 
                 roi_loc = (anchor_pos[0] + dis_x, anchor_pos[1] + dis_y)
-                # 지정원인, 으로계획
                 expand_factor = 1 / 5
-                # 계획ROI의
                 roi_top_left = (
                     math.ceil(roi_loc[0] - (w * expand_factor)),
                     math.ceil(roi_loc[1] - (h * expand_factor)),

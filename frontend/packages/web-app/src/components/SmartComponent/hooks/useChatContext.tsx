@@ -1,4 +1,4 @@
-﻿import { message, Typography } from 'ant-design-vue'
+import { message, Typography } from 'ant-design-vue'
 import type { BubbleProps, XRequestCallbacks } from 'ant-design-x-vue'
 import { useXAgent, useXChat, XRequest } from 'ant-design-x-vue'
 import { useTranslation } from 'i18next-vue'
@@ -237,7 +237,6 @@ export function useChatContext(smartComp: SmartCompContext) {
   function sendChat(text: DocNode) {
     // 파싱TiptapEditor의JSON형식로서버필요의형식
     const parsedContent = parseChatContent(text)
-    console.log('파싱후의내용:', parsedContent)
 
     if (!smartComp.smartType.value) {
       // 근거여부있음 ElementNode  smartType
@@ -260,8 +259,6 @@ export function useChatContext(smartComp: SmartCompContext) {
   }
 
   function fixCode(errorLog: RPA.LogItem & Record<'formattedContent', string>) {
-    console.log('복사오류:', errorLog)
-
     if (senderLoading.value) {
       message.warning(t('smartComponent.generatingPleaseWait'))
       return

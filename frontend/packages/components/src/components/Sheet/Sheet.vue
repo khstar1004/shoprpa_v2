@@ -1,18 +1,17 @@
-﻿<script lang="ts" setup>
-import { theme } from 'ant-design-vue'
-import { useTemplateRef, onBeforeUnmount, onMounted, watch } from 'vue'
-import { twMerge } from 'tailwind-merge'
-import { set } from 'lodash-es'
-import { generate } from '@ant-design/colors';
-
-import type { FUniver, Univer, IWorkbookData, CellValue, Theme } from '@univerjs/presets'
+<script lang="ts" setup>
+import { generate } from '@ant-design/colors'
 import { UniverSheetsCorePreset } from '@univerjs/preset-sheets-core'
-import UniverPresetSheetsCoreZhCN from '@univerjs/preset-sheets-core/locales/zh-CN'
 import UniverPresetSheetsCoreEnUS from '@univerjs/preset-sheets-core/locales/en-US'
-import { createUniver, LocaleType, mergeLocales, defaultTheme, LogLevel } from '@univerjs/presets'
+import UniverPresetSheetsCoreZhCN from '@univerjs/preset-sheets-core/locales/zh-CN'
 import { UniverSheetsFindReplacePreset } from '@univerjs/preset-sheets-find-replace'
-import sheetsFindReplaceZhCN from '@univerjs/preset-sheets-find-replace/locales/zh-CN'
 import sheetsFindReplaceEnUS from '@univerjs/preset-sheets-find-replace/locales/en-US'
+import sheetsFindReplaceZhCN from '@univerjs/preset-sheets-find-replace/locales/zh-CN'
+import type { CellValue, FUniver, IWorkbookData, Theme, Univer } from '@univerjs/presets'
+import { createUniver, defaultTheme, LocaleType, LogLevel, mergeLocales } from '@univerjs/presets'
+import { theme } from 'ant-design-vue'
+import { set } from 'lodash-es'
+import { twMerge } from 'tailwind-merge'
+import { onBeforeUnmount, onMounted, useTemplateRef, watch } from 'vue'
 
 import '@univerjs/preset-sheets-core/lib/index.css'
 import '@univerjs/preset-sheets-find-replace/lib/index.css'
@@ -36,7 +35,7 @@ export interface ICellValue {
 const props = withDefaults(defineProps<SheetProps>(), {
   darkMode: false,
   locale: LocaleType.ZH_CN,
-  defaultValue: () => ({})
+  defaultValue: () => ({}),
 })
 
 const emits = defineEmits<{
@@ -53,7 +52,7 @@ let univerInstance: Univer | null = null
 let univerAPIInstance: FUniver | null = null
 
 onMounted(() => {
-  const colors = generate(token.value.colorPrimary);
+  const colors = generate(token.value.colorPrimary)
 
   const themeToUse: Theme = {
     ...defaultTheme,
@@ -68,7 +67,7 @@ onMounted(() => {
       700: colors[7],
       800: colors[8],
       900: colors[9],
-    }
+    },
   }
 
   const { univer, univerAPI } = createUniver({
@@ -103,8 +102,9 @@ onMounted(() => {
     ({ stage }) => {
       if (stage === univerAPI.Enum.LifecycleStages.Rendered) {
         emits('rendered')
-        
-        if (!props.readonly) return
+
+        if (!props.readonly)
+          return
 
         const fWorkbook = univerAPI.getActiveWorkbook()!
         const unitId = fWorkbook.getId()
@@ -116,7 +116,8 @@ onMounted(() => {
         const permission = fWorkbook.getPermission()
         permission.setWorkbookEditPermission(unitId, false)
         permission.setPermissionDialogVisible(false)
-      } else if (stage === univerAPI.Enum.LifecycleStages.Steady) {
+      }
+      else if (stage === univerAPI.Enum.LifecycleStages.Steady) {
         emits('ready')
       }
     },
@@ -125,10 +126,10 @@ onMounted(() => {
   univerAPI.createWorkbook(props.defaultValue)
 
   univerAPI.addEvent(univerAPI.Event.SheetValueChanged, (params) => {
-    const cellValues: ICellValue[] = params.effectedRanges.flatMap(it => {
-      const { startRow, startColumn } = it.getRange();
-      const values = it.getValues();
-      
+    const cellValues: ICellValue[] = params.effectedRanges.flatMap((it) => {
+      const { startRow, startColumn } = it.getRange()
+      const values = it.getValues()
+
       // 를이배열변환로 ICellValue 배열
       const result: ICellValue[] = []
       for (let i = 0; i < values.length; i++) {
@@ -146,7 +147,7 @@ onMounted(() => {
       }
       return result
     })
-    
+
     emits('cellUpdate', cellValues)
   })
 
@@ -154,28 +155,29 @@ onMounted(() => {
   univerAPIInstance = univerAPI
 })
 
-const getWorkbookData = () => {
+function getWorkbookData() {
   const fWorkbook = univerAPIInstance?.getActiveWorkbook()
-  if (!fWorkbook) return
+  if (!fWorkbook)
+    return
   return fWorkbook.save()
 }
 
-const createWorkbook = (workbookData: Partial<IWorkbookData>) => {
+function createWorkbook(workbookData: Partial<IWorkbookData>) {
   univerAPIInstance?.createWorkbook(workbookData)
 }
 
-const updateCellValues = (values: ICellValue[]) => {
+function updateCellValues(values: ICellValue[]) {
   const fWorkbook = univerAPIInstance?.getActiveWorkbook()
   const fWorksheet = fWorkbook?.getActiveSheet()
   const fRange = fWorksheet?.getRange('A1:B2')
-  
+
   const cellValue: Record<number, Record<number, CellValue>> = {}
-  values.forEach(it => {
+  values.forEach((it) => {
     if (!cellValue[it.row]) {
       cellValue[it.row] = {}
     }
     set(cellValue, [it.row, it.column], it.value)
-  });
+  })
 
   fRange?.setValues(cellValue)
 }
@@ -204,14 +206,15 @@ defineExpose({
   redo: () => univerAPIInstance?.redo(),
   // 열기조회팝업
   openFindDialog: () => {
-    univerAPIInstance?.executeCommand("ui.operation.open-find-dialog")
+    univerAPIInstance?.executeCommand('ui.operation.open-find-dialog')
   },
   // 빈전체데이터
   clearAll: () => createWorkbook({}),
   // 삭제선택중내용
   deleteSelection: () => {
     const fWorkbook = univerAPIInstance?.getActiveWorkbook()
-    if (!fWorkbook) return
+    if (!fWorkbook)
+      return
 
     const fWorksheet = fWorkbook.getActiveSheet()
     // 가져오기 선택의

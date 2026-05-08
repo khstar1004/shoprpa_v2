@@ -27,8 +27,8 @@ const text = computed(() => {
 
 function openLink(linkType: 'service' | 'privacy') {
   const urls: Record<string, string> = {
-    service: 'https://www.shoprpa.com/resource/server.html',
-    privacy: 'https://www.shoprpa.com/resource/licence.html',
+    service: '',
+    privacy: '',
   }
   if (urls[linkType]) {
     if (window.UtilsManager) {

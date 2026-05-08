@@ -1,4 +1,4 @@
-﻿<script lang="ts" setup>
+<script lang="ts" setup>
 import { message } from 'ant-design-vue'
 import { to } from 'await-to-js'
 import { useTranslation } from 'i18next-vue'
@@ -12,51 +12,51 @@ const { sheetRef, isReady } = useDataSheetStore()
 const { t } = useTranslation()
 
 async function handleExport(type: 'csv' | 'excel') {
- const data = sheetRef.value?.getWorkbookData()
- if (!data)
- return
+  const data = sheetRef.value?.getWorkbookData()
+  if (!data)
+    return
 
- let saveContent: ArrayBuffer | string
- const saveFileName = type === 'csv' ? 'data.csv' : 'data.xlsx'
+  let saveContent: ArrayBuffer | string
+  const saveFileName = type === 'csv' ? 'data.csv' : 'data.xlsx'
 
- if (type === 'excel') {
- saveContent = await sheetRef.value.utils.exportToExcelFile(data)
- }
+  if (type === 'excel') {
+    saveContent = await sheetRef.value.utils.exportToExcelFile(data)
+  }
 
- if (type === 'csv') {
- const csvContent = await sheetRef.value.utils.exportToCsvFile(data)
- const content = isString(csvContent) ? csvContent : Object.values(csvContent).join('\n')
- // 추출CSV내용(data:text/csv;charset=utf-8,전)
- saveContent = content.replace('data:text/csv;charset=utf-8,', '')
- }
+  if (type === 'csv') {
+    const csvContent = await sheetRef.value.utils.exportToCsvFile(data)
+    const content = isString(csvContent) ? csvContent : Object.values(csvContent).join('\n')
+    // 추출CSV내용(data:text/csv;charset=utf-8,전)
+    saveContent = content.replace('data:text/csv;charset=utf-8,', '')
+  }
 
- const [error, saved] = await to<boolean, string>(utilsManager.saveFile(saveFileName, saveContent))
- if (error) {
- message.error(String(error || '').toLowerCase() === 'unauthorized' ? t('noPermission') : error)
- }
- else if (saved) {
- message.success(t('common.operationSuccess'))
- }
+  const [error, saved] = await to<boolean, string>(utilsManager.saveFile(saveFileName, saveContent))
+  if (error) {
+    message.error(String(error || '').toLowerCase() === 'unauthorized' ? t('noPermission') : error)
+  }
+  else if (saved) {
+    message.success(t('common.operationSuccess'))
+  }
 }
 </script>
 
 <template>
- <a-dropdown :disabled="!isReady">
- <rpa-hint-icon name="move-folder" enable-hover-bg>
- <template #suffix>
- <span class="ml-1 text-xs">{{ $t('common.export') }}</span>
- </template>
- </rpa-hint-icon>
+  <a-dropdown :disabled="!isReady">
+    <rpa-hint-icon name="move-folder" enable-hover-bg>
+      <template #suffix>
+        <span class="ml-1 text-xs">{{ $t('common.export') }}</span>
+      </template>
+    </rpa-hint-icon>
 
- <template #overlay>
- <a-menu>
- <a-menu-item @click="handleExport('csv')">
- {{ $t('sheet.exportCSV') }}
- </a-menu-item>
- <a-menu-item @click="handleExport('excel')">
- {{ $t('sheet.exportExcel') }}
- </a-menu-item>
- </a-menu>
- </template>
- </a-dropdown>
+    <template #overlay>
+      <a-menu>
+        <a-menu-item @click="handleExport('csv')">
+          {{ $t('sheet.exportCSV') }}
+        </a-menu-item>
+        <a-menu-item @click="handleExport('excel')">
+          {{ $t('sheet.exportExcel') }}
+        </a-menu-item>
+      </a-menu>
+    </template>
+  </a-dropdown>
 </template>

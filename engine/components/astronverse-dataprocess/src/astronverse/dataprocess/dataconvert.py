@@ -67,4 +67,4 @@ class DataConvertProcess:
             ]:
                 return ast.literal_eval(input_data)
         except Exception:
-            raise Exception("입력하세요정상의대기변환목록문자열")
+            raise Exception("올바른 변환 대상 목록 문자열을 입력하세요")

@@ -1,4 +1,4 @@
-﻿import { BoldOutlined, OrderedListOutlined, UnorderedListOutlined } from '@ant-design/icons-vue'
+import { BoldOutlined, OrderedListOutlined, UnorderedListOutlined } from '@ant-design/icons-vue'
 import Gapcursor from '@tiptap/extension-gapcursor'
 import Image from '@tiptap/extension-image'
 import Link from '@tiptap/extension-link'

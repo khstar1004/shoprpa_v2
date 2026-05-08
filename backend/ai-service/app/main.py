@@ -1,6 +1,5 @@
 from contextlib import asynccontextmanager
 
-import uvicorn
 from fastapi import FastAPI
 
 from app.config import get_settings
@@ -29,7 +28,7 @@ async def lifespan(app: FastAPI):
     await close_redis_pool()
 
 
-app = FastAPI(lifespan=lifespan)
+app = FastAPI(title=settings.APP_NAME, version=settings.API_VERSION, lifespan=lifespan)
 
 app.include_router(admin.router, prefix="/admin", tags=["admin"])
 
@@ -46,10 +45,17 @@ app.add_middleware(RequestTracingMiddleware)
 @app.get("/")
 async def root():
     logger.info("Root endpoint accessed!")
-    return {"message": "Hello Bigger Applications!"}
+    return {"service": settings.APP_NAME, "status": "ok"}
+
+
+@app.get("/health")
+async def health():
+    return {"service": settings.APP_NAME, "status": "ok"}
 
 
 if __name__ == "__main__":
+    import uvicorn
+
     uvicorn.run(
         "app.main:app",
         host="0.0.0.0",

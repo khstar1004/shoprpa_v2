@@ -27,7 +27,6 @@ export function quoteManage(currentItem, callback: (args: any) => void, pickType
   worker.onmessage = (e) => {
     console.timeEnd('quoteManage')
     const { params } = e.data
-    console.log('params', params)
     callback(params)
     worker.terminate()
   }

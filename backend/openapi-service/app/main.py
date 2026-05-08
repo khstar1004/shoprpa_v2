@@ -1,10 +1,10 @@
-﻿import os
+import os
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
-import uvicorn
 from fastapi import FastAPI
 
+from app.config import get_settings
 from app.dependencies import get_ws_service
 from app.internal import admin
 from app.logger import get_logger
@@ -18,6 +18,7 @@ from app.routers.streamable_mcp import (
 )
 
 logger = get_logger(__name__)
+settings = get_settings()
 
 
 @asynccontextmanager
@@ -28,12 +29,10 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 
     await init_redis_pool()
 
-    #  WsManagerService 단일
     worker_id = os.getpid()
     await get_ws_service()
-    logger.info(f"WsManagerService singleton initialized for worker {worker_id}")
+    logger.info("WsManagerService singleton initialized for worker %s", worker_id)
 
-    # 사용 async with 관리관리 session_manager 의명령
     async with session_manager.run():
         logger.info("Application started with StreamableHTTP session manager!")
         try:
@@ -41,15 +40,14 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         finally:
             logger.info("Application shutting down...")
 
-            # 관리 tools_config 연결
             await tools_config.cleanup_connections()
             logger.info("Tools config connections cleaned up")
 
             await close_redis_pool()
-            logger.info(f"Worker {worker_id} shutting down")
+            logger.info("Worker %s shutting down", worker_id)
 
 
-app = FastAPI(title="RPA OpenAPI", version="1.2.0", lifespan=lifespan)
+app = FastAPI(title=settings.APP_NAME, version=settings.API_VERSION, lifespan=lifespan)
 
 app.include_router(admin.router, prefix="/admin", tags=["admin"])
 
@@ -59,7 +57,7 @@ app.include_router(api_keys.router)
 app.include_router(healthcheck.router)
 app.include_router(user.router)
 app.include_router(websocket.router)
-app.mount("/mcp", handle_streamable_http)  # APISIX증가추가경로 , 해제307재지정제목
+app.mount("/mcp", handle_streamable_http)
 
 app.add_middleware(RequestTracingMiddleware)
 
@@ -68,10 +66,12 @@ app.add_middleware(RequestTracingMiddleware)
 async def root():
     logger.info("Root endpoint accessed!")
 
-    return {"message": "Hello Bigger Applications!"}
+    return {"service": settings.APP_NAME, "status": "ok"}
 
 
 if __name__ == "__main__":
+    import uvicorn
+
     uvicorn.run(
         "app.main:app",
         host="0.0.0.0",

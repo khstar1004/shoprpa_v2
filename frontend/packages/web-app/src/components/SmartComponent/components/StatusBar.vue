@@ -1,4 +1,4 @@
-﻿<script lang="ts" setup>
+<script lang="ts" setup>
 defineProps<{
   isGenerating?: boolean
   duration?: number // 시(S)

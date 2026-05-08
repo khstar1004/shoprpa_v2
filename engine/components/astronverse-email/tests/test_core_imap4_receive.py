@@ -1,5 +1,6 @@
-﻿import importlib
+import importlib
 import sys
+import unittest
 from types import ModuleType, SimpleNamespace
 
 
@@ -18,11 +19,15 @@ _install_logger_stub()
 core_imap4_receive = importlib.import_module("astronverse.email.core_imap4_receive")
 
 
-def test_encode_imap_utf7_for_chinese_folder_name():
-    assert core_imap4_receive.encode_imap_utf7("") == b"&XeVPXA-"
+class TestCoreImap4Receive(unittest.TestCase):
+    def test_encode_imap_utf7_for_chinese_folder_name(self):
+        self.assertEqual(core_imap4_receive.encode_imap_utf7("\u5de5\u4f5c"), b"&XeVPXA-")
+
+    def test_decode_folder_list_shows_decoded_folder_name(self):
+        folders = core_imap4_receive.decode_folder_list([b'() "/" "&XeVPXA-"'])
+
+        self.assertEqual(folders, ["'\u5de5\u4f5c'  (raw: &XeVPXA-)"])
 
 
-def test_decode_folder_list_shows_decoded_folder_name():
-    folders = core_imap4_receive.decode_folder_list([b'() "/" "&XeVPXA-"'])
-
-    assert folders == ["''  (raw: &XeVPXA-)"]
+if __name__ == "__main__":
+    unittest.main()

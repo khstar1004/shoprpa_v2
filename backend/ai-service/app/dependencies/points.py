@@ -1,4 +1,4 @@
-﻿from fastapi import Depends, HTTPException
+from fastapi import Depends, HTTPException
 
 from app.dependencies import get_user_id_from_header, get_user_point_service
 from app.logger import get_logger
@@ -23,10 +23,8 @@ class PointChecker:
     ):
         logger.info("Checking points call...")
         try:
-            # 시도증가추가분, 내부모듈사용완료 Redis, 가능열기판매소
             await userpoints_service.grant_monthly_points(current_user_id)
 
-            # 조회사용자분
             points = await userpoints_service.get_cached_points(current_user_id)
             if points < self.points_cost:
                 raise HTTPException(
@@ -34,7 +32,6 @@ class PointChecker:
                     detail="Insufficient points.",
                 )
 
-            # 반환패키지사용자 정보및제거분방법법의객체
             return PointsContext(
                 user_id=current_user_id,
                 service=userpoints_service,
@@ -42,8 +39,8 @@ class PointChecker:
                 transaction_type=self.transaction_type,
             )
         except Exception as e:
-            logger.error(f"Failed to check points: {str(e)}")
-            raise e
+            logger.error("Failed to check points: %s", str(e))
+            raise
 
 
 class PointsContext:
@@ -60,7 +57,7 @@ class PointsContext:
         self.transaction_type = transaction_type
 
     async def deduct_points(self):
-        """제거분"""
+        """Deduct points after successful processing."""
         try:
             await self.service.deduct_points(
                 user_id=self.user_id,

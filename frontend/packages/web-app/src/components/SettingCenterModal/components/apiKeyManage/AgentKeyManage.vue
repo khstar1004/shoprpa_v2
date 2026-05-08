@@ -93,7 +93,7 @@ const starTableOption = reactive<TableOption>({
   buttonListAlign: 'right',
   headerClass: '!justify-end',
   buttonList: [{
-    label: '새생성',
+    label: '새로 만들기',
     clickFn: addAgentKey,
     type: 'primary',
     hidden: false,

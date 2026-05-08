@@ -289,7 +289,7 @@ class Worksheet:
             worksheet: 테이블객체
 
         Raises:
-            ValueError: 테이블중아니오저장된 비고시출력예외
+            ValueError: 테이블의 저장되지 않은 비고 처리 중 오류
         """
         if worksheet.Comments.Count > 0:
             # 비고: Comments.Item 예의, 삭제후검색변수, 으로매삭제일개

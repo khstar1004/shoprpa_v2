@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 전체영역실행상태의
  */
 import { message } from 'ant-design-vue'
@@ -232,7 +232,6 @@ export const useRunningStore = defineStore('running', () => {
 
   // 시작실행기기생성ws연결
   const start = async (params: StartExecutorParams) => {
-    console.log('start: ', params)
     // http시작실행기기, 가져오기실행기기반환의ws url
     setStatus('starting')
     setRunProjectId(params.project_id)
@@ -352,7 +351,7 @@ export const useRunningStore = defineStore('running', () => {
 
   /**
    * 닫기데이터테이블
-   * @returns
+   * @returns 닫기 요청 결과
    */
   const closeDataTableListener = () => closeDataTable(processStore.project.id)
 

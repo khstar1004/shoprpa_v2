@@ -4,7 +4,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    APP_NAME: str = "AI Service"
+    APP_NAME: str = "ShopRPA AI Service"
     API_VERSION: str = "1.0"
     DATABASE_URL: str
     DATABASE_USERNAME: str
@@ -32,6 +32,7 @@ class Settings(BaseSettings):
 
     JFBYM_ENDPOINT: str = "http://api.jfbym.com/api/YmServer/customApi"
     JFBYM_API_TOKEN: str
+    INTERNAL_ADMIN_API_KEY: str
 
     model_config = SettingsConfigDict(
         env_file=None,

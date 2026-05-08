@@ -94,7 +94,7 @@ class GuiKeyBoard:
                 Clipboard.clear()
         elif keyboard_type == KeyboardType.DRIVER:
             if message == "":
-                raise BaseException(KEYBOARD_MSG_ERROR, "입력내용비어 있습니다, 확인하세요입력내용")
+                raise BaseException(KEYBOARD_MSG_ERROR, "입력 내용이 비어 있습니다.")
 
             file_path = Keyboard.get_drive_path()
             cmd = [file_path, message, f"{interval}"]
@@ -103,7 +103,7 @@ class GuiKeyBoard:
                     cmd, check=True, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
                 )
             except subprocess.CalledProcessError as e:
-                raise BaseException(DRIVE_INPUT_ERROR, "키보드드라이버입력있음관리자 권한")
+                raise BaseException(DRIVE_INPUT_ERROR, "키보드 드라이버 입력에 실패했습니다. 관리자 권한을 확인하세요.")
         elif keyboard_type == KeyboardType.GBLID:
             from astronverse.input.code import ghostbox as gb
 
@@ -112,7 +112,7 @@ class GuiKeyBoard:
             if not device or not is_connected:
                 raise BaseException(GHOST_DRIVE_ERROR, "드라이버를 찾을 수 없거나 연결되지 않았습니다. 드라이버 연결을 확인하세요")
             if message == "":
-                raise BaseException(KEYBOARD_MSG_ERROR, "입력내용비어 있습니다, 확인하세요입력내용")
+                raise BaseException(KEYBOARD_MSG_ERROR, "입력 내용이 비어 있습니다.")
             try:
                 Keyboard.change_language(ENGLISH)
                 gb.inputstring(message)

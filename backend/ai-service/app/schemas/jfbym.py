@@ -1,4 +1,4 @@
-﻿from typing import Optional
+from typing import Optional
 
 from pydantic import BaseModel, Field
 
@@ -6,11 +6,11 @@ from pydantic import BaseModel, Field
 class JFBYMGeneralRequestBody(BaseModel):
     image: str = Field(
         ...,
-        description="필요이미지의base64문자열",
+        description="Base64-encoded CAPTCHA image",
         examples=["iVBORw0KGgoAAAANSUhEUgAA..."],
     )
-    type: str = Field(..., description="인증코드유형", examples=["..."])
-    direction: Optional[str] = Field("bottom", description="이미지방법", examples=["bottom"])
+    type: str = Field(..., description="CAPTCHA type", examples=["..."])
+    direction: Optional[str] = Field("bottom", description="Image direction", examples=["bottom"])
 
 
 class JFBYMGeneralResponseInnerData(BaseModel):
@@ -23,17 +23,17 @@ class JFBYMGeneralResponseInnerData(BaseModel):
 class JFBYMGeneralResponseBody(BaseModel):
     code: int = Field(
         ...,
-        description="상태값, 10000테이블완료, 테이블실패",
+        description="Status code. 10000 means success.",
         examples=[10000],
     )
     msg: str = Field(
         ...,
-        description="요청 설명",
-        examples=["완료"],
+        description="Response message",
+        examples=["success"],
     )
-    data: JFBYMGeneralResponseInnerData = Field(
+    data: Optional[JFBYMGeneralResponseInnerData] = Field(
         None,
-        description="열기코드데이터",
+        description="CAPTCHA result data",
         examples=[
             {
                 "code": 0,

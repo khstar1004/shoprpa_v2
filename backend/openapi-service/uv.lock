@@ -760,20 +760,22 @@ dependencies = [
     { name = "aiomysql" },
     { name = "bcrypt" },
     { name = "cryptography" },
-    { name = "fastapi", extra = ["standard"] },
+    { name = "fastapi" },
     { name = "greenlet" },
+    { name = "httpx" },
     { name = "mcp" },
     { name = "pydantic-settings" },
     { name = "python-dotenv" },
     { name = "pytz" },
-    { name = "redis", extra = ["hiredis"] },
+    { name = "redis" },
     { name = "rpawebsocket" },
     { name = "sqlalchemy" },
+    { name = "uvicorn" },
+    { name = "websockets" },
 ]
 
 [package.dev-dependencies]
 dev = [
-    { name = "httpx" },
     { name = "pytest" },
     { name = "pytest-asyncio" },
     { name = "pytest-cov" },
@@ -785,20 +787,22 @@ requires-dist = [
     { name = "aiomysql", specifier = ">=0.2.0" },
     { name = "bcrypt", specifier = ">=4.3.0" },
     { name = "cryptography", specifier = ">=45.0.2" },
-    { name = "fastapi", extras = ["standard"], specifier = ">=0.115.12" },
+    { name = "fastapi", specifier = ">=0.115.12" },
     { name = "greenlet", specifier = ">=3.2.2" },
+    { name = "httpx", specifier = ">=0.28.1" },
     { name = "mcp" },
     { name = "pydantic-settings", specifier = ">=2.9.1" },
     { name = "python-dotenv", specifier = ">=1.1.0" },
     { name = "pytz" },
-    { name = "redis", extras = ["hiredis"], specifier = ">=6.1.0" },
+    { name = "redis", specifier = ">=6.1.0" },
     { name = "rpawebsocket", path = "app/utils/rpawebsocket-1.0.6-py3-none-any.whl" },
     { name = "sqlalchemy", specifier = ">=2.0.41" },
+    { name = "uvicorn", specifier = ">=0.34.0" },
+    { name = "websockets", specifier = ">=15.0.1" },
 ]
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "httpx", specifier = ">=0.28.1" },
     { name = "pytest", specifier = ">=8.3.5" },
     { name = "pytest-asyncio", specifier = ">=0.26.0" },
     { name = "pytest-cov", specifier = ">=6.1.1" },

@@ -1,4 +1,4 @@
-﻿import { cloneDeep, unionWith } from 'lodash-es'
+import { cloneDeep, unionWith } from 'lodash-es'
 
 import i18next from '@/plugins/i18next'
 
@@ -19,262 +19,262 @@ import { pickProcessAndModuleOptions } from '@/views/Arrange/utils'
 import { generateName, genNonDuplicateID } from './index'
 
 export const exceptionKeys = [
- '__skip_err__',
- '__retry_time__',
- '__retry_interval__',
+  '__skip_err__',
+  '__retry_time__',
+  '__retry_interval__',
 ]
 
 let addNewAtomIdxArr = []
 
 export function setAddAtomIdx(item: number | number[]) {
- addNewAtomIdxArr = Array.isArray(item) ? item : [item]
+  addNewAtomIdxArr = Array.isArray(item) ? item : [item]
 }
 
 // 완료원자 기능id
 export function generateId(type) {
- let id = genNonDuplicateID()
- if (type === Group || type === GroupEnd)
- id = `group_${id}`
- return id
+  let id = genNonDuplicateID()
+  if (type === Group || type === GroupEnd)
+    id = `group_${id}`
+  return id
 }
 
 // 통신경과key가져오기대상원자 기능
 export async function loopAtomByKey(key: string) {
- const child = LOOP_END_MAP[key]
- if (child)
- await loopAtomByKey(child)
- if (!getAtomByKey(key)) {
- await useProjectDocStore().gainLastNodeAbility(key, true)
- }
+  const child = LOOP_END_MAP[key]
+  if (child)
+    await loopAtomByKey(child)
+  if (!getAtomByKey(key)) {
+    await useProjectDocStore().gainLastNodeAbility(key, true)
+  }
 }
 
 // 완료컴포넌트점
 export async function createComponentAbility(key: string, version?: string | number, context?: 'add' | 'get' | 'update') {
- if (!getAtomByKey(key, version)) {
- const node = await ProjectDocument.gainComponentAbility(key, version, context)
- return node
- }
+  if (!getAtomByKey(key, version)) {
+    const node = await ProjectDocument.gainComponentAbility(key, version, context)
+    return node
+  }
 }
 
 // 완료가능컴포넌트점
 export async function loadSmartComponentAbility(key: string, version?: string | number) {
- const processStore = useProcessStore()
- const node = getAtomByKey(key, version) || await ProjectDocument.gainSmartComponentAbility(processStore.project.id, key, version)
- return node
+  const processStore = useProcessStore()
+  const node = getAtomByKey(key, version) || await ProjectDocument.gainSmartComponentAbility(processStore.project.id, key, version)
+  return node
 }
 
 // 통신경과key가져오기대상원자 기능
 export function getAtomByKey(key: string | number, version?: string | number) {
- let defaultVersion = version
- if (!version)
- defaultVersion = useProjectDocStore().noVersionMap()[key]
+  let defaultVersion = version
+  if (!version)
+    defaultVersion = useProjectDocStore().noVersionMap()[key]
 
- const keys = `${key}***${defaultVersion}`
- return cloneDeep(useProjectDocStore().nodeAbility()[keys])
+  const keys = `${key}***${defaultVersion}`
+  return cloneDeep(useProjectDocStore().nodeAbility()[keys])
 }
 
 // 완료정보테이블단일
 export function generateBaseItems(initData, alias = '') {
- const baseItems = initData.baseForm || cloneDeep(BASE_FORM) || []
- return baseItems.map((i) => {
- const obj = {
- type: 'str',
- value: '',
- }
- if (i.key === 'baseName')
- obj.value = initData.title
- if (i.key === 'anotherName')
- obj.value = alias ?? initData.anotherName ?? initData.title
+  const baseItems = initData.baseForm || cloneDeep(BASE_FORM) || []
+  return baseItems.map((i) => {
+    const obj = {
+      type: 'str',
+      value: '',
+    }
+    if (i.key === 'baseName')
+      obj.value = initData.title
+    if (i.key === 'anotherName')
+      obj.value = alias ?? initData.anotherName ?? initData.title
 
- i.value = [obj]
+    i.value = [obj]
 
- if (initData.key === Group)
- i.title = i18next.t('arrange.groupName')
- return i
- })
+    if (initData.key === Group)
+      i.title = i18next.t('arrange.groupName')
+    return i
+  })
 }
 
 // 가져오기프로세스중모든출력변수
 export function getFlowVariable() {
- let allFlowVariable = []
- const allNode = useFlowStore().simpleFlowUIData
- allNode.forEach((item) => {
- (item.outputList || []).forEach((i) => {
- allFlowVariable = allFlowVariable.concat((i.value as Array<any>).map(v => v.type === VAR_IN_TYPE ? v.value : null).filter(i => i))
- })
- })
- return allFlowVariable
+  let allFlowVariable = []
+  const allNode = useFlowStore().simpleFlowUIData
+  allNode.forEach((item) => {
+    (item.outputList || []).forEach((i) => {
+      allFlowVariable = allFlowVariable.concat((i.value as Array<any>).map(v => v.type === VAR_IN_TYPE ? v.value : null).filter(i => i))
+    })
+  })
+  return allFlowVariable
 }
 
 // 가져오기모든전역 변수
 export function getAllGlobalVariable() {
- const variableStore = useVariableStore()
- const arr = variableStore.globalVariableList.map(i => i.varName)
- return arr
+  const variableStore = useVariableStore()
+  const arr = variableStore.globalVariableList.map(i => i.varName)
+  return arr
 }
 
 // 가져오기프로세스중모든출력변수
 export function generateVarName(typeVarName, allVariable, excludeVariables: string[] = []) {
- // 조회출력모든의typeVarName_1, typeVarName_2...의변수, 정렬제거지정의변수
- const regex = new RegExp(`${typeVarName}_` + `\\d`)
- const variables = allVariable.filter(i => regex.test(i) && !excludeVariables.includes(i))
- // 통신경과대상보다, 완료새의후이름
- const newVarName = generateName(variables, typeVarName, '_')
- // 를새완료의변수추가까지모든변수, 다음출력테이블단일후정상완료
- allVariable.push(newVarName)
- return newVarName
+  // 조회출력모든의typeVarName_1, typeVarName_2...의변수, 정렬제거지정의변수
+  const regex = new RegExp(`${typeVarName}_` + `\\d`)
+  const variables = allVariable.filter(i => regex.test(i) && !excludeVariables.includes(i))
+  // 통신경과대상보다, 완료새의후이름
+  const newVarName = generateName(variables, typeVarName, '_')
+  // 를새완료의변수추가까지모든변수, 다음출력테이블단일후정상완료
+  allVariable.push(newVarName)
+  return newVarName
 }
 
 function generateFormItemDefaultVal(originArr: RPA.AtomDisplayItem[], targetArr: any[]) {
- return originArr.map((i) => {
- const { formType: { type }, key, types, default: defaultVal = '' } = i
- if (targetArr.length > 0) {
- const findItem = targetArr.find(item => item.key === key)
- if (findItem) {
- i.value = findItem.value
- }
- return i
- }
- const typeArr = type.split('_')
- i.value = defaultVal
- if (typeArr.includes(ATOM_FORM_TYPE.INPUT) || type === ATOM_FORM_TYPE.PICK) {
- // 있음input유형의value필요예배열
- const obj = {
- type: OTHER_IN_TYPE,
- value: defaultVal,
- }
- if (LIMIT_VARIABLE_SELECT.includes(types as VARIABLE_TYPE)) {
- useFlowStore().simpleFlowUIData.slice(0, addNewAtomIdxArr[0]).findLast((item) => {
- const findoutputListIdx = item?.outputList?.findIndex((v: RPA.AtomDisplayItem) => v.types === types)
- if (findoutputListIdx !== -1 && findoutputListIdx !== undefined) {
- obj.type = item.outputList[findoutputListIdx].value[0].type
- obj.value = item.outputList[findoutputListIdx].value[0].value
- return true
- }
- return false
- })
- }
- i.value = [obj]
- }
- return i
- })
+  return originArr.map((i) => {
+    const { formType: { type }, key, types, default: defaultVal = '' } = i
+    if (targetArr.length > 0) {
+      const findItem = targetArr.find(item => item.key === key)
+      if (findItem) {
+        i.value = findItem.value
+      }
+      return i
+    }
+    const typeArr = type.split('_')
+    i.value = defaultVal
+    if (typeArr.includes(ATOM_FORM_TYPE.INPUT) || type === ATOM_FORM_TYPE.PICK) {
+      // 있음input유형의value필요예배열
+      const obj = {
+        type: OTHER_IN_TYPE,
+        value: defaultVal,
+      }
+      if (LIMIT_VARIABLE_SELECT.includes(types as VARIABLE_TYPE)) {
+        useFlowStore().simpleFlowUIData.slice(0, addNewAtomIdxArr[0]).findLast((item) => {
+          const findoutputListIdx = item?.outputList?.findIndex((v: RPA.AtomDisplayItem) => v.types === types)
+          if (findoutputListIdx !== -1 && findoutputListIdx !== undefined) {
+            obj.type = item.outputList[findoutputListIdx].value[0].type
+            obj.value = item.outputList[findoutputListIdx].value[0].value
+            return true
+          }
+          return false
+        })
+      }
+      i.value = [obj]
+    }
+    return i
+  })
 }
 
 // 완료출력정보테이블단일
 export function generateOutItems(originArr = [], targetArr: any[] = [], excludeVariables: string[] = []) {
- const allFlowVariable = getFlowVariable()
- const allGlobalVariable = getAllGlobalVariable()
- const allVariable = allFlowVariable.concat(allGlobalVariable)
- const arr = originArr.map((i) => {
- if (targetArr.length > 0) {
- const findItem = targetArr.find(item => item.key === i.key)
- if (findItem) {
- i.value = findItem.value
- }
- return i
- }
- const obj = {
- type: VAR_IN_TYPE,
- value: '',
- }
- if (i.formType?.type === ATOM_FORM_TYPE.RESULT) {
- const newVarName = generateVarName(i.key, allVariable, excludeVariables)
- obj.value = newVarName
- }
- i.value = [obj]
- return i
- })
- return arr
+  const allFlowVariable = getFlowVariable()
+  const allGlobalVariable = getAllGlobalVariable()
+  const allVariable = allFlowVariable.concat(allGlobalVariable)
+  const arr = originArr.map((i) => {
+    if (targetArr.length > 0) {
+      const findItem = targetArr.find(item => item.key === i.key)
+      if (findItem) {
+        i.value = findItem.value
+      }
+      return i
+    }
+    const obj = {
+      type: VAR_IN_TYPE,
+      value: '',
+    }
+    if (i.formType?.type === ATOM_FORM_TYPE.RESULT) {
+      const newVarName = generateVarName(i.key, allVariable, excludeVariables)
+      obj.value = newVarName
+    }
+    i.value = [obj]
+    return i
+  })
+  return arr
 }
 
 // 완료입력정보테이블단일
 export function generateInItems(initData, targetData: any[] = []) {
- return generateFormItemDefaultVal(initData.inputList?.filter(i => i.level !== 'advanced') || [], targetData)
+  return generateFormItemDefaultVal(initData.inputList?.filter(i => i.level !== 'advanced') || [], targetData)
 }
 
 // 완료높음단계정보테이블단일
 export function generateAdvancedItems(initData, targetData: any[] = []) {
- const processStore = useProcessStore()
+  const processStore = useProcessStore()
 
- let advanceArr = []
- if (initData.advanced) {
- advanceArr = initData.advanced
- }
- else {
- const specialAdvanced = initData.inputList?.filter(i => i.level === 'advanced')
- // 높음단계매개변수공개공유매칭
- let commonAdvanced = cloneDeep(processStore.commonAdvancedParameter).filter(item => !exceptionKeys.includes(item.key))
+  let advanceArr = []
+  if (initData.advanced) {
+    advanceArr = initData.advanced
+  }
+  else {
+    const specialAdvanced = initData.inputList?.filter(i => i.level === 'advanced')
+    // 높음단계매개변수공개공유매칭
+    let commonAdvanced = cloneDeep(processStore.commonAdvancedParameter).filter(item => !exceptionKeys.includes(item.key))
 
- // 있음출력정보의, 높음단계매개변수중아니오필요인쇄출력변수매칭
- if (initData.outputList?.length === 0)
- commonAdvanced = commonAdvanced.filter(item => item.key !== '__res_print__')
+    // 있음출력정보의, 높음단계매개변수중아니오필요인쇄출력변수매칭
+    if (initData.outputList?.length === 0)
+      commonAdvanced = commonAdvanced.filter(item => item.key !== '__res_print__')
 
- advanceArr = unionWith(specialAdvanced, commonAdvanced, (specialArr, commonArr) => {
- return specialArr.key === commonArr.key
- })
- }
- return generateFormItemDefaultVal(advanceArr, targetData)
+    advanceArr = unionWith(specialAdvanced, commonAdvanced, (specialArr, commonArr) => {
+      return specialArr.key === commonArr.key
+    })
+  }
+  return generateFormItemDefaultVal(advanceArr, targetData)
 }
 
 // 완료예외정보테이블단일
 export function generateExceptionItems(initData, targetData: any[] = []) {
- const processStore = useProcessStore()
- const cloneConfig = cloneDeep(processStore.commonAdvancedParameter)
- const exceptionArr = initData.exception || cloneConfig.filter(item => exceptionKeys.includes(item.key)) || []
- return generateFormItemDefaultVal(exceptionArr, targetData)
+  const processStore = useProcessStore()
+  const cloneConfig = cloneDeep(processStore.commonAdvancedParameter)
+  const exceptionArr = initData.exception || cloneConfig.filter(item => exceptionKeys.includes(item.key)) || []
+  return generateFormItemDefaultVal(exceptionArr, targetData)
 }
 
 export function generateGroupName() {
- const groups = useFlowStore().simpleFlowUIData.filter(val => val.key === Group)
- const groupNames = groups.map(i => i.alias)
- return generateName(groupNames, '그룹', '-')
+  const groups = useFlowStore().simpleFlowUIData.filter(val => val.key === Group)
+  const groupNames = groups.map(i => i.alias)
+  return generateName(groupNames, '그룹', '-')
 }
 
 export function generateInputMap(key: string, specialRender = false) {
- const atom = getAtomByKey(key)
- if (!atom)
- return
+  const atom = getAtomByKey(key)
+  if (!atom)
+    return
 
- const nodeConfig = {
- ...atom,
- alias: key === Group ? generateGroupName() : atom.title,
- id: generateId(key),
- inputList: isComponentKey(atom.key) || isSmartComponentKey(atom.key) ? atom.inputList : generateInItems(atom),
- outputList: generateOutItems(atom.outputList),
- advanced: generateAdvancedItems(atom),
- exception: generateExceptionItems(atom),
- disabled: false,
- }
- const configs = [nodeConfig]
+  const nodeConfig = {
+    ...atom,
+    alias: key === Group ? generateGroupName() : atom.title,
+    id: generateId(key),
+    inputList: isComponentKey(atom.key) || isSmartComponentKey(atom.key) ? atom.inputList : generateInItems(atom),
+    outputList: generateOutItems(atom.outputList),
+    advanced: generateAdvancedItems(atom),
+    exception: generateExceptionItems(atom),
+    disabled: false,
+  }
+  const configs = [nodeConfig]
 
- if (specialRender)
- return configs
+  if (specialRender)
+    return configs
 
- const nestedKey = LOOP_END_MAP[key]
- if (nestedKey) {
- const nodeArr = generateInputMap(nestedKey)
- nodeArr.forEach((node) => {
- useFlowStore().nodeContactMap[nodeConfig.id] = node.id
- if (node.key === GroupEnd) {
- node.alias = nodeConfig.alias
- }
- configs.push(node)
- })
- }
+  const nestedKey = LOOP_END_MAP[key]
+  if (nestedKey) {
+    const nodeArr = generateInputMap(nestedKey)
+    nodeArr.forEach((node) => {
+      useFlowStore().nodeContactMap[nodeConfig.id] = node.id
+      if (node.key === GroupEnd) {
+        node.alias = nodeConfig.alias
+      }
+      configs.push(node)
+    })
+  }
 
- return configs
+  return configs
 }
 
 export function generateFormMap(item) {
- const { alias, title, exception, inputList } = item
- if (inputList) {
- for (const item of inputList as RPA.AtomDisplayItem[]) {
- const options = pickProcessAndModuleOptions(item)
- if (options)
- item.options = options
- }
- }
- item.baseForm = generateBaseItems(item || { title }, alias)
- item.exception = generateExceptionItems({}, exception)
- return item
+  const { alias, title, exception, inputList } = item
+  if (inputList) {
+    for (const item of inputList as RPA.AtomDisplayItem[]) {
+      const options = pickProcessAndModuleOptions(item)
+      if (options)
+        item.options = options
+    }
+  }
+  item.baseForm = generateBaseItems(item || { title }, alias)
+  item.exception = generateExceptionItems({}, exception)
+  return item
 }

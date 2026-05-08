@@ -1,4 +1,4 @@
-﻿<script lang="ts" setup>
+<script lang="ts" setup>
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons-vue'
 import { message, RangePicker } from 'ant-design-vue'
 import dayjs from 'dayjs'
@@ -225,7 +225,6 @@ function editColumnElementHandle() {
 }
 
 function openModal(args: any) {
-  console.log('openModal: ', args)
   Object.assign(modalConfig, args)
   modalConfig.open = true
   modalType(args)
@@ -302,7 +301,7 @@ function prefixSuffixText(type: string) {
     Suffix: t('dataBatch.suffix'),
   }[type]
 }
-// 필터링파일의value input 
+// 필터링파일의value input
 function showfilterValueInput(type: string) {
   const showMap = {
     isnull: 'empty',
@@ -323,7 +322,6 @@ function inputPlaceholder(type: string) {
   }
 }
 function filterSelectChange(item) {
-  console.log('item: ', item)
   if (item.logical === 'time_between') {
     item.parameter = ['', '']
   }
@@ -513,7 +511,7 @@ watch(() => props.config, (newVal) => {
       <div v-if="['Prefix', 'Suffix'].includes(modalConfig.type)" class="batch-modal-content">
         <div class="flex justify-between items-center mb-2 prefix-box">
           <div class="text-left text-[12px]">
-            {{ prefixSuffixText(modalConfig.type) }}: 
+            {{ prefixSuffixText(modalConfig.type) }}:
           </div>
           <a-input v-if="modalConfig.type === 'Prefix'" v-model:value="prefixConfig.parameters[0].val" class="prefix-input text-[12px]" />
           <a-input v-if="modalConfig.type === 'Suffix'" v-model:value="suffixConfig.parameters[0].val" class="prefix-input text-[12px]" />
@@ -524,7 +522,7 @@ watch(() => props.config, (newVal) => {
       <div v-if="modalConfig.type === 'FormatTime'" class="batch-modal-content">
         <div class="flex items-center mb-2 formattime-box">
           <div class="text-left text-[12px]">
-            {{ t('dataBatch.chooseFormat') }}: 
+            {{ t('dataBatch.chooseFormat') }}:
           </div>
           <a-select v-model:value="formatTimeConfig.parameters[0].val" class="formattime-select text-[12px]" :options="dateSelectListData" />
         </div>

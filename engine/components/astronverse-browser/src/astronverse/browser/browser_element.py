@@ -198,7 +198,7 @@ class BrowserElement:
                     scroll_into_center=scroll_into_center,
                 )
                 if isinstance(element.rect(), list):
-                    raise Exception("브라우저요소위치 지정아니오일, 확인하세요!")
+                    raise Exception("브라우저 요소 위치를 확인할 수 없습니다.")
 
                 # 클릭
                 center = element.point()
@@ -299,7 +299,7 @@ class BrowserElement:
         scroll_into_center: bool = True,
     ):
         """
-        입력란(web)
+        브라우저 입력란에 값을 입력합니다.
         """
         browser_obj = check_element(browser_obj, element_data, element_timeout)
 
@@ -343,9 +343,9 @@ class BrowserElement:
 
             # 매개변수인증
             if focus_time < 0:
-                raise BaseException(FOCUS_TIMEOUT_MUST_BE_POSITIVE, "시간 초과시간대0")
+                raise BaseException(FOCUS_TIMEOUT_MUST_BE_POSITIVE, "포커스 대기시간은 0 이상이어야 합니다.")
             if write_gap_time < 0:
-                raise BaseException(KEY_PRESS_INTERVAL_MUST_BE_NON_NEGATIVE, "입력대대기0")
+                raise BaseException(KEY_PRESS_INTERVAL_MUST_BE_NON_NEGATIVE, "입력 간격은 0 이상이어야 합니다.")
 
             # 위치 지정
             element = locator.locator(
@@ -354,7 +354,7 @@ class BrowserElement:
                 scroll_into_center=scroll_into_center,
             )
             if isinstance(element.rect(), list):
-                raise Exception("브라우저요소위치 지정아니오일, 확인하세요!")
+                raise Exception("브라우저 요소 위치를 확인할 수 없습니다.")
 
             # 클릭
             center = element.point()
@@ -409,7 +409,7 @@ class BrowserElement:
             scroll_into_center=scroll_into_center,
         )
         if isinstance(element.rect(), list):
-            raise Exception("브라우저요소위치 지정아니오일, 확인하세요!")
+            raise Exception("브라우저 요소 위치를 확인할 수 없습니다.")
         element.move()
 
     @staticmethod
@@ -448,7 +448,7 @@ class BrowserElement:
         if data:
             data = data.replace("data:image/jpeg;base64,", "")
         else:
-            raise Exception("확장반환 데이터가 비어 있습니다")
+            raise Exception("브라우저 확장에서 스크린샷 데이터를 반환하지 않았습니다.")
 
         # 출력
         if not image_name.endswith((".png", ".jpg", ".jpeg")):
@@ -485,7 +485,7 @@ class BrowserElement:
         browser_obj = check_element(browser_obj, element_data, element_timeout)
         element = locator.locator(element_data.get("elementData"), cur_target_app=browser_obj.browser_type.value)
         if isinstance(element.rect(), list):
-            raise Exception("브라우저요소위치 지정아니오일, 확인하세요!")
+            raise Exception("브라우저 요소 위치를 확인할 수 없습니다.")
         rect = element.rect()
 
         if not image_name.endswith((".png", ".jpg", ".jpeg")):
@@ -855,7 +855,7 @@ class BrowserElement:
         # (필요의요소)
         element = locator.locator(element_slider.get("elementData"), cur_target_app=browser_obj.browser_type.value)
         if isinstance(element.rect(), list):
-            raise Exception("요소위치 지정아니오일, 확인하세요!")
+            raise Exception("슬라이더 요소 위치를 확인할 수 없습니다.")
         slider_center = element.point()
 
         # (가능의)
@@ -863,7 +863,7 @@ class BrowserElement:
             element_progress.get("elementData"), cur_target_app=browser_obj.browser_type.value, scroll_into_view=False
         )
         if isinstance(element.rect(), list):
-            raise Exception("요소위치 지정아니오일, 확인하세요!")
+            raise Exception("진행 바 요소 위치를 확인할 수 없습니다.")
         progress_rect = element.rect()
 
         # 계획의및위치

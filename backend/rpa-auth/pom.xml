@@ -14,7 +14,7 @@
     <artifactId>rpaauth</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>rpaauth</name>
-    <description>Demo project for Spring Boot</description>
+    <description>ShopRPA auth service</description>
     <properties>
         <java.version>1.8</java.version>
         <spring-cloud.version>Hoxton.SR11</spring-cloud.version>
@@ -26,28 +26,6 @@
         <feign.version>10.4.0</feign.version>
         <cloud.version>2.2.0.RELEASE</cloud.version>
     </properties>
-    <repositories>
-        <repository>
-            <id>cbgmaven</id>
-            <name>cbg maven</name>
-            <url>https://depend.iflytek.com/artifactory/cbg-mvn-release-private/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-        </repository>
-        <repository>
-            <id>mvn-repo</id>
-            <name>mvn-repo</name>
-            <url>https://depend.iflytek.com/artifactory/mvn-repo/</url>
-            <layout>default</layout>
-        </repository>
-        <repository>
-            <id>alimaven</id>
-            <name>aliyun maven</name>
-            <url>https://maven.aliyun.com/repository/central</url>
-        </repository>
-    </repositories>
-
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -276,7 +254,7 @@
         <profile>
             <id>opensource</id>
             <activation>
-                <activeByDefault>false</activeByDefault>
+                <activeByDefault>true</activeByDefault>
             </activation>
             <dependencies>
                 <!-- 사용 stub 항목항목항목 SDK(jar 파일항목에서항목목록 lib 디렉터리아래) -->
@@ -318,7 +296,7 @@
         <profile>
             <id>closed-source</id>
             <activation>
-                <activeByDefault>true</activeByDefault>
+                <activeByDefault>false</activeByDefault>
             </activation>
             <dependencies>
                 <!-- 항목의 UAP Starter -->

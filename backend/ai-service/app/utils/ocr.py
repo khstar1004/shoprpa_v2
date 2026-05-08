@@ -44,8 +44,9 @@ SERVICE_ID = "sf8e6aca1"
 class OCRError(Exception):
     """Custom exception for OCR-related errors."""
 
-    def __init__(self, msg):
-        self.message = msg
+    def __init__(self, message: str):
+        super().__init__(message)
+        self.message = message
 
 
 class URLComponents:
@@ -62,7 +63,6 @@ class Url:
         self.host = host
         self.path = path
         self.schema = schema
-        pass
 
 
 # calculate sha256 and encode to base64
@@ -93,10 +93,7 @@ def assemble_ws_auth_url(request_url, method="POST", api_key=API_KEY, api_secret
     path = u.path
     now = datetime.now()
     date = format_date_time(mktime(now.timetuple()))
-    logger.info("date정보: %s", date)
-    # date = "Thu, 12 Dec 2019 01:57:27 GMT"
     signature_origin = "host: {}\ndate: {}\n{} {} HTTP/1.1".format(host, date, method, path)
-    logger.info("signature_origin정보: %s", signature_origin)
     signature_sha = hmac.new(
         api_secret.encode("utf-8"), signature_origin.encode("utf-8"), digestmod=hashlib.sha256
     ).digest()
@@ -108,7 +105,6 @@ def assemble_ws_auth_url(request_url, method="POST", api_key=API_KEY, api_secret
         signature_sha,
     )
     authorization = base64.b64encode(authorization_origin.encode("utf-8")).decode(encoding="utf-8")
-    logger.info("authorization_origin정보: %s", authorization_origin)
     values = {"host": host, "date": date, "authorization": authorization}
 
     return request_url + "?" + urlencode(values)
@@ -156,11 +152,10 @@ async def recognize_text_from_image(
         OCRError: If the request fails or returns an error
     """
     try:
-        # Build request components
         request_payload = _build_request_payload(image_base64, image_encoding, status)
 
         authenticated_url = assemble_ws_auth_url(BASE_URL)
-        logger.debug(f"OCR request URL: {authenticated_url}")
+        logger.debug("OCR request URL prepared for host api.xf-yun.com")
 
         headers = {
             "content-type": "application/json",
@@ -168,7 +163,6 @@ async def recognize_text_from_image(
             "app_id": APP_ID,
         }
 
-        # Make async request
         async with httpx.AsyncClient(timeout=timeout) as client:
             response = await client.post(authenticated_url, data=json.dumps(request_payload), headers=headers)
 
@@ -176,7 +170,6 @@ async def recognize_text_from_image(
         result = response.json()
         model = OCRGeneralResponseBody.model_validate(result)
 
-        # Check for API-level errors
         if model.header.code != 0:
             error_message = model.header.msg or "Unknown API error"
             raise OCRError(f"API returned error: {error_message}")
@@ -185,11 +178,11 @@ async def recognize_text_from_image(
         return model
 
     except httpx.HTTPError as e:
-        logger.error(f"HTTP error during OCR request: {e}")
-        raise  # Re-raise httpx.HTTPError instead of wrapping it
+        logger.error("HTTP error during OCR request: %s", e)
+        raise
     except json.JSONDecodeError as e:
-        logger.error(f"Failed to decode JSON response: {e}")
+        logger.error("Failed to decode OCR response: %s", e)
         raise OCRError("Invalid response format") from e
     except Exception as e:
-        logger.error(f"Unexpected error during OCR: {e}")
+        logger.error("Unexpected error during OCR: %s", e)
         raise OCRError(f"OCR processing failed: {str(e)}") from e

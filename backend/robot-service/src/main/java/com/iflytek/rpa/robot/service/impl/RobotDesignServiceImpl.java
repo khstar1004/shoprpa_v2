@@ -16,7 +16,6 @@ import com.iflytek.rpa.component.dao.ComponentRobotBlockDao;
 import com.iflytek.rpa.component.dao.ComponentRobotUseDao;
 import com.iflytek.rpa.component.entity.ComponentRobotBlock;
 import com.iflytek.rpa.component.entity.ComponentRobotUse;
-import com.iflytek.rpa.example.constants.ExampleConstants;
 import com.iflytek.rpa.market.entity.vo.AcceptResultVo;
 import com.iflytek.rpa.market.entity.vo.LatestVersionRobotVo;
 import com.iflytek.rpa.market.service.AppApplicationService;
@@ -51,6 +50,7 @@ import javax.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -68,6 +68,9 @@ import org.springframework.web.client.RestTemplate;
 public class RobotDesignServiceImpl extends ServiceImpl<RobotDesignDao, RobotDesign> implements RobotDesignService {
     @Resource
     private RobotDesignDao robotDesignDao;
+
+    @Value("${openapi.workflows-upsert-url:http://openapi-service:8020/workflows/upsert}")
+    private String workflowsUpsertUrl;
 
     @Resource
     private RobotExecuteDao robotExecuteDao;
@@ -630,16 +633,13 @@ public class RobotDesignServiceImpl extends ServiceImpl<RobotDesignDao, RobotDes
             // 생성요청 
             HttpEntity<String> requestEntity = new HttpEntity<>(requestBodyStr, headers);
 
-            // openapi URL
-            String openApiUrl = ExampleConstants.WORKFLOWS_UPSERT_URL;
-
             // 발송 POST 요청 
             ResponseEntity<String> response =
-                    restTemplate.exchange(openApiUrl, HttpMethod.POST, requestEntity, String.class);
+                    restTemplate.exchange(workflowsUpsertUrl, HttpMethod.POST, requestEntity, String.class);
 
             log.info(
                     "OpenAPI 요청완료, URL: {}, 상태: {}, : {}",
-                    openApiUrl,
+                    workflowsUpsertUrl,
                     response.getStatusCode(),
                     response.getBody());
         } catch (Exception e) {
@@ -1046,7 +1046,9 @@ public class RobotDesignServiceImpl extends ServiceImpl<RobotDesignDao, RobotDes
     public void processCopy(String oldRobotId, String newRobotId, String userId) throws Exception {
         // 조회봇의process목록
         List<CProcess> oldProcessList = processDao.getProcess(oldRobotId, 0, userId);
-        if (CollectionUtils.isEmpty(oldProcessList)) throw new Exception();
+        if (CollectionUtils.isEmpty(oldProcessList)) {
+            throw new ServiceException("복사할 프로세스를 찾을 수 없습니다");
+        }
 
         // 생성processId까지새processId의
         Map<String, String> oldNewProcessIdMap = new HashMap<>();
@@ -1354,7 +1356,9 @@ public class RobotDesignServiceImpl extends ServiceImpl<RobotDesignDao, RobotDes
         String sourceRobotId = robotDesignDao.getRobotIdFromAppResourceRegardlessDel(appId);
 
         RobotVersion latestRobotVersion = robotVersionDao.getLatestVersionRegardlessDel(sourceRobotId);
-        if (latestRobotVersion == null) throw new Exception();
+        if (latestRobotVersion == null) {
+            throw new ServiceException("원본 로봇의 최신 버전을 찾을 수 없습니다");
+        }
 
         String fileId = latestRobotVersion.getAppendixId();
         String videoId = latestRobotVersion.getVideoId();
@@ -1363,7 +1367,7 @@ public class RobotDesignServiceImpl extends ServiceImpl<RobotDesignDao, RobotDes
 
         myRobotDetailRes.setUseDescription(latestRobotVersion.getUseDescription());
         myRobotDetailRes.setFileName(fileName);
-        myRobotDetailRes.setFilePath(filePathPrefix + fileId);
+        myRobotDetailRes.setFilePath(StringUtils.isEmpty(fileId) ? null : (filePathPrefix + fileId));
         myRobotDetailRes.setVideoName(videoName);
         myRobotDetailRes.setVideoPath(StringUtils.isEmpty(videoId) ? null : (filePathPrefix + videoId));
     }
@@ -1401,7 +1405,7 @@ public class RobotDesignServiceImpl extends ServiceImpl<RobotDesignDao, RobotDes
         resVo.setCreatorName(creatorName);
         resVo.setCreateTime(robot.getCreateTime());
         resVo.setFileName(fileName);
-        resVo.setFilePath(filePathPrefix + fileId);
+        resVo.setFilePath(StringUtils.isEmpty(fileId) ? null : (filePathPrefix + fileId));
         resVo.setVideoName(videoName);
         resVo.setVideoPath(StringUtils.isEmpty(videoId) ? null : (filePathPrefix + videoId));
 
@@ -1573,7 +1577,9 @@ public class RobotDesignServiceImpl extends ServiceImpl<RobotDesignDao, RobotDes
     private void processShare(String oldRobotId, String sharedUserId, String newRobotId, String receivedUserId)
             throws Exception {
         List<CProcess> processList = processDao.getProcess(oldRobotId, 0, sharedUserId);
-        if (CollectionUtils.isEmpty(processList)) throw new Exception();
+        if (CollectionUtils.isEmpty(processList)) {
+            throw new ServiceException("공유할 프로세스를 찾을 수 없습니다");
+        }
         for (CProcess process : processList) {
             String nextId = String.valueOf(idWorker.nextId());
             process.setId(null);

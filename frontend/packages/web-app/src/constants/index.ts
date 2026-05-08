@@ -1,4 +1,4 @@
-﻿import type { TablePaginationConfig } from 'ant-design-vue'
+import type { TablePaginationConfig } from 'ant-design-vue'
 
 // 창이름
 export enum WINDOW_NAME {
@@ -41,7 +41,7 @@ export const SUCCESS_CODES = ['200', '000000', 200, '0000']
 export const ERROR_CODES = ['500', '5001', '1001']
 export const UN_AUTHORIZED_CODES = ['302', '4001', '401', '403', '900005', '900001'] // 900005빈경과 900001계정
 
-export const VUE_APP_HELP = 'https://www.shoprpa.com/docs/'
+export const VUE_APP_HELP = ''
 
 export const paginationConfig: TablePaginationConfig = {
   hideOnSinglePage: true,

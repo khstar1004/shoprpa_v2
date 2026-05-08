@@ -20,7 +20,7 @@ class HighLightClient:
         try:
             self.hide_wnd()
         except Exception as e:
-            logger.info(f"높이출력예외{e}")
+            logger.info("하이라이트 창 종료 중 예외: %s", e)
 
     def __send__(self, message):
         self.__socket.sendto(message.encode("utf-8"), ("localhost", self.__socket_port))

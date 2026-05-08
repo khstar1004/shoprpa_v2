@@ -151,7 +151,7 @@ class WinEle:
         wait_time: float = 10.0,
     ):
         if pick.get("elementData", {}).get("type", None) != PickerDomain.UIA.value:
-            raise BaseException(UNPICKABLE, "유형지원하지 않음{}".format(pick.get("type", None)))
+            raise BaseException(UNPICKABLE, "지원하지 않는 요소 유형입니다: {}".format(pick.get("type", None)))
 
         locator = WinEleCore.find(pick, wait_time)
         locator.move()
@@ -201,7 +201,7 @@ class WinEle:
     )
     def similar(pick: WinPick, wait_time: int = 10) -> list:
         if pick.get("elementData", {}).get("type", None) != PickerDomain.UIA.value:
-            raise BaseException(UNPICKABLE, "유형지원하지 않음{}".format(pick.get("type", None)))
+            raise BaseException(UNPICKABLE, "지원하지 않는 요소 유형입니다: {}".format(pick.get("type", None)))
 
         locator_list = WinEleCore.find(pick, wait_time)
         res_list = []

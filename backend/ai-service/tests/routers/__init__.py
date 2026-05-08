@@ -12,7 +12,7 @@ from app.database import get_db, Base
 from app.redis_op import get_redis
 
 # 항목시도항목매칭항목
-TEST_MYSQL_URL = "mysql+asyncmy://test_user:test_password@localhost:3307/test_db"
+TEST_MYSQL_URL = "mysql+aiomysql://test_user:test_password@localhost:3307/test_db"
 TEST_REDIS_URL = "redis://localhost:6380/0"
 
 

@@ -137,7 +137,7 @@ class MailTask:
                 client.quit()  # 출력
                 return True
             else:
-                raise ValueError(f"지원하지 않음의메일: {used_mail_protocol}")
+                raise ValueError(f"지원하지 않는 메일 프로토콜입니다: {used_mail_protocol}")
         except Exception as e:
             return False
 
@@ -185,7 +185,7 @@ class MailTask:
 
                 return client
             else:
-                raise ValueError(f"지원하지 않음의메일: {used_mail_protocol}")
+                raise ValueError(f"지원하지 않는 메일 프로토콜입니다: {used_mail_protocol}")
 
         except Exception as e:
             logger.info(f"[AsyncMailTask callback]연결메일함시오류: {str(e)}")
@@ -225,7 +225,7 @@ class MailTask:
                 logger.info(f"[AsyncMailTask callback]POP3가져오기메일목록실패: {str(e)}")
                 return False
         else:
-            logger.error(f"[AsyncMailTask callback]지원하지 않음의: {self.custom_mail_protocol}")
+            logger.error(f"[AsyncMailTask callback]지원하지 않는 메일 프로토콜입니다: {self.custom_mail_protocol}")
             return False
 
     async def callback(self) -> bool:
@@ -309,7 +309,7 @@ class MailTask:
                     # POP3반환의예원그룹 (response, lines, octets)
                     data = [data[1]]  # 변환로및IMAP의형식
                 else:
-                    logger.error(f"[AsyncMailTask callback]지원하지 않음의: {self.custom_mail_protocol}")
+                    logger.error(f"[AsyncMailTask callback]지원하지 않는 메일 프로토콜입니다: {self.custom_mail_protocol}")
                     continue
 
                 mail_info = self._extract_info(data, self.custom_mail_protocol)

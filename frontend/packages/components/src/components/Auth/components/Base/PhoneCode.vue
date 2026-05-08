@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { Button, Input, message } from 'ant-design-vue'
 import type { FormInstance } from 'ant-design-vue'
 import { useTranslation } from 'i18next-vue'
@@ -66,8 +66,7 @@ async function handleSendCode() {
       throw new Error(t('components.auth.sendCaptchaUndefined'))
     }
   }
-  catch (e) {
-    console.log(e)
+  catch {
   }
   finally {
     isCodeSending.value = false

@@ -1,4 +1,4 @@
-﻿import { NiceModal } from '@rpa/components'
+import { NiceModal } from '@rpa/components'
 import { message } from 'ant-design-vue'
 import { useTranslation } from 'i18next-vue'
 import { computed, ref } from 'vue'
@@ -8,80 +8,80 @@ import { QueueConfigModal } from '@/components/QueueConfigModal'
 import { useCommonOperate } from '@/views/Home/pages/hooks/useCommonOperate.tsx'
 
 export default function useQueueOperation() {
- const { handleDeleteConfirm } = useCommonOperate()
- const { t } = useTranslation()
- const selectedRowKeys = ref([])
- const queueTableRef = ref(null)
+  const { handleDeleteConfirm } = useCommonOperate()
+  const { t } = useTranslation()
+  const selectedRowKeys = ref([])
+  const queueTableRef = ref(null)
 
- const rowSelection = computed(() => {
- return {
- onChange: (keys: string[], _selectedRows: any[]) => {
- selectedRowKeys.value = keys
- },
- selectedRowKeys: selectedRowKeys.value,
- }
- })
+  const rowSelection = computed(() => {
+    return {
+      onChange: (keys: string[], _selectedRows: any[]) => {
+        selectedRowKeys.value = keys
+      },
+      selectedRowKeys: selectedRowKeys.value,
+    }
+  })
 
- // 가져오기큐데이터
- async function getTableData(params) {
- const { data } = await getTaskQueueList(params)
- const records = data?.current_tasks || []
- const total = data?.pagination.total || 0
- return {
- records,
- total,
- }
- }
+  // 가져오기큐데이터
+  async function getTableData(params) {
+    const { data } = await getTaskQueueList(params)
+    const records = data?.current_tasks || []
+    const total = data?.pagination.total || 0
+    return {
+      records,
+      total,
+    }
+  }
 
- // 삭제큐중의작업
- async function deleteQueueTask(record) {
- const confirm = await handleDeleteConfirm(t('deleteConfirm'))
- if (!confirm) {
- return
- }
- await removeTaskQueue({ unique_id: [record.unique_id] })
- message.success(t('deleteSuccess'))
- queueTableRef.value?.refreshWithDelete()
- }
+  // 삭제큐중의작업
+  async function deleteQueueTask(record) {
+    const confirm = await handleDeleteConfirm(t('deleteConfirm'))
+    if (!confirm) {
+      return
+    }
+    await removeTaskQueue({ unique_id: [record.unique_id] })
+    message.success(t('deleteSuccess'))
+    queueTableRef.value?.refreshWithDelete()
+  }
 
- const batchDelete = async () => {
- if (selectedRowKeys.value.length === 0) {
- message.warning(t('selectOne'))
- return
- }
- const confirm = await handleDeleteConfirm(t('deleteConfirm'))
- if (!confirm) {
- return
- }
- await removeTaskQueue({ unique_id: selectedRowKeys.value })
- message.success(t('batchDeleteSuccess'))
- queueTableRef.value?.refreshWithDelete(selectedRowKeys.value.length)
- selectedRowKeys.value = []
- }
+  const batchDelete = async () => {
+    if (selectedRowKeys.value.length === 0) {
+      message.warning(t('selectOne'))
+      return
+    }
+    const confirm = await handleDeleteConfirm(t('deleteConfirm'))
+    if (!confirm) {
+      return
+    }
+    await removeTaskQueue({ unique_id: selectedRowKeys.value })
+    message.success(t('batchDeleteSuccess'))
+    queueTableRef.value?.refreshWithDelete(selectedRowKeys.value.length)
+    selectedRowKeys.value = []
+  }
 
- const queueSetting = async () => {
- NiceModal.show(QueueConfigModal, {
- onOk: () => queueTableRef.value?.fetchTableData(),
- })
- }
+  const queueSetting = async () => {
+    NiceModal.show(QueueConfigModal, {
+      onOk: () => queueTableRef.value?.fetchTableData(),
+    })
+  }
 
- const refreshQueueList = () => {
- queueTableRef.value?.fetchTableData()
- }
+  const refreshQueueList = () => {
+    queueTableRef.value?.fetchTableData()
+  }
 
- const intervalRefresh = () => {
- const t = setInterval(() => queueTableRef.value?.fetchTableData(), 10 * 1000) // 매10초새로고침일회;
- return { clear: () => clearInterval(t) }
- }
+  const intervalRefresh = () => {
+    const t = setInterval(() => queueTableRef.value?.fetchTableData(), 10 * 1000) // 매10초새로고침일회;
+    return { clear: () => clearInterval(t) }
+  }
 
- return {
- queueTableRef,
- rowSelection,
- deleteQueueTask,
- getTableData,
- batchDelete,
- queueSetting,
- refreshQueueList,
- intervalRefresh,
- }
+  return {
+    queueTableRef,
+    rowSelection,
+    deleteQueueTask,
+    getTableData,
+    batchDelete,
+    queueSetting,
+    refreshQueueList,
+    intervalRefresh,
+  }
 }

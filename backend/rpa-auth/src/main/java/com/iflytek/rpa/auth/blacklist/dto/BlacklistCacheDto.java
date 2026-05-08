@@ -7,8 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * 이름단일저장 DTO
- * 사용 Redis 저장
+ * Redis에 저장하는 사용자 차단 정보 DTO
  *
  * @author system
  * @date 2025-12-16
@@ -32,27 +31,27 @@ public class BlacklistCacheDto implements Serializable {
     private String username;
 
     /**
-     * 원인
+     * 차단 사유
      */
     private String reason;
 
     /**
-     * 대기단계
+     * 차단 단계
      */
     private Integer level;
 
     /**
-     * 데이터
+     * 차단 횟수
      */
     private Integer count;
 
     /**
-     * 종료 시간(시간, 초)
+     * 차단 종료 시각(epoch milliseconds)
      */
     private Long endTimeMillis;
 
     /**
-     * 시간(초)
+     * 남은 시간(초)
      */
     private Long remainingSeconds;
 }

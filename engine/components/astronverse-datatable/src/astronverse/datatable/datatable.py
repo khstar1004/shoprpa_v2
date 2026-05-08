@@ -25,6 +25,7 @@ from astronverse.datatable import (
     PasteType,
     ReadType,
     RowInsertShift,
+    SortOrder,
     WriteMode,
     WriteType,
 )
@@ -43,17 +44,37 @@ from astronverse.datatable.utils import (
     validate_row,
 )
 
-try:
-    _xlsx_file_path = os.path.abspath(os.path.join(sys.exec_prefix, "../astron/data_table.xlsx"))
-    _head_file_path = os.path.abspath(os.path.join(sys.exec_prefix, "../astron/data_table_head.xlsx"))
-    logger.info(f"DataTable xlsx file path: {_xlsx_file_path}")
-    ensure_xlsx_file(_xlsx_file_path)
-    ensure_xlsx_file(_head_file_path)
+_xlsx_file_path = os.path.abspath(os.path.join(sys.exec_prefix, "../astron/data_table.xlsx"))
+_head_file_path = os.path.abspath(os.path.join(sys.exec_prefix, "../astron/data_table_head.xlsx"))
+ensure_xlsx_file(_xlsx_file_path)
+ensure_xlsx_file(_head_file_path)
 
-    PyxlWrapper = OpenpyxlWrapper(file_path=_xlsx_file_path, sheet_name=None)
-    PyxlHeadWrapper = OpenpyxlWrapper(file_path=_head_file_path, sheet_name=None)
-except Exception as e:
-    pass
+PyxlWrapper = OpenpyxlWrapper(file_path=_xlsx_file_path, sheet_name=None)
+PyxlHeadWrapper = OpenpyxlWrapper(file_path=_head_file_path, sheet_name=None)
+_clipboard_cache = ""
+
+
+def _copy_to_clipboard(value) -> None:
+    global _clipboard_cache
+    _clipboard_cache = str(value)
+    try:
+        import pyperclip
+
+        pyperclip.copy(_clipboard_cache)
+    except Exception as exc:
+        logger.warning(f"DataTable system clipboard copy unavailable; using in-process clipboard: {exc}")
+
+
+def _paste_from_clipboard() -> str:
+    try:
+        import pyperclip
+
+        value = pyperclip.paste()
+        if value is not None:
+            return value
+    except Exception as exc:
+        logger.warning(f"DataTable system clipboard paste unavailable; using in-process clipboard: {exc}")
+    return _clipboard_cache
 
 
 def auto_save(func):
@@ -646,9 +667,6 @@ class DataTable:
             if not start_row or not start_col:
                 raise DATAFRAME_EXPECTION(PARAMS_ERROR.format("복사필요지정시작 행열"), "복사필요지정시작 행열")
 
-        # 입력까지시스템잘라내기
-        import pyperclip
-
         _clipboard = DataTable.read_data(
             read_type=ReadType(copy_type.value),
             row=row,
@@ -659,7 +677,7 @@ class DataTable:
             end_col=end_col,
         )
 
-        pyperclip.copy(str(_clipboard))
+        _copy_to_clipboard(_clipboard)
         return _clipboard
 
     @staticmethod
@@ -713,13 +731,12 @@ class DataTable:
         col: str = "A",
         start_row: int = 1,
         start_col: str = "A",
+        **kwargs,
     ):
         """
         붙여넣기데이터, 를복사의데이터붙여넣기까지지정셀, 행, 열, 
         """
-        import pyperclip
-
-        _clipboard = pyperclip.paste()
+        _clipboard = _paste_from_clipboard()
 
         if paste_type == PasteType.CELL and (not row or not col):
             raise DATAFRAME_EXPECTION(PARAMS_ERROR.format("붙여넣기셀필요지정행열"), "붙여넣기셀필요지정행열")
@@ -899,6 +916,49 @@ class DataTable:
             validate_end_row(start_row=start_row, end_row=end_row)
             col_range = f"{start_col}{start_row}:{end_col}{end_row}"
             PyxlWrapper.clear_range(range_str=col_range)
+
+    @staticmethod
+    @validate_cell
+    @auto_save
+    @atomicMg.atomic(
+        "DataTable",
+        inputList=[
+            atomicMg.param(
+                "col",
+                types="Str",
+                required=True,
+            ),
+            atomicMg.param(
+                "sort_type",
+                formType=AtomicFormTypeMeta(AtomicFormType.RADIO.value),
+            ),
+        ],
+        outputList=[],
+    )
+    def sort_table(
+        col: str = "A",
+        sort_type: SortOrder = SortOrder.ASCENDING,
+    ):
+        """
+        데이터테이블을 지정 열 기준으로 정렬합니다.
+        """
+        if not col:
+            raise DATAFRAME_EXPECTION(PARAMS_ERROR.format("정렬열비워 둘 수 없습니다"), "정렬열비워 둘 수 없습니다")
+        max_row = PyxlWrapper.get_max_row()
+        max_col = PyxlWrapper.get_max_column()
+        if max_row < 1 or max_col < 1:
+            return
+
+        col_index = col_to_index(col)
+        if col_index > max_col:
+            raise DATAFRAME_EXPECTION(PARAMS_ERROR.format("정렬열이데이터범위를벗어났습니다"), "정렬열이데이터범위를벗어났습니다")
+
+        table_range = f"A1:{index_to_col(max_col - 1)}{max_row}"
+        PyxlWrapper.sort_range(
+            range_str=table_range,
+            sort_column_index=col_index - 1,
+            reverse=sort_type == SortOrder.DESCENDING,
+        )
 
     @staticmethod
     @validate_cell
@@ -1519,6 +1579,8 @@ class DataTable:
             )
             with open(file_path, "w", encoding="utf-8") as jsonfile:
                 json.dump(data, jsonfile, indent=4)
+        elif export_file_type == ExportFileType.CSV:
+            PyxlWrapper.export_to_csv(csv_file_path=file_path, include_header=False)
         else:
             PyxlWrapper.export_to_file(file_path=file_path)
         return file_path

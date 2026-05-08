@@ -1,4 +1,4 @@
-﻿import { inject, provide, ref } from 'vue'
+import { inject, provide, ref } from 'vue'
 
 import { useRunlogStore } from '@/stores/useRunlogStore'
 
@@ -29,8 +29,6 @@ export function useSmartCompContext() {
     else if (!comp) {
       currentVersionIndex.value = -1
     }
-
-    console.log('editingSmartComp', editingSmartComp.value, 'currentVersionIndex', currentVersionIndex.value)
   }
 
   function initVersionList(versionListData: SmartComp[], targetVersion?: number) {
@@ -53,7 +51,7 @@ export function useSmartCompContext() {
   }
 
   function getNextVersionNumber(): number {
-    // 버전에서1열기 
+    // 버전에서1열기
     if (versionList.value.length === 0) {
       return 1
     }

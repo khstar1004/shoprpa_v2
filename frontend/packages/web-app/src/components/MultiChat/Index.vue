@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { CloseOutlined, LoadingOutlined, RightOutlined, SaveOutlined, StopOutlined, ZoomInOutlined } from '@ant-design/icons-vue'
 import { useTheme } from '@rpa/components'
 import { useAsyncState, useToggle } from '@vueuse/core'
@@ -11,10 +11,10 @@ import { computed, h, nextTick, onBeforeUnmount, ref } from 'vue'
 
 import { getAPIBaseURL } from '@/api/http/env'
 import { sseRequest } from '@/api/sse'
+import appIcon from '@/assets/brand/shoprpa-app-icon.png'
 import { WINDOW_NAME } from '@/constants'
 import { utilsManager, windowManager } from '@/platform'
 import type { chatItem } from '@/types/chat'
-import appIcon from '@/assets/brand/shoprpa-app-icon.png'
 
 import ChatBgDarkSvg from './assets/chat-bg-dark.svg?component'
 import ChatBgLightSvg from './assets/chat-bg-light.svg?component'
@@ -173,7 +173,6 @@ function createSSE(url: string, query: string) {
     url,
     queryData,
     (res) => {
-      console.log('res', res)
       if (!res)
         return
 
@@ -208,7 +207,6 @@ function handleSend() {
     if (isMultiTurnLimit.value)
       return
     if (messagingId.value || isThinking.value) {
-      console.log('messagingId', messagingId.value)
       message.warning(t('multiChat.waitPreviousChatEnd'))
       return
     }

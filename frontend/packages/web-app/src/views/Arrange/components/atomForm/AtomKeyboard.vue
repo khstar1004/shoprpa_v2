@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { ref } from 'vue'
 
 import ShortCutInput from '@/components/ShortcutInput/Index.vue'

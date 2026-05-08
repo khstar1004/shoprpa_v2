@@ -1,4 +1,4 @@
-﻿import { reactive, ref } from 'vue'
+import { reactive, ref } from 'vue'
 
 import type { ConsultFormData } from '../../../../interface'
 import { generateFormData } from '../../../../schemas/factories'

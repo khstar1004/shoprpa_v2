@@ -1,4 +1,4 @@
-﻿export enum RecordActionType {
+export enum RecordActionType {
   GET_ELEMENT_INFO = 'get-element-info',
   GET_ELEMENT_TEXT = 'get-element-text',
   GET_ELEMENT_CODE = 'get-element-code',
@@ -32,7 +32,7 @@ export const WebRecordActionType: Partial<Record<RecordActionType, string>> = {
   [RecordActionType.SNAPSHOT]: 'BrowserElement.screenshot',
 }
 
-// 
+//
 export const DesktopRecordActionType: Partial<Record<RecordActionType, string>> = {
   [RecordActionType.GET_ELEMENT_TEXT]: 'WinEle.get_element_text',
   [RecordActionType.INPUT]: 'WinEle.input_text_element',

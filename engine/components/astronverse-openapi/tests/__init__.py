@@ -9,7 +9,7 @@ def write_to_excel(dst_file, dst_file_name, header_dict, json_data):
     :param dst_file: 본excel경로(폴더)
     :param dst_file_name: 본excel이름
     :param header_dict: excel의일행제목, 형식{"payer_name": "발송", ...}
-    :param json_data: 입력할까지excel중의json데이터, 가득아니오, 형식지정로[{`발송`: "Shoprpa 운영팀", ...}, {`발송`: "Shoprpa 운영팀", ...}, ...]
+    :param json_data: 입력할까지excel중의json데이터, 가득아니오, 형식지정로[{`발송`: "ShopRPA 운영팀", ...}, {`발송`: "ShopRPA 운영팀", ...}, ...]
     :return: 본excel경로
     """
     if not os.path.splitext(dst_file_name)[1]:

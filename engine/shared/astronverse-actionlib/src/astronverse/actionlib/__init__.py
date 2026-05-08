@@ -78,7 +78,7 @@ class AtomicFormType(Enum):
     REMOTEFOLDERS = "REMOTEFOLDERS"
     # 프로세스매개변수
     PROCESSPARAM = "PROCESSPARAM"
-    # ShoprpaAgent파일
+    # ShopRPA Agent 파일
     AIWORKFLOW = "AIWORKFLOW"
 
 

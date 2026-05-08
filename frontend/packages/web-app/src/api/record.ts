@@ -1,4 +1,4 @@
-﻿import type { ITableResponse } from '@/types/normalTable'
+import type { ITableResponse } from '@/types/normalTable'
 
 import http from './http'
 

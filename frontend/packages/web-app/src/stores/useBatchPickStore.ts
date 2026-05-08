@@ -1,4 +1,4 @@
-﻿import { message } from 'ant-design-vue'
+import { message } from 'ant-design-vue'
 import { useTranslation } from 'i18next-vue'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
@@ -38,7 +38,6 @@ export const useBatchPickStore = defineStore('batchPick', () => {
    * 시작데이터가져오기
    */
   const startBatchPick = (type: string, batchParams: object, callback: (params: { success: boolean, data: any }) => void) => {
-    console.log('startBatchPick: ', batchParams)
     type = type.toUpperCase()
     isPicking.value = true
 

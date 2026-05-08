@@ -1,9 +1,12 @@
 ﻿import copy
+import logging
 import os
 import time
 
 import cv2
 import numpy as np
+
+logger = logging.getLogger(__name__)
 
 
 class ImageDetector:
@@ -166,9 +169,8 @@ class ImageDetector:
         if not boxes:
             return []
 
-        # 정렬법으로가장자리의너비정도로순서정렬열
         boxes = sorted(boxes, key=lambda x: x[2], reverse=False)
-        print(boxes)
+        logger.debug("Candidate boxes before NMS: %s", boxes)
         keep_boxes = []
 
         while boxes:
@@ -261,7 +263,6 @@ class ImageDetector:
         # Step3 Canny감지내용
         canny_contours = self.preprocess_stage(canny_gradient, False)
 
-        # 가장자리선택
         fore_boxes = [
             (x, y, w, h)
             for x, y, w, h in (cv2.boundingRect(contour) for contour in fore_contours)
@@ -288,7 +289,6 @@ class ImageDetector:
         ]
 
         self.output_img = copy.deepcopy(self.original_img)
-        # 가장자리합치기&대값제어
         all_boxes = fore_boxes + sobel_boxes
         all_boxes = [list(box) for box in all_boxes]
         selected_boxes = self.apply_nms(all_boxes)
@@ -311,7 +311,7 @@ class ImageDetector:
         # + self.detect_ocr_text(line_width)
 
         end_time = time.time()
-        print(end_time - start_time)
+        logger.debug("Object detection completed in %.4fs", end_time - start_time)
         return self.output_img, selected_boxes
 
     def show_or_save_image(self, save_path: str = "", show_image: bool = True):
@@ -337,4 +337,4 @@ class ImageDetector:
             try:
                 cv2.imwrite(save_path, self.original_img)
             except Exception as e:
-                raise Exception(f"저장이미지시발송오류: {e}")
+                raise Exception(f"이미지 저장 중 오류: {e}")

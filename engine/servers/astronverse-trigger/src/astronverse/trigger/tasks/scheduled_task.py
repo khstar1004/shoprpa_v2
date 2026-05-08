@@ -209,7 +209,7 @@ class ScheduledTask:
             - end_time: 사용중지시간, 비어 있습니다테이블아니오중지시간
             - minutes: `int`, 지원[0, 60)
             - hours: `int`, 지원[0, 24)
-            - weeks: `List`, Shoprpa목록, 예[1 ,3, 5]테이블월요일, 수요일, 금요일
+            - weeks: `List`, 요일 목록, 예 [1, 3, 5]은 월요일, 수요일, 금요일
             - months: `List`, 월목록, 예[1 ,3, 5]테이블일월, 삼월, 오월
             - expression: 높이단계지정테이블방식
 

@@ -61,13 +61,16 @@ function buildFormMap(lists: any[]): { [key: string]: any } {
 function withedCode(code: string, scope: any) {
   const keys = Object.keys(scope)
   const values = Object.values(scope)
+  const expressionErrorReporter = import.meta.env.DEV
+    ? 'console.error(\'Expression execution error:\', error)'
+    : ''
 
   const wrappedCode = `
     try {
       const $this = $formMap;
       ${code}
     } catch (error) {
-      console.error('Expression execution error:', error)
+      ${expressionErrorReporter}
       return undefined
     }
   `

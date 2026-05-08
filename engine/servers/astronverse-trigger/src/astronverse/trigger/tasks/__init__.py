@@ -167,15 +167,15 @@ async def run_tasks(task_info: TaskIdInput):
             "data": {},
         }
     if not isinstance(task, AsyncImmediateTask):
-        return {"code": 201, "message": "지정작업찾을 수 없습니다해당스케줄링방식", "data": {}}
+        return {"code": 201, "message": "해당 스케줄링 방식의 지정 작업을 찾을 수 없습니다", "data": {}}
 
     flag = await task.callback()
     if flag:
-        return {"code": 200, "message": "작업스케줄링성공", "data": {}}
+        return {"code": 200, "message": "작업 스케줄링 성공", "data": {}}
     else:
         return {
             "code": 201,
-            "message": "작업스케줄링실패, 확인하세요여부완료저장된 정상에서실행",
+            "message": "작업 스케줄링 실패. 저장된 작업이 정상 실행 가능한지 확인하세요.",
             "data": {},
         }
 

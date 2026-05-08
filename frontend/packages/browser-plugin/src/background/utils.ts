@@ -1,8 +1,10 @@
 import { StatusCode } from './constant'
 
+const SPECIAL_CHARACTER_PATTERN = /[^\p{L}\p{N}_-]/u
+
 export const Utils = {
   getNavigatorUserAgent() {
-    const isChorme = /Chrome/.test(navigator.userAgent)
+    const isChrome = /Chrome/.test(navigator.userAgent)
     const isFirefox = /Firefox/.test(navigator.userAgent)
     const isEdge = /Edg/.test(navigator.userAgent)
 
@@ -10,7 +12,7 @@ export const Utils = {
       return '$firefox$'
     if (isEdge)
       return '$edge$'
-    if (isChorme)
+    if (isChrome)
       return '$chrome$'
     return '$unknown$'
   },
@@ -67,17 +69,21 @@ export const Utils = {
       return regex
     }
     catch {
-      throw new Error('Invalid regular expression pattern')
+      throw new Error('정규식 패턴이 올바르지 않습니다.')
     }
   },
 
-  isSupportProtocal(url: string) {
+  isSupportProtocol(url: string) {
     if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('ftp://') || url.startsWith('file://')) {
       return true
     }
     else {
       return false
     }
+  },
+
+  isSupportProtocal(url: string) {
+    return this.isSupportProtocol(url)
   },
 
   isNumberStartString(str: string) {
@@ -91,9 +97,7 @@ export const Utils = {
   isSpecialCharacter(str: string) {
     if (this.isNumberStartString(str))
       return true
-    if (/[~`!@#$%^&*()+\-={}\\[\]|:;"'<>,.?/()￥!, ;: ````[]<>, .?]/.test(str))
-      return true
-    return false
+    return SPECIAL_CHARACTER_PATTERN.test(str)
   },
 
   success(data, msg = 'success') {

@@ -10,13 +10,13 @@ import lombok.Getter;
  */
 @Getter
 public enum CycleWeekEnum {
-    MON("MON", "Shoprpa일"),
-    TUE("TUE", "Shoprpa이"),
-    WED("WED", "Shoprpa삼"),
-    THU("THU", "Shoprpa사"),
-    FRI("FRI", "Shoprpa오"),
-    SAT("SAT", "Shoprpa육"),
-    SUN("SUN", "Shoprpa일"),
+    MON("MON", "월요일"),
+    TUE("TUE", "화요일"),
+    WED("WED", "수요일"),
+    THU("THU", "목요일"),
+    FRI("FRI", "금요일"),
+    SAT("SAT", "토요일"),
+    SUN("SUN", "일요일"),
     ;
 
     private String code;

@@ -1,9 +1,8 @@
-﻿/**
- * 요소 name까지 
+/**
+ * 요소 name까지
  * @param name 필요 name 여부있음의전
  */
 export function scrollToName(name: string, times?: number) {
-  console.log('scrollToName: ', name)
   if (!name)
     return
   if (times <= 0) {

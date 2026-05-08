@@ -69,7 +69,7 @@ class OcrRequests:
 
 
 class OpenapiShoprpa:
-    """Shoprpa OCR 요청 처리"""
+    """ShopRPA OCR 요청 처리"""
 
     @staticmethod
     def template_ocr(header_dict: dict, files: list, type_code: str, url: str, key_name: str) -> list:

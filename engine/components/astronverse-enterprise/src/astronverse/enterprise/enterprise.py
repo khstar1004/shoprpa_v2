@@ -95,7 +95,7 @@ class Enterprise:
         )
         # 조회파일여부존재함
         if not (os.path.exists(file_path) and os.path.isfile(file_path)):
-            return BaseException(PATH_INVALID_FORMAT.format(file_path), "요청다시 입력정상의파일 경로")
+            raise BaseException(PATH_INVALID_FORMAT.format(file_path), "요청다시 입력정상의파일 경로")
 
         try:
             # 준비파일업로드
@@ -116,7 +116,7 @@ class Enterprise:
                     if inner_data.get("code") in ["999999", "500000"]:
                         raise BaseException(
                             FILE_UPLOAD_FAILED_FORMAT.format(response.text),
-                            "가능사용완료지원하지 않음의이름!",
+                            "지원하지 않는 이름입니다.",
                         )
                     info_data = {
                         "fileId": inner_data.get("data").get("fileid"),
@@ -148,7 +148,7 @@ class Enterprise:
                         "확인하세요업로드연결!",
                     )
         except Exception as e:
-            logger.error(f"업로드경과중발송오류: {str(e)}")
+            logger.error(f"업로드 중 오류: {str(e)}")
             raise BaseException(FILE_UPLOAD_FAILED_FORMAT.format(e), "")
 
     @staticmethod
@@ -176,14 +176,20 @@ class Enterprise:
         )
         # 조회 save_folder 경로여부예경로
         if not Path(save_folder).is_absolute():
-            raise Exception(f"폴더 경로오류: {save_folder} 아니오예경로")
+            raise BaseException(
+                FILE_DOWNLOAD_FAILED_FORMAT.format(f"폴더 경로 오류: 절대 경로가 아닙니다. path={save_folder}"),
+                "절대 경로를 입력하세요",
+            )
         # 조회저장폴더여부존재함, 결과가찾을 수 없습니다이면생성
         if not os.path.exists(save_folder):
             os.makedirs(save_folder)
 
         # 조회저장경로여부로디렉터리
         if not os.path.isdir(save_folder):
-            raise Exception(f"폴더 경로오류: {save_folder} 아니오예폴더 경로")
+            raise BaseException(
+                FILE_DOWNLOAD_FAILED_FORMAT.format(f"폴더 경로 오류: 디렉터리가 아닙니다. path={save_folder}"),
+                "정상 폴더 경로를 입력하세요",
+            )
 
         try:
             params = {"fileId": file_path}
@@ -236,8 +242,8 @@ class Enterprise:
             else:
                 raise NotImplementedError()
         except Exception as e:
-            logger.error(f"다운로드경과중발송오류: {str(e)}")
-            raise BaseException(FILE_UPLOAD_FAILED_FORMAT.format(e), "")
+            logger.error(f"다운로드 중 오류: {str(e)}")
+            raise BaseException(FILE_DOWNLOAD_FAILED_FORMAT.format(e), "")
 
     # 가져오기 변수
     @staticmethod
@@ -260,6 +266,8 @@ class Enterprise:
         """
         key = get_remote_var_key()
         value = get_remote_var_value(shared_variable)
+        if not value:
+            return None
 
         sub_var_list = value.get("subVarList", [])
         if not sub_var_list:

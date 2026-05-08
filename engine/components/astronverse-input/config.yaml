@@ -1,76 +1,76 @@
-﻿# @format
+# @format
 
 atomic:
   Gui.keyboard:
-    title: 키보드입력
-    comment: 통신경과(@{keyboard_type})방식키보드입력(@{message})
+    title: 키보드 입력
+    comment: '@{keyboard_type} 방식으로 키보드 입력 @{message}를 실행합니다.'
     icon: keyboard-input
     helpManual: ''
     inputList:
       - key: keyboard_type
-        title: 입력방식
+        title: 입력 방식
         tip: >-
-          통신입력: windows키보드메시지의방식입력;잘라내기입력: 가져오기잘라내기내용 붙여넣기입력;그룹합치기: 사용삽입키보드기호그룹합치기빠름입력;드라이버입력: 사용드라이버입력, 일사용네트워크비밀번호입력또는통신입력방식불가입력의
+          일반 입력: Windows 키보드 메시지 방식으로 입력합니다. 클립보드 입력: 클립보드에 내용을 복사한 뒤 붙여넣습니다. 조합 입력: 키보드 기호를 조합해 빠르게 입력합니다. 드라이버 입력: 일반 입력이 어려운 네트워크 비밀번호 입력 등에 사용합니다.
       - key: message
-        title: 입력내용
+        title: 입력 내용
         tip: ''
       - key: simulate_flag
-        title: 사람입력
-        tip: 사람방식키보드개입력문자, 로아니오
+        title: 사람처럼 입력
+        tip: 사람처럼 한 글자씩 입력할지 선택합니다.
       - key: interval
-        title: 입력
-        tip: 입력, 단일위치로초
+        title: 입력 간격(초)
+        tip: 글자 사이 입력 간격을 초 단위로 입력합니다.
     outputList: []
   Gui.key_input:
-    title: 키보드
-    comment: 사용키보드(@{keys_str})(@{key_model})
+    title: 키보드 키 입력 시뮬레이션
+    comment: 지정한 키 조합 @{keys_str}을 @{key_model} 방식으로 입력합니다.
     icon: keyboard-simulate-key
-    helpManual: 통신경과키보드행입력
+    helpManual: 키보드 단축키나 특수 키 입력을 실행합니다.
     inputList:
       - key: keys_str
-        title: 그룹합치기
-        tip: 그룹합치기
+        title: 키 조합
+        tip: 입력할 키 또는 키 조합을 지정합니다.
       - key: key_model
-        title: 방식
-        tip: 방식
+        title: 입력 방식
+        tip: 키를 누를 방식을 선택합니다.
     outputList: []
   Gui.mouse:
-    title: 마우스클릭
-    comment: 마우스(@{btn_type:왼쪽 버튼/오른쪽 버튼/중}) (@{btn_model:아래//단일기기/더블클릭}))
+    title: 마우스 클릭
+    comment: '@{btn_type} 버튼으로 @{btn_model} 동작을 실행합니다.'
     icon: mouse-click
     helpManual: ''
     inputList:
       - key: btn_type
-        title: 마우스
-        tip: 선택클릭마우스위의위치
+        title: 버튼
+        tip: 클릭할 마우스 버튼을 선택합니다.
       - key: btn_model
         title: 클릭방식
-        tip: 선택마우스의클릭방식
+        tip: 클릭, 누르기, 떼기, 더블클릭 중 실행할 방식을 선택합니다.
       - key: ctrl_type
-        title: 키보드
-        tip: 선택키보드, 로없음
+        title: 보조 키
+        tip: 클릭과 함께 누를 보조 키를 선택합니다. 필요 없으면 없음을 선택합니다.
     outputList: []
   Gui.mouse_wheel:
-    title: 마우스
-    comment: 마우스(@{scroll_type})(@{scroll_px||times}),방법로:(@{direction})
+    title: 마우스 휠
+    comment: 마우스를 @{direction} 방향으로 @{scroll_type} 방식에 따라 @{scroll_px||times}만큼 스크롤합니다.
     icon: mouse-scroll-webpage
     helpManual: ''
     inputList:
       - key: scroll_type
-        title: 방식
-        tip: ''
+        title: 스크롤 방식
+        tip: 횟수 또는 픽셀 단위 중 스크롤 방식을 선택합니다.
       - key: times
-        title: 지정데이터
-        tip: 입력마우스의데이터,일거리로120개웹 페이지이미지
+        title: 스크롤 횟수
+        tip: 마우스 휠을 움직일 횟수를 입력합니다. 1회는 일반적으로 120 단위입니다.
       - key: scroll_px
-        title: 지정이미지
-        tip: 입력지정이미지, 단일위치로px, 일로0-9999의데이터값
+        title: 스크롤 픽셀
+        tip: 스크롤할 픽셀 값을 입력합니다.
       - key: direction
-        title: 방법
-        tip: ''
+        title: 방향
+        tip: 스크롤 방향을 선택합니다.
       - key: ctrl_type
-        title: 키보드
-        tip: 선택키보드, 로없음
+        title: 보조 키
+        tip: 스크롤과 함께 누를 보조 키를 선택합니다.
     outputList: []
   Gui.mouse_move:
     title: 마우스
@@ -80,12 +80,12 @@ atomic:
     inputList:
       - key: window_type
         title: 창유형
-        tip: 개화면: 으로화면왼쪽위역할로위치;창: 으로창왼쪽위역할로위치
+        tip: '전체 화면은 화면 왼쪽 위를 기준으로, 창은 창 왼쪽 위를 기준으로 위치를 계산합니다.'
       - key: window_position
         title: 창왼쪽위역할위치
         tip: ''
       - key: get_mouse_position
-        title: 가져오기마우스위치
+        title: 마우스 위치 가져오기
         tip: ''
       - key: position_x
         title: 마우스x위치
@@ -95,43 +95,43 @@ atomic:
         tip: ''
       - key: move_type
         title: 마우스 이동 방식
-        tip: 선택마우스 이동 방식
+        tip: 마우스 이동 방식을 선택합니다.
       - key: move_speed
         title: 마우스 속도
         tip: ''
     outputList: []
   Gui.mouse_move_new:
-    title: 마우스
-    comment: 에서(@{window_type})위마우스까지(@{position_x}, @{position_y})
+    title: 마우스 이동
+    comment: '@{window_type} 기준 좌표(@{position_x}, @{position_y})로 마우스를 이동합니다.'
     icon: mouse-move
     helpManual: ''
     inputList:
       - key: window_type
         title: 창유형
-        tip: 개화면: 으로화면왼쪽위역할로위치;창: 으로창왼쪽위역할로위치
+        tip: '전체 화면은 화면 왼쪽 위를 기준으로, 창은 창 왼쪽 위를 기준으로 위치를 계산합니다.'
       - key: window_pick
         title: 창선택
-        tip: 선택할의창
+        tip: 기준으로 사용할 창을 선택합니다.
       - key: get_mouse_position
-        title: 가져오기마우스위치
-        tip: ''
+        title: 마우스 위치 가져오기
+        tip: 이동 후 현재 마우스 위치를 반환할지 선택합니다.
       - key: position_x
-        title: 마우스x위치
-        tip: ''
+        title: X 좌표
+        tip: 이동할 가로 좌표를 입력합니다.
       - key: position_y
-        title: 마우스y위치
-        tip: ''
+        title: Y 좌표
+        tip: 이동할 세로 좌표를 입력합니다.
       - key: move_type
         title: 마우스 이동 방식
-        tip: 선택마우스 이동 방식
+        tip: 즉시 이동 또는 부드러운 이동 방식을 선택합니다.
       - key: move_speed
         title: 마우스 속도
-        tip: ''
+        tip: 부드럽게 이동할 때 사용할 이동 속도를 선택합니다.
     outputList: []
   Gui.mouse_drag:
     title: 마우스
     comment: >-
-      마우스에서위치(@{start_pos_x}, @{start_pos_y})까지종료위치(@{end_pos_x},
+      마우스를 시작 위치(@{start_pos_x}, @{start_pos_y})에서 종료 위치(@{end_pos_x},
       @{end_pos_y})
     icon: mouse-drag
     helpManual: ''
@@ -153,17 +153,17 @@ atomic:
         tip: 시아래의마우스위치
       - key: move_type
         title: 방식
-        tip: 선택마우스 이동 방식
+        tip: 마우스 이동 방식을 선택합니다.
       - key: move_speed
         title: 정도
-        tip: 선택마우스 속도
+        tip: 마우스 속도를 선택합니다.
       - key: ctrl_type
         title: 키보드
-        tip: 선택마우스시의키보드, 로없음
+        tip: 마우스 동작과 함께 누를 보조 키를 선택합니다. 없으면 사용하지 않습니다.
     outputList: []
   Gui.mouse_position:
-    title: 가져오기마우스위치
-    comment: 가져오기현재마우스위치출력(@{point_x}, @{point_y})
+    title: 마우스 위치 가져오기
+    comment: 현재 마우스 위치를 가져와 @{point_x}, @{point_y}에 저장합니다.
     icon: get-mouse-position
     helpManual: ''
     inputList: []
@@ -177,13 +177,13 @@ atomic:
 options:
   KeyboardType:
     - value: normal
-      label: 통신입력
+      label: 일반 입력
     - value: driver
-      label: 드라이버입력
+      label: 드라이버 입력
     - value: clip
-      label: 입력
+      label: 클립보드 입력
     - value: gblid
-      label: ghost입력
+      label: 조합 입력
   Simulate_flag:
     - value: 'yes'
       label: 예
@@ -191,21 +191,21 @@ options:
       label: 아니오
   KeyModel:
     - value: click
-      label: 단일
+      label: 누르기
     - value: down
-      label: 아래
+      label: 누른 상태
     - value: up
-      label: 
+      label: 떼기
   BtnType:
     - value: left
       label: 왼쪽 버튼
     - value: middle
-      label: 중
+      label: 가운데 버튼
     - value: right
       label: 오른쪽 버튼
   BtnModel:
     - value: click
-      label: 단일
+      label: 클릭
     - value: double_click
       label: 더블클릭
     - value: down
@@ -227,9 +227,9 @@ options:
       label: space
   ScrollType:
     - value: time
-      label: 데이터
+      label: 횟수
     - value: px
-      label: 이미지
+      label: 픽셀
   Direction:
     - value: up
       label: 위
@@ -244,9 +244,9 @@ options:
     - value: linear
       label: 직선
     - value: simulation
-      label: 사람방식
+      label: 자연스러운 이동방식
     - value: teleportation
-      label: 시
+      label: 즉시 이동
   Speed:
     - value: slow
       label: 느림

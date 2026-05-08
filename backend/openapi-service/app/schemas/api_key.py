@@ -1,16 +1,16 @@
-﻿from typing import Optional, Union
+from typing import Optional, Union
 
 from pydantic import BaseModel, Field
 
 
 class ApiKeyCreate(BaseModel):
-    """생성API Key요청 유형"""
+    """Create API key request."""
 
-    name: str = Field(..., description="API Key이름", min_length=1, max_length=100)
+    name: str = Field(..., description="API key name", min_length=1, max_length=100)
 
 
 class ApiKeyDelete(BaseModel):
-    """삭제API Key요청 유형"""
+    """Delete API key request."""
 
     id: Union[int, str] = Field(..., description="API Key ID")
 
@@ -27,25 +27,25 @@ class ApiKeyDelete(BaseModel):
 
 
 class ShoprpaAgentCreate(BaseModel):
-    """생성ShoprpaAgent요청 유형"""
+    """Create ShopRPA Agent credential request."""
 
     api_key: str = Field(..., description="API Key", min_length=1, max_length=100)
     api_secret: str = Field(..., description="API Secret", min_length=1, max_length=100)
-    app_id: Optional[str] = Field(None, description="사용ID", min_length=1, max_length=100)
-    name: str = Field(..., description="사용자명명칭", min_length=1, max_length=100)
+    app_id: Optional[str] = Field(None, description="Application ID", min_length=1, max_length=100)
+    name: str = Field(..., description="Credential name", min_length=1, max_length=100)
 
 
 class ShoprpaAgentDelete(BaseModel):
-    """삭제ShoprpaAgent요청 유형"""
+    """Delete ShopRPA Agent credential request."""
 
-    id: Union[int, str] = Field(..., description="ShoprpaAgent ID")
+    id: Union[int, str] = Field(..., description="ShopRPA Agent credential ID")
 
 
 class ShoprpaAgentUpdate(BaseModel):
-    """업데이트ShoprpaAgent요청 유형"""
+    """Update ShopRPA Agent credential request."""
 
-    id: Union[int, str] = Field(..., description="ShoprpaAgent ID")
-    name: Optional[str] = Field(None, description="사용자명명칭", min_length=1, max_length=100)
-    app_id: Optional[str] = Field(None, description="사용ID", min_length=1, max_length=100)
+    id: Union[int, str] = Field(..., description="ShopRPA Agent credential ID")
+    name: Optional[str] = Field(None, description="Credential name", min_length=1, max_length=100)
+    app_id: Optional[str] = Field(None, description="Application ID", min_length=1, max_length=100)
     api_key: Optional[str] = Field(None, description="API Key", min_length=1, max_length=100)
     api_secret: Optional[str] = Field(None, description="API Secret", min_length=1, max_length=100)

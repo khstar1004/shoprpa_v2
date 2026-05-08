@@ -1,4 +1,4 @@
-﻿import type { ISheetWorkbookData, IWorksheetData, SheetLocaleType } from '@rpa/components'
+import type { ISheetWorkbookData, IWorksheetData, SheetLocaleType } from '@rpa/components'
 
 const DEFAULT_SHEET_NAME = 'sheet'
 const DEFAULT_EXCEL_NAME = 'datatable.xlsx'
@@ -6,40 +6,40 @@ const DEFAULT_EXCEL_NAME = 'datatable.xlsx'
 /**
  * 를백엔드저장의 datatable 데이터변환성공 univer 데이터
  * @param data
- * @returns
+ * @returns Univer workbook 데이터
  */
 export function transformToWorkbookData(data: RPA.IDataTableSheet): Partial<ISheetWorkbookData> {
- if (!data?.data) {
- return {}
- }
+  if (!data?.data) {
+    return {}
+  }
 
- const cellData: IWorksheetData['cellData'] = {}
+  const cellData: IWorksheetData['cellData'] = {}
 
- for (let row = 0; row < data.data.length; row++) {
- const rowArray = data.data[row]
- for (let col = 0; col < rowArray.length; col++) {
- const cellValue = rowArray[col]
+  for (let row = 0; row < data.data.length; row++) {
+    const rowArray = data.data[row]
+    for (let col = 0; col < rowArray.length; col++) {
+      const cellValue = rowArray[col]
 
- if (!cellData[row]) {
- cellData[row] = {}
- }
+      if (!cellData[row]) {
+        cellData[row] = {}
+      }
 
- cellData[row][col] = { v: cellValue }
- }
- }
+      cellData[row][col] = { v: cellValue }
+    }
+  }
 
- return {
- appVersion: '',
- id: Date.now().toString(),
- locale: 'zhCN' as SheetLocaleType,
- name: DEFAULT_EXCEL_NAME,
- resources: [],
- sheetOrder: [DEFAULT_SHEET_NAME],
- sheets: {
- [DEFAULT_SHEET_NAME]: {
- id: DEFAULT_SHEET_NAME,
- cellData,
- },
- },
- }
+  return {
+    appVersion: '',
+    id: Date.now().toString(),
+    locale: 'zhCN' as SheetLocaleType,
+    name: DEFAULT_EXCEL_NAME,
+    resources: [],
+    sheetOrder: [DEFAULT_SHEET_NAME],
+    sheets: {
+      [DEFAULT_SHEET_NAME]: {
+        id: DEFAULT_SHEET_NAME,
+        cellData,
+      },
+    },
+  }
 }

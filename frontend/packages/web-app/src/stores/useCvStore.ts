@@ -1,4 +1,4 @@
-﻿import { message } from 'ant-design-vue'
+import { message } from 'ant-design-vue'
 // 요소정보
 import { defineStore } from 'pinia'
 import type { Ref } from 'vue'
@@ -34,8 +34,7 @@ export const useCvStore = defineStore('cv', () => {
   // 추가분그룹
   const addGroup = (groupName: string) => {
     return new Promise((resolve, reject) => {
-      addElementGroup({ robotId: processStore.project.id, groupName, elementType: 'cv' }).then((res) => {
-        console.log(res)
+      addElementGroup({ robotId: processStore.project.id, groupName, elementType: 'cv' }).then((_res) => {
         message.success('추가되었습니다.')
         updateCvTreeData()
         resolve(true)
@@ -48,8 +47,7 @@ export const useCvStore = defineStore('cv', () => {
   // 분그룹이름 변경
   const renameGroup = (groupId: string, groupName: string) => {
     return new Promise((resolve, reject) => {
-      renameElementGroup({ robotId: processStore.project.id, groupId, groupName, elementType: 'cv' }).then((res) => {
-        console.log(res)
+      renameElementGroup({ robotId: processStore.project.id, groupId, groupName, elementType: 'cv' }).then((_res) => {
         message.success('이름이 변경되었습니다.')
         updateCvTreeData()
         resolve(true)
@@ -135,8 +133,7 @@ export const useCvStore = defineStore('cv', () => {
 
   // 삭제이미지
   const deleteCvItem = (cvItem: Element) => {
-    postDeleteElement({ robotId: processStore.project.id, elementId: cvItem.id }).then((res) => {
-      console.log(res)
+    postDeleteElement({ robotId: processStore.project.id, elementId: cvItem.id }).then((_res) => {
       updateCvTreeData()
       // 업데이트프로세스데이터-삭제해당이미지
       elementDeleteAndUpdateFlow({ elementIds: [cvItem.id] })
@@ -144,8 +141,7 @@ export const useCvStore = defineStore('cv', () => {
   }
   // 이미지까지개분그룹
   const moveCvItem = (id: string, groupId: string) => {
-    moveElement({ robotId: processStore.project.id, groupId, elementId: id }).then((res) => {
-      console.log(res)
+    moveElement({ robotId: processStore.project.id, groupId, elementId: id }).then((_res) => {
       updateCvTreeData()
     })
   }

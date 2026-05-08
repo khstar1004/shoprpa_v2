@@ -3,19 +3,19 @@ import { isPyModel, useProcessStore } from '@/stores/useProcessStore'
 import type { ArrangeTools } from '@/views/Arrange/types/arrangeTools'
 
 export function useToolsMultiSelect() {
- const item: ArrangeTools = {
- key: 'multiSelect',
- title: () => useFlowStore().multiSelect ? 'deselect' : 'multiSelect',
- name: '',
- fontSize: '',
- icon: 'tools-multi-select',
- action: '',
- noParams: true,
- show: true,
- disable: () => isPyModel(useProcessStore().activeProcess?.resourceCategory),
- clickFn: () => {
- useFlowStore().toggleMultiSelect() // 열기시작다중선택공가능
- },
- }
- return item
+  const item: ArrangeTools = {
+    key: 'multiSelect',
+    title: () => useFlowStore().multiSelect ? 'deselect' : 'multiSelect',
+    name: '',
+    fontSize: '',
+    icon: 'tools-multi-select',
+    action: '',
+    noParams: true,
+    show: true,
+    disable: () => isPyModel(useProcessStore().activeProcess?.resourceCategory),
+    clickFn: () => {
+      useFlowStore().toggleMultiSelect() // 열기시작다중선택공가능
+    },
+  }
+  return item
 }

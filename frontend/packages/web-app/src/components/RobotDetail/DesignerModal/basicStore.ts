@@ -1,4 +1,4 @@
-﻿import { createInjectionState } from '@vueuse/core'
+import { createInjectionState } from '@vueuse/core'
 import { onBeforeMount, ref, shallowRef } from 'vue'
 
 import { getMarketRobotDetail, getMyRobotDetail } from '@/api/robot'
@@ -9,7 +9,7 @@ import type { Version } from '../components/VersionTable/index.vue'
 interface BasicContentData {
   createTime: string // 생성 시간
   creatorName: string // 생성자이름
-  introduction: string // 
+  introduction: string //
   name: string // 사용이름
   version: number // 버전
   filePath: string // 파일 경로
@@ -17,7 +17,7 @@ interface BasicContentData {
   videoName?: string // 이름
   videoPath?: string // 경로
   useDescription: string // 사용설명
-  sourceName?: string // 
+  sourceName?: string //
   versionList?: Version[] // 버전목록
 }
 

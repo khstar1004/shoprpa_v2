@@ -9,7 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * 사용자이름단일유형
+ * 사용자 차단 목록 엔티티
  *
  * @author system
  * @date 2025-12-16
@@ -42,25 +42,25 @@ public class UserBlacklist implements Serializable {
     private String username;
 
     /**
-     * 원인
+     * 차단 사유
      */
     @TableField("ban_reason")
     private String banReason;
 
     /**
-     * 대기단계(1,2,3...)
+     * 차단 단계(1,2,3...)
      */
     @TableField("ban_level")
     private Integer banLevel;
 
     /**
-     * 데이터
+     * 차단 횟수
      */
     @TableField("ban_count")
     private Integer banCount;
 
     /**
-     * 시길이(초)
+     * 차단 기간(초)
      */
     @TableField("ban_duration")
     private Long banDuration;
@@ -78,13 +78,13 @@ public class UserBlacklist implements Serializable {
     private LocalDateTime endTime;
 
     /**
-     * 상태(1:중, 0:완료해제)
+     * 상태(1:차단 중, 0:해제됨)
      */
     @TableField("status")
     private Integer status;
 
     /**
-     * 사람
+     * 처리자
      */
     @TableField("operator")
     private String operator;

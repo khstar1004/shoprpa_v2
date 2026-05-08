@@ -142,7 +142,7 @@ class CV:
 
                     screen_weight, screen_height = Mouse.screen_size()
                     if target_x < 0 or target_x > screen_weight or target_y < 0 or target_y > screen_height:
-                        raise BaseException(REGION_ERROR, "매개변수아니오합치기법!")
+                        raise BaseException(REGION_ERROR, "이미지 클릭 좌표가 화면 범위를 벗어났습니다.")
 
                     if move_type == MoveType.LINEAR:
                         Mouse.move(
@@ -296,7 +296,7 @@ class CV:
 
                     screen_weight, screen_height = Mouse.screen_size()
                     if target_x < 0 or target_x > screen_weight or target_y < 0 or target_y > screen_height:
-                        raise BaseException(REGION_ERROR, "매개변수아니오합치기법!")
+                        raise BaseException(REGION_ERROR, "이미지 마우스 이동 좌표가 화면 범위를 벗어났습니다.")
 
                     if move_type == MoveType.LINEAR:
                         Mouse.move(

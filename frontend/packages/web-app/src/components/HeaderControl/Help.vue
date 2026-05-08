@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { NiceModal } from '@rpa/components'
+import { message } from 'ant-design-vue'
 
 import { ComplaintModal } from '@/components/ComplaintModal'
 import { VUE_APP_HELP } from '@/constants'
@@ -8,6 +9,10 @@ import { utilsManager } from '@/platform'
 import ControlButton from './ControlButton.vue'
 
 function handleHelpInfo() {
+  if (!VUE_APP_HELP) {
+    message.info('도움말 문서는 배포 패키지의 README를 확인하세요.')
+    return
+  }
   utilsManager.openInBrowser(VUE_APP_HELP)
 }
 

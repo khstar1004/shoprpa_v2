@@ -306,7 +306,6 @@ export class IncrementalASTParser {
   }
 
   // private validateNodeErrors(node: ASTNode) {
-  //     console.log(node);
   // }
 
   private finalizeNode(node: ASTNode, parentLevel?: number) {

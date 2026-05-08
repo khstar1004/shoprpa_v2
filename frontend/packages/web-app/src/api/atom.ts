@@ -1,9 +1,18 @@
-﻿import type { ITableResponse } from '@/types/normalTable'
+import {
+  getWorkflowEditorSmokeAtomAbilityInfo,
+  getWorkflowEditorSmokeAtomMeta,
+  getWorkflowEditorSmokeAtomTreeByParentKey,
+  isWorkflowEditorSmokeMode,
+} from '@/smoke/workflowEditorSmoke'
+import type { ITableResponse } from '@/types/normalTable'
 
 import http from './http'
 
 // 근거id및version가져오기기존가능의정보
 export async function getAbilityInfo(atomList: { key: string, version: string }[]): Promise<string[]> {
+  if (isWorkflowEditorSmokeMode())
+    return getWorkflowEditorSmokeAtomAbilityInfo(atomList.map(i => i.key))
+
   const res = await http.post<any[]>('/api/robot/atom-new/list', { keys: atomList.map(i => i.key) })
   const data = res.data || []
   return data.map((atom: any) => atom.atomContent)
@@ -11,22 +20,42 @@ export async function getAbilityInfo(atomList: { key: string, version: string }[
 
 // 가져오기기존가능왼쪽메뉴데이터
 export async function getAtomsMeta(): Promise<RPA.AtomMetaData> {
+  if (isWorkflowEditorSmokeMode())
+    return getWorkflowEditorSmokeAtomMeta()
+
   const res = await http.post('/api/robot/atom-new/tree')
   return JSON.parse(res.data)
 }
 
 // 가져오기 컴포넌트왼쪽메뉴데이터
 export async function getModuleMeta(): Promise<RPA.AtomTreeNode[]> {
+  if (isWorkflowEditorSmokeMode())
+    return []
+
   const res = await http.post('/api/robot/atom-new/tree')
   const data = JSON.parse(res.data)
   return data.atomicTreeExtend ?? []
 }
 
 export function getTreeByParentKey(parentKey: string) {
+  if (isWorkflowEditorSmokeMode()) {
+    return Promise.resolve({
+      code: '000000',
+      data: getWorkflowEditorSmokeAtomTreeByParentKey(parentKey),
+      message: '',
+    })
+  }
+
   return http.post('/api/robot/atom/getListByParentKey', null, { params: { parentKey } })
 }
 
 export async function getNewAtomDesc(key: string): Promise<{ data: string }> {
+  if (isWorkflowEditorSmokeMode()) {
+    return {
+      data: getWorkflowEditorSmokeAtomAbilityInfo([key])[0] ?? '{}',
+    }
+  }
+
   const res = await http.post<any[]>('/api/robot/atom-new/list', { keys: [key] })
   const atom = res.data && res.data.length > 0 ? res.data[0] : {}
   const { atomContent = '{}' } = atom as any
@@ -37,18 +66,37 @@ export async function getNewAtomDesc(key: string): Promise<{ data: string }> {
  * 추가즐겨찾기
  */
 export function addFavorite(data: { atomKey: string }) {
+  if (isWorkflowEditorSmokeMode()) {
+    return Promise.resolve({
+      code: '000000',
+      data: data.atomKey,
+      message: '',
+    })
+  }
+
   return http.get('/api/robot/atomLike/create', data)
 }
 /**
  * 가져오기 즐겨찾기
  */
 export function removeFavorite(data: { likeId: string }) {
+  if (isWorkflowEditorSmokeMode()) {
+    return Promise.resolve({
+      code: '000000',
+      data: data.likeId,
+      message: '',
+    })
+  }
+
   return http.get('/api/robot/atomLike/cancel', data)
 }
 /**
  * 가져오기즐겨찾기목록
  */
 export async function getFavoriteList() {
+  if (isWorkflowEditorSmokeMode())
+    return []
+
   const res = await http.get<RPA.AtomTreeNode[]>('/api/robot/atomLike/list')
   return res.data ?? []
 }
@@ -60,6 +108,9 @@ export async function getComponentList(data: {
   robotId: string
   version?: number
 }) {
+  if (isWorkflowEditorSmokeMode())
+    return []
+
   const res = await http.post<RPA.ComponentManageItem[]>('/api/robot/component/editing/list', { ...data, mode: 'EDIT_PAGE' })
   return res.data ?? []
 }
@@ -74,6 +125,9 @@ export async function getConfigParams(params: {
   moduleId?: string
   mode?: string
 }) {
+  if (isWorkflowEditorSmokeMode())
+    return []
+
   const res = await http.post<RPA.ConfigParamData[]>('/api/robot/param/all', params)
   return res.data
 }
@@ -82,6 +136,9 @@ export async function getConfigParams(params: {
  * 추가기존가능의구성 매개변수
  */
 export async function createConfigParam(data: RPA.CreateConfigParamData) {
+  if (isWorkflowEditorSmokeMode())
+    return `shoprpa-smoke-param-${Date.now()}`
+
   const res = await http.post<string>('/api/robot/param/add', data)
   return res.data
 }
@@ -91,6 +148,14 @@ export async function createConfigParam(data: RPA.CreateConfigParamData) {
  * @param id 매개변수id
  */
 export function deleteConfigParam(id: string) {
+  if (isWorkflowEditorSmokeMode()) {
+    return Promise.resolve({
+      code: '000000',
+      data: id,
+      message: '',
+    })
+  }
+
   return http.post(`/api/robot/param/delete?id=${id}`)
 }
 
@@ -99,6 +164,14 @@ export function deleteConfigParam(id: string) {
  * @param data RPA.ConfigParamData
  */
 export function updateConfigParam(data: RPA.ConfigParamData) {
+  if (isWorkflowEditorSmokeMode()) {
+    return Promise.resolve({
+      code: '000000',
+      data,
+      message: '',
+    })
+  }
+
   return http.post('/api/robot/param/update', data)
 }
 
@@ -106,6 +179,9 @@ export function updateConfigParam(data: RPA.ConfigParamData) {
  * 가져오기 공유 변수
  */
 export async function getRemoteParams<T>() {
+  if (isWorkflowEditorSmokeMode())
+    return [] as T[]
+
   const res = await http.get<T[]>('/api/robot/robot-shared-var/get-shared-var')
   return res.data || []
 }
@@ -114,6 +190,9 @@ export async function getRemoteParams<T>() {
  * 가져오기 중파일관리관리공유파일목록
  */
 export async function getRemoteFiles(data?: { pageSize?: number, fileName?: string }) {
+  if (isWorkflowEditorSmokeMode())
+    return { records: [], total: 0 }
+
   const res = await http.post<ITableResponse<RPA.SharedFileType>>('/api/robot/robot-shared-file/page', data)
   return res.data || { records: [], total: 0 }
 }

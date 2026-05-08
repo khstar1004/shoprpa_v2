@@ -1,4 +1,4 @@
-﻿<script lang="ts" setup>
+<script lang="ts" setup>
 /**
  * This component is used to reset the focus of the input element.
  * 개컴포넌트사용재입력요소의.

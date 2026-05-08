@@ -4,7 +4,7 @@ from astronverse.baseline.i18n.i18n import _
 BaseException = BaseException
 
 MSG_EMPTY_FORMAT: ErrorCode = ErrorCode(BizCode.LocalErr, _("내용비어 있습니다"))
-FILE_PATH_ERROR_FORMAT: ErrorCode = ErrorCode(BizCode.LocalErr, _("파일 경로:{}있음오류, 입력하세요정상의경로!"))
+FILE_PATH_ERROR_FORMAT: ErrorCode = ErrorCode(BizCode.LocalErr, _("파일 경로가 올바르지 않습니다: {}"))
 SAVE_TYPE_ERROR_FORMAT: ErrorCode = ErrorCode(BizCode.LocalErr, _("저장형식:{}있음오류, 파일이름필요로{}!"))
 FILE_READ_ERROR_FORMAT: ErrorCode = ErrorCode(BizCode.LocalErr, _("파일가져오기실패, 확인하세요파일여부!") + ": {}")
 FILE_WRITE_ERROR_FORMAT: ErrorCode = ErrorCode(BizCode.LocalErr, _("파일입력실패, 확인하세요파일여부!") + ": {}")

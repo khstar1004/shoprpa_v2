@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Dropdown, Menu } from 'ant-design-vue'
-import { ref } from 'vue'
 import { useTranslation } from 'i18next-vue'
+import { ref } from 'vue'
 
 import Loading from '../../../Loading'
 import { switchTenant, tenantList } from '../../api/login'
@@ -53,8 +53,7 @@ async function toggleTenant(tenant: TenantItem) {
   try {
     await switchTenant({ tenantId: tenant.id })
   }
-  catch (e) {
-    console.log(e)
+  catch {
     loadingRef.value?.isLoading({ isLoading: false, immediate: true })
     return
   }

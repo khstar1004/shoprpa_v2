@@ -21,7 +21,7 @@ export function useInstallPython() {
   const pacakgeConfig = ref<Array<any>>([
     { key: 'packageName', label: t('packageName'), type: 'input', placeholder: t('enterPackageName') },
     { key: 'packageVersion', label: t('packageVersion'), type: 'input', placeholder: t('installLatestVersion') },
-    { key: 'mirror', label: t('mirror'), type: 'select', placeholder: t('selectMirror'), options: mirrorList },
+    { key: 'mirror', label: t('mirror'), type: 'input', placeholder: t('selectMirror'), options: mirrorList },
     { key: 'output', label: t('output'), type: 'textarea', placeholder: t('packageOutputMessage') },
   ])
 

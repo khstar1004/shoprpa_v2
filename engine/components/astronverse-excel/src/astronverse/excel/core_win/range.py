@@ -243,7 +243,7 @@ class Range:
                 range_obj.ClearFormats()
                 range_obj.Clear()
             else:
-                raise ValueError(f"지원하지 않음의관리유형: {clear_type}")
+                raise ValueError(f"지원하지 않는 관리 유형입니다: {clear_type}")
         except Exception as e:
             raise ValueError(f"관리실패: {e}")
 
@@ -286,7 +286,7 @@ class Range:
         }
         paste_type_value = paste_type_conf.get(paste_type)
         if paste_type_value is None:
-            raise ValueError(f"지원하지 않음의붙여넣기유형: {paste_type_value}")
+            raise ValueError(f"지원하지 않는 붙여넣기 유형입니다: {paste_type_value}")
 
         try:
             range_obj.PasteSpecial(Paste=paste_type_value, SkipBlanks=bool(skip_blanks), Transpose=bool(transpose))
@@ -309,7 +309,7 @@ class Range:
             # Excel 일반량 -4159 테이블 xlShiftToRight
             range_obj.EntireColumn.Insert(Shift=-4159)
         else:
-            raise ValueError(f"지원하지 않음의axis매개변수: {axis}")
+            raise ValueError(f"지원하지 않는 axis 매개변수입니다: {axis}")
 
     @staticmethod
     def merge_range(
@@ -450,7 +450,7 @@ class Range:
             range_obj: Range 객체(삭제할비고의셀)
 
         Raises:
-            ValueError: 셀아니오저장된 비고시출력예외
+            ValueError: 셀의 저장되지 않은 비고 처리 중 오류
         """
         if range_obj.Comment:
             range_obj.ClearComments()

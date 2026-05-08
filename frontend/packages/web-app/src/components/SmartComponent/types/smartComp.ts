@@ -1,4 +1,4 @@
-﻿import type { Message, SmartType } from './chat'
+import type { Message, SmartType } from './chat'
 
 export interface SmartComp extends Omit<RPA.Atom, 'version'> {
   key: string

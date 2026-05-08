@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons-vue'
 import { computed, ref, watch } from 'vue'
 

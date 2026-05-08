@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { useTranslation } from 'i18next-vue'
 import type { Ref } from 'vue'
 import { computed, inject, onMounted, ref, watch } from 'vue'
@@ -34,7 +34,6 @@ watch(() => flowStore.activeAtom, (newVal) => {
     BUS.$emit('toggleAtomForm', false)
   }
   renderForm(newVal)
-  console.log(atomTab.value)
 })
 
 watch(() => flowStore.selectedAtomIds, () => {
@@ -86,7 +85,7 @@ onMounted(() => {
             <span class="text-[12px]">{{ $t(title) }}</span>
           </template>
         </a-segmented>
-        <rpa-hint-icon :name="sidebarWide ? 'sidebar-wide' : 'sidebar-narrow'" :title="sidebarWide ? '까지버전' : '까지너비버전'" class="ml-[12px]" width="16px" height="16px" enable-hover-bg @click="() => sidebarWide = !sidebarWide" />
+        <rpa-hint-icon :name="sidebarWide ? 'sidebar-wide' : 'sidebar-narrow'" :title="sidebarWide ? '좁게 보기' : '넓게 보기'" class="ml-[12px]" width="16px" height="16px" enable-hover-bg @click="() => sidebarWide = !sidebarWide" />
       </div>
       <article
         v-for="item in atomTab[activeKey]?.params" :key="item.key"

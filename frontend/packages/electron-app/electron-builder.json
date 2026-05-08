@@ -1,9 +1,11 @@
 {
  "appId": "com.shoprpa.app",
- "productName": "shoprpa",
-  "artifactName": "shoprpa-${version}-${arch}.${ext}",
+ "productName": "ShopRPA",
+  "artifactName": "ShopRPA-${version}-${arch}.${ext}",
+  "npmRebuild": false,
+  "buildDependenciesFromSource": false,
   "electronLanguages": [
-    "zh-CN",
+    "ko",
     "en-US"
   ],
   "asar": false,
@@ -22,7 +24,7 @@
   "win": {
     "target": "nsis",
     "icon": "../../public/icons/icon.ico",
-    "publisherName": "shoprpa",
+    "publisherName": "ShopRPA",
     "verifyUpdateCodeSignature": false,
     "publish": {
       "provider": "generic",
@@ -56,6 +58,6 @@
     "allowToChangeInstallationDirectory": true,
     "createDesktopShortcut": true,
     "createStartMenuShortcut": true,
-    "shortcutName": "shoprpa"
+    "shortcutName": "ShopRPA"
   }
 }

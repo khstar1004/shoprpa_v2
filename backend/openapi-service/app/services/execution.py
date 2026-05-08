@@ -1,4 +1,4 @@
-﻿import asyncio
+import asyncio
 import json
 from datetime import datetime
 from typing import Any, Optional
@@ -23,11 +23,10 @@ class ExecutionService:
         self.redis = redis
 
     async def create_execution(self, execution_data: ExecutionCreate, user_id: str) -> Execution:
-        """생성실행기록"""
+        """Create an execution record."""
         execution_id = str(uuid4())
         parameters = execution_data.params or {}
 
-        # 사용json.dumps확인매개변수으로있음의JSON형식저장
         parameters_json = json.dumps(parameters, ensure_ascii=False) if parameters else "{}"
 
         execution = Execution(
@@ -35,9 +34,9 @@ class ExecutionService:
             project_id=execution_data.project_id,
             parameters=parameters_json,
             user_id=user_id,
-            exec_position=execution_data.exec_position,  # 저장실행위치
-            version=execution_data.version,  # 저장버전
-            recording_config=execution_data.recording_config,  # 저장기록제어매칭
+            exec_position=execution_data.exec_position,
+            version=execution_data.version,
+            recording_config=execution_data.recording_config,
             status=ExecutionStatus.PENDING.value,
         )
 
@@ -48,12 +47,11 @@ class ExecutionService:
         return execution
 
     async def get_execution(self, execution_id: str, user_id: str | None = None) -> Optional[Execution]:
-        """가져오기실행기록"""
+        """Get an execution record, scoped to a user when supplied."""
         query = select(Execution).where(Execution.id == execution_id)
 
-        # 아니오검증user_id
-        # if user_id is not None:
-        #     query = query.where(Execution.user_id == user_id)
+        if user_id is not None:
+            query = query.where(Execution.user_id == user_id)
 
         result = await self.db.execute(query)
         return result.scalars().first()
@@ -65,7 +63,7 @@ class ExecutionService:
         skip: int = 0,
         limit: int = 100,
     ) -> list[Execution]:
-        """가져오기실행기록목록"""
+        """List execution records."""
         query = select(Execution).order_by(Execution.start_time.desc()).offset(skip).limit(limit)
 
         if project_id is not None:
@@ -82,15 +80,13 @@ class ExecutionService:
         pageNo: int = 1,
         pageSize: int = 10,
     ) -> tuple[list[Execution], int]:
-        """분가져오기사용자의실행기록"""
+        """List paged execution records for a user."""
         skip = (pageNo - 1) * pageSize
 
-        # 조회데이터
         count_query = select(Execution).where(Execution.user_id == user_id)
         count_result = await self.db.execute(count_query)
         total = len(count_result.scalars().all())
 
-        # 조회분데이터
         query = (
             select(Execution)
             .where(Execution.user_id == user_id)
@@ -110,9 +106,8 @@ class ExecutionService:
         result: dict[str, Any] | None = None,
         error: str | None = None,
     ) -> Optional[Execution]:
-        """업데이트실행기록상태"""
+        """Update an execution status."""
         try:
-            # 직선연결사용SQL업데이트, 상태제목
             update_stmt = update(Execution).where(Execution.id == execution_id)
 
             update_data = {Execution.status: status}
@@ -120,7 +115,6 @@ class ExecutionService:
                 if isinstance(result, dict):
                     update_data[Execution.result] = json.dumps(result, ensure_ascii=False)
                 else:
-                    # 결과가아니오예딕셔너리, 시도변환로문자열
                     update_data[Execution.result] = str(result)
             if error is not None:
                 update_data[Execution.error] = error
@@ -135,14 +129,12 @@ class ExecutionService:
             await self.db.execute(update_stmt)
             await self.db.commit()
 
-            # 반환업데이트후의실행기록
             return await self.get_execution(execution_id)
         except Exception as e:
-            # 결과가업데이트실패, 돌아가기서비스기록오류
             try:
                 await self.db.rollback()
-            except:
-                pass  # 결과가돌아가기실패, 오류
+            except Exception:
+                logger.exception("Rollback failed after execution update error")
             logger.exception("Failed to update execution %s", execution_id)
             return None
 
@@ -153,76 +145,62 @@ class ExecutionService:
         wait: bool = True,
         workflow_timeout: int = 36000,
     ) -> Optional[Execution]:
-        """실행워크플로"""
-        # 생성실행기록
+        """Execute a workflow through the connected desktop worker."""
         execution = await self.create_execution(execution_data, user_id)
 
-        # 확인실행기록완료제출까지데이터베이스
         await self.db.commit()
         logger.info("Created execution %s and committed to database", execution.id)
         logger.info("[execute_workflow] user_id: %s ", user_id)
 
-        # 저장 execution_id, 후필요사용
         execution_id = execution.id
 
-        # 실행워크플로(예외/)
-        # 추가짧음지연, 확인데이터베이스서비스전체제출
         await asyncio.sleep(0.1)
 
         if wait:
-            # 실행방식 - 사용새의데이터베이스, 길이시간사용연결
             await self._run_workflow_with_new_session_sync(execution_id, workflow_timeout, user_id)
 
-            # 사용기존다시 가져오기 새상태
             await self.db.refresh(execution)
         else:
-            # 예외실행방식, 후실행(아니오대기결과)
             asyncio.create_task(self._run_workflow_with_new_session(execution_id, workflow_timeout, user_id))
 
         return execution
 
     async def _run_workflow(self, execution_id: str, workflow_timeout: int = 36000, user_id: str = "") -> None:
-        """실행워크플로실행"""
+        """Run a workflow and update its execution record."""
         try:
-            # 가져오기실행기록
             execution = await self.get_execution(execution_id)
             if not execution:
                 logger.info("Execution not found for execution_id: %s", execution_id)
                 raise Exception(f"Execution not found for execution_id: {execution_id}")
             logger.info("[_run_workflow] user_id: %s ", user_id)
-            # 시간 초과
             await asyncio.wait_for(
                 self._execute_workflow_logic(execution, user_id),
                 timeout=workflow_timeout,
             )
         except TimeoutError:
-            # 시간 초과관리 - 사용update_execution_status방법법제목
             await self.update_execution_status(execution_id, ExecutionStatus.RUNNING.value)
             raise
         except Exception as e:
             await self.update_execution_status(execution_id, ExecutionStatus.FAILED.value, error=str(e))
 
     async def _run_workflow_with_new_session_sync(self, execution_id: str, workflow_timeout: int, user_id: str) -> None:
-        """사용새의데이터베이스실행워크플로(버전, 출력예외)"""
+        """Run a workflow in a new DB session and propagate errors."""
         async with AsyncSessionLocal() as db:
             execution_service = ExecutionService(db, self.redis)
             logger.info("Running workflow execution %s", execution_id)
             await execution_service._run_workflow(execution_id, workflow_timeout, user_id)
 
     async def _run_workflow_with_new_session(self, execution_id: str, workflow_timeout: int, user_id: str) -> None:
-        """사용새의데이터베이스실행워크플로(예외버전, 아니오출력예외)"""
+        """Run a workflow in a background DB session."""
         async with AsyncSessionLocal() as db:
             try:
                 execution_service = ExecutionService(db, self.redis)
                 logger.info("Running background workflow execution %s", execution_id)
                 await execution_service._run_workflow(execution_id, workflow_timeout, user_id)
             except Exception as e:
-                # 기록오류로그
                 logger.exception("Error in background workflow execution %s", execution_id)
 
-                # 업데이트실행상태로실패, 확인사용자가능까지오류
                 try:
-                    # 사용새의업데이트상태, 제목
                     async with AsyncSessionLocal() as update_db:
                         update_service = ExecutionService(update_db, self.redis)
                         await update_service.update_execution_status(
@@ -233,17 +211,13 @@ class ExecutionService:
 
     async def _execute_workflow_logic(self, execution: Execution, user_id: str) -> None:
         """
-        워크플로실행의
-        예일개예시, 목록중필요근거아니오워크플로아니오의
+        Send the workflow run request to the connected desktop worker.
         """
         import json
 
         logger.info("Starting workflow execution logic for execution %s", execution.id)
 
         try:
-            # 예외워크플로실행
-            # 목록중가능호출외부모듈시스템, 관리데이터대기
-            # 돌아가기조정파일
             from app.dependencies import get_ws_service
 
             websocket_service = await get_ws_service()
@@ -258,16 +232,16 @@ class ExecutionService:
             def callback(watch_msg: BaseMsg | None = None, e: Exception | None = None):
                 nonlocal wait, res, res_e
                 if watch_msg:
-                    res = watch_msg.data
-                    logger.info("Received response for execution %s: %s", execution.id, res)
-                    # Received response for execution 71e3147f-55cd-43f5-b7a8-b734d1075618:
-                    # {'code': '5001', 'msg': '', 'data': None}
+                    if isinstance(watch_msg.data, dict):
+                        res = watch_msg.data
+                    else:
+                        res = {"code": None, "data": watch_msg.data, "msg": "Invalid worker response payload"}
+                    logger.info("Received worker response for execution %s with code %s", execution.id, res.get("code"))
                 if e:
                     res_e = e
                     logger.error("Received error for execution %s: %s", execution.id, e)
                 wait.set()
 
-            # 파싱매개변수, 확인예딕셔너리형식
             if execution.parameters is None:
                 parameters_dict = {}
             elif isinstance(execution.parameters, str):
@@ -281,7 +255,7 @@ class ExecutionService:
 
             run_param = []
             for key, value in parameters_dict.items():
-                logger.debug("매개변수: %s=%s", key, value)
+                logger.debug("Preparing execution parameter %s", key)
                 run_param.append({"varName": key, "varValue": value})
             run_param = json.dumps(run_param, ensure_ascii=False)
 
@@ -305,15 +279,13 @@ class ExecutionService:
                 data=executor_data,
             ).init()
 
-            logger.info("Sending WebSocket message for execution %s: %s", execution.id, base_msg.data)
+            logger.info("Sending WebSocket run message for execution %s", execution.id)
             await websocket_service.ws_manager.send_reply(base_msg, 10 * 3600, callback)
 
-            # 대기
             logger.info("Waiting for response for execution %s", execution.id)
             await wait.wait()
             logger.info("Received response for execution %s", execution.id)
 
-            # 워크플로실행성공
             if res.get("code") == "0000":
                 await self.update_execution_status(
                     execution.id,
@@ -330,13 +302,21 @@ class ExecutionService:
                     error=str(res_e) if res_e else None,
                 )
                 logger.info("Updated execution %s status to FAILED", execution.id)
+            else:
+                await self.update_execution_status(
+                    execution.id,
+                    ExecutionStatus.FAILED.value,
+                    result=res,
+                    error=f"Unexpected worker response code: {res.get('code')}",
+                )
+                logger.warning("Updated execution %s status to FAILED due to unexpected worker response", execution.id)
 
         except Exception as e:
             logger.exception("Error in workflow execution logic for %s", execution.id)
             raise
 
     async def cancel_execution(self, execution_id: str, user_id: str) -> bool:
-        """가져오기 실행"""
+        """Cancel a pending or running execution."""
         try:
             execution = await self.get_execution(execution_id, user_id)
             if not execution or execution.status not in [
@@ -345,7 +325,6 @@ class ExecutionService:
             ]:
                 return False
 
-            # 사용update_execution_status방법법
             updated_execution = await self.update_execution_status(execution_id, ExecutionStatus.CANCELLED.value)
 
             return updated_execution is not None

@@ -136,7 +136,6 @@ export class ProjectDocument implements IProjectDocument {
     }
     obj.totalPage = Math.ceil(nodes.length / ProjectDocument.loadNumber)
     ProjectDocument.nodeAbilityMap[processId] = obj
-    console.log('프로세스데이터', nodes)
     const editor = new ProcessEditor(processId, nodes)
     this.processEditorMap.set(processId, editor)
     this.loadNodeAbilityList(nodes, processId, 'init')
@@ -163,7 +162,7 @@ export class ProjectDocument implements IProjectDocument {
    * 가져오기 nodeAbility, 예결과지정버전찾을 수 없습니다, 이면사용새버전
    * @param key
    * @param version
-   * @returns
+   * @returns nodeAbility 설정
    */
   static getNodeAbilityWithFallback(key: string, version: string): any {
     const specificKey = `${key}***${version}`
@@ -223,7 +222,7 @@ export class ProjectDocument implements IProjectDocument {
     return getSmartComp({ smartId, robotId }).then((data) => {
       const node = data.detail?.versionList.find(item => item.version === version) || data.detail?.versionList?.[0]
       if (!node) {
-        console.error(`찾을 수 없는  key 로 '${key}' 의가능컴포넌트`)
+        console.error(`키 '${key}'에 해당하는 스마트 컴포넌트를 찾을 수 없습니다.`)
         return null
       }
       const keys = `${key}***${node.version}`

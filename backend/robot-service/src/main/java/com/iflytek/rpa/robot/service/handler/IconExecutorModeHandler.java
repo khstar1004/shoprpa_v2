@@ -2,7 +2,6 @@ package com.iflytek.rpa.robot.service.handler;
 
 import static com.iflytek.rpa.robot.constants.RobotConstant.EXECUTOR;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.iflytek.rpa.common.feign.RpaAuthFeign;
 import com.iflytek.rpa.common.feign.entity.User;
 import com.iflytek.rpa.robot.dao.RobotExecuteDao;
@@ -63,8 +62,7 @@ public class IconExecutorModeHandler implements RobotIconModeHandler {
         return executeInfo;
     }
 
-    private AppResponse<RobotIconVo> handleDataSource(RobotExecute robotExecute, Integer robotVersion)
-            throws JsonProcessingException {
+    private AppResponse<RobotIconVo> handleDataSource(RobotExecute robotExecute, Integer robotVersion) {
         if (robotVersion != null) {
             robotExecute.setAppVersion(robotVersion);
             robotExecute.setRobotVersion(robotVersion);
@@ -72,7 +70,7 @@ public class IconExecutorModeHandler implements RobotIconModeHandler {
         if ("market".equals(robotExecute.getDataSource())) {
             return handleMarketSource(robotExecute, robotVersion);
         } else if ("create".equals(robotExecute.getDataSource())) {
-            return handleCreateSource(robotExecute);
+            return handleCreateSource(robotExecute, robotVersion);
         } else if ("deploy".equals(robotExecute.getDataSource())) {
             return handleDeploySource(robotExecute, robotVersion);
         }
@@ -82,25 +80,24 @@ public class IconExecutorModeHandler implements RobotIconModeHandler {
 
     private AppResponse<RobotIconVo> handleMarketSource(RobotExecute executeInfo, Integer robotVersion) {
         RobotIconVo vo = robotVersionDao.getMarketInfo(executeInfo);
-        return AppResponse.success(vo);
+        return AppResponse.success(resolveIconVo(executeInfo, vo));
     }
 
-    private AppResponse<RobotIconVo> handleCreateSource(RobotExecute robotExecute) {
+    private AppResponse<RobotIconVo> handleCreateSource(RobotExecute robotExecute, Integer robotVersion) {
         String robotId = robotExecute.getRobotId();
-        // 가져오기사용중의 버전
-        Integer enabledVersion = robotVersionDao.getRobotVersion(robotId);
-
-        RobotVersion version = robotVersionDao.getVersion(robotId, enabledVersion);
-        String icon = version.getIcon();
-        if (StringUtils.isEmpty(icon)) {
-            icon = "";
-        }
+        Integer versionNum = robotVersion != null ? robotVersion : robotVersionDao.getRobotVersion(robotId);
+        RobotVersion version = versionNum == null ? null : robotVersionDao.getVersion(robotId, versionNum);
+        String icon = version == null || StringUtils.isEmpty(version.getIcon()) ? "" : version.getIcon();
         String name = robotExecute.getName();
         return AppResponse.success(new RobotIconVo(name, icon));
     }
 
     private AppResponse<RobotIconVo> handleDeploySource(RobotExecute robotExecute, Integer robotVersion) {
         RobotIconVo vo = robotVersionDao.getDeployInfo(robotExecute);
-        return AppResponse.success(vo);
+        return AppResponse.success(resolveIconVo(robotExecute, vo));
+    }
+
+    private RobotIconVo resolveIconVo(RobotExecute robotExecute, RobotIconVo vo) {
+        return vo != null ? vo : new RobotIconVo(robotExecute.getName(), "");
     }
 }

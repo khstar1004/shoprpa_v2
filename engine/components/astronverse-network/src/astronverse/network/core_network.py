@@ -15,6 +15,7 @@ class NetworkCore:
         timeout: int = 60,
     ):
         file_arr = []
+        open_files = []
         headers = json.loads(header) if header else {}
 
         json_body = None
@@ -30,8 +31,9 @@ class NetworkCore:
             for key in files_dict:
                 value = files_dict[key]
                 basename = os.path.basename(value)
-                with open(value, "rb") as f:
-                    file_arr.append((key, (basename, f, "application/octet-stream")))
+                file_obj = open(value, "rb")
+                open_files.append(file_obj)
+                file_arr.append((key, (basename, file_obj, "application/octet-stream")))
 
         try:
             res = requests.post(
@@ -45,6 +47,9 @@ class NetworkCore:
             return res.text
         except requests.RequestException as e:
             raise Exception(f"Request failed: {e}")
+        finally:
+            for file_obj in open_files:
+                file_obj.close()
 
     @staticmethod
     def get_request(url: str = "", header: str = "", timeout: int = 60):

@@ -81,7 +81,7 @@ public interface UserDao {
     String queryPhoneByLoginName(@Param("loginName") String loginName, @Param("databaseName") String databaseName);
 
     /**
-     * 조회필요까지Shoprpa계정의사용자(휴대폰 번호아니요비어 있습니다third_ext_info비어 있습니다)
+     * 조회필요까지ShopRPA 계정의사용자(휴대폰 번호아니요비어 있습니다third_ext_info비어 있습니다)
      * @param databaseName 데이터베이스이름
      * @param loginNames 가능선택, 지정필요의사용자로그인이름목록, 비어 있습니다이면조회모든기호합치기파일의사용자
      * @return 사용자목록

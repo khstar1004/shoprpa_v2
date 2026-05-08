@@ -1,17 +1,26 @@
 ﻿import os
+from pathlib import Path
 import shutil
-import tempfile
 import unittest
+from uuid import uuid4
 from unittest import TestCase, mock
 
 from astronverse.system import *
 from astronverse.system.file import File
 
 
+def _make_temp_dir() -> str:
+    temp_root = Path(__file__).resolve().parents[4] / "build" / "tmp" / "system-tests"
+    temp_root.mkdir(parents=True, exist_ok=True)
+    temp_dir = temp_root / f"file-{uuid4().hex}"
+    temp_dir.mkdir()
+    return str(temp_dir)
+
+
 class TestFile(TestCase):
     def setUp(self):
         """시도전의준비"""
-        self.temp_dir = tempfile.mkdtemp()
+        self.temp_dir = _make_temp_dir()
         self.test_file_path = os.path.join(self.temp_dir, "test_file.txt")
         self.test_content = "예일개시도파일내용"
 

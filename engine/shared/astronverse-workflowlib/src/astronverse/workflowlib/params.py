@@ -116,7 +116,7 @@ class ComplexParamParser:
         if need_eval:
             return "+".join(f"str({p})" for p in pieces), need_eval
         else:
-            return "".join(pieces), need_eval, need_eval
+            return "".join(pieces), need_eval
 
     @classmethod
     def _recursive_convert_params(cls, data: Any, gv=None) -> Any:
@@ -194,24 +194,20 @@ class ComplexParamParser:
             if frame is None:
                 return {}
 
-            # 모든호출, 까지외부로main의
-            cframe = None
+            # 파서 내부가 아닌 가장 가까운 호출자 프레임을 평가 컨텍스트로 사용합니다.
             while frame is not None:
-                # 가져오기현재의영역모듈변수
-                if frame.f_code.co_name == "main":
-                    # 까지 main 데이터, 사용해당
-                    cframe = frame
+                if frame.f_globals.get("__name__") != __name__:
+                    local_vars = frame.f_locals.copy()
+                    gv = local_vars.get("gv")
+                    if not isinstance(gv, dict):
+                        gv = frame.f_globals.get("gv")
+                    if not isinstance(gv, dict):
+                        gv = {}
+                    all_vars.update({"gv": gv.copy()})
+                    all_vars.update(frame.f_globals)
+                    all_vars.update(local_vars)
                     break
-                else:
-                    frame = frame.f_back
-
-            # 가져오기영역모듈변수및전역 변수
-            if cframe is not None:
-                local_vars = cframe.f_locals.copy()
-                global_vars = cframe.f_globals.get("gv").copy()
-                # 병합변수, 영역모듈변수(덮어쓰기전역 변수)
-                all_vars.update({"gv": global_vars})
-                all_vars.update(local_vars)
+                frame = frame.f_back
             return all_vars
         except Exception:
             return {}

@@ -1,4 +1,4 @@
-﻿import { cloneDeep } from 'lodash-es'
+import { cloneDeep } from 'lodash-es'
 // 프로세스정보
 import { defineStore } from 'pinia'
 import { ref, shallowRef } from 'vue'
@@ -79,7 +79,6 @@ export const useFlowStore = defineStore('flow', () => {
     }
     else {
       simpleFlowUIData.value = data
-      console.log('테이블', simpleFlowUIData.value)
       setActiveAtom(data[index])
     }
   }

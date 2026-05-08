@@ -1,4 +1,4 @@
-﻿import type { ITableResponse } from '@/types/normalTable'
+import type { ITableResponse } from '@/types/normalTable'
 import type { Task } from '@/types/schedule'
 
 import http from './http'

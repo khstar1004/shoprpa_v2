@@ -1,4 +1,4 @@
-﻿import { fetchEventSource } from '@microsoft/fetch-event-source'
+import { fetchEventSource } from '@microsoft/fetch-event-source'
 import type { FetchEventSourceInit } from '@microsoft/fetch-event-source'
 import { isFunction } from 'lodash-es'
 
@@ -9,7 +9,7 @@ import { isFunction } from 'lodash-es'
  * @param options 요청 매칭
  * @param sCB 성공돌아가기조정
  * @param eCB 실패돌아가기조정
- * @returns
+ * @returns SSE 요청 제어 객체
  */
 function SSERequest(
   url: string,
@@ -28,18 +28,13 @@ function SSERequest(
       'Content-Type': 'application/json',
       'Accept': '*/*',
     },
-    onopen: async (res) => {
-      console.log('sse open', res)
-    },
     ...(options || {}),
     ...(options?.method === 'GET' ? {} : { body: JSON.stringify(params) }),
     onmessage(msg) {
-      console.log('sse msg', msg)
       sCB(msg)
     },
     onerror(err) {
       // 출력오류중지
-      console.log('sse error', err)
       isFunction(eCB) && eCB(err)
       throw err
     },

@@ -74,8 +74,7 @@ function handleChange() {
       .map(i => i.userId)
   }
 }
-function handleSelectChange(value: string) {
-  console.log('value', value)
+function handleSelectChange(_value: string) {
   if (userIds.value.length === 0) {
     isAll.value = false
   }

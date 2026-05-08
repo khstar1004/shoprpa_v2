@@ -1,15 +1,15 @@
 ﻿atomic:
   Email.send_email:
-    title: 메일 보내기
-    comment: 지정메일함 @{receiver} 메일 보내기
+    title: 이메일 보내기
+    comment: 수신자 @{receiver}에게 이메일을 보냅니다.
     icon: send-email
     helpManual: ''
     inputList:
       - key: receiver
-        title: 수신자 메일함
+        title: 수신자 이메일
         tip: ''
       - key: cc
-        title: 메일함
+        title: 참조
         tip: ''
       - key: subject
         title: 제목
@@ -18,94 +18,94 @@
         title: HTML 형식 사용
         tip: ''
       - key: content
-        title: 내용
+        title: 본문
         tip: ''
       - key: attachment_path
-        title: 파일경로
+        title: 첨부파일 경로
         tip: ''
       - key: mail_server
         title: 메일 서비스 서버
         tip: ''
       - key: other_mail_server
-        title: 메일 서비스 서버
+        title: 메일 서버 주소
         tip: ''
       - key: mail_port
-        title: 메일 서비스 서버단말
+        title: SMTP 포트
         tip: ''
       - key: use_ssl
         title: SSL 암호화 사용
         tip: ''
       - key: sender_mail
-        title: 발송수신자 메일함
+        title: 발신자 이메일
         tip: ''
       - key: send_name
         title: 발신자 이름
         tip: ''
       - key: password
-        title: 비밀번호/권한 부여코드
+        title: 비밀번호/인증 코드
         tip: ''
       - key: bcc
-        title: 비밀메일함
+        title: 숨은 참조
         tip: ''
       - key: replace_table
-        title: 가능테이블
+        title: 치환 테이블
         tip: ''
     outputList: []
   Email.receive_email:
     title: 메일 받기
-    comment: 에서메일함(@{user_mail})메일 받기정보
+    comment: 메일 계정 @{user_mail}에서 이메일을 조회합니다.
     icon: receive-email
     helpManual: ''
     inputList:
       - key: mail_server
-        title: 메일 서비스 서버주소
-        tip: 선택일개메일함유형
+        title: 메일 서버
+        tip: 사용할 메일 서버를 선택합니다.
       - key: custom_mail_server
-        title: IMAP서비스서버주소
-        tip: 입력지정의IMAP서비스서버주소
+        title: IMAP 서버 주소
+        tip: 직접 사용할 IMAP 서버 주소를 입력합니다.
       - key: custom_mail_port
-        title: IMAP서비스서버단말
-        tip: 입력지정의IMAP서비스서버단말
+        title: IMAP 포트
+        tip: IMAP 서버 포트를 입력합니다.
       - key: user_mail
-        title: 사용자메일계정
-        tip: IMAP서비스서버인증의사용자명, 통신일반예메일함계정, 으로메일서비스상업의로
+        title: 이메일 계정
+        tip: IMAP 서버에 로그인할 이메일 계정을 입력합니다.
       - key: user_password
-        title: 권한 부여코드
-        tip: IMAP서비스서버인증의권한 부여코드, 일필요짧음정보인증열기통신, 모듈분메일함로계정비밀번호, 으로메일서비스상업의로
+        title: 비밀번호/인증 코드
+        tip: 메일 계정 비밀번호 또는 앱 인증 코드를 입력합니다.
       - key: max_return_num
-        title: 메일대반환수
-        tip: 반환의대메일수
+        title: 최대 수신 개수
+        tip: 한 번에 가져올 최대 메일 수를 입력합니다.
       - key: unseen_flag
-        title: 미완료메일
-        tip: 가져오기미완료메일또는전체메일
+        title: 읽지 않은 메일만
+        tip: 읽지 않은 메일 또는 전체 메일 중 가져올 범위를 선택합니다.
       - key: save_attachment_flag
-        title: 저장파일
-        tip: 여부다운로드메일파일
+        title: 첨부파일 저장
+        tip: 메일 첨부파일을 저장할지 선택합니다.
       - key: save_attachment_path
-        title: 저장디렉터리
-        tip: 파일의저장디렉터리
+        title: 첨부파일 저장 폴더
+        tip: 첨부파일을 저장할 폴더를 선택합니다.
       - key: folder_name
-        title: 폴더이름
-        tip: 입력필요메일 받기의메일함이름, 로INBOX
+        title: 메일함 이름
+        tip: 조회할 메일함 이름을 입력합니다. 기본값은 INBOX입니다.
       - key: mask_as_read_flag
-        title: 로완료
-        tip: 가져오기메일후, 를메일로완료상태
+        title: 가져온 뒤 읽음 처리
+        tip: 메일을 가져온 뒤 읽음 상태로 표시할지 선택합니다.
       - key: sender_text
-        title: 발송파일사람중패키지의내용
-        tip: 통신경과전송패키지닫기 문자행필터링
+        title: 발신자 필터
+        tip: 발신자에 포함되어야 할 문자열을 입력합니다.
       - key: receiver_text
-        title: 파일사람중패키지의내용
-        tip: 통신경과수신패키지닫기 문자행필터링
+        title: 수신자 필터
+        tip: 수신자에 포함되어야 할 문자열을 입력합니다.
       - key: theme_text
-        title: 제목중패키지의내용
-        tip: 통신경과제목패키지닫기 문자행필터링
+        title: 제목 필터
+        tip: 제목에 포함되어야 할 문자열을 입력합니다.
       - key: content_text
-        title: 정상문서중패키지의내용
-        tip: 통신경과내용패키지닫기 문자행필터링
+        title: 본문 필터
+        tip: 본문에 포함되어야 할 문자열을 입력합니다.
     outputList:
       - key: mail_list
-        title: 저장메일목록
-        tip: 지정일개변수 이름, 를반환의메일목록저장해당변수
+        title: 메일 목록
+        tip: 조회한 메일 목록을 지정한 변수에 저장합니다.
 options:
   Bool:
     - value: true
@@ -114,7 +114,7 @@ options:
       label: 아니오
   EmailServerType:
     - value: other
-      label: 메일함
+      label: 직접 입력
     - value: '126'
       label: '126'
     - value: '163'
@@ -122,4 +122,4 @@ options:
     - value: qq
       label: QQ
     - value: shoprpa
-      label: Shoprpa메일함
+      label: ShopRPA 메일

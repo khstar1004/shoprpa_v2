@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { useTranslation } from 'i18next-vue'
 
 import type { AuthType, Edition, Platform } from '../../interface'

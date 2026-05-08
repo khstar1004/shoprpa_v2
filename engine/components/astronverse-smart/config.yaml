@@ -1,15 +1,15 @@
 ﻿atomic:
   Smart.run_code:
-    title: 실행코드
-    comment: AI완료Python본
+    title: 스마트 컴포넌트 실행
+    comment: 선택한 스마트 컴포넌트의 Python 코드를 실행하고 결과를 반환합니다.
     icon: magic-command
-    helpManual: ''
+    helpManual: 스마트 컴포넌트에 포함된 Python 코드를 현재 컨텍스트와 입력값으로 실행합니다.
     inputList:
       - key: smart_component
-        title: 코드[없음, 완료]
-        tip: ''
+        title: 스마트 컴포넌트
+        tip: 실행할 스마트 컴포넌트를 선택합니다.
     outputList:
       - key: smart_result
-        title: 반환값[없음, 완료]
-        tip: ''
+        title: 실행 결과
+        tip: 스마트 컴포넌트 실행 결과를 저장합니다.
 options: {}

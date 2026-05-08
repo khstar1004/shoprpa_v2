@@ -1,24 +1,28 @@
 package com.iflytek.rpa.robot.service.handler;
 
 import static com.iflytek.rpa.robot.constants.RobotConstant.CRONTAB;
+import static com.iflytek.rpa.robot.constants.RobotConstant.CREATE;
+import static com.iflytek.rpa.robot.constants.RobotConstant.DEPLOY;
+import static com.iflytek.rpa.robot.constants.RobotConstant.MARKET;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.iflytek.rpa.base.dao.CParamDao;
 import com.iflytek.rpa.robot.dao.RobotExecuteDao;
+import com.iflytek.rpa.robot.dao.RobotVersionDao;
+import com.iflytek.rpa.robot.entity.RobotExecute;
+import com.iflytek.rpa.robot.entity.RobotVersion;
 import com.iflytek.rpa.robot.entity.dto.RobotIconDto;
 import com.iflytek.rpa.robot.entity.vo.RobotIconVo;
-import com.iflytek.rpa.task.service.ScheduleTaskRobotService;
+import com.iflytek.rpa.utils.StringUtils;
+import com.iflytek.rpa.utils.exception.ServiceException;
 import com.iflytek.rpa.utils.response.AppResponse;
+import com.iflytek.rpa.utils.response.ErrorCodeEnum;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
 public class IconTriggerModeHandler implements RobotIconModeHandler {
-    private final ScheduleTaskRobotService scheduleTaskRobotService;
     private final RobotExecuteDao robotExecuteDao;
-    private final CParamDao cParamDao;
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final RobotVersionDao robotVersionDao;
 
     @Override
     public boolean supports(String mode) {
@@ -27,109 +31,36 @@ public class IconTriggerModeHandler implements RobotIconModeHandler {
 
     @Override
     public AppResponse<RobotIconVo> handle(RobotIconDto dto) throws Exception {
-        return null;
+        RobotExecute executeInfo = robotExecuteDao.getRobotExecuteByRobotId(dto.getRobotId());
+        if (executeInfo == null) {
+            throw new ServiceException(ErrorCodeEnum.E_SQL.getCode(), "예약 작업에 연결된 로봇 정보를 찾을 수 없습니다");
+        }
+
+        Integer robotVersion = dto.getRobotVersion();
+        if (robotVersion != null) {
+            executeInfo.setAppVersion(robotVersion);
+            executeInfo.setRobotVersion(robotVersion);
+        }
+
+        if (MARKET.equals(executeInfo.getDataSource())) {
+            RobotIconVo vo = robotVersionDao.getMarketInfo(executeInfo);
+            return AppResponse.success(resolveIconVo(executeInfo, vo));
+        }
+        if (DEPLOY.equals(executeInfo.getDataSource())) {
+            RobotIconVo vo = robotVersionDao.getDeployInfo(executeInfo);
+            return AppResponse.success(resolveIconVo(executeInfo, vo));
+        }
+        if (CREATE.equals(executeInfo.getDataSource())) {
+            Integer versionNum = robotVersion != null ? robotVersion : robotVersionDao.getRobotVersion(dto.getRobotId());
+            RobotVersion version = versionNum == null ? null : robotVersionDao.getVersion(dto.getRobotId(), versionNum);
+            String icon = version == null || StringUtils.isEmpty(version.getIcon()) ? "" : version.getIcon();
+            return AppResponse.success(new RobotIconVo(executeInfo.getName(), icon));
+        }
+
+        throw new ServiceException(ErrorCodeEnum.E_PARAM.getCode(), "지원하지 않는 데이터 출처입니다");
     }
 
-    //    @Override
-    //    public AppResponse<List<ParamDto>> handle(QueryParamDto dto) throws JsonProcessingException, NoLoginException
-    // {
-    //        ScheduleTaskRobot taskRobot = getTaskRobot(dto.getTaskRobotUniqueId());
-    //
-    //        if (null != taskRobot && StringUtils.isNotBlank(taskRobot.getParamJson())) {
-    //            return parseCustomParams(taskRobot.getParamJson());
-    //        }
-    //
-    //        RobotExecute executeInfo = getRobotExecute(dto.getRobotId());
-    //        if (dto.getRobotVersion() != null) {
-    //            executeInfo.setRobotVersion(dto.getRobotVersion());
-    //            executeInfo.setAppVersion(dto.getRobotVersion());
-    //        }
-    //        return handleDataSource(executeInfo, dto.getProcessId());
-    //    }
-    //
-    //    private ScheduleTaskRobot getTaskRobot(Long uniqueId) {
-    //        if (uniqueId == null) {
-    //            return null;
-    //        }
-    //        ScheduleTaskRobot taskRobot = scheduleTaskRobotService.queryById(uniqueId);
-    //        if (taskRobot == null) {
-    //            throw new ServiceException(ErrorCodeEnum.E_SERVICE.getCode(), "찾을 수 없는 의예약 작업봇");
-    //        }
-    //        return taskRobot;
-    //    }
-    //
-    //    private RobotExecute getRobotExecute(String robotId) throws NoLoginException {
-    //        RobotExecute executeInfo = robotExecuteDao.getRobotInfoByRobotId(
-    //                robotId,
-    //                UserUtils.nowUserId(),
-    //                TenantUtils.getTenantId()
-    //        );
-    //        if (executeInfo == null) {
-    //            throw new ServiceException(ErrorCodeEnum.E_SQL.getCode(), "실행할 로봇 정보를 찾을 수 없습니다");
-    //        }
-    //        return executeInfo;
-    //    }
-    //
-    //    private AppResponse<List<ParamDto>> handleDataSource(RobotExecute executeInfo, String processId) {
-    //        if ("market".equals(executeInfo.getDataSource())) {
-    //            return handleMarketSource(executeInfo, processId);
-    //        } else if ("create".equals(executeInfo.getDataSource())) {
-    //            return handleCreateSource(executeInfo, processId);
-    //        }
-    //        throw new ServiceException(ErrorCodeEnum.E_SERVICE.getCode(), "지원하지 않는 데이터 출처입니다");
-    //    }
-    //
-    //    // 으로아래복사사용ExecutorModeHandler중의handleMarketSource/handleCreateSource
-    //    // 목록중가져오기 공유컴포넌트
-    //    private AppResponse<List<ParamDto>> handleMarketSource(RobotExecute executeInfo, String processId) {
-    //        validateMarketInfo(executeInfo);
-    //        String originRobotId = cParamDao.getMarketRobotId(executeInfo);
-    //        String mainProcessId = cParamDao.getMianProcessId(originRobotId, executeInfo.getAppVersion());
-    //        List<CParam> params = cParamDao.getAllParams(
-    //                processId != null ? processId : mainProcessId,
-    //                originRobotId,
-    //                executeInfo.getAppVersion()
-    //        );
-    //        return AppResponse.success(convertParams(params));
-    //    }
-    //
-    //    private AppResponse<List<ParamDto>> handleCreateSource(RobotExecute executeInfo, String processId) {
-    //        Integer enabledVersion = cParamDao.getRobotVersion(executeInfo.getRobotId());
-    //        if (executeInfo.getRobotVersion() != null) {
-    //            enabledVersion = executeInfo.getRobotVersion();
-    //        }
-    //        String mainProcessId = cParamDao.getMianProcessId(executeInfo.getRobotId(), enabledVersion);
-    //        List<CParam> params = cParamDao.getSelfRobotParam(
-    //                executeInfo.getRobotId(),
-    //                StringUtils.isNotBlank(processId) ? processId : mainProcessId,
-    //                enabledVersion
-    //        );
-    //        return AppResponse.success(convertParams(params));
-    //    }
-    //
-    //    private AppResponse<List<ParamDto>> parseCustomParams(String paramJson) throws JsonProcessingException {
-    //        List<CParam> params = objectMapper.readValue(paramJson, new TypeReference<List<CParam>>(){});
-    //        return AppResponse.success(convertParams(params));
-    //    }
-    //
-    //    private List<ParamDto> convertParams(List<CParam> params) {
-    //        if (CollectionUtils.isEmpty(params)) {
-    //            return Collections.emptyList();
-    //        }
-    //        return params.stream()
-    //                .map(p -> {
-    //                    ParamDto dto = new ParamDto();
-    //                    BeanUtils.copyProperties(p, dto);
-    //                    return dto;
-    //                })
-    //                .collect(Collectors.toList());
-    //    }
-    //
-    //    private void validateMarketInfo(RobotExecute executeInfo) {
-    //        if (StringUtils.isAnyBlank(executeInfo.getMarketId(), executeInfo.getAppId())
-    //                || executeInfo.getAppVersion() == null) {
-    //            throw new ServiceException(ErrorCodeEnum.E_SQL.getCode(), "로봇 마켓 정보가 올바르지 않습니다");
-    //        }
-    //    }
-
+    private RobotIconVo resolveIconVo(RobotExecute executeInfo, RobotIconVo vo) {
+        return vo != null ? vo : new RobotIconVo(executeInfo.getName(), "");
+    }
 }

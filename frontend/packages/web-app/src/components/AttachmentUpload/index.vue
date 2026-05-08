@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { InfoCircleOutlined, UploadOutlined } from '@ant-design/icons-vue'
 import { useVModel } from '@vueuse/core'
 import type { UploadFile } from 'ant-design-vue'

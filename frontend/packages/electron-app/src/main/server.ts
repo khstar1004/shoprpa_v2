@@ -1,16 +1,17 @@
-﻿import { exec } from 'node:child_process'
+import { exec } from 'node:child_process'
 import fs from 'node:fs/promises'
 import { join } from 'node:path'
+
 import { to } from 'await-to-js'
 
 import { toUnicode } from '../common'
 
+import { envJson } from './env'
 import { mainToRender } from './event'
 import { extract7z } from './file'
 import logger from './log'
 import { appWorkPath, confPath, pythonExe, resourcePath } from './path'
 import { getMainWindow } from './window'
-import { envJson } from './env'
 
 process.on('uncaughtException', (err) => {
   logger.error(`uncaughtException: ${err.message}`)
@@ -92,10 +93,10 @@ export async function startServer() {
       if (error) {
         logger.error(`${envJson.SCHEDULER_NAME} error: ${error}`)
       }
-    }
+    },
   )
 
-  rpaSetup.stdout?.on('data', (data) => msgFilter(data.toString()))
+  rpaSetup.stdout?.on('data', data => msgFilter(data.toString()))
 
   rpaSetup.stderr?.on('data', (data) => {
     logger.info(`${envJson.SCHEDULER_NAME} stderr: ${data.toString()}`)
@@ -126,11 +127,12 @@ export function closeSubProcess() {
       (error) => {
         if (error) {
           logger.error(`${envJson.SCHEDULER_NAME} closeSubProcess error: ${error}`)
-        } else {
+        }
+        else {
           logger.info(`${envJson.SCHEDULER_NAME} closeSubProcess success`)
         }
         resolve()
-      }
+      },
     )
   })
 }
@@ -172,7 +174,8 @@ async function readHashFile(hashFilePath: string): Promise<string> {
   try {
     const hashContent = await fs.readFile(hashFilePath, 'utf-8')
     return hashContent.trim()
-  } catch (error) {
+  }
+  catch (error) {
     logger.error(`해시 파일을 읽지 못했습니다: ${hashFilePath}`, error)
     throw error
   }
@@ -182,7 +185,7 @@ async function readHashFile(hashFilePath: string): Promise<string> {
  * Check whether one archive needs to be extracted again.
  * @param packageFile - Archive file name.
  * @returns True when re-extraction is required.
- * */
+ */
 async function checkSingleFile(packageFile: string): Promise<boolean> {
   const archiveName = packageFile.replace('.7z', '')
   const archivePath = join(appWorkPath, archiveName)
@@ -199,7 +202,7 @@ async function checkSingleFile(packageFile: string): Promise<boolean> {
     // 2. Check extracted runtime and copied hash file.
     const [archiveExists, hashFileExists] = await Promise.all([
       fs.access(archivePath).then(() => true).catch(() => false),
-      fs.access(appWorkHashPath).then(() => true).catch(() => false)
+      fs.access(appWorkHashPath).then(() => true).catch(() => false),
     ])
 
     // 3. Re-extract when the runtime folder does not exist.
@@ -217,7 +220,7 @@ async function checkSingleFile(packageFile: string): Promise<boolean> {
     // 5. Read both hash files.
     const [resourceHash, appWorkHash] = await Promise.all([
       readHashFile(resourceHashPath),
-      readHashFile(appWorkHashPath)
+      readHashFile(appWorkHashPath),
     ])
 
     // 6. Re-extract when either hash file is empty.
@@ -230,12 +233,14 @@ async function checkSingleFile(packageFile: string): Promise<boolean> {
     if (resourceHash !== appWorkHash) {
       logger.warn(`해시가 일치하지 않습니다: ${packageFile}`)
       return true
-    } else {
+    }
+    else {
       logger.info(`해시 검증 완료: ${packageFile}`)
     }
 
     return false
-  } catch (error) {
+  }
+  catch (error) {
     logger.error(`압축 해제 상태 확인 실패: ${packageFile}`, error)
     return true
   }
@@ -275,7 +280,8 @@ async function copySingleFile(fileName: string): Promise<boolean> {
     logger.info(`복사파일: ${fileName}`)
     await fs.copyFile(sourcePath, targetPath)
     return true
-  } catch (error) {
+  }
+  catch (error) {
     logger.error(`파일 복사 실패: ${fileName}`, error)
     throw error
   }
@@ -287,7 +293,8 @@ async function copySingleFile(fileName: string): Promise<boolean> {
 async function ensureAppWorkPathExists(): Promise<void> {
   try {
     await fs.access(appWorkPath)
-  } catch {
+  }
+  catch {
     logger.info(`사용자 데이터 디렉터리 생성: ${appWorkPath}`)
     await fs.mkdir(appWorkPath, { recursive: true })
   }
@@ -342,13 +349,13 @@ export async function startBackend() {
 
   logger.info(`압축 해제가 필요한 파일: ${needExtractFiles.join(', ')}`)
 
-  let preStep = 30;
-  const singlePercentStep = (90 - preStep) / needExtractFiles.length;
+  const preStep = 30
+  const singlePercentStep = (90 - preStep) / needExtractFiles.length
   sendToRender('Python 패키지를 압축 해제하는 중...', preStep)
 
   // Extract all required archives.
   await Promise.allSettled(needExtractFiles.map(file => extractAndCleanFile(file, (percent) => {
-    const newStep = preStep + (percent / 100 * singlePercentStep);
+    const newStep = preStep + (percent / 100 * singlePercentStep)
     sendToRender('압축 해제중...', newStep)
   })))
 
@@ -367,13 +374,13 @@ async function extractAndCleanFile(fileName: string, percentCallback: (percent: 
   // 1. Remove old and temporary directories.
   const [error] = await to(Promise.all([
     fs.rm(tempOutputDir, { recursive: true, force: true }),
-    fs.rm(outputDir, { recursive: true, force: true })
+    fs.rm(outputDir, { recursive: true, force: true }),
   ]))
   if (error) {
     logger.error(`기존 압축 해제 디렉터리를 정리하지 못했습니다: ${error}`)
     return
   }
-  logger.info("기존 압축 해제 디렉터리 삭제 완료")
+  logger.info('기존 압축 해제 디렉터리 삭제 완료')
 
   // 2. Extract to a temporary directory.
   logger.info(`임시 디렉터리에 압축 해제 시작: ${tempOutputDir}`)

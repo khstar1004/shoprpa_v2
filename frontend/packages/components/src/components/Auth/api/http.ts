@@ -23,6 +23,31 @@ function normalizeMessage(value?: string) {
     : value
 }
 
+function normalizeTransportError(err: any) {
+  const rawMessage = String(err?.message || '')
+  const rawCode = String(err?.code || '')
+  const lowerMessage = rawMessage.toLowerCase()
+
+  if (err?.response?.status === 403) {
+    return i18next.t('noPermission', { defaultValue: '권한이 없습니다. 관리자에게 문의하세요.' })
+  }
+
+  if (
+    rawCode === 'ERR_NETWORK'
+    || rawCode === 'ECONNABORTED'
+    || lowerMessage === 'network error'
+    || lowerMessage.includes('timeout')
+    || lowerMessage.includes('err_connection_refused')
+    || lowerMessage.includes('connection refused')
+  ) {
+    return '서버에 연결할 수 없습니다. 백엔드 주소와 서비스 실행 상태를 확인한 뒤 다시 시도하세요.'
+  }
+
+  return err?.response
+    ? i18next.t('components.auth.serviceError')
+    : rawMessage || i18next.t('components.auth.serviceError')
+}
+
 export async function request<T = any, P = any>(
   config: AxiosRequestConfig<P> & { url: string },
 ): Promise<ResponseData<T>> {
@@ -47,9 +72,9 @@ export async function request<T = any, P = any>(
     return Promise.reject(res)
   }
   catch (err: any) {
-    const msg = err.response
-      ? i18next.t('components.auth.serviceError')
-      : err.message || i18next.t('components.auth.serviceError')
+    const msg = normalizeTransportError(err)
+    err.message = msg
+    err.userMessage = msg
     message.error(msg)
     return Promise.reject(err)
   }

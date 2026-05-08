@@ -1,4 +1,4 @@
-﻿import { useRoute } from 'vue-router'
+import { useRoute } from 'vue-router'
 
 import { saveSmartComp } from '@/api/component'
 import { useFlowStore } from '@/stores/useFlowStore'

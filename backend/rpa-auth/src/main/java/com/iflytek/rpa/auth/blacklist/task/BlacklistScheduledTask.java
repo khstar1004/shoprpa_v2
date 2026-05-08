@@ -8,17 +8,12 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 /**
- * 이름단일예약작업
- * 해제완료경과의사용자(기기제어)
+ * 사용자 차단 목록 예약 작업.
  *
- * 설명: 
- * 1. 필요사용로드기기제어: 에서조회시(isBlocked)조회업데이트경과상태
- * 2. 예약작업로: 매일실행일, 관리가능의경과기록
- * 3. 사용: 
- *    - 업데이트데이터베이스 status 필드: 1(중)-> 0(완료해제)
- *    - 관리 Redis 중가능의저장
- *    - 보관데이터베이스및 Redis 의데이터일
- *    - 내용오류: 관리길이시간미완료방문의사용자기록
+ * 설명:
+ * 1. 요청 시 isBlocked()에서 만료 상태를 확인하고 갱신합니다.
+ * 2. 예약 작업은 매일 만료된 차단 기록을 정리합니다.
+ * 3. 데이터베이스 status 필드를 1(차단 중)에서 0(해제됨)으로 갱신하고 Redis 캐시를 제거합니다.
  *
  * @author system
  * @date 2025-12-16
@@ -32,39 +27,32 @@ public class BlacklistScheduledTask {
     private final BlackListService blackListService;
 
     /**
-     * 예약해제완료경과의사용자
-     * 매일 2 실행일
-     *
-     * 비고: 필요로드기기제어, 예약작업로
-     * 로드에서 isBlocked() 방법법중, 조회시조회업데이트경과상태
+     * 만료된 사용자 차단을 매일 새벽 2시에 해제합니다.
      */
     @Scheduled(cron = "${blacklist.task.unban-cron:0 0 2 * * ?}")
     public void unbanExpiredUsers() {
-        log.info("열기 실행예약해제작업");
+        log.info("만료된 사용자 차단 해제 예약 작업을 시작합니다.");
 
         try {
             int count = blackListService.batchUnbanExpired();
-            log.info("예약해제작업완료, 공유해제 {} 개사용자", count);
+            log.info("만료된 사용자 차단 해제 예약 작업 완료, count: {}", count);
         } catch (Exception e) {
-            log.error("예약해제작업실행실패", e);
+            log.error("만료된 사용자 차단 해제 예약 작업 실패", e);
         }
     }
 
     /**
-     * 예약관리경과데이터
-     * 매일 2 실행
-     * 가능선택: 삭제초과경과 90 의완료해제기록
+     * 차단 목록 보관 데이터 정리 예약 작업입니다.
+     * 현재는 해제 처리를 batchUnbanExpired()가 담당하므로 별도 삭제는 수행하지 않습니다.
      */
     @Scheduled(cron = "${blacklist.task.cleanup-cron:0 0 2 * * ?}")
     public void cleanupExpiredData() {
-        log.info("열기 실행이름단일데이터관리작업");
+        log.info("차단 목록 보관 데이터 정리 예약 작업을 시작합니다.");
 
         try {
-            // TODO: 관리(가능선택)
-            // 예: 삭제 90 전의완료해제기록
-            log.info("이름단일데이터관리작업완료");
+            log.info("차단 목록 보관 데이터 정리 예약 작업 완료");
         } catch (Exception e) {
-            log.error("이름단일데이터관리작업실행실패", e);
+            log.error("차단 목록 보관 데이터 정리 예약 작업 실패", e);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿import { reactive, ref } from 'vue'
+import { reactive, ref } from 'vue'
 
 import type { InviteInfo, LoginFormData } from '../../../interface'
 import { createSetPasswordFormConfig } from '../../../schemas/loginRegister'

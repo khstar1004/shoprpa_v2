@@ -264,7 +264,7 @@ class UnicodeInput:
                      'left', 'right', 'up', 'down', 'delete', 'shift', 'ctrl', 'alt'
 
         Raises:
-            ValueError: 지원하지 않음의이름
+            ValueError: 지원하지 않는 이름
         """
         key_map = {
             "enter": VK_RETURN,
@@ -294,7 +294,7 @@ class UnicodeInput:
                 time.sleep(self.delay)
         else:
             supported_keys = ", ".join(sorted(set(key_map.keys())))
-            raise ValueError(f"지원하지 않음의이름: '{key_name}'\n지원의이름: {supported_keys}")
+            raise ValueError(f"지원하지 않는 이름입니다: '{key_name}'\n지원되는 이름: {supported_keys}")
 
     def press_keys(self, *key_names):
         """

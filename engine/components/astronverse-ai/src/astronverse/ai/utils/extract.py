@@ -20,7 +20,7 @@ class FileExtractor:
 
             text_content = Path(self.file_path).read_text(encoding="utf-8")
         else:
-            raise ValueError("지원하지 않음의파일유형: " + file_extension)
+            raise ValueError("지원하지 않는 파일 유형입니다: " + file_extension)
         return text_content
 
     @staticmethod

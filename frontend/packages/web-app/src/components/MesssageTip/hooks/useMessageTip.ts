@@ -1,4 +1,4 @@
-﻿import type { SegmentedProps } from 'ant-design-vue'
+import type { SegmentedProps } from 'ant-design-vue'
 import { message } from 'ant-design-vue'
 import { useTranslation } from 'i18next-vue'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
@@ -34,7 +34,7 @@ export function useMessageTip() {
     totalPages: 1,
   })
   const hasBadage = ref('0')
-  const loading = ref(false) // 사용메시지데이터, 중지일직선, 다중트리거요청 
+  const loading = ref(false) // 사용메시지데이터, 중지일직선, 다중트리거요청
   const spinStatus = ref(false) // 사용열기메시지목록시, spin
   const readType = ref('all')
 
@@ -60,7 +60,6 @@ export function useMessageTip() {
     return content
   }
   function handleTabChange(value: string) {
-    console.log('value++++', value)
     if (value === 'noread') {
       checkNoread()
     }

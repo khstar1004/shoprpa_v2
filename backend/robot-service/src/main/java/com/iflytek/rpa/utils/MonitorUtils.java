@@ -22,21 +22,6 @@ import org.jsoup.Jsoup;
 @Slf4j
 public class MonitorUtils {
 
-    public static void main(String args[]) {
-        System.out.println(connectMail("imap", 993, "imap.qq.com", true, "1144317879@qq.com", "vwczfdxnrwgbied"));
-        //        System.out.println(connectMail("pop3",995,"pop.qq.com",true,"1144317879@qq.com","vwczfdxnrwgbiedg"));
-        //        getMailInfos("imap",993,"imap.qq.com",true,"1144317879@qq.com","vwczfdxnrwgbiedg");
-        //        getMailInfos("imap",993,"imap.qq.com",true,"1144317879@qq.com","vwczfdxnrwgbiedg");
-        //        getMailInfos("imap",993,"imap.qq.com",true,"2542994179@qq.com","ziwifsgdfdheecjd");
-        //        getMailInfos("imap",993,"imap.126.com",true,"liyupengnike@126.com","NJSHREXWZDPYVRQS");
-        //        getMailInfos("imap",993,"imap.163.com",true,"13512971276@163.com","IMWWVCLCULNOQODF");
-        //        getMailInfos("pop3",995,"pop.qq.com",true,"1144317879@qq.com","vwczfdxnrwgbiedg");
-        //        getMailInfos("pop3",995,"pop.qq.com",true,"2450723069@qq.com","vdzqdhvifahjdhgf");
-        //        getMailInfos("imap",993,"imap.qq.com",true,"2450723069@qq.com","vdzqdhvifahjdhgf");
-        //        getMailInfos("imap",993,"imap.qq.com",true,"1130305549@qq.com","alffclnvnmgrffgi");
-        //        getMailInfos("pop3",995,"pop.qq.com",true,"1130305549@qq.com","alffclnvnmgrffgi");
-    }
-
     public static final String RECEIVED_HEADER_DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss Z";
     public static final String RECEIVED_HEADER_DATE_FORMAT1 = "E, dd MMM yyyy HH:mm:ss z";
     public static final String RECEIVED_HEADER_REGEXP = "^[^;]+;(.+)$";
@@ -69,7 +54,7 @@ public class MonitorUtils {
                             found = true;
                         }
                     } catch (ParseException e) {
-                        System.out.println("test");
+                        log.debug("메일 Received 헤더 날짜 파싱 실패: {}", regexpMatch, e);
                     }
                 } else {
                 }
@@ -101,9 +86,7 @@ public class MonitorUtils {
 
     public static List<MailInfo> getMailInfos(
             String type, Integer port, String host, boolean sslEnable, String mail, String password) {
-        System.out.println("\nTesting monitor\n");
-        log.info("Testing monitor");
-        log.info("mail----" + mail);
+        log.info("메일 모니터 연결 테스트 시작: {}", mail);
         try {
 
             Properties props = System.getProperties();
@@ -146,39 +129,25 @@ public class MonitorUtils {
                 profile.add(UIDFolder.FetchProfileItem.UID);
                 profile.add(FetchProfile.Item.ENVELOPE);
                 Message[] messages = "pop3".equals(type) ? inbox.search(getSearch1()) : inbox.search(getSearch());
-                //                Message[] messages = inbox.search(getSearch1());
-                //                inbox.fetch(messages, profile);
                 List<MailInfo> mailInfos = new ArrayList<>();
-                int j = messages.length - 1;
-                for (int i = 0; i < messages.length; i++, j--) {
-                    //                    System.out.println(inbox.getUID(messages[i]));
-                    //                    System.out.println(messages[i].getSubject());
-                    //                    System.out.println(messages[i].getContentType());
-                    System.out.println(messages[i].getSentDate());
+                for (int i = 0; i < messages.length; i++) {
                     MailInfo mailInfo = new MailInfo();
                     if (messages[i].isMimeType("multipart/*")) {
                         Multipart mp = (Multipart) messages[i].getContent();
                         int bodyNum = mp.getCount();
                         StringBuilder contentStr = new StringBuilder();
                         for (int k = 0; k < bodyNum; k++) {
-                            //                            System.out.println("bodyType------" +
-                            // mp.getBodyPart(k).getContentType());
                             if (mp.getBodyPart(k).isMimeType("text/*")) {
                                 String content = (String) mp.getBodyPart(k).getContent();
-                                //                                System.out.println(Jsoup.parse(content).text());
                                 contentStr.append(Jsoup.parse(content).text());
                             } else if (mp.getBodyPart(k).isMimeType("multipart/*")) {
                                 Multipart mp1 = (Multipart) mp.getBodyPart(k).getContent();
                                 int bodyNum1 = mp1.getCount();
                                 for (int q = 0; q < bodyNum1; q++) {
-                                    //                                    System.out.println("bodyType------" +
-                                    // mp1.getBodyPart(q).getContentType());
                                     if (mp1.getBodyPart(q).isMimeType("text/*")) {
                                         String content =
                                                 (String) mp1.getBodyPart(q).getContent();
                                         contentStr.append(Jsoup.parse(content).text());
-                                        //
-                                        // System.out.println(Jsoup.parse(content).text());
                                     }
                                 }
                             }
@@ -213,16 +182,12 @@ public class MonitorUtils {
                     }
 
                     mailInfos.add(mailInfo);
-                    //                    System.out.println(Arrays.toString(messages[i].getAllRecipients()));
-                    //                    System.out.println(Arrays.toString(messages[i].getFrom()));
-                    //                    System.out.println(DateUtils.getDayTimeFormat(messages[i].getReceivedDate()));
 
                 }
-                System.out.println(mailInfos);
-                log.info("mailInfos---" + String.valueOf(mailInfos));
+                log.info("메일 모니터 조회 결과: {}건", mailInfos.size());
                 return mailInfos;
             } catch (Exception e) {
-                e.printStackTrace();
+                log.warn("메일 목록 조회 실패: {}", e.getMessage(), e);
             } finally {
                 try {
                     inbox.close(false);
@@ -238,9 +203,9 @@ public class MonitorUtils {
             }
 
         } catch (Exception ex) {
-            ex.printStackTrace();
+            log.warn("메일 모니터 초기화 실패: {}", ex.getMessage(), ex);
         }
-        return null;
+        return Collections.emptyList();
     }
 
     public static String connectMail(
@@ -269,13 +234,13 @@ public class MonitorUtils {
                 store1.connect(mail, password);
                 return "";
             } catch (MailConnectException e) {
-                e.printStackTrace();
+                log.warn("메일함 서비스 연결 실패: {}", e.getMessage(), e);
                 return "메일함서비스주소및단말있음제목";
             } catch (AuthenticationFailedException e1) {
-                e1.printStackTrace();
+                log.warn("메일 인증 실패: {}", e1.getMessage(), e1);
                 return "인증실패";
             } catch (Exception e2) {
-                e2.printStackTrace();
+                log.warn("메일 연결 예외: {}", e2.getMessage(), e2);
                 return "예외";
             } finally {
                 try {
@@ -285,7 +250,7 @@ public class MonitorUtils {
             }
 
         } catch (Exception ex) {
-            ex.printStackTrace();
+            log.warn("메일 연결 초기화 예외: {}", ex.getMessage(), ex);
             return "예외";
         }
     }
@@ -303,7 +268,6 @@ public class MonitorUtils {
             // 여부있음파일
             if (disposition != null && disposition.equals(Part.ATTACHMENT)) {
                 // 에서파일의저장
-                System.out.println("저장된 파일");
                 return true;
             }
         }

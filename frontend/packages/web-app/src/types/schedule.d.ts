@@ -1,4 +1,4 @@
-﻿/** @format */
+/** @format */
 
 type TaskType = 'schedule' | 'mail' | 'file' | 'hotKey' | 'manual'
 type FrequencyType = 'days' | 'weeks' | 'months' | 'hours' | 'minutes' | 'regular' | 'advance'

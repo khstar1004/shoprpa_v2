@@ -1,4 +1,4 @@
-﻿import type { AppEnv, UtilsManager as UtilsManagerType } from '@rpa/shared/platform'
+import type { AppEnv, UtilsManager as UtilsManagerType } from '@rpa/shared/platform'
 
 import type { DialogObj } from '../types'
 
@@ -20,19 +20,20 @@ function listenEvent(eventName: string, callback: (data: any) => void) {
 
 function getFromElectronInfo<T>(key: string, defaultValue: T): Promise<T> {
   return new Promise((resolve) => {
-    const electronInfo = localStorage.getItem('electron');
+    const electronInfo = localStorage.getItem('electron')
     if (electronInfo) {
       try {
-        const info = JSON.parse(electronInfo);
-        resolve(info[key] ?? defaultValue);
-      } catch (e) {
-        console.error('Failed to parse electron info from localStorage', e);
-        resolve(defaultValue);
+        const info = JSON.parse(electronInfo)
+        resolve(info[key] ?? defaultValue)
       }
-    } else {
-      resolve(defaultValue);
+      catch {
+        resolve(defaultValue)
+      }
     }
-  });
+    else {
+      resolve(defaultValue)
+    }
+  })
 }
 
 function getAppVersion() {
@@ -55,9 +56,13 @@ function getResourcePath() {
   return getFromElectronInfo<string>('resourcePath', '')
 }
 
+function getAppWorkPath() {
+  return getFromElectronInfo<string>('appWorkPath', '')
+}
+
 async function getBuildInfo() {
   const electronVersion = await getFromElectronInfo<string>('electronVersion', '')
-  return `Build by Electron ${electronVersion}`
+  return `ShopRPA Desktop (Electron ${electronVersion})`
 }
 
 function getSystemEnv() {
@@ -87,14 +92,7 @@ const saveFile: UtilsManagerType['saveFile'] = (fileName, buffer) => {
 }
 
 function playVideo(videoPath: string) {
-  ipcRenderer.invoke('open-path', videoPath).then((res) => {
-    if (res) {
-      console.log('Video played successfully')
-    }
-    else {
-      console.error('Failed to play video')
-    }
-  })
+  void ipcRenderer.invoke('open-path', videoPath).catch(() => undefined)
 }
 
 function pathJoin(dirArr: Array<string>) {
@@ -104,54 +102,51 @@ function pathJoin(dirArr: Array<string>) {
 function shellopen(path: string) {
   return new Promise<void>((resolve, reject) => {
     const fullPath = path.replace(/\\/g, '/')
-    console.log('fullPath: ', fullPath)
     ClipboardManager.writeClipboardText(fullPath)
     ipcRenderer
       .invoke('open-path', fullPath)
       .then((res) => {
         if (res) {
-          console.log('Shell opened successfully')
           resolve()
         }
         else {
-          console.error('Failed to open shell')
-          reject(new Error('Failed to open shell'))
+          reject(new Error('경로를 열 수 없습니다.'))
         }
       })
       .catch((err) => {
-        console.error('Error opening shell:', err)
         reject(err)
       })
   })
 }
 
 async function openPlugins() {
-  const appPath = await getAppPath()
-  let userDataPath = await getUserPath()
-  if (!userDataPath.endsWith('/')) {
-    userDataPath += '/'
-  }
-  if (appPath.startsWith('C:') || appPath.startsWith('c:') || appPath.startsWith('/')) {
-    shellopen(`${userDataPath}python_core/Lib/site-packages/astronverse/browser_plugin/plugins`)
-  }
-  else {
-    shellopen(`${appPath}data/python_core/Lib/site-packages/astronverse/browser_plugin/plugins`)
-  }
+  const appWorkPath = await getAppWorkPath()
+  const fallbackPath = await getUserPath()
+  const pluginPath = await pathJoin([
+    appWorkPath || fallbackPath,
+    'python_core',
+    'Lib',
+    'site-packages',
+    'astronverse',
+    'browser_plugin',
+    'plugins',
+  ])
+  await shellopen(pluginPath)
 }
 
 const showDialog: UtilsManagerType['showDialog'] = async (dialogProps) => {
   const { file_type, filters: dialogFilters, multiple, defaultPath = '' } = dialogProps
-  const isDirectory = file_type === 'folder' // 열기파일
-  const isMultiple = file_type === 'files' ? true : (file_type === 'file' ? multiple : false) // 단일선택
+  const isDirectory = file_type === 'folder'
+  const isMultiple = file_type === 'files' ? true : (file_type === 'file' ? multiple : false)
   const filterExtensions = dialogFilters?.map((item: string) => item.replace('.', ''))
   const filters = filterExtensions ? [{ name: '', extensions: filterExtensions }] : []
 
-  const properties: string[] = [
+  const properties = [
     isDirectory ? 'openDirectory' : 'openFile',
-    isMultiple ? 'multiSelections' : ''
-  ]
+    isMultiple ? 'multiSelections' : undefined,
+  ].filter(Boolean) as string[]
 
-  const dialogObj: DialogObj = { title: '선택파일 디렉터리', defaultPath, properties, filters }
+  const dialogObj: DialogObj = { title: '파일 또는 폴더 선택', defaultPath, properties, filters }
   return await ipcRenderer.invoke('open-dialog', dialogObj)
 }
 

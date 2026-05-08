@@ -1,5 +1,5 @@
-﻿<!--
- 목록전목록중팝업필요있음삼방식: 
+<!--
+ 목록전목록중팝업필요있음삼방식:
 1. 에서필요사용 <a-modal></a-modal> 의방법아니오사용수정예전의사용법, 없음알림;
 2. 에서필요사용 <Modal></Modal> 의방법, 입력 GlobalModal/index.vue, 완료<Global></Global>;
 3. 에서필요사용 유형Modal.confirm({...}) 의방법, 입력 GlobalModal/index.ts, 완료GlobalModal.confirm({...});

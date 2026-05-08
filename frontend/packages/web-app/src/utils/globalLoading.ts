@@ -1,7 +1,8 @@
-﻿import BUS from '@/utils/eventBus'
+import BUS from '@/utils/eventBus'
 
 const $loading = {
   /**
+   * @param options loading 옵션
    * @param options.msg loading 안내정보
    * @param options.timeout  시간 단일위치초
    * @param options.exit 여부출력버튼

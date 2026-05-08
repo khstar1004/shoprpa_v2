@@ -70,7 +70,7 @@ class PickerCore(IPickerCore):
                 return self._draw_element(svc, highlight_client, data)
 
             else:
-                return DrawResult(success=False, error_message=f"지원하지 않음의선택유형: {pick_type}")
+                return DrawResult(success=False, error_message=f"지원하지 않는 선택 유형입니다: {pick_type}")
 
         except Exception as e:
             logger.error(f"선택제어실패: {e}")
@@ -108,7 +108,7 @@ class PickerCore(IPickerCore):
         start_control = UIAOperate.get_windows_by_point(self.last_point)
         if not start_control:
             logger.info("선택관리 start_control 비어 있습니다")
-            return DrawResult(success=False, error_message="찾을 수 없는 파일")
+            return DrawResult(success=False, error_message="파일을 찾을 수 없습니다")
 
         process_id = UIAOperate.get_process_id(start_control)
 
@@ -189,7 +189,7 @@ class PickerCore(IPickerCore):
         start_control = BrowserControlFinder.get_document_control(parent_control)
         if not start_control:
             logger.info("선택관리 start_control 비어 있습니다")
-            return "찾을 수 없는 브라우저, 다시 시도하세요"
+            return "브라우저를 찾을 수 없습니다. 다시 시도하세요"
 
         process_id = UIAOperate.get_process_id(start_control)
         if pick_type == PickerType.ELEMENT:
@@ -226,7 +226,7 @@ class PickerCore(IPickerCore):
                             high_light.draw_wnd(cur_rect, msgs=cur_tag)
                         return res.path(svc, cur_strategy_svc)
                 except Exception as e:
-                    logger.info(f"가능컴포넌트출력예외 {e}")
+                    logger.info("스마트 컴포넌트 처리 예외: %s", e)
                     res = str(e)
                 return res
 

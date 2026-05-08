@@ -1,4 +1,4 @@
-﻿class TimeoutError extends Error {
+class TimeoutError extends Error {
   constructor() {
     super('TimeoutError')
   }

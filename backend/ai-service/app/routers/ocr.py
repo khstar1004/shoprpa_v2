@@ -1,4 +1,4 @@
-﻿import httpx
+import httpx
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.config import get_settings
@@ -12,7 +12,7 @@ logger = get_logger(__name__)
 
 router = APIRouter(
     prefix="/ocr",
-    tags=["열기 평면OCR"],
+    tags=["ocr"],
 )
 
 
@@ -48,31 +48,25 @@ async def general_ocr(
         HTTPException: 400 for invalid requests, 500 for server errors, 503 for network issues
     """
     try:
-        # 호출위 OCR 서비스
         result = await recognize_text_from_image(params.image, params.encoding, params.status)
 
-        # 조회결과관리분제거
         if result.header.code == 0:
-            # 성공시제거분
             await points_context.deduct_points()
             logger.info("OCR processing successful, points deducted for user")
 
         return result
 
     except OCRError as e:
-        # 서비스오류 - 400 Bad Request
-        logger.error(f"OCR business logic error: {e.message}")
+        logger.error("OCR business logic error: %s", e.message)
         raise HTTPException(status_code=400, detail=f"OCR processing failed: {e.message}")
 
     except httpx.HTTPError as e:
-        # 네트워크오류 - 503 Service Unavailable
-        logger.error(f"OCR service network error: {e}")
+        logger.error("OCR service network error: %s", e)
         raise HTTPException(
             status_code=503,
             detail="OCR service is temporarily unavailable. Please try again later.",
         )
 
     except Exception as e:
-        # 미완료의오류 - 500 Internal Server Error
-        logger.error(f"Unexpected error in OCR processing: {e}")
+        logger.error("Unexpected error in OCR processing: %s", e)
         raise HTTPException(status_code=500, detail="An unexpected error occurred during OCR processing")

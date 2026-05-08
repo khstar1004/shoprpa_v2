@@ -1,4 +1,4 @@
-﻿import i18next from '@/plugins/i18next'
+import i18next from '@/plugins/i18next'
 
 import { getContextMenuList } from '@/views/Arrange/utils/contextMenu'
 

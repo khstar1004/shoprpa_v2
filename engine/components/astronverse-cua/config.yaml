@@ -1,122 +1,112 @@
 ﻿atomic:
   ComputerUse.run:
-    title: 계획기기사용관리
-    comment: 사용대유형분화면실행GUI작업: @{instruction}
+    title: 컴퓨터 에이전트 실행
+    comment: '화면에서 GUI 작업을 실행합니다: @{instruction}'
     icon: computer-use
     helpManual: |
-      사용설명: 
-      1. 지원의패키지: 클릭, 더블클릭, 오른쪽 버튼, , 빠름, 입력텍스트, 대기
-      2. Agent실행직선까지작업완료또는까지대데이터
-      3. 모든스크린샷저장된 지정디렉터리, 가능사용디버그및인증
+      화면을 인식해 클릭, 더블클릭, 우클릭, 입력, 대기 같은 GUI 작업을 수행합니다.
+      작업이 끝나면 실행 상태, 로그, 스크린샷 경로, 오류 정보를 반환합니다.
     inputList:
       - key: instruction
-        title: 사용자
-        tip: 설명필요실행의GUI작업, 예"열기계획기기계획123+456"
+        title: 작업 지시
+        tip: '에이전트가 수행할 화면 작업을 자연어로 입력합니다. 예: 계산기를 열고 123+456 계산'
       - key: max_steps
-        title: 대실행데이터
-        tip: 작업실행의대데이터제한, 중지없음제한
+        title: 최대 실행 단계
+        tip: 작업을 중단하기 전까지 허용할 최대 단계 수를 입력합니다.
       - key: temperature
-        title: 유형정도
-        tip: 유형완료시의정도매개변수, 제어출력의기기, 0
+        title: 응답 다양성
+        tip: 낮을수록 안정적으로, 높을수록 다양한 방식으로 작업을 시도합니다.
     outputList:
       - key: computer_use_res
         title: 실행 결과
-        subTitle: AI완료
-        tip: 패키지작업실행상태, 데이터, 시, 스크린샷디렉터리및오류정보의딕셔너리
+        subTitle: AI 완료
+        tip: 실행 상태, 결과 데이터, 스크린샷 경로, 오류 정보를 포함한 딕셔너리입니다.
   ComputerUse.custom_action_screen:
-    title: 지정AI화면
-    comment: 사용대유형분화면실행GUI작업: @{instruction}
+    title: 지정 화면 AI 작업
+    comment: '지정한 화면에서 GUI 작업을 실행합니다: @{instruction}'
     icon: computer-use
     helpManual: |
-      사용설명: 
-      1. 지원의패키지: 클릭, 더블클릭, 오른쪽 버튼, , 빠름, 입력텍스트, 대기
-      2. Agent실행직선까지작업완료또는까지대데이터
-      3. 모든스크린샷저장된 지정디렉터리, 가능사용디버그및인증
+      지정한 화면 이미지를 기준으로 클릭, 더블클릭, 우클릭, 입력, 대기 같은 GUI 작업을 수행합니다.
+      작업이 끝나면 실행 상태, 로그, 스크린샷 경로, 오류 정보를 반환합니다.
     inputList:
       - key: instruction
-        title: 사용자
-        tip: 설명필요실행의GUI작업, 예"열기계획기기계획123+456"
+        title: 작업 지시
+        tip: '지정한 화면에서 수행할 작업을 자연어로 입력합니다. 예: 계산기를 열고 123+456 계산'
       - key: max_steps
-        title: 대실행데이터
-        tip: 작업실행의대데이터제한, 중지없음제한
+        title: 최대 실행 단계
+        tip: 작업을 중단하기 전까지 허용할 최대 단계 수를 입력합니다.
       - key: temperature
-        title: 유형정도
-        tip: 유형완료시의정도매개변수, 제어출력의기기, 0
+        title: 응답 다양성
+        tip: 낮을수록 안정적으로, 높을수록 다양한 방식으로 작업을 시도합니다.
     outputList:
       - key: computer_use_res
         title: 실행 결과
-        subTitle: AI완료
-        tip: 패키지작업실행상태, 데이터, 시, 스크린샷디렉터리및오류정보의딕셔너리
+        subTitle: AI 완료
+        tip: 실행 상태, 결과 데이터, 스크린샷 경로, 오류 정보를 포함한 딕셔너리입니다.
   ComputerUse.extract_data:
-    title: 가져오기화면데이터
-    comment: 사용대유형분화면가져오기화면데이터
+    title: 화면 데이터 추출
+    comment: 화면에서 필요한 정보를 추출하고 구조화된 결과로 반환합니다.
     icon: computer-use
     helpManual: |
-      사용설명: 
-      1. 지원의패키지: 클릭, 더블클릭, 오른쪽 버튼, , 빠름, 입력텍스트, 대기
-      2. Agent실행직선까지작업완료또는까지대데이터
-      3. 모든스크린샷저장된 지정디렉터리, 가능사용디버그및인증
+      화면을 인식해 필요한 값을 추출하고 JSON처럼 후속 작업에 쓰기 쉬운 형태로 반환합니다.
+      작업이 끝나면 실행 상태, 결과 데이터, 스크린샷 경로, 오류 정보를 반환합니다.
     inputList:
       - key: instruction
-        title: 사용자
-        tip: 설명필요실행의GUI작업, 예"에서화면중가져오기데이터, 반환 JSON 형식."
+        title: 추출 지시
+        tip: '추출할 화면 데이터와 반환 형식을 입력합니다. 예: 화면의 주문번호와 금액을 JSON 형식으로 추출'
       - key: max_steps
-        title: 대실행데이터
-        tip: 작업실행의대데이터제한, 중지없음제한
+        title: 최대 실행 단계
+        tip: 작업을 중단하기 전까지 허용할 최대 단계 수를 입력합니다.
       - key: temperature
-        title: 유형정도
-        tip: 유형완료시의정도매개변수, 제어출력의기기, 0
+        title: 응답 다양성
+        tip: 낮을수록 안정적으로, 높을수록 다양한 방식으로 작업을 시도합니다.
     outputList:
       - key: computer_use_res
         title: 실행 결과
-        subTitle: AI완료
-        tip: 패키지작업실행상태, 데이터, 시, 스크린샷디렉터리및오류정보의딕셔너리
+        subTitle: AI 완료
+        tip: 실행 상태, 결과 데이터, 스크린샷 경로, 오류 정보를 포함한 딕셔너리입니다.
   ComputerUse.fill_form:
-    title: 테이블단일
-    comment: 사용대유형분화면화면중테이블단일
+    title: 양식 입력
+    comment: 화면의 입력란이나 표에 지정한 내용을 자동으로 채웁니다.
     icon: computer-use
     helpManual: |
-      사용설명: 
-      1. 지원의패키지: 클릭, 더블클릭, 오른쪽 버튼, , 빠름, 입력텍스트, 대기
-      2. Agent실행직선까지작업완료또는까지대데이터
-      3. 모든스크린샷저장된 지정디렉터리, 가능사용디버그및인증
+      화면을 인식해 입력란, 표, 폼 항목에 지정한 값을 입력합니다.
+      작업이 끝나면 실행 상태, 결과 데이터, 스크린샷 경로, 오류 정보를 반환합니다.
     inputList:
       - key: instruction
-        title: 사용자
-        tip: 설명필요실행의GUI작업, 예"를 [데이터내용] 까지화면중의테이블단일.데이터내용: "
+        title: 입력 지시
+        tip: '실행할 GUI 작업을 설명합니다. 예: 화면의 테이블에 [데이터내용]을 입력'
       - key: max_steps
-        title: 대실행데이터
-        tip: 작업실행의대데이터제한, 중지없음제한
+        title: 최대 실행 단계
+        tip: 작업을 중단하기 전까지 허용할 최대 단계 수를 입력합니다.
       - key: temperature
-        title: 유형정도
-        tip: 유형완료시의정도매개변수, 제어출력의기기, 0
+        title: 응답 다양성
+        tip: 낮을수록 안정적으로, 높을수록 다양한 방식으로 작업을 시도합니다.
     outputList:
       - key: computer_use_res
         title: 실행 결과
-        subTitle: AI완료
-        tip: 패키지작업실행상태, 데이터, 시, 스크린샷디렉터리및오류정보의딕셔너리
+        subTitle: AI 완료
+        tip: 실행 상태, 결과 데이터, 스크린샷 경로, 오류 정보를 포함한 딕셔너리입니다.
   ComputerUse.process_captcha:
-    title: 관리인증 코드
-    comment: 사용대유형분화면관리화면중인증 코드
+    title: 인증 코드 처리
+    comment: 화면의 인증 코드나 검증 단계를 인식하고 처리합니다.
     icon: computer-use
     helpManual: |
-      사용설명: 
-      1. 지원의패키지: 클릭, 더블클릭, 오른쪽 버튼, , 빠름, 입력텍스트, 대기
-      2. Agent실행직선까지작업완료또는까지대데이터
-      3. 모든스크린샷저장된 지정디렉터리, 가능사용디버그및인증
+      화면의 인증 코드, 체크, 검증 단계를 인식해 사용자가 지시한 방식으로 처리합니다.
+      작업이 끝나면 실행 상태, 결과 데이터, 스크린샷 경로, 오류 정보를 반환합니다.
     inputList:
       - key: instruction
-        title: 사용자
-        tip: 설명필요실행의GUI작업, 예"관리닫기화면중의인증 코드."
+        title: 처리 지시
+        tip: '처리할 인증 코드나 검증 단계를 설명합니다. 예: 화면의 인증 코드를 입력'
       - key: max_steps
-        title: 대실행데이터
-        tip: 작업실행의대데이터제한, 중지없음제한
+        title: 최대 실행 단계
+        tip: 작업을 중단하기 전까지 허용할 최대 단계 수를 입력합니다.
       - key: temperature
-        title: 유형정도
-        tip: 유형완료시의정도매개변수, 제어출력의기기, 0
+        title: 응답 다양성
+        tip: 낮을수록 안정적으로, 높을수록 다양한 방식으로 작업을 시도합니다.
     outputList:
       - key: computer_use_res
         title: 실행 결과
-        subTitle: AI완료
-        tip: 패키지작업실행상태, 데이터, 시, 스크린샷디렉터리및오류정보의딕셔너리
+        subTitle: AI 완료
+        tip: 실행 상태, 결과 데이터, 스크린샷 경로, 오류 정보를 포함한 딕셔너리입니다.
 options: {}

@@ -1,4 +1,4 @@
-﻿// 변수유형현재에서 atom-meta.json 
+// 변수유형현재에서 atom-meta.json
 export type VariableType = RPA.VariableType
 
 export type ArgumentValueType = 'other' | 'python' | 'var' // atom-meta 있음 str, 완료사용.필요프론트엔드있음있음사용까지.

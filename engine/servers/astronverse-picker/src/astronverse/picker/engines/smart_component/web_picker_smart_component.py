@@ -88,11 +88,11 @@ class WEBPicker:
 
     @classmethod
     def get_similar_path(cls, route_port, strategy_svc) -> Optional[dict]:
-        raise Exception("가능컴포넌트의선택미완료")
+        raise Exception("스마트 컴포넌트의 유사 요소 선택이 완료되지 않았습니다")
 
     @classmethod
     def get_batch_path(cls, route_port, strategy_svc, curr_ele: "WEBElement") -> Optional[dict]:
-        raise Exception("가능컴포넌트의량가져오기 미완료")
+        raise Exception("스마트 컴포넌트의 배치 요소 수집이 완료되지 않았습니다")
 
     @classmethod
     def get_element(
@@ -118,7 +118,7 @@ class WEBPicker:
             gate_way_port=route_port,
         )
         if not web_info:
-            raise Exception("가져오기원정보실패, 요청 출력재시도")
+            raise Exception("원본 요소 정보를 가져오지 못했습니다. 다시 시도하세요.")
 
         WEBPicker.pre_xpath = web_info.get("abXpath", "")
         # 관리html
@@ -140,7 +140,7 @@ class WEBPicker:
         )
 
         if not web_info:
-            raise Exception("아니오까지요소")
+            raise Exception("요소를 찾을 수 없습니다")
 
         # 관리html
         web_info["outerHTML"] = parse_html(web_info.get("outerHTML", ""))

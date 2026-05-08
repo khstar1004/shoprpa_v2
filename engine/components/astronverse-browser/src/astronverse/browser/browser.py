@@ -83,7 +83,7 @@ class Browser:
         )
 
         if res.status_code != 200:
-            raise BaseException(BROWSER_EXTENSION_INSTALL_ERROR, "브라우저 확장통신출력오류, 다시 시도하세요")
+            raise BaseException(BROWSER_EXTENSION_INSTALL_ERROR, "브라우저 확장 통신 오류입니다. 다시 시도하세요.")
         res_data = res.json()
         if not res_data.get("data"):
             raise BaseException(BROWSER_EXTENSION_INSTALL_ERROR, "브라우저 확장이 연결되지 않았습니다")

@@ -1,4 +1,4 @@
-﻿declare namespace RPA {
+declare namespace RPA {
   interface RobotConfigItem {
     listKey: string
     title: string

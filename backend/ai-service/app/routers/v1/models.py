@@ -1,4 +1,4 @@
-﻿from urllib.parse import urljoin
+from urllib.parse import urljoin
 
 import httpx
 from fastapi import APIRouter, Depends, HTTPException
@@ -14,7 +14,7 @@ logger = get_logger(__name__)
 
 router = APIRouter(
     prefix="/models",
-    tags=["시스템일대유형연결"],
+    tags=["models"],
 )
 
 
@@ -34,10 +34,10 @@ async def list_models(current_user_id: str = Depends(get_user_id_from_header)):
             response.raise_for_status()
             return response.json()
     except httpx.HTTPStatusError as e:
-        logger.error(f"HTTP error: {e.response.status_code} - {e.response.text}")
+        logger.error("HTTP error: %s - %s", e.response.status_code, e.response.text[:500])
         raise HTTPException(status_code=e.response.status_code, detail=str(e))
     except Exception as e:
-        logger.error(f"Unexpected error: {str(e)}")
+        logger.error("Unexpected error: %s", str(e))
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
 
@@ -56,8 +56,8 @@ async def get_model(model_id: str, current_user_id: str = Depends(get_user_id_fr
             response.raise_for_status()
             return response.json()
     except httpx.HTTPStatusError as e:
-        logger.error(f"HTTP error: {e.response.status_code} - {e.response.text}")
+        logger.error("HTTP error: %s - %s", e.response.status_code, e.response.text[:500])
         raise HTTPException(status_code=e.response.status_code, detail=str(e))
     except Exception as e:
-        logger.error(f"Unexpected error: {str(e)}")
+        logger.error("Unexpected error: %s", str(e))
         raise HTTPException(status_code=500, detail="Internal Server Error")

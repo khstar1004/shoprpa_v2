@@ -59,11 +59,6 @@ public class IconEditModeHandler implements RobotIconModeHandler {
         if (robot != null) {
             name = robot.getName();
         }
-        //        RobotVersion version = robotVersionDao.getVersion(robotId, robotVersion);
-        //        if(version == null){
-        //            return AppResponse.success(new RobotIconVo(name, ""));
-        //        }
-        //        String icon = version.getIcon();
         return AppResponse.success(new RobotIconVo(name, icon));
     }
 }

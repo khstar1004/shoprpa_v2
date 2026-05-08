@@ -135,7 +135,7 @@ def get_factors(
         elif file_extension == "txt":
             contract_content = open(contract_path).read()
         else:
-            raise ValueError("지원하지 않음의파일유형: " + file_extension)
+            raise ValueError("지원하지 않는 파일 유형입니다: " + file_extension)
     try:
         custom_factors = ast.literal_eval(custom_factors)
     except:

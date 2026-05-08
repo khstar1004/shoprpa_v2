@@ -36,6 +36,7 @@ public class AuthenticationFilter implements Filter {
             "/api/rpa-auth/register",
             "/api/rpa-auth/password/set",
             "/api/rpa-auth/logout",
+            "/api/rpa-auth/health",
             "/api/rpa-auth/login-status",
             "/api/rpa-auth/tenant/getTenantId",
             "/api/rpa-auth/user/info",

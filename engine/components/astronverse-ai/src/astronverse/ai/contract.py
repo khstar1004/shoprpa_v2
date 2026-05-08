@@ -93,7 +93,7 @@ class ContractAI:
         try:
             custom_factors = ast.literal_eval(custom_factors)
         except:
-            raise ValueError("custom_factors 형식오류, 확인하세요")
+            raise ValueError("custom_factors 형식 오류입니다. 확인하세요")
         preset_factors = custom_factors.get("preset", [])  # type: ignore
         custom_factors = custom_factors.get("custom", [])  # type: ignore
 

@@ -1,8 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Shoprpa Browser Plugin",
-  "description": "Shoprpa Browser Plugin-chromium",
-  "homepage_url": "https://www.shoprpa.com/",
+  "description": "undefined-chromium",
   "version": "5.2.9",
   "icons": {
     "16": "static/icon_16.png",

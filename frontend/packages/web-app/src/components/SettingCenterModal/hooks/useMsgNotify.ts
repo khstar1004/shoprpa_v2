@@ -1,4 +1,4 @@
-﻿import { message } from 'ant-design-vue'
+import { message } from 'ant-design-vue'
 import type { Rule } from 'ant-design-vue/es/form'
 import { useTranslation } from 'i18next-vue'
 import { isEmpty } from 'lodash-es'
@@ -18,7 +18,7 @@ function initEmailData(): RPA.EmailFormMap {
     sender_mail: '', // 메일계정
     password: '', // 메일비밀번호(필요사용키, 저장의예키이름)
     use_ssl: true, // 여부SSL
-    cc: '', // 
+    cc: '', //
   }
 }
 
@@ -26,7 +26,7 @@ function initPhoneData(): RPA.PhoneFormMap {
   return {
     is_enable: false, // 여부사용, 아니오사용
     receiver: '', // 파일사람휴대폰 번호
-    phone_msg_url: 'https://pretest.xfpaas.com/dripsms/smssafe',
+    phone_msg_url: '',
   }
 }
 
@@ -63,7 +63,7 @@ export function useNotify() {
       // /0?(13|14|15|18)[0-9]{9}/
       { required: true, message: t('userForm.enterPhone'), trigger: 'blur' },
       {
-        pattern: /^1([3-9])\d{9}$/,
+        pattern: /^\+?\d[0-9\s-]{6,18}\d$/,
         message: t('settingCenter.msgNotify.phoneFormatError'),
         trigger: 'blur',
       },
@@ -71,7 +71,6 @@ export function useNotify() {
   }
 
   function handleMsgTest(key: string) {
-    console.log('handleMsgTest', key)
     handleValidateSave().then(() => {
       toolsInterfacePost({
         alert_type: key,
@@ -126,7 +125,11 @@ export function useNotify() {
       email.value = emailData
     }
     if (phoneData && !isEmpty(phoneData)) {
-      phone_msg.value = phoneData
+      phone_msg.value = {
+        ...initPhoneData(),
+        ...phoneData,
+        phone_msg_url: phoneData.phone_msg_url?.includes('/dripsms/smssafe') ? '' : phoneData.phone_msg_url || '',
+      }
     }
   }
   initData()

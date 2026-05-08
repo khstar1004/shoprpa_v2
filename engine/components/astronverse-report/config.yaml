@@ -1,6 +1,6 @@
-﻿atomic:
+atomic:
   Report.print:
-    title: 로그인쇄
+    title: 로그 출력
     comment: 를변수(@{msg})인쇄
     icon: log-print
     helpManual: ''
@@ -10,7 +10,7 @@
         tip: ''
       - key: msg
         title: 로그내용
-        tip: 인쇄실행경과중출력의변수
+        tip: 실행 중 출력할 로그 변수
     outputList: []
 options:
   ReportLevelType:

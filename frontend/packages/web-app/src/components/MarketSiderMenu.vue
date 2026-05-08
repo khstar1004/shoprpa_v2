@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { PlusOutlined } from '@ant-design/icons-vue'
 import { NiceModal } from '@rpa/components'
 import { computed, ref, watch } from 'vue'

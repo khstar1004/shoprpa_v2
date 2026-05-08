@@ -88,6 +88,9 @@ public class AppMarketInviteServiceImpl implements AppMarketInviteService {
             throw new ServiceException("사용자 정보 조회 실패");
         }
         TenantExpirationDto data = resp.getData();
+        if (data == null) {
+            throw new ServiceException("테넌트 만료 정보 조회 실패");
+        }
         String tenantType = data.getTenantType();
 
         // 조회사용자권한: 있음admin가능행연결공유
@@ -115,19 +118,25 @@ public class AppMarketInviteServiceImpl implements AppMarketInviteService {
                 newInvite.setInviteKey(inviteKey);
                 newInvite.setCurrentJoinCount(existingInvite.getCurrentJoinCount());
                 newInvite.setMaxJoinCount(existingInvite.getMaxJoinCount());
-                if (tenantType.equals("personal")) {
+                if ("personal".equals(tenantType)) {
                     newInvite.setMaxJoinCount(maxJoinCount);
                 } else {
                     newInvite.setMaxJoinCount(-1);
                 }
                 newInvite.setExpireType(inviteLinkDto.getExpireType());
                 ExpireTypeEnum expireTypeEnum = ExpireTypeEnum.getByCode(inviteLinkDto.getExpireType());
+                if (expireTypeEnum == null) {
+                    return AppResponse.error(ErrorCodeEnum.E_PARAM, "지원하지 않는 실패시간유형, 지원: 4H, 24H, 7D, 30D");
+                }
                 Date expireTime = calculateExpireTime(expireTypeEnum);
                 newInvite.setExpireTime(expireTime);
                 newInvite.setUpdateTime(now);
                 newInvite.setCreateTime(now);
                 newInvite.setDeleted(0);
-                appMarketInviteDao.insert(newInvite);
+                int insertCount = appMarketInviteDao.insert(newInvite);
+                if (insertCount <= 0) {
+                    return AppResponse.error(ErrorCodeEnum.E_SQL_EXCEPTION, "초대 링크 생성에 실패했습니다");
+                }
 
                 InviteLinkVo responseVo = getInviteLinkVo(newInvite);
                 return AppResponse.success(responseVo);
@@ -155,7 +164,7 @@ public class AppMarketInviteServiceImpl implements AppMarketInviteService {
         // 실패시간유형
         appMarketInvite.setExpireType(inviteLinkDto.getExpireType());
         // 대추가입력사람데이터
-        if (tenantType.equals("personal")) {
+        if ("personal".equals(tenantType)) {
             appMarketInvite.setMaxJoinCount(maxJoinCount);
         } else {
             appMarketInvite.setMaxJoinCount(-1);
@@ -175,7 +184,7 @@ public class AppMarketInviteServiceImpl implements AppMarketInviteService {
             responseVo.setOverNumLimit(0);
             return AppResponse.success(responseVo);
         }
-        return null;
+        return AppResponse.error(ErrorCodeEnum.E_SQL_EXCEPTION, "초대 링크 생성에 실패했습니다");
     }
 
     private static InviteLinkVo getInviteLinkVo(AppMarketInvite existingInvite) {
@@ -184,8 +193,11 @@ public class AppMarketInviteServiceImpl implements AppMarketInviteService {
         responseVo.setExpireTime(existingInvite.getExpireTime());
         responseVo.setExpireType(existingInvite.getExpireType());
 
-        if (existingInvite.getMaxJoinCount() > 0) {
-            if (existingInvite.getCurrentJoinCount() >= existingInvite.getMaxJoinCount()) {
+        Integer maxJoinCount = existingInvite.getMaxJoinCount();
+        Integer currentJoinCount =
+                existingInvite.getCurrentJoinCount() == null ? 0 : existingInvite.getCurrentJoinCount();
+        if (maxJoinCount != null && maxJoinCount > 0) {
+            if (currentJoinCount >= maxJoinCount) {
                 responseVo.setOverNumLimit(1);
             } else {
                 responseVo.setOverNumLimit(0);
@@ -214,6 +226,9 @@ public class AppMarketInviteServiceImpl implements AppMarketInviteService {
             throw new ServiceException("사용자 정보 조회 실패");
         }
         TenantExpirationDto data = resp.getData();
+        if (data == null) {
+            throw new ServiceException("테넌트 만료 정보 조회 실패");
+        }
         String tenantType = data.getTenantType();
         User loginUser = userResponse.getData();
         String userId = loginUser.getId();
@@ -232,19 +247,25 @@ public class AppMarketInviteServiceImpl implements AppMarketInviteService {
         newInvite.setInviteKey(inviteKey);
         newInvite.setCurrentJoinCount(existingInvite.getCurrentJoinCount());
         newInvite.setMaxJoinCount(existingInvite.getMaxJoinCount());
-        if (tenantType.equals("personal")) {
+        if ("personal".equals(tenantType)) {
             newInvite.setMaxJoinCount(maxJoinCount);
         } else {
             newInvite.setMaxJoinCount(-1);
         }
         newInvite.setExpireType(inviteLinkDto.getExpireType());
         ExpireTypeEnum expireTypeEnum = ExpireTypeEnum.getByCode(inviteLinkDto.getExpireType());
+        if (expireTypeEnum == null) {
+            return AppResponse.error(ErrorCodeEnum.E_PARAM, "지원하지 않는 실패시간유형, 지원: 4H, 24H, 7D, 30D");
+        }
         Date expireTime = calculateExpireTime(expireTypeEnum);
         newInvite.setExpireTime(expireTime);
         newInvite.setUpdateTime(now);
         newInvite.setCreateTime(now);
         newInvite.setDeleted(0);
-        appMarketInviteDao.insert(newInvite);
+        int insertCount = appMarketInviteDao.insert(newInvite);
+        if (insertCount <= 0) {
+            return AppResponse.error(ErrorCodeEnum.E_SQL_EXCEPTION, "초대 링크 재생성에 실패했습니다");
+        }
         // 생성
         InviteLinkVo responseVo = new InviteLinkVo();
         responseVo.setInviteKey(inviteKey);
@@ -277,8 +298,9 @@ public class AppMarketInviteServiceImpl implements AppMarketInviteService {
         }
         // 조회현재완료추가입력사람데이터여부초과경과제한제어사람데이터
         Integer currentJoinCount = invite.getCurrentJoinCount() == null ? 0 : invite.getCurrentJoinCount();
-        if (invite.getMaxJoinCount() > 0) {
-            if (currentJoinCount >= invite.getMaxJoinCount()) {
+        Integer maxJoinCount = invite.getMaxJoinCount();
+        if (maxJoinCount != null && maxJoinCount > 0) {
+            if (currentJoinCount >= maxJoinCount) {
                 InviteInfoVo resultVo = new InviteInfoVo();
                 resultVo.setResultCode(QuotaCodeEnum.E_OVER_MARKET_USER_NUM_LIMIT.getResultCode());
                 return AppResponse.success(resultVo);
@@ -347,8 +369,9 @@ public class AppMarketInviteServiceImpl implements AppMarketInviteService {
         }
         // 조회현재완료추가입력사람데이터여부초과경과제한제어사람데이터
         Integer currentJoinCount = invite.getCurrentJoinCount() == null ? 0 : invite.getCurrentJoinCount();
-        if (invite.getMaxJoinCount() > 0) {
-            if (currentJoinCount >= invite.getMaxJoinCount()) {
+        Integer maxJoinCount = invite.getMaxJoinCount();
+        if (maxJoinCount != null && maxJoinCount > 0) {
+            if (currentJoinCount >= maxJoinCount) {
                 AcceptResultVo resultVo = new AcceptResultVo(QuotaCodeEnum.E_OVER_MARKET_USER_NUM_LIMIT);
                 return AppResponse.success(resultVo);
             }
@@ -386,7 +409,8 @@ public class AppMarketInviteServiceImpl implements AppMarketInviteService {
         AppMarketUser appMarketUser = buildAppMarketUser(marketId, userId, now);
         appMarketUserDao.insert(appMarketUser);
         // 업데이트초대계획데이터
-        invite.setCurrentJoinCount(invite.getCurrentJoinCount() + 1);
+        Integer currentJoinCount = invite.getCurrentJoinCount() == null ? 0 : invite.getCurrentJoinCount();
+        invite.setCurrentJoinCount(currentJoinCount + 1);
         invite.setUpdaterId(userId);
         invite.setUpdateTime(now);
         appMarketInviteDao.updateById(invite);

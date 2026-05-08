@@ -30,7 +30,6 @@ function handleSearchChange() {
   )
 }
 function handleProcessChange() {
-  console.log(processId.value)
   getTableData(
     useProjectDocStore().userFlowNode(processId.value).length,
     processId.value,

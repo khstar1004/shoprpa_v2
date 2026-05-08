@@ -1,4 +1,4 @@
-﻿/// <reference types="@rpa/shared/platform" />
+/// <reference types="@rpa/shared/platform" />
 
 export interface W2WType {
   from: string // 창

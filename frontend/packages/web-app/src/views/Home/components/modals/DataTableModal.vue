@@ -11,11 +11,11 @@ const modal = NiceModal.useModal()
 </script>
 
 <template>
- <a-drawer
- v-bind="NiceModal.antdDrawer(modal)"
- :title="`데이터 테이블 - ${props.record.robotName}`"
- :width="628"
- >
- <ReadonlyDataTable :data-table-path="props.record.dataTablePath" />
- </a-drawer>
+  <a-drawer
+    v-bind="NiceModal.antdDrawer(modal)"
+    :title="`데이터 테이블 - ${props.record.robotName}`"
+    :width="628"
+  >
+    <ReadonlyDataTable :data-table-path="props.record.dataTablePath" />
+  </a-drawer>
 </template>

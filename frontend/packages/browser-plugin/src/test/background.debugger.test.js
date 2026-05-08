@@ -1,5 +1,6 @@
 ﻿import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { Debugger, checkDebuggerDetached } from '../background/debugger'
+import { ErrorMessage } from '../background/constant'
 
 global.chrome = global.chrome || {};
 
@@ -12,7 +13,7 @@ describe('background/debugger', () => {
 
   it('checkDebuggerDetached should timeout after 10 attempts', async () => {
     global.chrome.debugger.getTargets = vi.fn(cb => cb([{ tabId: 1 }]));
-    await expect(checkDebuggerDetached(1, 11)).rejects.toThrow('감지 detach 상태시간 초과');
+    await expect(checkDebuggerDetached(1, 11)).rejects.toThrow(ErrorMessage.DEBUGGER_TIMEOUT);
   });
 
   it('Debugger.attachDebugger should resolve true', async () => {
@@ -41,6 +42,6 @@ describe('background/debugger', () => {
 
   it('Debugger.evaluate should throw if no context', async () => {
     Debugger.frameContextIdMap = { 0: [] };
-    await expect(Debugger.evaluate(1, '1+1', 0)).rejects.toThrow('찾을 수 없는 실행위아래문서');
+    await expect(Debugger.evaluate(1, '1+1', 0)).rejects.toThrow('실행 컨텍스트를 찾을 수 없습니다.');
   });
 });

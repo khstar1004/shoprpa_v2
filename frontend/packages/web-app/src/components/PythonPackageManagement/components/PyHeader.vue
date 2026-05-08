@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { pythonInstallModal } from '../modals'
 
 const sidebarWide = defineModel('sidebarWide')
@@ -9,7 +9,7 @@ const sidebarWide = defineModel('sidebarWide')
     <span
       class="python-header-title flex-1 text-[rgba(0, 0, 0, 0.85)] dark:text-[rgba(255,255,255,0.85)]"
     >
-      Python패키지관리관리
+      Python 패키지 관리
     </span>
     <div class="pythonDependence-right">
       <rpa-hint-icon
@@ -25,7 +25,7 @@ const sidebarWide = defineModel('sidebarWide')
     </div>
     <rpa-hint-icon
       :name="sidebarWide ? 'sidebar-wide' : 'sidebar-narrow'"
-      :title="sidebarWide ? '까지버전' : '까지너비버전'"
+      :title="sidebarWide ? '좁게 보기' : '넓게 보기'"
       enable-hover-bg
       width="16px"
       height="16px"
@@ -59,7 +59,7 @@ const sidebarWide = defineModel('sidebarWide')
 .ant-select-tree li .ant-select-tree-node-content-wrapper {
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowarp;
+  white-space: nowrap;
 }
 
 .ant-select-tree li span.ant-select-tree-switcher {

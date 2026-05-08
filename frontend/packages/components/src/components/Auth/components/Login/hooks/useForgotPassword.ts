@@ -1,4 +1,4 @@
-﻿import { reactive, ref, watch } from 'vue'
+import { reactive, ref, watch } from 'vue'
 
 import type { LoginFormData } from '../../../interface'
 import { generateFormData } from '../../../schemas/factories'

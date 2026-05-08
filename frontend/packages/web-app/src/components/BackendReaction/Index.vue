@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 /**
  *  전체영역파일
  *  1, 파일, 관리필요실행의
@@ -64,7 +64,6 @@ const route = useRoute()
 utilsManager.listenEvent('scheduler-event', (eventMsg) => {
   const msgObject = JSON.parse(base64ToString(eventMsg))
   const { type, msg } = msgObject
-  console.log('메시지: ', msgObject)
   switch (type) {
     case 'tip': {
       const msgContent = typeof msg === 'string' ? msg : msg.msg
@@ -125,7 +124,6 @@ utilsManager.listenEvent('scheduler-event', (eventMsg) => {
 
 // 창통신
 utilsManager.listenEvent('w2w', (eventMsg: W2WType) => {
-  console.log('w2w: ', eventMsg)
   const { type, from, data } = eventMsg
 
   if (from === WINDOW_NAME.BATCH) {
@@ -160,7 +158,6 @@ utilsManager.listenEvent('w2w', (eventMsg: W2WType) => {
 })
 
 utilsManager.listenEvent('exit_scheduling_mode', () => {
-  console.log('exit_scheduling_mode')
   appModeStore.setAppMode('normal') // 로정상일반방식
   endSchedulingMode()
 })
@@ -171,7 +168,6 @@ utilsManager.listenEvent('update-downloaded', () => {
 
 // 스케줄링방식, 중지현재작업
 utilsManager.listenEvent('stop_task', () => {
-  console.log('stop_task')
   stopSchedulingTask()
   utilsManager.invoke('tray_change', { mode: 'scheduling', status: 'idle' }) // 수정변수메뉴
 })

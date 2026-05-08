@@ -76,7 +76,7 @@ class DatabaseCore(IDatabaseCore):
             #     host=db_info_dict.get("host", ""),
             # )
         else:
-            raise Exception("아니오까지해당데이터베이스유형!")
+            raise Exception("지원하지 않는 데이터베이스 유형입니다.")
 
     @staticmethod
     def disconnect(db_conn: object):

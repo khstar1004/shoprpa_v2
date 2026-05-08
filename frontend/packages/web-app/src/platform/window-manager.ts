@@ -75,7 +75,11 @@ class BrowserWindowManager implements WindowManager {
 
   hideDecorations() {}
 
-  foucsWindow() {}
+  focusWindow() {}
+
+  foucsWindow() {
+    this.focusWindow()
+  }
 
   restoreLoginWindow() {}
 

@@ -26,7 +26,7 @@ def random_number(
         return numpy.random.randint(start, end, size).tolist()
     if number_type == NumberType.FLOAT:
         return numpy.random.uniform(start, end, size).tolist()
-    raise ValueError("지원하지 않음의 number_type")
+    raise ValueError("지원하지 않는 number_type입니다")
 
 
 class MathProcess:
@@ -77,7 +77,7 @@ class MathProcess:
             return number + add_sub_number
         if add_sub == AddSubType.SUB:
             return number - add_sub_number
-        raise ValueError("지원하지 않음의추가유형")
+        raise ValueError("지원하지 않는 추가 유형입니다")
 
     @staticmethod
     @atomicMg.atomic(

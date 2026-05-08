@@ -1,4 +1,4 @@
-﻿import { computed, ref } from 'vue'
+import { computed, ref } from 'vue'
 import type { Ref } from 'vue'
 
 import type { PanelProps } from '../interface'
@@ -41,7 +41,7 @@ export default function useSizes(items: Ref<PanelProps[]>, containerSize: Ref<nu
     return mergedSizes
   })
 
-  // 후관리.예아래: 
+  // 후관리.예아래:
   // 1. 를모든의 px 변환로분, 예결과아니오로빈.
   // 2. 가져오기저장된 분의분.
   // 3. 를분까지빈.

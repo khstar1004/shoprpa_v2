@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { computed } from 'vue'
 
 import { COMPONENT_DEFAULT_ICON, DEFAULT_COLOR } from '@/constants/avatar'

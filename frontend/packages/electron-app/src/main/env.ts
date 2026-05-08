@@ -1,11 +1,15 @@
-const REQUEST_WHITE_URL = [
+const defaultRequestWhiteUrl = [
   'http://127.0.0.1:1420/*',
   'http://127.0.0.1:8003/*',
   'http://127.0.0.1:8006/*',
-  'http://dev.shoprpa.private:31680/*',
-  'http://test.shoprpa.private:32680/*',
-  'https://newapi.shoprpa.com/*',
 ]
+
+const extraRequestWhiteUrl = (process.env.SHOPRPA_REQUEST_WHITE_URLS || '')
+  .split(/[;,]/)
+  .map(url => url.trim())
+  .filter(Boolean)
+
+const REQUEST_WHITE_URL = [...defaultRequestWhiteUrl, ...extraRequestWhiteUrl]
 
 export const envJson = {
   REQUEST_WHITE_URL,

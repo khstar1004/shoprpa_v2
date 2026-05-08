@@ -1,4 +1,4 @@
-﻿import { CloseOutlined, DownOutlined } from '@ant-design/icons-vue'
+import { CloseOutlined, DownOutlined } from '@ant-design/icons-vue'
 import { Button, DatePicker, Dropdown, Input, Menu, Select, Space } from 'ant-design-vue'
 import { useTranslation } from 'i18next-vue'
 
@@ -274,7 +274,6 @@ export default function useTableFormItem() {
   //     modelObj && (
   //         <el-tree-select v-model={modelObj[item.bind]} data={item.data} nodeKey="id" placeholder={`선택하세요${item.label}`} {...nodeProps}
   //           onNodeClick={(val, node) => {
-  //             // console.log(val[item.props.value || 'id'])
   //             if (!item.showCheckbox && !node.disabled) {
   //               modelObj[item.bind] = val[item.props.value || 'id']
   //             }

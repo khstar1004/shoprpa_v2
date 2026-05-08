@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Shoprpa계정삭제사용자매개변수
+ * ShopRPA 계정삭제사용자매개변수
  */
 @Data
 @NoArgsConstructor

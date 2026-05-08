@@ -21,8 +21,7 @@ export function useToolsBack() {
       useProjectDocStore().clearAllData()
       useRunlogStore().clearLogs()
     }
-    catch (error) {
-      console.log(error)
+    catch {
       message.error(i18next.t('common.saveFailedRetry'))
     }
   }

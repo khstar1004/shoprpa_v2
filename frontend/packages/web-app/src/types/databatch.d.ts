@@ -1,4 +1,4 @@
-﻿/** @format */
+/** @format */
 import type { WebElementType } from './resource.d'
 
 export interface BatchDataTableMenu {

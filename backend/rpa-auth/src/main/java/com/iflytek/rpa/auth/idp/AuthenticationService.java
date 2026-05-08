@@ -80,7 +80,7 @@ public interface AuthenticationService {
     /**
      * 회원가입(일)
      * 필요휴대폰 번호및인증 코드, 아니요필요비밀번호
-     * 에서Shoprpa계정및UAP생성사용자(사용비밀번호)
+     * 에서ShopRPA 계정및UAP생성사용자(사용비밀번호)
      *
      * @param registerDto 회원가입요청 DTO
      * @return 시인증(사용후비밀번호)
@@ -89,7 +89,7 @@ public interface AuthenticationService {
 
     /**
      * 비밀번호로그인(회원가입이)
-     * 사용자비밀번호후, 업데이트Shoprpa계정및UAP비밀번호, 로그인
+     * 사용자비밀번호후, 업데이트ShopRPA 계정및UAP비밀번호, 로그인
      *
      * @param tempToken 시인증
      * @param password 새비밀번호

@@ -8,6 +8,8 @@ import { VxeUI } from 'vxe-table'
 import 'dayjs/locale/ko'
 import 'dayjs/locale/zh-cn'
 
+import { getPublicLanguage } from '@/plugins/i18next'
+
 const NiceModalProvider = NiceModal.Provider
 
 const { i18next } = useTranslation()
@@ -18,7 +20,7 @@ watchImmediate(colorTheme, theme => VxeUI.setTheme(theme))
 watchImmediate(
   () => i18next.language,
   (lang) => {
-    dayjs.locale(lang === 'zh-CN' ? 'ko' : 'en')
+    dayjs.locale(getPublicLanguage(lang) === 'ko-KR' ? 'ko' : 'en')
   },
 )
 </script>

@@ -1,6 +1,8 @@
 import type { RouteLocationAsRelativeGeneric, RouteRecordRaw } from 'vue-router'
 import { createRouter, createWebHashHistory } from 'vue-router'
 
+import { baseUrl } from '@/utils/env'
+
 import {
   ACTUATOR,
   APPLICATION,
@@ -39,7 +41,7 @@ export const routes: RouteRecordRaw[] = [
     name: ARRANGE,
     meta: {
       show: false,
-      closeConfirm: false, // 닫기 
+      closeConfirm: false, // 닫기
     },
     redirect: `/${ARRANGE}/${EDITORPAGE}`,
     component: ArrangeComponent,
@@ -276,7 +278,7 @@ router.beforeEach(async (to, _from, next) => {
     if (first)
       return next(first)
 
-    window.location.href = '/boot.html?code=403' // 권한이 없습니다방문, 변환까지로그인
+    window.location.href = `${baseUrl}/boot.html?code=403` // 권한이 없습니다방문, 변환까지로그인
     return
   }
   next()

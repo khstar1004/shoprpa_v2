@@ -1,4 +1,4 @@
-﻿<script lang="ts" setup>
+<script lang="ts" setup>
 import {
   ArrowRightOutlined,
   CaretDownOutlined,
@@ -39,7 +39,7 @@ const useLength = computed(() => {
   return length
 })
 
-// 열기 
+// 열기
 const openKeys = ref([])
 function toggleOpen(key: string, flag: boolean) {
   if (flag) {

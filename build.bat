@@ -84,6 +84,22 @@ set BUILD_DIR=build
 set PYTHON_CORE_DIR=%BUILD_DIR%\python_core
 set DIST_DIR=%BUILD_DIR%\dist
 set ARCHIVE_DIST_DIR=resources
+set PORTABLE_DIST_DIR=frontend\packages\electron-app\dist\win-portable
+set PORTABLE_RESOURCES_DIR=%PORTABLE_DIST_DIR%\resources
+
+REM Auto-detect common local tool locations before failing the build.
+if not exist "%PYTHON_EXE%" if exist "%LOCALAPPDATA%\Programs\Python\Python313\python.exe" set "PYTHON_EXE=%LOCALAPPDATA%\Programs\Python\Python313\python.exe"
+if not exist "%PYTHON_EXE%" if exist "%ProgramFiles%\Python313\python.exe" set "PYTHON_EXE=%ProgramFiles%\Python313\python.exe"
+if not exist "%PYTHON_EXE%" if exist "%ProgramFiles(x86)%\Python313\python.exe" set "PYTHON_EXE=%ProgramFiles(x86)%\Python313\python.exe"
+if not exist "%SEVENZ_EXE%" if exist "%SCRIPT_DIR%\resources\7zr.exe" set "SEVENZ_EXE=%SCRIPT_DIR%\resources\7zr.exe"
+if not exist "%SEVENZ_EXE%" if exist "%ProgramFiles%\7-Zip\7z.exe" set "SEVENZ_EXE=%ProgramFiles%\7-Zip\7z.exe"
+
+set "POWERSHELL_EXE=%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe"
+set "UV_EXE=uv"
+set "UV_ARGS="
+set "UV_INDEX_ARGS="
+if "%UV_LOCK_TIMEOUT%"=="" set "UV_LOCK_TIMEOUT=300"
+if not "%SHOPRPA_PIP_INDEX_URL%"=="" set "UV_INDEX_ARGS=--index-url %SHOPRPA_PIP_INDEX_URL%"
 
 REM ============================================
 REM 3. Environment Check
@@ -116,16 +132,76 @@ if not exist "%SEVENZ_EXE%" (
     exit /b 1
 )
 
-uv --version >nul 2>&1
+"%UV_EXE%" %UV_ARGS% --version >nul 2>&1
 if errorlevel 1 (
-    echo uv not found, please install uv first, https://docs.astral.sh/uv/, and ensure uv command is in environment variables
-    exit /b 1
+    set "UV_EXE=%PYTHON_EXE%"
+    set "UV_ARGS=-m uv"
+    "!UV_EXE!" !UV_ARGS! --version >nul 2>&1
+    if errorlevel 1 (
+        echo uv not found. Install uv for Python 3.13 or make uv available in PATH.
+        echo Tried:
+        echo   uv
+        echo   "%PYTHON_EXE%" -m uv
+        exit /b 1
+    )
 )
 
 :skip_engine_checks
 
 REM ============================================
-REM 4. Engine Build
+REM 4. Browser Bridge Inject Sync
+REM ============================================
+
+echo.
+echo ============================================
+echo Preparing Browser Bridge Inject Assets
+echo ============================================
+
+echo Checking pnpm installation through Corepack...
+call corepack pnpm --version >nul 2>&1
+if !errorlevel! neq 0 (
+    echo.
+    echo ERROR: pnpm not available through Corepack. Please install Node.js 22+ and run: corepack enable
+    exit /b 1
+)
+echo pnpm check passed
+
+echo Navigating to frontend directory: %SCRIPT_DIR%\frontend
+cd /d "%SCRIPT_DIR%\frontend"
+if errorlevel 1 (
+    echo Frontend directory not found: %SCRIPT_DIR%\frontend
+    exit /b 1
+)
+
+if not exist "package.json" (
+    echo ERROR: package.json not found in frontend directory
+    cd /d "%SCRIPT_DIR%"
+    exit /b 1
+)
+
+if exist "node_modules\.bin\vite.cmd" if exist "node_modules\.bin\tsdown.cmd" (
+    echo Dependencies already installed, skipping pnpm install
+) else (
+    echo Installing dependencies...
+    call corepack pnpm install --prefer-offline
+    if !errorlevel! neq 0 (
+        echo pnpm install failed
+        cd /d "%SCRIPT_DIR%"
+        exit /b 1
+    )
+)
+
+echo Building and syncing browser bridge inject assets...
+call corepack pnpm --filter @rpa/extension run build:bridge-inject
+if !errorlevel! neq 0 (
+    echo Browser bridge inject build failed
+    cd /d "%SCRIPT_DIR%"
+    exit /b 1
+)
+cd /d "%SCRIPT_DIR%"
+
+REM ============================================
+REM 5. Engine Build
 REM ============================================
 
 if "%SKIP_ENGINE%"=="1" (
@@ -142,7 +218,7 @@ echo Starting Engine Build
 echo ============================================
 
 REM ============================================
-REM 4.1. Environment Setup
+REM 5.1. Environment Setup
 REM ============================================
 
 echo Cleaning dist directory...
@@ -154,14 +230,7 @@ if exist "%DIST_DIR%" (
     )
 )
 
-echo Cleaning requirements.txt...
-if exist %ENGINE_DIR%\requirements.txt (
-    del /q %ENGINE_DIR%\requirements.txt
-    if errorlevel 1 (
-        echo Failed to delete requirements.txt
-        exit /b 1
-    )
-)
+echo Existing requirements.txt will be overwritten only after a successful wheel build.
 
 if exist %ENGINE_DIR%\pyproject.toml.backup (
     move /y %ENGINE_DIR%\pyproject.toml.backup %ENGINE_DIR%\pyproject.toml >nul
@@ -191,7 +260,7 @@ if not exist "%PYTHON_CORE_DIR%\python.exe" (
 )
 
 REM ============================================
-REM 4.2. Build Packages
+REM 5.2. Build Packages
 REM ============================================
 
 echo Backing up original and adding workspace
@@ -239,17 +308,53 @@ echo. >> %ENGINE_DIR%\pyproject.toml
 echo [tool.uv.workspace] >> %ENGINE_DIR%\pyproject.toml
 echo members = [!WORKSPACE_MEMBERS!] >> %ENGINE_DIR%\pyproject.toml
 
+if not exist "%SCRIPT_DIR%\.run-logs" mkdir "%SCRIPT_DIR%\.run-logs"
+set "ENGINE_BUILD_LOG=%SCRIPT_DIR%\.run-logs\engine-build.log"
 echo Starting batch build of all packages...
-uv build --project %ENGINE_DIR% --all-packages --wheel --out-dir "%DIST_DIR%"
+echo Engine build log: %ENGINE_BUILD_LOG%
+if "%SHOPRPA_OFFLINE_ENGINE_OVERLAY%"=="1" (
+    echo SHOPRPA_OFFLINE_ENGINE_OVERLAY=1, overlaying engine sources into existing python_core.
+    if not exist "%PYTHON_CORE_DIR%\python.exe" (
+        echo Existing python_core is required for offline engine overlay.
+        exit /b 1
+    )
+    move %ENGINE_DIR%\pyproject.toml.backup %ENGINE_DIR%\pyproject.toml >nul
+    "%POWERSHELL_EXE%" -NoProfile -ExecutionPolicy Bypass -File "%SCRIPT_DIR%\scripts\offline-engine-overlay.ps1" -EngineDir "%SCRIPT_DIR%\%ENGINE_DIR%" -PythonCoreDir "%SCRIPT_DIR%\%PYTHON_CORE_DIR%"
+    if errorlevel 1 exit /b 1
+    goto compress_python_core
+)
+"%UV_EXE%" %UV_ARGS% build --project %ENGINE_DIR% --all-packages --wheel --out-dir "%DIST_DIR%" > "%ENGINE_BUILD_LOG%" 2>&1
 if errorlevel 1 (
     move %ENGINE_DIR%\pyproject.toml.backup %ENGINE_DIR%\pyproject.toml >nul
+    if exist "%PYTHON_CORE_DIR%\python.exe" (
+        echo.
+        echo WARNING: Engine wheel build failed. Trying offline source overlay into existing python_core.
+        "%POWERSHELL_EXE%" -NoProfile -ExecutionPolicy Bypass -File "%SCRIPT_DIR%\scripts\offline-engine-overlay.ps1" -EngineDir "%SCRIPT_DIR%\%ENGINE_DIR%" -PythonCoreDir "%SCRIPT_DIR%\%PYTHON_CORE_DIR%"
+        if not errorlevel 1 (
+            echo Offline engine source overlay succeeded. Rebuilding python_core archive.
+            goto compress_python_core
+        )
+        echo Offline engine source overlay failed.
+    )
+    if exist "%SCRIPT_DIR%\%ARCHIVE_DIST_DIR%\python_core.7z" if exist "%SCRIPT_DIR%\%ARCHIVE_DIST_DIR%\python_core.7z.sha256.txt" (
+        if "%SHOPRPA_STRICT_ENGINE_BUILD%"=="1" (
+            if exist "%ENGINE_BUILD_LOG%" type "%ENGINE_BUILD_LOG%"
+            exit /b 1
+        )
+        echo.
+        echo WARNING: Engine source build failed. Reusing existing resources\python_core.7z bundle.
+        echo Engine build log: %ENGINE_BUILD_LOG%
+        echo Set SHOPRPA_STRICT_ENGINE_BUILD=1 to fail instead of using the existing engine bundle.
+        goto skip_engine_build
+    )
+    if exist "%ENGINE_BUILD_LOG%" type "%ENGINE_BUILD_LOG%"
     exit /b 1
 )
 move %ENGINE_DIR%\pyproject.toml.backup %ENGINE_DIR%\pyproject.toml >nul
 echo All packages built successfully
 
 REM ============================================
-REM 4.3. Install Packages
+REM 5.3. Install Packages
 REM ============================================
 
 echo Upgrading pip...
@@ -258,12 +363,19 @@ echo Upgrading pip...
 echo Generating requirements.txt from built packages...
 
 REM Generate requirements.txt from wheel files using PowerShell
-powershell -Command "$files = Get-ChildItem '%DIST_DIR%\*.whl' | ForEach-Object { $name = $_.BaseName -replace '_','-'; $name -replace '-\d+\.\d+\.\d+-py3-none-any$','' }; Set-Content -Path '%ENGINE_DIR%\requirements.txt' -Value '# Generated requirements from built packages'; Add-Content -Path '%ENGINE_DIR%\requirements.txt' -Value $files"
+"%POWERSHELL_EXE%" -Command "$files = Get-ChildItem '%DIST_DIR%\*.whl' | ForEach-Object { $name = $_.BaseName -replace '_','-'; $name -replace '-\d+\.\d+\.\d+-py3-none-any$','' }; Set-Content -Path '%ENGINE_DIR%\requirements.txt' -Value '# Generated requirements from built packages'; Add-Content -Path '%ENGINE_DIR%\requirements.txt' -Value $files"
 
 echo Installing packages from requirements.txt...
-uv pip install --link-mode=copy --python "%PYTHON_CORE_DIR%\python.exe" --find-links="%DIST_DIR%" -r "%ENGINE_DIR%\requirements.txt" --upgrade --force-reinstall -i https://pypi.tuna.tsinghua.edu.cn/simple
+"%UV_EXE%" %UV_ARGS% pip install --link-mode=copy --python "%PYTHON_CORE_DIR%\python.exe" --find-links="%DIST_DIR%" -r "%ENGINE_DIR%\requirements.txt" --upgrade --force-reinstall %UV_INDEX_ARGS%
 if errorlevel 1 (
     echo Package installation failed
+    if exist "%SCRIPT_DIR%\%ARCHIVE_DIST_DIR%\python_core.7z" if exist "%SCRIPT_DIR%\%ARCHIVE_DIST_DIR%\python_core.7z.sha256.txt" (
+        if "%SHOPRPA_STRICT_ENGINE_BUILD%"=="1" exit /b 1
+        echo.
+        echo WARNING: Engine package installation failed. Reusing existing resources\python_core.7z bundle.
+        echo Set SHOPRPA_STRICT_ENGINE_BUILD=1 to fail instead of using the existing engine bundle.
+        goto skip_engine_build
+    )
     exit /b 1
 )
 echo Batch installation successful
@@ -280,36 +392,54 @@ echo Batch installation successful
 @REM echo meta_json.py executed successfully
 
 REM ============================================
-REM 4.4. Package and Release
+REM 5.4. Package and Release
 REM ============================================
 
+:compress_python_core
 echo Compressing python_core directory...
-if exist "%SCRIPT_DIR%\%ARCHIVE_DIST_DIR%\python_core.7z" del /f /q "%SCRIPT_DIR%\%ARCHIVE_DIST_DIR%\python_core.7z"
+set "ENGINE_ARCHIVE=%SCRIPT_DIR%\%ARCHIVE_DIST_DIR%\python_core.7z"
+set "ENGINE_ARCHIVE_TMP=%SCRIPT_DIR%\%ARCHIVE_DIST_DIR%\python_core.7z.tmp"
+if exist "%ENGINE_ARCHIVE_TMP%" del /f /q "%ENGINE_ARCHIVE_TMP%"
 cd /d "%PYTHON_CORE_DIR%"
-"%SEVENZ_EXE%" a -t7z "%SCRIPT_DIR%\%ARCHIVE_DIST_DIR%\python_core.7z" "*" >nul
+"%SEVENZ_EXE%" a -t7z "%ENGINE_ARCHIVE_TMP%" "*" >nul
 cd /d "%SCRIPT_DIR%"
 if errorlevel 1 (
     echo python_core directory compression failed
+    if exist "%ENGINE_ARCHIVE_TMP%" del /f /q "%ENGINE_ARCHIVE_TMP%"
     exit /b 1
 )
-echo Python_core directory compressed successfully, file saved to: %SCRIPT_DIR%\%ARCHIVE_DIST_DIR%\python_core.7z
+move /y "%ENGINE_ARCHIVE_TMP%" "%ENGINE_ARCHIVE%" >nul
+if errorlevel 1 (
+    echo python_core archive replacement failed
+    if exist "%ENGINE_ARCHIVE_TMP%" del /f /q "%ENGINE_ARCHIVE_TMP%"
+    exit /b 1
+)
+echo Python_core directory compressed successfully, file saved to: %ENGINE_ARCHIVE%
 
-REM ---- 항목성공 SHA-256 검증파일(및 7z 항목단계) ----
+REM Generate SHA-256 checksum for the engine archive.
 set "HASH_FILE=%SCRIPT_DIR%\%ARCHIVE_DIST_DIR%\python_core.7z.sha256.txt"
 
-for /f "skip=1 delims=" %%H in (
-    'certutil -hashfile "%SCRIPT_DIR%\%ARCHIVE_DIST_DIR%\python_core.7z" SHA256'
-) do (
-    echo %%H> "%HASH_FILE%"
-    goto :hashDone
-)
-:hashDone
-
+"%POWERSHELL_EXE%" -NoProfile -Command "(Get-FileHash -Algorithm SHA256 -LiteralPath '%ENGINE_ARCHIVE%').Hash | Set-Content -NoNewline -Encoding ASCII -LiteralPath '%HASH_FILE%'"
 if errorlevel 1 (
     echo SHA-256 generation failed
     exit /b 1
 )
 echo Hash file generated: %HASH_FILE%
+
+if "%SKIP_FRONTEND%"=="1" if exist "%SCRIPT_DIR%\%PORTABLE_RESOURCES_DIR%" (
+    echo Updating existing portable Python runtime archive...
+    copy /y "%ENGINE_ARCHIVE%" "%SCRIPT_DIR%\%PORTABLE_RESOURCES_DIR%\python_core.7z" >nul
+    if errorlevel 1 (
+        echo Failed to update portable python_core.7z
+        exit /b 1
+    )
+    copy /y "%HASH_FILE%" "%SCRIPT_DIR%\%PORTABLE_RESOURCES_DIR%\python_core.7z.sha256.txt" >nul
+    if errorlevel 1 (
+        echo Failed to update portable python_core.7z.sha256.txt
+        exit /b 1
+    )
+    echo Existing portable Python runtime archive updated.
+)
 
 echo.
 echo ============================================
@@ -319,7 +449,7 @@ echo ============================================
 :skip_engine_build
 
 REM ============================================
-REM 5. Frontend Build
+REM 6. Frontend Build
 REM ============================================
 
 if "%SKIP_FRONTEND%"=="1" (
@@ -327,6 +457,15 @@ if "%SKIP_FRONTEND%"=="1" (
     echo ============================================
     echo Frontend Build Skipped
     echo ============================================
+    if exist "%SCRIPT_DIR%\%PORTABLE_DIST_DIR%\ShopRPA.cmd" (
+        echo Running portable host verification against the existing portable package...
+        "%POWERSHELL_EXE%" -NoProfile -ExecutionPolicy Bypass -File "%SCRIPT_DIR%\scripts\verify-portable-host.ps1"
+        if !errorlevel! neq 0 (
+            echo Portable host verification failed
+            exit /b 1
+        )
+        echo Portable host verification completed successfully
+    )
     goto skip_frontend_build
 )
 
@@ -335,11 +474,11 @@ echo ============================================
 echo Starting Frontend Build
 echo ============================================
 
-echo Checking pnpm installation...
-call pnpm --version >nul 2>&1
+echo Checking pnpm installation through Corepack...
+call corepack pnpm --version >nul 2>&1
 if !errorlevel! neq 0 (
     echo.
-    echo ERROR: pnpm not found, please install pnpm first: npm install -g pnpm
+    echo ERROR: pnpm not available through Corepack. Please install Node.js 22+ and run: corepack enable
     exit /b 1
 )
 echo pnpm check passed
@@ -360,16 +499,20 @@ if not exist "package.json" (
     exit /b 1
 )
 
-echo Installing dependencies...
-call pnpm install
-if !errorlevel! neq 0 (
-    echo pnpm install failed
-    cd /d "%SCRIPT_DIR%"
-    exit /b 1
+if exist "node_modules\.bin\vite.cmd" if exist "node_modules\.bin\tsdown.cmd" (
+    echo Dependencies already installed, skipping pnpm install
+) else (
+    echo Installing dependencies...
+    call corepack pnpm install --prefer-offline
+    if !errorlevel! neq 0 (
+        echo pnpm install failed
+        cd /d "%SCRIPT_DIR%"
+        exit /b 1
+    )
 )
 
 echo Building desktop application...
-call pnpm build:desktop
+call corepack pnpm build:desktop
 if !errorlevel! neq 0 (
     echo Desktop application build failed
     cd /d "%SCRIPT_DIR%"
@@ -381,6 +524,14 @@ echo Frontend build completed successfully
 REM Return to script directory
 cd /d "%SCRIPT_DIR%"
 
+echo Running portable host verification...
+"%POWERSHELL_EXE%" -NoProfile -ExecutionPolicy Bypass -File "%SCRIPT_DIR%\scripts\verify-portable-host.ps1"
+if !errorlevel! neq 0 (
+    echo Portable host verification failed
+    exit /b 1
+)
+echo Portable host verification completed successfully
+
 :skip_frontend_build
 
 echo.
@@ -388,5 +539,8 @@ echo ============================================
 echo Full Build Complete!
 echo ============================================
 echo.
-echo Installation package location:
-echo   Frontend installer: frontend\packages\electron-app\dist\
+echo Desktop application location:
+echo   Portable app: frontend\packages\electron-app\dist\win-portable\ShopRPA.cmd
+echo.
+echo Installer build command:
+echo   cd frontend ^&^& corepack pnpm build:installer

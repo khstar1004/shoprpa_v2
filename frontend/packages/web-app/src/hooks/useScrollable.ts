@@ -1,4 +1,4 @@
-﻿import { useResizeObserver } from '@vueuse/core'
+import { useResizeObserver } from '@vueuse/core'
 import type { Ref } from 'vue'
 import { ref } from 'vue'
 

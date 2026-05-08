@@ -102,8 +102,8 @@ public class DeptServiceImpl implements DeptService {
         UapOrg uapOrg =
                 ClientManagementAPI.queryOrgByLoginName(tenantId, null == uapUser ? null : uapUser.getLoginName());
         if (null == uapOrg) {
-            log.info("treeAndPerson,사용자지정되지 않았습니다모듈");
-            return AppResponse.success(null);
+            log.info("treeAndPerson, 사용자 소속 부서 정보를 찾을 수 없습니다");
+            return AppResponse.error(ErrorCodeEnum.E_SERVICE, "사용자 소속 부서 정보를 찾을 수 없습니다");
         }
         String firstLevelId = uapOrg.getFirstLevelId();
         // 근거id조회모듈정보
@@ -192,8 +192,8 @@ public class DeptServiceImpl implements DeptService {
         UapOrg uapOrg =
                 ClientManagementAPI.queryOrgByLoginName(tenantId, null == uapUser ? null : uapUser.getLoginName());
         if (null == uapOrg) {
-            log.info("treeAndPersonOptimized,사용자지정되지 않았습니다모듈");
-            return AppResponse.success(null);
+            log.info("treeAndPersonOptimized, 사용자 소속 부서 정보를 찾을 수 없습니다");
+            return AppResponse.error(ErrorCodeEnum.E_SERVICE, "사용자 소속 부서 정보를 찾을 수 없습니다");
         }
 
         String firstLevelId = uapOrg.getFirstLevelId();
@@ -810,7 +810,7 @@ public class DeptServiceImpl implements DeptService {
     public AppResponse<Org> getDeptInfoByDeptId(String id, HttpServletRequest request) {
         try {
             if (StringUtils.isBlank(id)) {
-                return AppResponse.success(null);
+                return AppResponse.error(ErrorCodeEnum.E_PARAM_LOSE, "부서 ID는 비워 둘 수 없습니다");
             }
             UapOrg uapOrg = DeptUtils.getDeptInfoByDeptId(id);
             if (uapOrg == null) {

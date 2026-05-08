@@ -1,4 +1,4 @@
-﻿// 기존가능닫기의일반량
+// 기존가능닫기의일반량
 
 // 기존유형
 export enum ATOM_FORM_TYPE {

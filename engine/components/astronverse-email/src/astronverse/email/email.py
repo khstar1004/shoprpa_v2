@@ -193,24 +193,24 @@ class Email:
         content_text: str = "",
     ):
         """
-        메일수신기존가능
-        user_mail: `str`, 사용자주소정보
-        user_password: `str`, 사용자비밀번호정보
-        custom_mail_server: `str`, 사용자 입력삼방법상업주소
-        custom_mail_port: `int`, 사용자 입력단말
-        folder_name: `str`, 메일디렉터리
-        mail_server: `EmailServerType`, 의상업서비스서버유형
+        이메일을 조회하고 필요한 경우 첨부파일 저장과 읽음 처리를 수행합니다.
+        user_mail: `str`, 이메일 계정
+        user_password: `str`, 비밀번호 또는 앱 인증 코드
+        custom_mail_server: `str`, 직접 입력한 IMAP 서버 주소
+        custom_mail_port: `int`, 직접 입력한 IMAP 포트
+        folder_name: `str`, 조회할 메일함 이름
+        mail_server: `EmailServerType`, 메일 서버 유형
 
-        max_return_num: `int`, 메일대반환수
-        sender_text: `str`, 통신경과전송패키지닫기 문자행필터링
-        receiver_text: `str`, 통신경과수신패키지닫기 문자행필터링
-        theme_text: `str`, 통신경과제목패키지닫기 문자행필터링
-        content_text: `str`, 통신경과내용패키지닫기 문자행필터링
+        max_return_num: `int`, 최대 수신 개수
+        sender_text: `str`, 발신자 필터
+        receiver_text: `str`, 수신자 필터
+        theme_text: `str`, 제목 필터
+        content_text: `str`, 본문 필터
 
-        save_attachment_flag: `bool`, 여부저장파일
-        save_attachment_path: `str`, 파일저장경로
-        unseen_flag: `str`, 여부미완료메일
-        mask_as_read_flag: `bool`, 여부를경과의메일로완료
+        save_attachment_flag: `bool`, 첨부파일 저장 여부
+        save_attachment_path: `str`, 첨부파일 저장 경로
+        unseen_flag: `str`, 읽지 않은 메일만 조회할지 여부
+        mask_as_read_flag: `bool`, 조회 후 읽음 처리 여부
         """
         # 매개변수
         if max_return_num == 0:
@@ -250,7 +250,7 @@ class Email:
             except Exception as e:
                 logger.info(f"im error: {str(e)}")
                 continue
-            # id여부기호합치기조회필요
+            # 필터 조건이 없으면 전체 수신 대상이고, 있으면 하나 이상 일치해야 합니다.
             if (
                 (not (sender_text or receiver_text or theme_text or content_text))
                 or sender_text
@@ -272,25 +272,25 @@ class Email:
                 logger.info(f"im continue: {str(num)}")
                 continue
 
-            # 가득대반환파일가능결과
+        # 최신 메일부터 최대 수신 개수만 반환합니다.
         # Use parsed mail time for ordering instead of relying on provider-specific SEARCH order.
         matched_mails.sort(key=lambda item: item[1].get("time") or "", reverse=True)
         matched_mails = matched_mails[:max_return_num]
         logger.info(f"mail id:{[mail_id for mail_id, _ in matched_mails]}")
 
-        # 가져오기메일정보, 저장파일
+        # 메일 정보를 정리하고 필요한 첨부파일을 저장합니다.
         return_mail_res = []
         from pathlib import Path
 
         for mail_id, mail_info in matched_mails:
-            # 여부필요저장파일
+            # 첨부파일 저장이 켜져 있으면 지정 경로에 저장합니다.
             if save_attachment_flag:
                 for attachment in mail_info["attachments"]:
                     if not attachment:
                         continue
                     file_path = Path(save_attachment_path) / attachment["name"]
                     file_path.write_bytes(attachment["data"])
-            # 여부필요비고로완료
+            # 조회한 메일을 읽음 상태로 표시합니다.
             if mask_as_read_flag:
                 core.mask_as_read(mail_id)
             mail_info["attachments"] = [

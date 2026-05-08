@@ -5,7 +5,7 @@ package com.iflytek.rpa.auth.core.entity.enums;
  */
 public enum DeploymentMode {
     /**
-     * SaaS모듈 - 사용Shoprpa계정인증
+     * SaaS모듈 - 사용ShopRPA 계정인증
      */
     SAAS("saas", "SaaS모듈"),
 

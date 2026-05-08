@@ -28,11 +28,12 @@ function init() {
       const UpdaterManager = module.default
       window.UpdaterManager = UpdaterManager
     })
-    console.log('%c Electron SDK initialization is complete', 'color: white; background-color: green;')
   }
   else {
     setTimeout(() => {
-      maxRetries-- > 0 ? init() : console.warn('Electron SDK initialization failed: electron not found')
+      if (maxRetries-- > 0) {
+        init()
+      }
     }, 0)
   }
 }

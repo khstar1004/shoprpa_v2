@@ -1,6 +1,6 @@
-﻿atomic:
+atomic:
   Docx.open_docx:
-    title: 열기Word
+    title: Word 열기
     comment: 열기경로로 @{file_path} 의Word, 반환Word객체 @{doc_obj}
     icon: word-open-document
     helpManual: ''
@@ -34,7 +34,7 @@
         title: Word객체
         tip: 반환Word객체, 사용후
   Docx.read_docx:
-    title: 가져오기Word내용
+    title: Word 내용 가져오기
     comment: 가져오기Word객체 @{doc} 내용, 반환문서내용 @{doc_data}
     icon: word-read-content
     helpManual: ''
@@ -44,99 +44,97 @@
         tip: 본프로그램전순서기존가능(예열기, 생성)반환의Word객체
       - key: select_range
         title: 가져오기 
-        tip: 선택가져오기문서의, 예개문서또는선택중
+        tip: '문서를 읽을 범위를 선택합니다. 예: 전체 문서 또는 선택 영역'
     outputList:
       - key: doc_data
         title: 문서내용
         tip: ''
   Docx.create_docx:
-    title: 생성Word
-    comment: >-
-      생성Word, 저장까지경로로 @{file_path} 의위치, 파일이름로 @{file_name} , 반환Word객체 @{doc_obj}
-      및저장경로 @{doc_create_path}
+    title: Word 생성
+    comment: 지정한 폴더 @{file_path}에 Word 문서 @{file_name}을 만들고 Word 객체 @{doc_obj}와 저장 경로 @{doc_create_path}를 반환합니다.
     icon: word-new-document
     helpManual: ''
     inputList:
       - key: file_path
-        title: 문서저장폴더
-        tip: Word의저장폴더 경로
+        title: 문서 저장 폴더
+        tip: 새 Word 문서를 저장할 폴더를 선택합니다.
       - key: file_name
-        title: 문서이름
-        tip: Word의이름
+        title: 문서 이름
+        tip: 생성할 Word 문서 이름을 입력합니다.
       - key: default_application
-        title: 드라이버방식
-        tip: 선택Word의열기방식, 예Word또는WPS
+        title: 실행 프로그램
+        tip: Word, WPS, 기본 프로그램 중 사용할 프로그램을 선택합니다.
       - key: visible_flag
-        title: 여부가능
-        tip: 여부Word창
+        title: 창 표시
+        tip: Word 창을 화면에 표시할지 선택합니다.
       - key: exist_handle_type
-        title: 저장된 이름파일관리방식
-        tip: 선택존재함파일관리방식, 지원덮어쓰기기존있음파일, 생성파일본, 건너뛰기저장
+        title: 같은 이름이 있을 때
+        tip: 기존 파일이 있을 때 처리 방식을 선택합니다.
     outputList:
       - key: doc_obj
-        title: Word객체
-        tip: ''
+        title: Word 객체
+        tip: 생성한 Word 문서 객체를 반환합니다.
       - key: doc_create_path
-        title: 문서저장경로
-        tip: 저장의Word의경로
+        title: 문서 저장 경로
+        tip: 생성한 Word 문서의 저장 경로를 반환합니다.
   Docx.save_docx:
-    title: 저장Word
-    comment: 저장Word객체 @{doc} , 저장방식로 @{save_type}, 출력저장경로 @{save_file_path}
+    title: Word 저장
+    comment: Word 객체 @{doc}를 @{save_type} 방식으로 저장하고 저장 경로 @{save_file_path}를 반환합니다.
     icon: word-save-document
     helpManual: ''
     inputList:
       - key: doc
-        title: Word객체
-        tip: 본프로그램전순서기존가능(예열기, 생성)반환의Word객체
+        title: Word 객체
+        tip: 저장할 Word 문서 객체를 선택합니다.
       - key: save_type
-        title: 저장유형
-        tip: 선택저장유형, 예저장, 저장로, 아니오저장
+        title: 저장 방식
+        tip: 저장, 다른 이름으로 저장, 저장 안 함 중 선택합니다.
       - key: file_path
-        title: 문서경로
-        tip: Word의저장경로
+        title: 저장 폴더
+        tip: 다른 이름으로 저장할 폴더를 선택합니다.
       - key: file_name
-        title: 문서이름
-        tip: Word의이름
+        title: 파일 이름
+        tip: 다른 이름으로 저장할 파일 이름을 입력합니다.
       - key: exist_handle_type
-        title: 저장된 이름파일관리방식
-        tip: 선택존재함파일관리방식, 지원덮어쓰기기존있음파일, 생성파일본, 건너뛰기저장
+        title: 같은 이름이 있을 때
+        tip: 기존 파일이 있을 때 처리 방식을 선택합니다.
       - key: close_flag
-        title: 여부닫기문서
-        tip: 선택여부닫기문서창
+        title: 저장 후 닫기
+        tip: 저장한 뒤 문서를 닫을지 선택합니다.
     outputList:
       - key: save_file_path
-        title: 저장경로
-        tip: 저장의Word의경로
+        title: 저장 경로
+        tip: 저장된 Word 문서 경로를 반환합니다.
   Docx.close_docx:
-    title: 닫기Word
-    comment: 닫기Word객체 @{doc}
+    title: Word 닫기
+    comment: Word 객체 @{doc}를 닫고 필요하면 저장합니다.
     icon: word-close-document
     helpManual: ''
     inputList:
       - key: doc
-        title: Word객체
-        tip: 본프로그램전순서기존가능(예열기, 생성)반환의Word객체
+        title: Word 객체
+        tip: 닫을 Word 문서 객체를 선택합니다.
       - key: close_range_flag
-        title: 닫기문서
-        tip: 선택닫기문서의, 예닫기현재문서또는닫기모든문서
+        title: 닫을 범위
+        tip: 현재 문서만 닫을지 모든 문서를 닫을지 선택합니다.
       - key: save_type
-        title: 저장유형
-        tip: 선택저장유형, 예저장, 저장로, 아니오저장
+        title: 저장 방식
+        tip: 저장, 다른 이름으로 저장, 저장 안 함 중 선택합니다.
       - key: file_path
-        title: 저장로문서경로
-        tip: Word의저장경로
+        title: 저장 폴더
+        tip: 다른 이름으로 저장할 폴더를 선택합니다.
       - key: file_name
-        title: 저장로문서이름
-        tip: Word의이름
+        title: 파일 이름
+        tip: 다른 이름으로 저장할 파일 이름을 입력합니다.
       - key: exist_handle_type
-        title: 저장된 이름파일관리방식
-        tip: 선택존재함파일관리방식, 지원덮어쓰기기존있음파일, 생성파일본, 건너뛰기저장
+        title: 같은 이름이 있을 때
+        tip: 기존 파일이 있을 때 처리 방식을 선택합니다.
       - key: pkill_flag
-        title: 여부결과Word또는WPS
-        tip: 선택여부결과Word또는WPS
+        title: 프로그램 종료
+        tip: 모든 문서를 닫을 때 Word 또는 WPS 프로세스까지 종료할지 선택합니다.
     outputList: []
   Docx.insert_docx:
-    title: 삽입텍스트까지Word
+    title: Word에 텍스트 삽입
     comment: Word객체 @{doc} 삽입텍스트 @{text}
     icon: word-insert-text
     helpManual: ''
@@ -152,7 +150,7 @@
         tip: 필요삽입의텍스트
       - key: text_file_path
         title: 텍스트파일 경로
-        tip: 선택할가져오기의텍스트파일
+        tip: 삽입할 텍스트 파일을 선택합니다.
       - key: enter_flag
         title: 여부에서삽입전행
         tip: 선택여부에서삽입전행
@@ -176,7 +174,7 @@
         tip: 선택문자색상
     outputList: []
   Docx.select_text:
-    title: 선택Word텍스트
+    title: Word 텍스트 선택
     comment: 에서Word객체 @{doc} 중선택텍스트
     icon: word-select-text
     helpManual: ''
@@ -201,8 +199,8 @@
         tip: 입력끝 행
     outputList: []
   Docx.get_cursor_position:
-    title: 위치 지정Word
-    comment: 에서Word객체 @{doc} 중위치 지정위치
+    title: Word 커서 위치 지정
+    comment: Word 객체 @{doc}에서 현재 커서 위치를 가져옵니다.
     icon: word-position-cursor
     helpManual: ''
     inputList:
@@ -216,8 +214,8 @@
         title: 위치
         tip: 선택내용 전/선택내용 후
       - key: content
-        title: 텍스트내용
-        tip: 결과가선택위치 지정텍스트, 입력텍스트내용
+        title: 텍스트 내용
+        tip: 결과가선택위치 지정텍스트, 입력텍스트 내용
       - key: c_idx
         title: 텍스트순서
         tip: 입력위치 지정텍스트의순서
@@ -283,30 +281,30 @@
         tip: 입력필요의텍스트
     outputList: []
   Docx.insert_img:
-    title: Word삽입이미지
-    comment: 에서Word객체 @{doc} 중, 에서경로 @{img_path} 또는삽입이미지
+    title: Word 이미지 삽입
+    comment: Word 객체 @{doc}에 파일 또는 클립보드의 이미지를 삽입합니다.
     icon: word-insert-image
     helpManual: ''
     inputList:
       - key: doc
-        title: Word객체
-        tip: 본프로그램전순서기존가능(예열기, 생성)반환의Word객체
+        title: Word 객체
+        tip: 이전에 열거나 생성한 Word 객체를 선택합니다.
       - key: img_from
-        title: 이미지
-        tip: 선택통신경과파일 경로, 
+        title: 이미지 가져오기
+        tip: 파일 또는 클립보드 중 이미지 출처를 선택합니다.
       - key: img_path
-        title: 파일 경로
-        tip: 입력파일 경로
+        title: 이미지 경로
+        tip: 삽입할 이미지 파일 경로를 선택합니다.
       - key: scale
-        title: (%)
-        tip: 로100%, 가능으로입력값, 아니오입력할분
+        title: 크기 비율(%)
+        tip: 이미지 크기 비율을 입력합니다. 100은 원본 크기입니다.
       - key: newline
-        title: 여부행
-        tip: 선택삽입전여부행
+        title: 삽입 전 줄 바꿈
+        tip: 이미지를 삽입하기 전에 줄 바꿈을 추가할지 선택합니다.
     outputList: []
   Docx.read_table:
-    title: Word가져오기테이블
-    comment: 에서Word객체 @{doc} 중, 가져오기테이블내용 반환테이블데이터객체 @{table_content}
+    title: Word 표 읽기
+    comment: Word 객체 @{doc}에서 표 내용을 읽어 데이터 테이블 @{table_content}에 저장합니다.
     icon: word-read-table
     helpManual: ''
     inputList:
@@ -337,7 +335,7 @@
         tip: 본프로그램전순서기존가능(예열기, 생성)반환의Word객체
       - key: table_content
         title: 테이블내용
-        tip: 필요생성의테이블내용,형식로이배열또는로가져오기의Excel테이블내용
+        tip: 생성할 표 내용을 입력합니다. 배열 또는 Excel에서 읽은 표 데이터를 사용할 수 있습니다.
       - key: table_behavior
         title: 테이블크기
         tip: 선택예크기
@@ -410,7 +408,7 @@
         tip: 입력결과문자
     outputList: []
   Docx.replace:
-    title: Word내용
+    title: Word 내용
     comment: 에서Word객체 @{doc} 중, 조회내용 
     icon: word-replace-content
     helpManual: ''
@@ -429,7 +427,7 @@
         tip: 입력필요로의내용
       - key: img_path
         title: 이미지경로
-        tip: 선택이미지경로
+        tip: 이미지 경로를 선택합니다.
       - key: replace_method
         title: 방식
         tip: 선택전체, 개
@@ -528,7 +526,7 @@ options:
     - value: WPS
       label: WPS
     - value: Default
-      label: 프로그램
+      label: 기본 프로그램
   Bool:
     - value: true
       label: 예
@@ -546,23 +544,23 @@ options:
       label: 선택중
   FileExistenceType:
     - value: overwrite
-      label: 덮어쓰기기존있음파일
+      label: 기존 파일 덮어쓰기
     - value: rename
-      label: 생성파일본
+      label: 사본 파일 생성
     - value: cancel
-      label: 건너뛰기저장
+      label: 저장 건너뛰기
   SaveType:
     - value: save
       label: 저장
     - value: save_as
-      label: 저장로
+      label: 다른 이름으로 저장
     - value: abort
-      label: 아니오저장
+      label: 저장 안 함
   CloseRangeType:
     - value: one
-      label: 닫기현재문서
+      label: 현재 문서
     - value: all
-      label: 닫기모든문서
+      label: 모든 문서
   UnderLineStyle:
     - value: 0
       label: 없음아래계획
@@ -583,7 +581,7 @@ options:
     - value: row
       label: 행
     - value: content
-      label: 텍스트내용
+      label: 텍스트 내용
   CursorPositionType:
     - value: head
       label: 선택내용 전
@@ -607,7 +605,7 @@ options:
     - value: character
       label: 문자
     - value: word
-      label: 단일
+      label: 클릭
   InsertionType:
     - value: page
       label: 
@@ -617,7 +615,7 @@ options:
     - value: file
       label: 파일
     - value: clipboard
-      label: 
+      label: 클립보드
   SearchTableType:
     - value: text
       label: 텍스트
@@ -632,14 +630,14 @@ options:
     - value: 0
       label: 왼쪽
     - value: 1
-      label: 중
+      label: 가운데 버튼
     - value: 2
       label: 오른쪽
   VerticalAlignment:
     - value: 0
       label: 모듈
     - value: 1
-      label: 중
+      label: 가운데 버튼
     - value: 3
       label: 모듈
   DeleteMode:

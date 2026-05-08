@@ -1,4 +1,4 @@
-﻿import json
+import json
 from urllib.parse import urljoin
 
 from fastapi import APIRouter, Body

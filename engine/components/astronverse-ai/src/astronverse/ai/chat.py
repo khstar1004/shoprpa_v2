@@ -45,6 +45,13 @@ def wait_with_timeout(check_done: Callable[[], bool], reset_timeout_on_activity:
         time.sleep(0.1)
 
 
+def require_chat_ws():
+    ws = atomicMg.cfg().get("WS", None)
+    if not ws:
+        raise RuntimeError("AI 채팅 UI 연결이 없습니다. ShopRPA 실행 환경에서 다시 시도하세요.")
+    return ws
+
+
 class ChatAI:
     """Chat interaction utilities: single turn, multi-turn, and knowledge-based chat."""
 
@@ -128,15 +135,14 @@ class ChatAI:
                 res_e = e
             done.set()
 
-        ws = atomicMg.cfg().get("WS", None)
-        if ws:
-            params = {
-                "max_turns": str(max_turns),
-                "is_save": str(int(is_save)),
-                "title": title,
-                "model": model,
-            }
-            ws.send_reply({"data": {"name": "multichat", "params": params, "height": 600}}, 600, callback_func)
+        ws = require_chat_ws()
+        params = {
+            "max_turns": str(max_turns),
+            "is_save": str(int(is_save)),
+            "title": title,
+            "model": model,
+        }
+        ws.send_reply({"data": {"name": "multichat", "params": params, "height": 600}}, 600, callback_func)
 
         done.wait()
         if res_e:
@@ -219,6 +225,8 @@ class ChatAI:
         Return:
             `dict`, 선택내보내기의기록
         """
+        ws = require_chat_ws()
+
         # 가져오기파일내용
         file_content = ChatAI._extract_file_content(file_path)
 
@@ -241,8 +249,7 @@ class ChatAI:
                 res_e = e
             done.set()
 
-        ws = atomicMg.cfg().get("WS", None)
-        if ws:
+        try:
             params = {
                 "max_turns": str(max_turns),
                 "is_save": str(int(is_save)),
@@ -255,11 +262,11 @@ class ChatAI:
                 callback_func,
             )
 
-        done.wait()
-
-        # 파일빈
-        if os.path.exists(dest_file):
-            os.remove(dest_file)
+            done.wait()
+        finally:
+            # 임시 채팅 파일은 UI 오류가 나도 남기지 않습니다.
+            if os.path.exists(dest_file):
+                os.remove(dest_file)
 
         if res_e:
             raise Exception(res_e)

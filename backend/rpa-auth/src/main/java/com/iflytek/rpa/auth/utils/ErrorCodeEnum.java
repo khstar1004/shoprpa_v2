@@ -6,9 +6,9 @@ public enum ErrorCodeEnum {
 
     OPEN_AUTH_UAC_SMS_VERIFY_CODE_ERROR("005001001", "인증 코드오류"),
     OPEN_AUTH_UAC_USER_IS_EMPTY("005001002", "사용자데이터비어 있습니다"),
-    OPEN_AUTH_XFYUN_OPEN_PLATFORM_DATA_IS_EMPTY("005002001", "Shoprpa열기 평면데이터비어 있습니다"),
-    OPEN_AUTH_XFYUN_OPEN_PLATFORM_BINDING_DATA_IS_EMPTY("005002002", "Shoprpa열기 평면지정데이터비어 있습니다"),
-    OPEN_AUTH_XFYUN_OPEN_PLATFORM_ALREADY_IS_BINDING("005002003", "완료지정Shoprpa열기 평면"),
+    OPEN_AUTH_XFYUN_OPEN_PLATFORM_DATA_IS_EMPTY("005002001", "ShopRPA 연동 플랫폼 데이터가 비어 있습니다"),
+    OPEN_AUTH_XFYUN_OPEN_PLATFORM_BINDING_DATA_IS_EMPTY("005002002", "ShopRPA 연동 플랫폼 바인딩 데이터가 비어 있습니다"),
+    OPEN_AUTH_XFYUN_OPEN_PLATFORM_ALREADY_IS_BINDING("005002003", "ShopRPA 연동 플랫폼이 이미 바인딩되었습니다"),
 
     E_PARAM("500000", "매개변수예외"),
     E_PARAM_LOSE("500001", "매개변수 실패"),

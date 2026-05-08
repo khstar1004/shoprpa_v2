@@ -388,7 +388,6 @@ public class ComponentServiceImpl extends ServiceImpl<ComponentDao, Component> i
             throw new ServiceException(ErrorCodeEnum.E_SQL_EXCEPTION.getCode(), "생성본컴포넌트실패");
         }
 
-        // TODO: 복사컴포넌트버전정보대기닫기데이터
         copyEditBase4Comp(originalComponent.getComponentId(), newComponentId, userId);
 
         return AppResponse.success(true);

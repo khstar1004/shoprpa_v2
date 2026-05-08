@@ -1,4 +1,4 @@
-﻿import { loader } from '@guolao/vue-monaco-editor'
+import { loader } from '@guolao/vue-monaco-editor'
 import * as monaco from 'monaco-editor'
 import type { IRange } from 'monaco-editor'
 import type {
@@ -348,7 +348,6 @@ export function registerModel(model: monaco.editor.ITextModel, lspClient: LspCli
 }
 
 function findRegisteredModel(model: monaco.editor.ITextModel) {
-  // TODO: 아니오알림원인, 직선연결 model 불가까지의, 필요사용 uri 매칭
   return registeredModels.find(m => m.model.uri.toString() === model.uri.toString())
 }
 

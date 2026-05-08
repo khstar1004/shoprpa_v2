@@ -2096,7 +2096,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public AppResponse<List<Permission>> getCurrentUserPermissionList(HttpServletRequest request) throws IOException {
-        throw new UnsupportedOperationException("지원하지 않음의공가능");
+        throw new UnsupportedOperationException("지원하지 않는 기능입니다.");
     }
 
     /**
@@ -2106,7 +2106,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public AppResponse<String> getRedirectUrl(HttpServletRequest request) {
-        throw new UnsupportedOperationException("지원하지 않음의공가능");
+        throw new UnsupportedOperationException("지원하지 않는 기능입니다.");
     }
 
     /**
@@ -2119,7 +2119,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public AppResponse<User> signIn(String code, String state, HttpServletRequest request) throws IOException {
-        throw new UnsupportedOperationException("지원하지 않음의공가능");
+        throw new UnsupportedOperationException("지원하지 않는 기능입니다.");
     }
 
     /**
@@ -2129,7 +2129,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public AppResponse<User> checkLoginStatus(HttpServletRequest request) {
-        throw new UnsupportedOperationException("지원하지 않음의공가능");
+        throw new UnsupportedOperationException("지원하지 않는 기능입니다.");
     }
 
     /**
@@ -2139,7 +2139,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public AppResponse<String> refreshToken(HttpServletRequest request) {
-        throw new UnsupportedOperationException("지원하지 않음의공가능");
+        throw new UnsupportedOperationException("지원하지 않는 기능입니다.");
     }
 
     /**

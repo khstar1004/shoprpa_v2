@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { NiceModal } from '@rpa/components'
 import { ref } from 'vue'
 

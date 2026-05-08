@@ -327,7 +327,7 @@ public class RobotExecuteServiceImpl extends ServiceImpl<RobotExecuteDao, RobotE
                 Integer i = robotExecuteDao.deleteExecute(robotId, userId, tenantId);
 
                 if (i.equals(1)) return AppResponse.success("삭제실행기기성공");
-                else throw new Exception(); // 돌아가기
+                else throw new ServiceException("실행 로봇 삭제에 실패했습니다");
 
             case 3: // 계획기기,  실행,  예약 작업사용
                 if (StringUtils.isBlank(taskIds)) return AppResponse.error(ErrorCodeEnum.E_PARAM_CHECK);
@@ -341,7 +341,7 @@ public class RobotExecuteServiceImpl extends ServiceImpl<RobotExecuteDao, RobotE
 
                 if (y.equals(1) && z.equals(taskIdList.size())) {
                     return AppResponse.success("실행기기,닫기예약 작업사용성공");
-                } else throw new Exception();
+                } else throw new ServiceException("예약 작업과 연결된 실행 로봇 삭제에 실패했습니다");
 
             default:
                 return AppResponse.error(ErrorCodeEnum.E_PARAM_CHECK);
@@ -533,7 +533,7 @@ public class RobotExecuteServiceImpl extends ServiceImpl<RobotExecuteDao, RobotE
                 resVo.setCreatorName(creatorName2);
                 break;
             default:
-                throw new Exception();
+                throw new ServiceException(ErrorCodeEnum.E_PARAM.getCode(), "지원하지 않는 로봇 데이터 출처입니다");
         }
 
         resVo.setVersionInfoList(versionInfoList);
@@ -555,7 +555,7 @@ public class RobotExecuteServiceImpl extends ServiceImpl<RobotExecuteDao, RobotE
         resVo.setUseDescription(useDescription);
         resVo.setIntroduction(introduction);
         resVo.setFileName(fileName);
-        resVo.setFilePath(filePathPrefix + fileId);
+        resVo.setFilePath(StringUtils.isEmpty(fileId) ? null : (filePathPrefix + fileId));
         resVo.setVideoName(videoName);
         resVo.setVideoPath(StringUtils.isEmpty(videoId) ? null : (filePathPrefix + videoId));
     }
@@ -579,7 +579,9 @@ public class RobotExecuteServiceImpl extends ServiceImpl<RobotExecuteDao, RobotE
         Integer i = 0;
         if (!CollectionUtils.isEmpty(taskIdNotInList)) i = triggerTaskDao.deleteTasks(taskIdNotInList);
 
-        if (!i.equals(taskIdNotInList.size())) throw new Exception();
+        if (!i.equals(taskIdNotInList.size())) {
+            throw new ServiceException("예약 작업 정리에 실패했습니다");
+        }
     }
 
     private DelExecuteRobotVo getDeleteRobotVo(

@@ -17,16 +17,22 @@ class ElectronShortCut implements ShortCutManager {
     this.globalShortcut.unregisterAll()
   }
 
-  regeisterToolbar() {
+  registerToolbar() {
     this.unregisterAll()
     this.toolbarShortCut.forEach(shortKey =>
-      this.register(shortKey, (sc: string) => {
-        console.log(`toolbarShortCut: ${sc}`)
-      }),
+      this.register(shortKey, () => undefined),
     )
   }
 
-  regeisterFlow(): void {}
+  registerFlow(): void {}
+
+  regeisterToolbar() {
+    this.registerToolbar()
+  }
+
+  regeisterFlow(): void {
+    this.registerFlow()
+  }
 }
 
 export default ElectronShortCut

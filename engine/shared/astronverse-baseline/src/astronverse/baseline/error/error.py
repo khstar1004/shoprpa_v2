@@ -14,8 +14,7 @@ class ErrorCode:
     httpcode: int = 200
 
     def format(self, *args, **kwargs):
-        self.message = self.message.format(*args, **kwargs)
-        return self
+        return ErrorCode(self.code, self.message.format(*args, **kwargs), self.httpcode)
 
 
 class BaseException(Exception):

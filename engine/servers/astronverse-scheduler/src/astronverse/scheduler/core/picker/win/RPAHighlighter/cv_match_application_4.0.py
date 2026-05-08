@@ -1,4 +1,5 @@
 ﻿import json
+import logging
 import os
 import time
 
@@ -30,6 +31,8 @@ from PyQt5.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
+
+logger = logging.getLogger(__name__)
 
 
 class DrawStatus:
@@ -169,14 +172,14 @@ class HighlightForm(QWidget):
     def paintEvent(self, event):
         self.raise_()
         painter = QPainter(self)
-        print("paintEvent", self.mode, self.draw_rect)
+        logger.debug("paintEvent mode=%s rect=%s", self.mode, self.draw_rect)
         if self.mode != "validate":
             pen = QPen(QColor(255, 255, 224))
             pen.setWidth(3)
             brush = QBrush(QColor(255, 192, 203, 155))
             painter.setPen(pen)
             painter.setBrush(brush)
-            print("drawing rect: ", self.draw_rect)
+            logger.debug("drawing rect=%s", self.draw_rect)
             painter.drawRect(self.draw_rect)
         else:
             pen = QPen(QColor(255, 0, 0))
@@ -207,7 +210,7 @@ class HighlightForm(QWidget):
         self.draw_rect = rect
 
         if self.draw_status != DrawStatus.clicked:
-            print("update_rect:", self.draw_rect, self.draw_status)
+            logger.debug("update_rect rect=%s status=%s", self.draw_rect, self.draw_status)
             self.repaint()
 
     def update_validate_rects(self, rects):
@@ -276,7 +279,7 @@ class CtrlWidget(QWidget):
         super().__init__()
         self.setWindowTitle("CtrlForm")
         self.showFullScreen()
-        print(self.rect())
+        logger.debug("CtrlForm initial rect=%s", self.rect())
         self.start_point = None
         self.end_point = None
         self.selecting = False
@@ -291,12 +294,12 @@ class CtrlWidget(QWidget):
         self.setGeometry(self.background.rect())
 
         # self.toolbar = None
-        print("Initial self.rect():", self.rect())
+        logger.debug("CtrlForm rect before toolbar=%s", self.rect())
         self.toolbar = None
         self.toolbar_show = False
         self.init_toolbar()
         self.update()
-        print("After init_toolbar self.rect():", self.rect())
+        logger.debug("CtrlForm rect after toolbar=%s", self.rect())
         # self.raise_()
 
     def init_toolbar(self):
@@ -369,7 +372,7 @@ class CtrlWidget(QWidget):
                 }
             ],
         }
-        print(send_json)
+        logger.debug("selection confirm payload=%s", send_json)
         self.send_message(json.dumps(send_json))
         self.selecting = False
 
@@ -396,7 +399,6 @@ class CtrlWidget(QWidget):
     def paintEvent(self, event):
         painter = QPainter(self)
         rect = self.rect()
-        # print(rect)
         painter.drawPixmap(rect, self.background)
 
         semi_transparent_red = QColor(255, 0, 0, 80)  # 색상, alpha로100()
@@ -445,7 +447,7 @@ class HoverHintWidget(QWidget):
             self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
             self.setAttribute(Qt.WA_TranslucentBackground, True)
         except Exception as e:
-            print(f"Error in HoverHintWidget.init_ui: {e}")
+            logger.exception("HoverHintWidget 초기화 오류: %s", e)
 
     def paintEvent(self, event):
         painter = QPainter(self)
@@ -533,12 +535,12 @@ class ConsoleApp(QMainWindow):
         self.sender_port = None
         self.sender_host = None
         if not self.udp_socket.bind(QHostAddress.Any, int(socket_port)):  # 지정까지단말 11001
-            print("Failed to bind UDP socket!")
+            logger.error("UDP 소켓 바인딩에 실패했습니다. port=%s", socket_port)
             return
 
         # 연결 readyRead 정보 까지데이터
         self.udp_socket.readyRead.connect(self.read_datagrams)
-        print("UDP Server started on port 11001...")
+        logger.info("UDP 서버가 시작되었습니다. port=%s", socket_port)
 
         self.highlight_form = HighlightForm()
         self.highlight_form.message_signal.connect(self.handle_message)
@@ -550,7 +552,7 @@ class ConsoleApp(QMainWindow):
         self.timer.timeout.connect(self.read_datagrams)
         self.timer.start(500)  # 매 500 초호출일 read_datagrams
 
-        print(f"Console App started:{self.udp_socket.hasPendingDatagrams()}")
+        logger.debug("ConsoleApp started has_pending=%s", self.udp_socket.hasPendingDatagrams())
 
     def read_datagrams(self):
         """관리수신까지의 UDP 데이터패키지"""
@@ -562,7 +564,7 @@ class ConsoleApp(QMainWindow):
             if datagram:
                 data, sender_host, sender_port = datagram
                 message = data.decode("utf-8")  # 를문자데이터해제코드로문자열
-                print(f"Received from {sender_host}:{sender_port}: {message}")
+                logger.debug("received from %s:%s: %s", sender_host, sender_port, message)
                 self.sender_port = sender_port
                 self.sender_host = sender_host
                 message_dict = json.loads(message)
@@ -595,7 +597,7 @@ class ConsoleApp(QMainWindow):
                     if message_dict["Type"] == "invalid":
                         self.highlight_form.handle_invalid()
                     if len(message_dict["Boxes"]) == 1:
-                        print("updating rect...")
+                        logger.debug("updating highlight rect")
                         # 일지정할show일아래, 아니오이면아니오
                         self.highlight_form.show()
                         self.highlight_form.showFullScreen()
@@ -671,7 +673,7 @@ class ConsoleApp(QMainWindow):
 
     def handle_message(self, message):
         # 관리 HighlightForm 의메시지
-        print(f"Received message from HighlightForm: {message}")
+        logger.debug("received message from HighlightForm: %s", message)
         self.udp_socket.writeDatagram(message.encode("utf-8"), QHostAddress("127.0.0.1"), self.sender_port)
 
 

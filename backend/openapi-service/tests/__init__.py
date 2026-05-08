@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-AI Service 시작항목본
+ShopRPA OpenAPI Service test bootstrap
 지원통신경과매개변수항목지정항목매칭항목파일
 
 사용방법법:

@@ -1,4 +1,4 @@
-﻿import { defineStore } from 'pinia'
+import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
 import { trackComponentUsageChange } from '@/utils/customComponent'
@@ -65,7 +65,6 @@ const useProjectDocStore = defineStore('projectDoc', () => {
     const curIdx = flowStore.simpleFlowUIData.findIndex(i => i.id === dragId)
     const atom = { ...flowStore.simpleFlowUIData[curIdx], level: parser.getNode(dragId).level }
     flowStore.setSimpleFlowUIDataByType(atom, curIdx, true)
-    console.log('UI결과', flowStore.simpleFlowUIData)
     processStore.setSavingType(processStore.activeProcessId, saveProcess, true, false, 5000)
   }
   function clearNode(processId = processStore.activeProcessId) {
@@ -180,7 +179,6 @@ const useProjectDocStore = defineStore('projectDoc', () => {
     if (!flag)
       return
     flowStore.setSimpleFlowUIData(gNode, type === 'init' ? 0 : flowStore.simpleFlowUIData.length, type !== 'init')
-    console.log('parser opened', parser)
     flowStore.generateContactMap(flowStore.simpleFlowUIData)
     const conditionId = getMultiSelectIds(flowStore.activeAtom?.id)
     changeSelectAtoms(flowStore.activeAtom?.id, conditionId, true)
@@ -200,7 +198,6 @@ const useProjectDocStore = defineStore('projectDoc', () => {
     const startIdx = flowStore.simpleFlowUIData.findIndex(i => i.id === ids[0])
     const lastIdx = flowStore.simpleFlowUIData.findIndex(i => i.id === ids[ids.length - 1])
     const filterList = flowStore.simpleFlowUIData.filter(item => !ids.includes(item.id))
-    console.log('삭제후', filterList)
     flowStore.setSimpleFlowUIData(filterList, index[0])
     if (ids[0].includes('group_') && ids.length === 2) {
       flowStore.setSimpleFlowUIDataProps(startIdx, lastIdx - 1, item => item.level -= 1)
@@ -218,29 +215,32 @@ const useProjectDocStore = defineStore('projectDoc', () => {
     return saveRequest
   }
   function addProcessOrModule(type: RPA.Flow.ProcessModuleType, name: string) {
-    document.processActor.addProcessOrModule(type, name).then((id) => {
-      document.processActor.loadProcess(id).then(() => {
+    return document.processActor.addProcessOrModule(type, name).then((id) => {
+      return document.processActor.loadProcess(id).then(() => {
         processStore.processOrModule({ resourceId: id, name, type })
+        return id
       })
     })
   }
   function renameProcessOrModule(type: RPA.Flow.ProcessModuleType, name: string, id: string) {
-    document.processActor.updateProcessOrModule(type, id, name).then(() => {
+    return document.processActor.updateProcessOrModule(type, id, name).then(() => {
       processStore.renameModule(name, id)
     })
   }
   function copyProcessOrModule(type: RPA.Flow.ProcessModuleType, id: string) {
-    document.processActor.copyProcessOrModule(type, id).then((res: { id: string, name: string }) => {
-      document.processActor.loadProcess(res.id).then(() => {
+    return document.processActor.copyProcessOrModule(type, id).then((res: { id: string, name: string }) => {
+      return document.processActor.loadProcess(res.id).then(() => {
         processStore.processOrModule({ resourceId: res.id, name: res.name, type })
+        return res
       })
     })
   }
   function removeProcessOrModule(data: RPA.Flow.ProcessModule) {
-    document.processActor.deleteProcessOrModule(data).then((flag) => {
+    return document.processActor.deleteProcessOrModule(data).then((flag) => {
       if (flag)
         delete ProjectDocument.nodeAbilityMap[data.resourceId]
       processStore.deleteProcess(data.resourceId, flag)
+      return flag
     })
   }
   function userFlowNode(id = processStore.activeProcessId) {

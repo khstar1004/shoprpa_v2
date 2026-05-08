@@ -1,4 +1,4 @@
-﻿import http from './http'
+import http from './http'
 
 // AI완료내용
 export function aiFeedback<T>(data: T) {

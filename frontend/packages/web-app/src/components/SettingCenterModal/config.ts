@@ -1,4 +1,4 @@
-﻿import type { Component } from 'vue'
+import type { Component } from 'vue'
 
 import About from './components/about.vue'
 import ApiKeyManage from './components/apiKeyManage/index.vue'

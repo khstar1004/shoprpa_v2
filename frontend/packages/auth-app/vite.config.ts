@@ -6,6 +6,7 @@ import { defineConfig } from 'vite'
 import { svg4VuePlugin } from 'vite-plugin-svg4vue'
 
 const basePublic = fileURLToPath(new URL('../../public', import.meta.url))
+const proxyTarget = process.env.SHOPRPA_AUTH_PROXY_TARGET || 'http://127.0.0.1:8080'
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -16,11 +17,20 @@ export default defineConfig({
       include: [/\.vue$/, /\.md$/],
     }),
     vueJsx(),
-    svg4VuePlugin({ 
+    svg4VuePlugin({
       assetsDirName: false,
       svgoConfig: false,
     }),
   ],
+  build: {
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+      },
+    },
+  },
   server: {
     hmr: true,
     watch: {
@@ -32,7 +42,7 @@ export default defineConfig({
     cors: true,
     proxy: {
       '/api': {
-        target: 'http://dev.shoprpa.private:31680',
+        target: proxyTarget,
         changeOrigin: true,
         secure: false,
         // rewrite: path => path.replace(/^\/api/, ''),

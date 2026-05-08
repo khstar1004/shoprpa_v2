@@ -19,6 +19,7 @@ import com.iflytek.rpa.utils.response.ErrorCodeEnum;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @copyright Copyright (c) 2025 mjren
  */
 @Service("cAtomMetaService")
+@Slf4j
 public class CAtomMetaServiceImpl extends ServiceImpl<CAtomMetaDao, CAtomMeta> implements CAtomMetaService {
 
     @Autowired
@@ -415,7 +417,7 @@ public class CAtomMetaServiceImpl extends ServiceImpl<CAtomMetaDao, CAtomMeta> i
                     return false;
                 }
             } catch (IllegalAccessException e) {
-                e.printStackTrace();
+                log.warn("원자 메타 필드 비교 실패: {}", field.getName(), e);
                 return false;
             }
         }

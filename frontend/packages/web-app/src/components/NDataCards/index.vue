@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { useTheme } from '@rpa/components'
 import type { PropType } from 'vue'
 

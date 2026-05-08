@@ -1,4 +1,4 @@
-﻿export interface ShortcutItemMap {
+export interface ShortcutItemMap {
   id: string
   name: string
   value: string

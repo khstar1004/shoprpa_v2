@@ -1,4 +1,4 @@
-﻿from datetime import datetime
+from datetime import datetime
 from enum import Enum
 from typing import Any, Optional, Union
 
@@ -19,66 +19,65 @@ class ExecutionStatus(str, Enum):
 
 
 class WorkflowBase(BaseModel):
-    """워크플로본데이터유형"""
+    """Workflow create/update payload."""
 
-    project_id: Union[str, int] = Field(..., description="목록ID")
-    name: str = Field("Default_Workflow", description="워크플로이름", min_length=1, max_length=100)
-    english_name: Optional[str] = Field(None, description="워크플로영어이름", max_length=100)
-    description: Optional[str] = Field(None, description="워크플로설명", max_length=500)
-    version: int = Field(1, description="워크플로버전")
-    status: int = Field(0, description="워크플로상태")
-    parameters: Optional[str] = Field(None, description="워크플로매개변수(JSON형식)")
-    example_project_id: Optional[str] = Field(None, description="예시사용자계정아래의project_id, 사용실행시")
+    project_id: Union[str, int] = Field(..., description="Project ID")
+    name: str = Field("Default_Workflow", description="Workflow name", min_length=1, max_length=100)
+    english_name: Optional[str] = Field(None, description="English workflow name", max_length=100)
+    description: Optional[str] = Field(None, description="Workflow description", max_length=500)
+    version: int = Field(1, description="Workflow version")
+    status: int = Field(1, description="Workflow status")
+    parameters: Optional[str] = Field(None, description="Workflow parameters as a JSON string")
+    example_project_id: Optional[str] = Field(None, description="Source example project ID used for execution")
 
 
 class WorkflowResponse(WorkflowBase):
-    """워크플로유형"""
+    """Workflow response."""
 
-    created_at: datetime = Field(..., description="생성 시간")
-    updated_at: Optional[datetime] = Field(None, description="수정 시간")
+    created_at: datetime = Field(..., description="Created at")
+    updated_at: Optional[datetime] = Field(None, description="Updated at")
 
     model_config = {"from_attributes": True}
 
 
 class WorkflowListResponse(BaseModel):
-    """워크플로목록 유형"""
+    """Workflow list response."""
 
-    data: list[WorkflowResponse] = Field(..., description="워크플로목록")
+    data: list[WorkflowResponse] = Field(..., description="Workflow list")
 
 
 class ExecutionCreate(BaseModel):
-    """생성워크플로실행기록요청 유형"""
+    """Workflow execution request."""
 
-    project_id: str = Field(..., description="목록ID")
-    params: Optional[dict[str, Any]] = Field(None, description="실행매개변수")
-    exec_position: str = Field("EXECUTOR", description="실행위치")
-    recording_config: Optional[str] = Field(None, description="기록제어매칭")
-    version: Optional[int] = Field(None, description="워크플로버전")
+    project_id: str = Field(..., description="Project ID")
+    params: Optional[dict[str, Any]] = Field(None, description="Execution parameters")
+    exec_position: str = Field("EXECUTOR", description="Execution position")
+    recording_config: Optional[str] = Field(None, description="Recording configuration")
+    version: Optional[int] = Field(None, description="Workflow version")
 
-    # 2026-01-12 추가휴대폰 번호매개변수, 사용ShoprpaAgent의복사호출
-    phone_number: Optional[str] = Field(None, description="휴대폰 번호")
+    phone_number: Optional[str] = Field(None, description="Phone number for ShopRPA Agent copy execution")
 
 
 class ExecutionResponse(BaseModel):
-    """실행기록유형"""
+    """Execution response."""
 
-    id: str = Field(..., description="실행기록ID")
-    project_id: str = Field(..., description="목록ID")
-    status: str = Field(..., description="실행상태")
-    parameters: Optional[dict[str, Any]] = Field(None, description="실행매개변수")
-    result: Optional[dict[str, Any]] = Field(None, description="실행 결과")
-    error: Optional[str] = Field(None, description="오류정보")
-    exec_position: str = Field(..., description="실행위치")
-    version: Optional[int] = Field(None, description="워크플로버전")
-    start_time: datetime = Field(..., description="시작 시간")
-    end_time: Optional[datetime] = Field(None, description="종료 시간")
+    id: str = Field(..., description="Execution ID")
+    project_id: str = Field(..., description="Project ID")
+    status: str = Field(..., description="Execution status")
+    parameters: Optional[dict[str, Any]] = Field(None, description="Execution parameters")
+    result: Optional[dict[str, Any]] = Field(None, description="Execution result")
+    error: Optional[str] = Field(None, description="Error details")
+    exec_position: str = Field(..., description="Execution position")
+    version: Optional[int] = Field(None, description="Workflow version")
+    start_time: datetime = Field(..., description="Start time")
+    end_time: Optional[datetime] = Field(None, description="End time")
 
     model_config = {"from_attributes": True}
 
 
 class WorkflowCopyRequest(BaseModel):
-    """복사워크플로요청 유형"""
+    """Workflow copy request."""
 
-    project_id: Union[str, int] = Field(..., description="목록ID")
-    version: int = Field(..., description="워크플로버전")
-    phone_number: str = Field(..., description="목록 휴대폰 번호")
+    project_id: Union[str, int] = Field(..., description="Project ID")
+    version: int = Field(..., description="Workflow version")
+    phone_number: str = Field(..., description="Target phone number")

@@ -17,8 +17,7 @@ contextBridge.exposeInMainWorld('electron', {
       return ipcRenderer
         .invoke('global-shortcut-register', shortcut, callback)
         .then(() => true)
-        .catch((err: Error) => {
-          console.error('Failed to register global shortcut:', err)
+        .catch(() => {
           return false
         })
     },
@@ -26,8 +25,7 @@ contextBridge.exposeInMainWorld('electron', {
       return ipcRenderer
         .invoke('global-shortcut-unregister', shortcut)
         .then(() => true)
-        .catch((err: Error) => {
-          console.error('Failed to unregister global shortcut:', err)
+        .catch(() => {
           return false
         })
     },
@@ -35,8 +33,7 @@ contextBridge.exposeInMainWorld('electron', {
       return ipcRenderer
         .invoke('global-shortcut-unregister-all')
         .then(() => true)
-        .catch((err: Error) => {
-          console.error('Failed to unregister all global shortcuts:', err)
+        .catch(() => {
           return false
         })
     },
@@ -50,8 +47,7 @@ contextBridge.exposeInMainWorld('electron', {
       return ipcRenderer
         .invoke('clipboard-write-text', text)
         .then(() => true)
-        .catch((err: Error) => {
-          console.error('Failed to write text to clipboard:', err)
+        .catch(() => {
           return false
         })
     },

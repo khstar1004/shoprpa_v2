@@ -22,7 +22,7 @@ class Database:
     @atomicMg.atomic(
         "Database",
         inputList=[
-            atomicMg.param("connect_info", types=dict),  # TODO 지정유형[목록전사용입력Dict의방식]
+            atomicMg.param("connect_info", types=dict),
         ],
         outputList=[atomicMg.param("connect_db_obj", types="Any")],
     )

@@ -1,4 +1,4 @@
-﻿import { useAsyncState } from '@vueuse/core'
+import { useAsyncState } from '@vueuse/core'
 import { defineStore } from 'pinia'
 
 import { getRemoteFiles, getRemoteParams } from '@/api/atom'

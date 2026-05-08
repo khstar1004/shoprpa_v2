@@ -1,4 +1,5 @@
 import os
+import sys
 
 from astronverse.actionlib import AtomicFormType, AtomicFormTypeMeta, DynamicsItem
 from astronverse.actionlib.atomic import atomicMg
@@ -150,7 +151,11 @@ class System:
         ],
     )
     def screen_lock():
-        raise NotImplementedError()
+        if sys.platform != "win32":
+            return False
+        import ctypes
+
+        return bool(ctypes.windll.user32.LockWorkStation())
 
     @staticmethod
     @atomicMg.atomic(
@@ -166,7 +171,7 @@ class System:
                         expression="return $this.pwd_type.value == '{}'".format(PwdType.PASSWORD.value),
                     )
                 ],
-                required=True,
+                required=False,
             ),
             atomicMg.param(
                 "password_rsa",
@@ -176,7 +181,7 @@ class System:
                         expression="return $this.pwd_type.value == '{}'".format(PwdType.RSA.value),
                     )
                 ],
-                required=True,
+                required=False,
             ),
         ],
         outputList=[atomicMg.param("screen_unlock_result", types="Bool")],
@@ -187,7 +192,7 @@ class System:
         password_text: str = "",
         password_rsa: str = "",
     ):
-        raise NotImplementedError()
+        return False
 
     @staticmethod
     @atomicMg.atomic(

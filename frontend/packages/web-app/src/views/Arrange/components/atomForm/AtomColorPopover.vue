@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { message } from 'ant-design-vue'
 import { useTranslation } from 'i18next-vue'
 import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue'
@@ -210,9 +210,7 @@ onMounted(() => {
       <button class="clear-btn" @click="clearColor">
         초기화
       </button>
-      <button class="confirm-btn" @click="changeColor">
-        
-      </button>
+      <button class="confirm-btn" @click="changeColor" />
     </div>
   </div>
 </template>

@@ -32,13 +32,14 @@
     },
     "./tokens/variables.css": "./dist/tokens/variables.css",
     "./tokens/variables.scss": "./dist/tokens/variables.scss",
+    "./tokens/_variables.scss": "./dist/tokens/_variables.scss",
     "./tokens/tailwind": "./dist/tokens/tailwind-preset.js"
   },
   "scripts": {
-    "build": "tsdown",
-    "dev": "tsdown --watch",
+    "build": "node ../../node_modules/tsdown/dist/run.mjs",
+    "dev": "node ../../node_modules/tsdown/dist/run.mjs --watch",
     "build:tokens": "node tokens/build-tokens.js",
-    "postinstall": "npm run build && npm run build:tokens"
+    "postinstall": "node ../../node_modules/tsdown/dist/run.mjs && node tokens/build-tokens.js"
   },
   "devDependencies": {
     "style-dictionary": "^4.4.0",

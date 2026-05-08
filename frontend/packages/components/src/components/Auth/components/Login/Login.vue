@@ -8,10 +8,14 @@ import FormLayout from '../Base/FormLayout.vue'
 
 import { useLoginForm } from './hooks/useLoginForm'
 
-const { running, inviteInfo, edition, authType } = defineProps({
+const { running, errorMessage, inviteInfo, edition, authType } = defineProps({
   running: {
     type: String as () => AsyncAction,
     default: 'IDLE',
+  },
+  errorMessage: {
+    type: String,
+    default: '',
   },
   inviteInfo: {
     type: Object as () => InviteInfo,
@@ -72,6 +76,19 @@ watch(() => phone.formData.agreement, (v) => {
       <div class="text-[12px] text-[#000000A6] mb-[24px] text-center dark:text-[#FFFFFF] font-sans">
         {{ $t('auth.useAuthAccount', { auth: $t('auth.shoprpa') }) }}
       </div>
+      <div
+        v-if="errorMessage"
+        data-shoprpa-auth-error-state
+        role="alert"
+        class="auth-error-state"
+      >
+        <div class="auth-error-state__title">
+          서비스 연결을 확인하세요
+        </div>
+        <div class="auth-error-state__message">
+          {{ errorMessage }}
+        </div>
+      </div>
     </template>
     <Tabs
       v-model:active-key="currentMode"
@@ -109,5 +126,29 @@ watch(() => phone.formData.agreement, (v) => {
   line-height: 1.35;
   word-break: keep-all;
   overflow-wrap: normal;
+}
+
+.auth-error-state {
+  margin: -8px 0 16px;
+  padding: 10px 12px;
+  border: 1px solid #ffd8bf;
+  border-radius: 8px;
+  background: #fff7f0;
+  color: #7a2e0e;
+  font-family: inherit;
+}
+
+.auth-error-state__title {
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.auth-error-state__message {
+  margin-top: 2px;
+  font-size: 12px;
+  line-height: 1.45;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
 }
 </style>

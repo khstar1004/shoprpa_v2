@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { isBrowser, windowManager } from '@/platform'
 
 // 제어창소, 대, 닫기

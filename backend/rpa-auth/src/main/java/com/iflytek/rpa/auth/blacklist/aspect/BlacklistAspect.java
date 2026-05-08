@@ -27,11 +27,9 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 /**
- * 이름단일 AOP 
- *  /login-status 및 /pre-authenticate 연결
- * - /login-status: 서비스에서검증 session 시호출해당연결
- * - /pre-authenticate: 로그인인증연결, 중지사용 안 함사용자로그인
- * 결과가에서이름단일중, 비고판매출력예외
+ * 사용자 차단 상태를 로그인 관련 API 앞에서 검사하는 AOP입니다.
+ * - /login-status: 로그인 세션 확인 시 차단 상태를 검사합니다.
+ * - /pre-authenticate: 로그인 인증 전에 차단 상태를 검사합니다.
  *
  * @author system
  * @date 2025-12-16
@@ -46,34 +44,32 @@ public class BlacklistAspect {
     private final UserService userService;
 
     /**
-     * 지정:  LoginController 의 loginStatus 방법법(/login-status 연결)
+     * LoginController.loginStatus(/login-status) 진입점입니다.
      */
     @Pointcut("execution(* com.iflytek.rpa.auth.core.controller.LoginController.loginStatus(..))")
     public void loginStatusPointcut() {}
 
     /**
-     * 지정:  LoginController 의 preAuthenticate 방법법(/pre-authenticate 연결)
+     * LoginController.preAuthenticate(/pre-authenticate) 진입점입니다.
      */
     @Pointcut("execution(* com.iflytek.rpa.auth.core.controller.LoginController.preAuthenticate(..))")
     public void preAuthenticatePointcut() {}
 
     /**
-     * 그룹합치기: loginStatus 또는 preAuthenticate
+     * 로그인 상태 확인과 사전 인증 진입점을 함께 묶습니다.
      */
     @Pointcut("loginStatusPointcut() || preAuthenticatePointcut()")
     public void loginCheckPointcut() {}
 
     /**
-     * 알림: 에서로그인닫기방법법실행전조회이름단일
+     * 로그인 관련 메서드 실행 전에 사용자 차단 상태를 검사합니다.
      */
     @Around("loginCheckPointcut()")
     public Object checkBlacklist(ProceedingJoinPoint joinPoint) throws Throwable {
         try {
-            // 가져오기현재요청 
             ServletRequestAttributes attributes =
                     (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
             if (attributes == null) {
-                //  Web 요청 , 직선연결행
                 return joinPoint.proceed();
             }
 
@@ -84,27 +80,22 @@ public class BlacklistAspect {
             String userId = null;
             String username = null;
 
-            // 예개연결
             if (requestURI.contains("/pre-authenticate")) {
-                // /pre-authenticate 연결: 에서요청 매개변수중가져오기휴대폰 번호, 후조회사용자ID
                 Object[] args = joinPoint.getArgs();
                 if (args != null && args.length > 0) {
-                    // 일개매개변수 해당예 LoginDto
                     Object firstArg = args[0];
                     if (firstArg instanceof LoginDto) {
                         LoginDto loginDto = (LoginDto) firstArg;
                         String phone = loginDto.getPhone();
 
                         if (StringUtils.hasText(phone)) {
-                            // 통신경과휴대폰 번호조회사용자ID
                             userId = getUserIdByPhone(phone, request);
-                            username = phone; // 시사용휴대폰 번호로사용자명
-                            log.debug("에서 pre-authenticate 요청 중가져오기휴대폰 번호: {}, userId: {}", phone, userId);
+                            username = phone;
+                            log.debug("pre-authenticate 요청에서 휴대폰 번호를 확인했습니다. phone: {}, userId: {}", phone, userId);
                         }
                     }
                 }
             } else {
-                // /login-status 연결: 에서 session 중가져오기완료로그인사용자
                 UapUser loginUser = UapUserInfoAPI.getLoginUser(request);
                 if (loginUser != null) {
                     userId = loginUser.getId();
@@ -112,32 +103,26 @@ public class BlacklistAspect {
                 }
             }
 
-            // 결과가가져오기까지사용자ID, 조회여부에서이름단일중
             if (userId != null && !userId.isEmpty()) {
                 BlacklistCacheDto blacklist = blackListService.isBlocked(userId);
 
                 if (blacklist != null) {
-                    // 사용자에서이름단일중, 로그인
                     log.warn(
-                            "AOP 까지이름단일사용자시도로그인, userId: {}, username: {}, reason: {}",
+                            "차단된 사용자의 로그인 관련 요청을 차단합니다. userId: {}, username: {}, reason: {}",
                             userId,
                             username,
                             blacklist.getReason());
 
-                    // 결과가예완료로그인사용자(/login-status), 강함제어비고판매
-                    // /pre-authenticate 연결본있음로그인, 필요하지 않습니다비고판매
                     if (!requestURI.contains("/pre-authenticate") && response != null) {
                         blackListService.forceLogout(request, response);
                     }
 
-                    // 를시간변환로 LocalDateTime
                     LocalDateTime endTime = blacklist.getEndTimeMillis() != null
                             ? LocalDateTime.ofInstant(
                                     java.time.Instant.ofEpochMilli(blacklist.getEndTimeMillis()),
                                     java.time.ZoneId.systemDefault())
                             : null;
 
-                    // 계획시간(초)
                     long remainingSeconds = 0;
                     if (endTime != null) {
                         remainingSeconds = java.time.Duration.between(LocalDateTime.now(), endTime)
@@ -147,7 +132,6 @@ public class BlacklistAspect {
                         }
                     }
 
-                    // 출력예외
                     throw new UserBlockedException(
                             blacklist.getUserId(),
                             blacklist.getUsername(),
@@ -157,20 +141,18 @@ public class BlacklistAspect {
                 }
             }
 
-            // 계속실행서비스방법법
             return joinPoint.proceed();
 
         } catch (UserBlockedException | ShouldBeBlackException e) {
             throw e;
         } catch (Throwable e) {
-            log.error("이름단일 AOP 실행예외", e);
-            // 예외계속실행, 정상일반서비스
+            log.error("사용자 차단 AOP 실행 예외", e);
             return joinPoint.proceed();
         }
     }
 
     /**
-     * 통신경과휴대폰 번호조회사용자ID
+     * 휴대폰 번호로 사용자ID를 조회합니다.
      */
     private String getUserIdByPhone(String phone, HttpServletRequest request) {
         try {
@@ -182,12 +164,12 @@ public class BlacklistAspect {
             User user = response.getData();
             String userId = user.getId();
             if (!StringUtils.hasText(userId)) {
-                log.debug("사용자ID비어 있습니다, 휴대폰 번호: {}", phone);
+                log.debug("사용자ID가 비어 있습니다. phone: {}", phone);
                 return null;
             }
             return userId;
         } catch (Exception e) {
-            log.debug("통신경과휴대폰 번호조회사용자ID실패: {}", phone, e);
+            log.debug("휴대폰 번호로 사용자ID 조회 실패: {}", phone, e);
             return null;
         }
     }

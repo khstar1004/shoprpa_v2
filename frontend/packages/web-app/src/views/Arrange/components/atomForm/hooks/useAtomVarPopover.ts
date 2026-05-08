@@ -1,4 +1,4 @@
-﻿import { ATOM_FORM_TYPE } from '@/constants/atom'
+import { ATOM_FORM_TYPE } from '@/constants/atom'
 import useCursorStore from '@/stores/useCursorStore'
 import { useProcessStore } from '@/stores/useProcessStore'
 import { generateHtmlVal } from '@/views/Arrange/components/atomForm/hooks/useRenderFormType'

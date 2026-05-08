@@ -1,6 +1,8 @@
 import { StatusCode } from './constant'
 import { InputTypeMap, TagMap } from './tag'
 
+const SPECIAL_CHARACTER_PATTERN = /[^\p{L}\p{N}_-]/u
+
 export const Utils = {
   removeUrlParams(url: string) {
     return url.replace(/\?.*$/, '')
@@ -17,9 +19,7 @@ export const Utils = {
   isSpecialCharacter(str: string) {
     if (this.isNumberStartString(str))
       return true
-    if (/[·~`!@#$%^&*()+={}\\[\]|:;"'<>,.?/()￥!, ;: ````[]<>, .?—]/.test(str))
-      return true
-    return false
+    return SPECIAL_CHARACTER_PATTERN.test(str)
   },
 
   isSupportUrl(str: string) {

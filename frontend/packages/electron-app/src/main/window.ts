@@ -1,12 +1,12 @@
 import path from 'node:path'
 
-import { app, BrowserWindow, screen } from 'electron'
 import type { CreateWindowOptions } from '@rpa/shared/platform'
+import { app, BrowserWindow, screen } from 'electron'
 import { isUndefined } from 'lodash'
 
 import { APP_ICON_PATH, MAIN_WINDOW_LABEL } from './config'
-import { resourcePath } from './path'
 import logger from './log'
+import { appWorkPath, resourcePath } from './path'
 
 export const WindowStack: Map<string, BrowserWindow> = new Map()
 
@@ -29,6 +29,7 @@ export function electronInfo(win: BrowserWindow) {
     arch: process.arch,
     platform: process.platform,
     preload: path.join(__dirname, '../preload/index.js'),
+    appWorkPath,
     resourcePath,
   })
   win.webContents.send('electron-info', electronInfo)
@@ -44,9 +45,10 @@ function createWindow(options: Electron.BrowserWindowConstructorOptions, label?:
   return win
 }
 
-export function createMainWindow() {
+export function createMainWindow(options: Electron.BrowserWindowConstructorOptions = {}) {
+  const { webPreferences, ...windowOptions } = options
   const mainWindowOptions: Electron.BrowserWindowConstructorOptions = {
-    title: 'shoprpa',
+    title: 'ShopRPA',
     autoHideMenuBar: true,
     titleBarStyle: 'hidden',
     width: 1280,
@@ -56,9 +58,15 @@ export function createMainWindow() {
     center: true,
     show: false,
     frame: false,
+    ...windowOptions,
     webPreferences: {
+      allowRunningInsecureContent: false,
+      nodeIntegration: false,
       preload: path.join(__dirname, '../preload/index.js'),
       contextIsolation: true,
+      sandbox: true,
+      webSecurity: true,
+      ...webPreferences,
     },
   }
 
@@ -123,8 +131,12 @@ export function createSubWindow(options: CreateWindowOptions) {
     width,
     height,
     webPreferences: {
+      allowRunningInsecureContent: false,
+      nodeIntegration: false,
       preload: path.join(__dirname, '../preload/index.js'),
       contextIsolation: true,
+      sandbox: true,
+      webSecurity: true,
     },
     icon: APP_ICON_PATH,
     frame: false,

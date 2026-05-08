@@ -2,13 +2,13 @@
 전체덮어쓰기창모듈
 
 에서가능컴포넌트선택완료후, 생성일개전체, , 의덮어쓰기창, 
-제거"Shoprpa"클라이언트창으로외부의모든마우스, 
+ShopRPA 클라이언트 창 외부의 마우스 입력을 차단합니다.
 직선까지원저장완료후판매덮어쓰기창.
 
 방법: Win32 Layered Window + SetWindowRgn 
 - 생성전체 TOPMOST  Layered Window(alpha=1, 할 수 없음)
-- 통신경과 SetWindowRgn 창로 "전체 - Shoprpa창"
-- "Shoprpa"없음덮어쓰기창, 클릭까지클라이언트
+- SetWindowRgn으로 "전체 화면 - ShopRPA 창" 영역을 구성합니다.
+- ShopRPA 창은 클릭 가능하게 유지합니다.
 - 있음덮어쓰기창, 클릭
 - 예약기기지정새로고침으로창/
 
@@ -55,7 +55,7 @@ def _delete_object(obj) -> bool:
 
 class BlockOverlay:
     """
-    전체덮어쓰기창 - 제거"Shoprpa"창외부의모든마우스.
+    ShopRPA 창 외부의 마우스 입력을 차단하는 전체 화면 오버레이입니다.
 
     사용방식::
 
@@ -67,8 +67,8 @@ class BlockOverlay:
     디버그: Ctrl+Shift+F12 가능강함제어닫기덮어쓰기창
     """
 
-    _CLASS_NAME = "ShoprpaBlockOverlay"
-    _RPA_WINDOW_KEYWORD = "Shoprpa"
+    _CLASS_NAME = "ShopRPABlockOverlay"
+    _RPA_WINDOW_KEYWORDS = ("ShopRPA", "Shoprpa")
 
     # 새로고침(초)
     _REGION_UPDATE_MS = 300
@@ -91,7 +91,7 @@ class BlockOverlay:
         self._first_search = True
 
     def show(self):
-        """덮어쓰기창, 열기 모든"Shoprpa"의마우스"""
+        """덮어쓰기창, 열기 모든 ShopRPA 의마우스"""
         with self._lock:
             if self._hwnd is not None:
                 logger.info("[BlockOverlay] 덮어쓰기창완료존재함, 건너뛰기생성")
@@ -199,7 +199,7 @@ class BlockOverlay:
         )
 
         if not hwnd:
-            raise RuntimeError("CreateWindowEx 생성덮어쓰기창실패")
+            raise RuntimeError("CreateWindowEx로 오버레이 창을 생성하지 못했습니다")
 
         # 정도 1/255 ≈ 0.4%, 할 수 없음
         _user32.SetLayeredWindowAttributes(hwnd, 0, 1, LWA_ALPHA)
@@ -306,11 +306,11 @@ class BlockOverlay:
 
     def _find_rpa_window_rects(self) -> list[tuple]:
         """
-        조회모든"Shoprpa"창 닫기의화면.
+        조회모든 ShopRPA 창 닫기의화면.
 
         :
         1. 모든가능창
-        2. 까지제목패키지"Shoprpa"의창, 기록 ID
+        2. 까지제목패키지 ShopRPA 의창, 기록 ID
         3. 의모든가능창(팝업/대화상자)
         """
         window_list: list[tuple[int, int, str]] = []  # (hwnd, pid, title)
@@ -338,19 +338,21 @@ class BlockOverlay:
         # ── 1:  RPA  ID ──
         rpa_pids: set[int] = set()
         for _, pid, title in window_list:
-            if self._RPA_WINDOW_KEYWORD in title:
+            if any(keyword in title for keyword in self._RPA_WINDOW_KEYWORDS):
                 rpa_pids.add(pid)
 
         # ── 검색또는찾을 수 없는 시출력로그 ──
         if self._first_search or not rpa_pids:
             self._first_search = False
             if rpa_pids:
-                matched = [(t, p) for _, p, t in window_list if self._RPA_WINDOW_KEYWORD in t]
+                matched = [
+                    (t, p) for _, p, t in window_list if any(keyword in t for keyword in self._RPA_WINDOW_KEYWORDS)
+                ]
                 for title, pid in matched:
                     logger.info(f"[BlockOverlay] 매칭까지RPA창: title='{title}', pid={pid}")
             else:
                 logger.warning(
-                    f"[BlockOverlay] 찾을 수 없는 패키지'{self._RPA_WINDOW_KEYWORD}'의창! 공유설명 {len(window_list)} 개가능창"
+                    f"[BlockOverlay] ShopRPA 창을 찾을 수 없습니다. 후보 창 수: {len(window_list)}"
                 )
                 # 출력있음제목의창디버그
                 titled = [(t, p) for _, p, t in window_list if t.strip()]

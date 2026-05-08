@@ -233,7 +233,7 @@ class PDF:
         :param exist_handle_type: 파일저장된 관리유형
         :return: 패키지이미지데이터의목록
         """
-        if select_range == SelectRangeType.PART:
+        if select_range == SelectRangeType.ALL:
             page_range = ""
         return PDFCore.get_images_in_page(file_path, pwd, page_range, save_dir, image_type, prefix, exist_handle_type)
 
@@ -315,7 +315,7 @@ class PDF:
         if file_folder_path and (not os.path.exists(file_folder_path)):
             raise BaseException(
                 FILE_PATH_ERROR_FORMAT.format(file_folder_path),
-                "의사용프로그램경로있음오류, 입력하세요정상의경로!",
+                "프로그램 경로가 올바르지 않습니다. 올바른 경로를 입력하세요.",
             )
         if not new_pwd_flag:
             new_pwd = ""
@@ -451,7 +451,7 @@ class PDF:
         :param exist_handle_type:
         :return:
         """
-        if select_range == SelectRangeType.PART:
+        if select_range == SelectRangeType.ALL:
             page_range = ""
         forms_file_path = PDFCore.extract_forms_from_pdf(
             file_path,

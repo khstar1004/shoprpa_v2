@@ -1,4 +1,4 @@
-﻿declare namespace RPA {
+declare namespace RPA {
   type LogLevel = 'error' | 'info' | 'warning' | 'debug'
   // 0 열기  1 성공 2 실패 3 실패건너뛰기
   type LogStatus = 0 | 1 | 2 | 3

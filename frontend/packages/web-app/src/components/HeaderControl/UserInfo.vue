@@ -1,9 +1,11 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { Auth } from '@rpa/components/auth'
 import { Button, Checkbox, Dropdown } from 'ant-design-vue'
 import { useTranslation } from 'i18next-vue'
 import { storeToRefs } from 'pinia'
 import { computed, h } from 'vue'
+
+import { baseUrl } from '@/utils/env'
 
 import { getTermianlStatus, startSchedulingMode } from '@/api/engine'
 import { taskNotify } from '@/api/task'
@@ -79,7 +81,7 @@ async function menuClick(item: any) {
             onClick: () => {
               startSchedulingMode({ start_watch: startWatch }) // 알림사용자지정로스케줄링방식
               useAppModeStore().setAppMode('scheduling') // 로스케줄링방식
-              windowManager.hideWindow() // 
+              windowManager.hideWindow() //
               utilsManager.invoke('tray_change', { mode: 'scheduling', status: 'idle' }) // 수정변수메뉴
               modal.destroy()
             },
@@ -95,7 +97,7 @@ async function menuClick(item: any) {
 async function logout() {
   await userStore.logout()
   taskNotify({ event: 'exit' }) // 아니오
-  location.replace(`/boot.html`)
+  location.replace(`${baseUrl}/boot.html`)
 }
 
 function modalTip() {
@@ -105,7 +107,6 @@ function modalTip() {
     okText: t('confirm'),
     cancelText: t('cancel'),
     onOk() {
-      console.log('User acknowledged the message')
       modal.destroy()
       runningStore.stop(runningStore.getRunProjectId())
     },

@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { Divider } from 'ant-design-vue'
 import { onMounted, ref } from 'vue'
 

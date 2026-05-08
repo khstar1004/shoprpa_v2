@@ -1,0 +1,15 @@
+import { defineConfig } from 'vitest/config'
+
+export default defineConfig({
+  test: {
+    environment: 'jsdom',
+    include: ['src/test/content.*.{test,spec}.js'],
+    exclude: ['src/test/background.*.{test,spec}.js'],
+    pool: 'threads',
+    poolOptions: {
+      threads: {
+        singleThread: true,
+      },
+    },
+  },
+})

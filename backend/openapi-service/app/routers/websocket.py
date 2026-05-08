@@ -1,4 +1,4 @@
-﻿import asyncio
+import asyncio
 
 from fastapi import APIRouter, Depends, WebSocket
 from rpawebsocket.ws import Conn

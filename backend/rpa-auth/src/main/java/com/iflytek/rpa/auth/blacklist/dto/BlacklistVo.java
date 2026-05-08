@@ -8,7 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * 이름단일이미지객체
+ * 사용자 차단 목록 응답 객체
  *
  * @author system
  * @date 2025-12-16
@@ -37,27 +37,27 @@ public class BlacklistVo implements Serializable {
     private String username;
 
     /**
-     * 원인
+     * 차단 사유
      */
     private String banReason;
 
     /**
-     * 대기단계
+     * 차단 단계
      */
     private Integer banLevel;
 
     /**
-     * 데이터
+     * 차단 횟수
      */
     private Integer banCount;
 
     /**
-     * 시길이(초)
+     * 차단 기간(초)
      */
     private Long banDuration;
 
     /**
-     * 시길이설명
+     * 차단 기간 설명
      */
     private String banDurationDesc;
 
@@ -72,27 +72,27 @@ public class BlacklistVo implements Serializable {
     private LocalDateTime endTime;
 
     /**
-     * 시간(초)
+     * 남은 시간(초)
      */
     private Long remainingSeconds;
 
     /**
-     * 시간설명
+     * 남은 시간 설명
      */
     private String remainingTimeDesc;
 
     /**
-     * 상태(1:중, 0:완료해제)
+     * 상태(1:차단 중, 0:해제됨)
      */
     private Integer status;
 
     /**
-     * 상태설명
+     * 상태 설명
      */
     private String statusDesc;
 
     /**
-     * 사람
+     * 처리자
      */
     private String operator;
 

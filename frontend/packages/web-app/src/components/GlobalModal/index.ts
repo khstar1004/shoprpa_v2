@@ -1,4 +1,4 @@
-﻿// packages/web-app/src/components/GlobalModal/index.ts
+// packages/web-app/src/components/GlobalModal/index.ts
 import { Modal as AntModal } from 'ant-design-vue'
 
 import GlobalModalComponent from './index.vue'

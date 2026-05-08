@@ -1,5 +1,6 @@
 ﻿import base64
 import io
+import logging
 
 import cv2
 import numpy as np
@@ -9,6 +10,7 @@ from PIL import Image
 
 desktop_filepath = "desktop.png"
 desktop_filepath_match = "desktop_filepath_match.png"
+logger = logging.getLogger(__name__)
 
 
 class CvCore:
@@ -69,13 +71,11 @@ class CvCore:
         if not base64_str:
             return None
         try:
-            # 해제코드 base64 문자열
             image_data = base64.b64decode(base64_str)
-            # 를문자데이터변환로이미지
             image = Image.open(io.BytesIO(image_data))
             return image
         except Exception as e:
-            print(f"Error converting base64 to image: {e}")
+            logger.warning("Failed to convert base64 data to image: %s", e)
             return None
 
     @staticmethod

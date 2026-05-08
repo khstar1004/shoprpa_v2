@@ -204,13 +204,13 @@ class Terminal:
             )
             flag = asyncio.run(task.callback())
             if flag:
-                logger.info("작업스케줄링성공")
+                logger.info("작업 스케줄링 성공")
             else:
-                logger.info("작업스케줄링실패, 확인하세요여부완료저장된 정상에서실행")
+                logger.info("작업 스케줄링 실패. 저장된 작업이 정상 실행 가능한지 확인하세요.")
 
             del task
         else:
-            raise Exception("지원하지 않음의작업유형: {}".format(task_type))
+            raise Exception("지원하지 않는 작업 유형입니다: {}".format(task_type))
         return True
 
     def get_task(self, task_id: str):

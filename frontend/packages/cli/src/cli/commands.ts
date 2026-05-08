@@ -1,11 +1,13 @@
 import path from 'node:path'
+
+import { cancel, intro, isCancel, outro, text } from '@clack/prompts'
 import cac from 'cac'
 import debug from 'debug'
-import { intro, text, outro, cancel, isCancel } from '@clack/prompts'
 
 import { version } from '../../package.json'
 import { globalLogger } from '../logger'
-import { resolveComma, toArray, getBuiltinTemplateDir, renderTemplate, exists, ensureDir } from '../utils'
+import { ensureDir, exists, getBuiltinTemplateDir, renderTemplate, resolveComma, toArray } from '../utils'
+
 import { createBuildServer } from './vite'
 
 const cli = cac('rpa')
@@ -34,14 +36,14 @@ cli
   .action(async (options: { name?: string, target?: string }) => {
     try {
       intro('create-rpa-plugin')
-      
+
       const cwd = process.cwd()
       const templateDir = getBuiltinTemplateDir()
       if (!templateDir) {
         cancel('builtin plugin template not found')
         return
       }
-      
+
       let name = options.name
       if (!name) {
         const result = await text({
@@ -55,7 +57,7 @@ cli
         }
         name = result as string
       }
-      
+
       let targetDir = options.target
       if (!targetDir) {
         const result = await text({
@@ -71,7 +73,7 @@ cli
       }
 
       const normalizedTarget = targetDir.replace(/\\+/g, '/')
-      
+
       if (exists(normalizedTarget)) {
         cancel('target directory already exists')
         return
@@ -81,7 +83,7 @@ cli
       await renderTemplate(templateDir, normalizedTarget, {
         name,
       })
-      
+
       outro(`plugin template created at ${normalizedTarget}`)
     }
     catch (error) {

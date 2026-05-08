@@ -1,4 +1,5 @@
-﻿import { ACTUATOR, APPLICATIONMARKET, DESIGNER } from '@/constants/menu'
+import { ACTUATOR, APPLICATIONMARKET, DESIGNER } from '@/constants/menu'
+import { getWorkflowEditorSmokePermissions, isWorkflowEditorSmokeMode } from '@/smoke/workflowEditorSmoke'
 
 import http from './http'
 
@@ -6,6 +7,9 @@ import http from './http'
  * 권한데이터
  */
 export async function permission() {
+  if (isWorkflowEditorSmokeMode())
+    return getWorkflowEditorSmokePermissions()
+
   const res = await http.get('/api/rpa-auth/user/entitlement')
   const entitlement = res.data
 

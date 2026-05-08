@@ -1,4 +1,4 @@
-﻿<!-- 하위 프로세스선택컴포넌트 -->
+<!-- 하위 프로세스선택컴포넌트 -->
 <script setup lang="ts">
 import { useTranslation } from 'i18next-vue'
 import { find, get, has, isArray, isEmpty, isEqual, some } from 'lodash-es'

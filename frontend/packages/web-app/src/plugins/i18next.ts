@@ -33,6 +33,10 @@ export function isI18n(str: unknown): str is LanguageType {
   return isObject(str) && hasIn(str, 'zh-CN') && hasIn(str, 'en-US')
 }
 
+export function getPublicLanguage(lng = i18next.language): string {
+  return lng === 'zh-CN' ? 'ko-KR' : lng
+}
+
 export function translate(str: string | LanguageType, variables?: Record<string, string>): string {
   if (isString(str))
     return str

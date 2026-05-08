@@ -1,4 +1,4 @@
-﻿import { createPinia } from 'pinia'
+import { createPinia } from 'pinia'
 import { createApp } from 'vue'
 
 import i18next from '@/plugins/i18next'

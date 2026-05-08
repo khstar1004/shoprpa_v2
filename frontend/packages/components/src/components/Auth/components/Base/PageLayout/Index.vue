@@ -33,7 +33,9 @@ onBeforeUnmount(() => {
       <slot name="container">
         <div class="auth-card-wrap">
           <div class="auth-brand-copy">
-            <div class="auth-eyebrow">{{ $t('app') }}</div>
+            <div class="auth-eyebrow">
+              {{ $t('app') }}
+            </div>
             <h1>{{ $t('auth.letAutomate') }}</h1>
             <p>{{ $t('auth.makeDecisions') }}</p>
           </div>

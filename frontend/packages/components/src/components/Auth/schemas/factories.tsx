@@ -1,4 +1,4 @@
-﻿import { Button, Checkbox } from 'ant-design-vue'
+import { Button, Checkbox } from 'ant-design-vue'
 import i18next from 'i18next'
 import type { Component, VNode } from 'vue'
 import type { JSX } from 'vue/jsx-runtime'

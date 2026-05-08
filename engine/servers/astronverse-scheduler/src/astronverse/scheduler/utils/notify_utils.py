@@ -70,17 +70,19 @@ class NotifyUtils:
             self.mail_handler.login(sender_mail, password)
         except smtplib.SMTPException as e:
             logger.debug(e)
-            raise Exception("전송예외메일실패!")
+            raise Exception("메일 서버 로그인에 실패했습니다.")
 
     def send(self, robot_name, run_time):
         if self.email_setting.get("is_enable", False):
-            content = "[ShoprpaShoprpaRPA]실행의봇 {}{}실행실패, 요청 시조회".format(robot_name, run_time)
+            content = "[ShopRPA] 봇 {} 실행이 {}에 실패했습니다. 실행 로그를 확인하세요.".format(
+                robot_name, run_time
+            )
             self.login_send()
             self.send_email(content)
         if self.text_setting.get("is_enable", False):
             self.send_text(robot_name, run_time)
 
-    def send_email(self, content: str = "봇실행출력오류, 확인하세요!"):
+    def send_email(self, content: str = "봇 실행 중 오류가 발생했습니다. 실행 로그를 확인하세요."):
         if self.email_setting.get("is_default", True):
             sender_mail = NotifyConfig.EMAIL_ADDRESS
         else:
@@ -94,11 +96,11 @@ class NotifyUtils:
 
         for i in range(len(receiver_list)):
             self.email_msg = MIMEMultipart()
-            self.email_msg["From"] = self.format_addr(f"Shoprpa <{sender_mail}>")
+            self.email_msg["From"] = self.format_addr(f"ShopRPA <{sender_mail}>")
             self.email_msg["To"] = Header(receiver_list[i])
             self.email_msg["Cc"] = cc_list[i]
             self.email_msg["date"] = time.strftime("%a, %d %b %Y %H:%M:%S %z")
-            self.email_msg["Subject"] = "RPA봇실행예외알림"
+            self.email_msg["Subject"] = "RPA 봇 실행 예외 알림"
             self.email_msg.attach(MIMEText(content, "plain", "utf-8"))
 
             # 열기 전송
@@ -109,7 +111,7 @@ class NotifyUtils:
                     self.email_msg.as_string(),
                 )
             except smtplib.SMTPException as e:
-                raise Exception("전송예외메일전송실패!")
+                raise Exception("메일 전송에 실패했습니다.")
 
     def send_text(self, robot_name, run_time):
         try:
@@ -125,8 +127,8 @@ class NotifyUtils:
             status_code = response.status_code
             text = response.text
             if status_code != 200:
-                logger.debug(f"전송짧음정보연결호출실패!{text}")
-                raise Exception(f"전송짧음정보연결호출실패!{text}")
+                logger.debug("문자 알림 API 호출 실패: %s", text)
+                raise Exception(f"문자 알림 API 호출에 실패했습니다: {text}")
         except Exception as e:
-            logger.debug(f"전송짧음정보연결호출실패!{e}")
-            raise Exception("전송짧음정보연결호출실패!")
+            logger.debug("문자 알림 API 호출 실패: %s", e)
+            raise Exception("문자 알림 API 호출에 실패했습니다.")

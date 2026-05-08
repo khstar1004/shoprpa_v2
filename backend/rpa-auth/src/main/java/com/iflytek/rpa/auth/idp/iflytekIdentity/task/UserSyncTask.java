@@ -37,7 +37,7 @@ import org.springframework.stereotype.Service;
 
 /**
  * 사용자작업서비스
- * 를있음데이터베이스중의사람요소까지Shoprpa계정
+ * 를있음데이터베이스중의사람요소까지ShopRPA 계정
  */
 @Slf4j
 @Service

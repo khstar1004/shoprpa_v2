@@ -222,14 +222,14 @@ class UIAElement(IElement):
         priority_attrs = ["tag_name", "name", "cls", "value", "index"]
         empty_attrs = self._get_empty_attrs(current_attrs)
 
-        # tag_name 결과가빈, 선택;아니오이면출력예외
+        # tag_name이 없으면 안정적인 요소 경로를 만들 수 없다.
         if "tag_name" not in empty_attrs:
             # tag_name 빈, 전체사용 안 함
             disable_keys = [attr for attr in priority_attrs if attr != "tag_name"]
             return disable_keys
         else:
             # tag_name 비어 있습니다(아니오해당출력)
-            raise Exception("tag_name 비어 있습니다, 불가일요소")
+            raise Exception("tag_name이 비어 있어 요소를 생성할 수 없습니다")
 
     def _calculate_disable_keys_progressive(
         self, current_attrs: dict, parent_control, current_control, is_root_level: bool = False
@@ -392,7 +392,7 @@ class UIAElement(IElement):
 
             similar_path = UIAPicker.get_similar_path(strategy_svc, res)
             if similar_path is None:
-                raise Exception("아니오까지요소")
+                raise Exception("요소를 찾을 수 없습니다")
             res["path"] = similar_path
             res["img"]["self"] = strategy_svc.data.get("data", {}).get("img", {}).get("self", "")
             res["picker_type"] = PickerType.SIMILAR.value  # 개필요에서전, 가능locator사용
@@ -400,9 +400,9 @@ class UIAElement(IElement):
             if isinstance(similar_list, list):
                 similar_count = len(similar_list)
                 if similar_count == 0:
-                    raise Exception("아니오까지요소")
+                    raise Exception("요소를 찾을 수 없습니다")
             else:
-                raise Exception("아니오까지요소")
+                raise Exception("요소를 찾을 수 없습니다")
             res["similar_count"] = similar_count
         return res
 
@@ -625,7 +625,7 @@ class UIAOperate:
             return res
 
         except Exception as e:
-            logger.info(f"출력예외완료: {e}")
+            logger.info("웹 컨트롤 여부 확인 중 예외: %s", e)
             return True
 
     @classmethod

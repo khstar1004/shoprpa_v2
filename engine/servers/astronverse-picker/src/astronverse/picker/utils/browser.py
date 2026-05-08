@@ -1,4 +1,5 @@
 ﻿import ctypes
+import logging
 import time
 from ctypes import wintypes
 from typing import Any, Optional
@@ -12,6 +13,8 @@ import uiautomation as auto
 user32 = ctypes.windll.user32
 
 from astronverse.picker.error import *
+
+logger = logging.getLogger(__name__)
 
 
 class Browser:
@@ -52,7 +55,7 @@ class Browser:
             )
 
             if response.status_code != 200:
-                raise Exception("브라우저 확장연결기기통신통신출력오류, 다시 시도하세요")
+                raise Exception("브라우저 확장 연결 통신 오류입니다. 다시 시도하세요.")
 
             res_json = response.json()
             res_code = res_json.get("code")
@@ -65,11 +68,11 @@ class Browser:
                     time.sleep(retry_interval)
                     continue
                 else:
-                    raise Exception(f"[{browser_type}] 브라우저 확장출력오류, 확인하세요확장여부설치완료열기시작")
+                    raise Exception(f"[{browser_type}] 브라우저 확장 응답 오류입니다. 확장이 설치되어 있고 브라우저에서 실행 중인지 확인하세요.")
 
             # 확장반환오류
             if res_code != "0000":
-                raise Exception(f"[{browser_type}] {res_msg}")
+                raise Exception(f"[{browser_type}] {res_msg or '브라우저 확장 처리 중 오류가 발생했습니다.'}")
 
             if not res_data:
                 return None
@@ -158,7 +161,7 @@ class BrowserControlFinder:
                 except (psutil.NoSuchProcess, psutil.AccessDenied):
                     continue
         except Exception as e:
-            print(f"가져오기 ID실패: {e}")
+            logger.debug("Failed to enumerate process ids for %s: %s", process_name, e)
         return pids
 
     @classmethod
@@ -171,7 +174,7 @@ class BrowserControlFinder:
         expected_class_name = cls.CLASS_NAME_MAP.get(app_key)
 
         if not process_name:
-            print(f"지원하지 않음의사용이름: {app_name}")
+            logger.debug("Unsupported browser application name: %s", app_name)
             return None
 
         target_pids = cls._get_process_ids(process_name)
@@ -267,37 +270,6 @@ class BrowserControlFinder:
                     continue
 
         except Exception as e:
-            print(f"조회Document파일실패: {e}")
+            logger.debug("Failed to find document control: %s", e)
 
         return None
-
-
-# 사용예시
-if __name__ == "__main__":
-    print("정상에서조회창...")
-    start = time.perf_counter()
-
-    # 예시: 조회 Chrome 창 (가능으로열기 Chrome 시도)
-    # 결과가시도제목매칭, 가능으로입력이개매개변수, 예: "정도"
-    chrome_control = BrowserControlFinder.get_control_by_app_name("Chrome")
-
-    end1 = time.perf_counter()
-    print(f"조회창시: {(end1 - start) * 1000:.2f} ms")  # 해당예초단계
-
-    if chrome_control:
-        print(f"까지매칭창: {chrome_control.Name} | Handle: {hex(chrome_control.NativeWindowHandle)}")
-
-        # 가져오기 Document  (모듈분예조회, 일시간)
-        doc_start = time.perf_counter()
-        doc_control = BrowserControlFinder.get_document_control(chrome_control)
-        doc_end = time.perf_counter()
-
-        if doc_control:
-            print(f"까지Document파일: {doc_control.BoundingRectangle}")
-        else:
-            print("찾을 수 없는 Document파일")
-
-        print(f"조회내부모듈Document시: {doc_end - doc_start:.4f} 초")
-
-    else:
-        print("찾을 수 없는 지정사용의창")

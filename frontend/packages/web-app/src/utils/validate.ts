@@ -16,7 +16,7 @@ async function phoneValidate(_rule: Rule, value: string) {
  * 사용자빈격식검증
  */
 async function validateTrim(_rule: Rule, value: string) {
-  const trimReg = /\s+/g // 매칭빈격식
+  const trimReg = /\s+/ // 매칭빈격식
   if (trimReg.test(value)) {
     return Promise.reject(new Error('비밀번호에 공백을 사용할 수 없습니다.'))
   }
@@ -29,8 +29,7 @@ async function validateTrim(_rule: Rule, value: string) {
  * 사용자검증
  */
 async function validateAccount(_rule: Rule, value: string) {
-  console.log('validateAccount: ', value)
-  const accountReg = /\s+/g // 매칭빈격식
+  const accountReg = /\s+/ // 매칭빈격식
   if (!value) {
     return Promise.reject(new Error('계정을 입력하세요.'))
   }

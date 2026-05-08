@@ -18,7 +18,9 @@ function gen_time() {
 }
 
 function default_log(msg) {
-    console.log(msg)
+    if (typeof globalThis !== "undefined" && globalThis.SHOPRPA_WS_DEBUG) {
+        console.info("[ShopRPA websocket]", msg)
+    }
 }
 
 class BaseMsg {
@@ -441,9 +443,7 @@ class WsApp {
 //
 //        // 2.2 전송닫기 서버반환결과
 //        app.send_reply(send_msg.init(), 10, function(msg){
-//            console.log("send_reply", msg)
 //        }, function(error) {
-//            console.log("send_reply", error)
 //        })
 //
 //        // 2.3 전송아니요닫기 서버반환결과

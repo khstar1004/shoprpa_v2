@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import type { TreeProps } from 'ant-design-vue'
 import { Empty, Popover } from 'ant-design-vue'
 import { useTranslation } from 'i18next-vue'
@@ -89,11 +89,9 @@ function getGlobalVarTree(): VarTreeItem[] {
         : '전역 변수',
     }))
 
-  // TODO: generateValTree 합치기재완료, 해당출력
   return generateValTree(filterGlobalVarList as unknown as any[])
 }
 
-// 완료구성 매개변수
 function getParameterVarTree(): VarTreeItem[] {
   return processStore.parameters.map((item) => {
     const { desc, funcList } = processStore.globalVarTypeList[item.varType]

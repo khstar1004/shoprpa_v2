@@ -1,4 +1,4 @@
-﻿atomic:
+atomic:
   DataProcess.set_variable_value:
     title: 변수 값
     comment: 값 @{value} 변수 @{variable_var}
@@ -24,7 +24,7 @@
     helpManual: ''
     inputList:
       - key: input_data
-        title: 입력내용
+        title: 입력 내용
         tip: ''
       - key: convert_type
         title: 변환유형
@@ -35,12 +35,12 @@
         tip: ''
   DataConvertProcess.other_to_str:
     title: 형식변환텍스트
-    comment: 를입력내용 @{input_data} 변환로텍스트(문자열)형식, 반환변환후의결과 @{other_convert_str}
+    comment: 를입력 내용 @{input_data} 변환로텍스트(문자열)형식, 반환변환후의결과 @{other_convert_str}
     icon: format-to-text
     helpManual: ''
     inputList:
       - key: input_data
-        title: 입력내용
+        title: 입력 내용
         tip: ''
     outputList:
       - key: other_convert_str
@@ -53,7 +53,7 @@
     helpManual: ''
     inputList:
       - key: input_data
-        title: 입력내용
+        title: 입력 내용
         tip: ''
       - key: convert_type
         title: 변환유형
@@ -113,8 +113,8 @@
         title: 삭제후의딕셔너리
         tip: ''
   DictProcess.get_value_from_dict:
-    title: 딕셔너리가져오기값
-    comment: 가져오기딕셔너리 @{dict_data} 의로 @{dict_key} 의값 @{get_dict_value}
+    title: 딕셔너리 값 가져오기
+    comment: 딕셔너리 @{dict_data}에서 키 @{dict_key}의 값을 가져와 @{get_dict_value}에 저장합니다.
     icon: dict-get-value
     helpManual: ''
     inputList:
@@ -125,8 +125,8 @@
         title: (key)
         tip: ''
       - key: fail_option
-        title: 찾을 수 없습니다시관리방식
-        tip: 찾을 수 없습니다시여부출력예외또는반환값
+        title: 없을 때 처리 방식
+        tip: 값이 없을 때 오류를 출력할지 기본값을 반환할지 선택합니다
       - key: default_value
         title: 값
         tip: ''
@@ -135,8 +135,8 @@
         title: 딕셔너리값
         tip: ''
   DictProcess.get_keys_from_dict:
-    title: 가져오기딕셔너리모든
-    comment: 가져오기딕셔너리 @{dict_data} 의모든 @{get_dict_keys}
+    title: 딕셔너리 키 가져오기
+    comment: 딕셔너리 @{dict_data}의 모든 키를 가져와 @{get_dict_keys}에 저장합니다.
     icon: get-dict-all-keys
     helpManual: ''
     inputList:
@@ -148,8 +148,8 @@
         title: 목록
         tip: ''
   DictProcess.get_values_from_dict:
-    title: 가져오기딕셔너리모든값
-    comment: 가져오기딕셔너리 @{dict_data} 의모든값 @{get_dict_values}
+    title: 딕셔너리 값 목록 가져오기
+    comment: 딕셔너리 @{dict_data}의 모든 값을 가져와 @{get_dict_values}에 저장합니다.
     icon: get-dict-all-values
     helpManual: ''
     inputList:
@@ -240,8 +240,8 @@
         title: 수정후의목록
         tip: ''
   ListProcess.get_list_position:
-    title: 가져오기값에서목록위치
-    comment: 가져오기값 @{value} 에서목록 @{list_data} 의위치 @{get_list_position}
+    title: 목록에서 값 위치 가져오기
+    comment: 목록 @{list_data}에서 값 @{value}의 위치를 찾아 @{get_list_position}에 저장합니다.
     icon: get-value-position
     helpManual: ''
     inputList:
@@ -274,7 +274,7 @@
         tip: ''
       - key: del_pos
         title: 삭제위치
-        tip: 가능지정단일개또는다중개위치데이터, 다중개위치검색사용열기, 예: 1,3,5
+        tip: 단일 또는 여러 위치를 지정할 수 있습니다. 예시 - 1,3,5
     outputList:
       - key: removed_list_data
         title: 삭제후의목록
@@ -310,7 +310,7 @@
         tip: ''
   ListProcess.filter_elements_from_list:
     title: 제거목록중의다중
-    comment: 에서목록 @{list_data_1} 중제거목록 @{list_data_2} 중의요소, 반환제거후의목록 @{filter_list_data}
+    comment: 목록 @{list_data_1}에서 목록 @{list_data_2}의 항목을 제거하고 결과를 @{filter_list_data}에 저장합니다.
     icon: list-remove-multiple
     helpManual: ''
     inputList:
@@ -319,7 +319,7 @@
         tip: 필요관리의목록
       - key: list_data_2
         title: 제거원목록
-        tip: 필요제거의원목록, 결과가대기관리목록중있음제거원목록중의요소, 이면제거
+        tip: 제거할 항목 목록을 선택합니다. 원본 목록에서 이 목록에 포함된 항목을 제거합니다.
     outputList:
       - key: filter_list_data
         title: 제거후의목록
@@ -368,7 +368,7 @@
         tip: ''
   ListProcess.get_common_elements_from_list:
     title: 가져오기 개목록의재복사
-    comment: 가져오기목록 @{list_data_1} 및목록 @{list_data_2} 의재복사, 반환재복사목록 @{common_list_data}
+    comment: 목록 @{list_data_1}와 @{list_data_2}의 공통 항목을 가져와 @{common_list_data}에 저장합니다.
     icon: get-list-duplicates
     helpManual: ''
     inputList:
@@ -383,8 +383,8 @@
         title: 재복사목록
         tip: ''
   ListProcess.get_value_from_list:
-    title: 근거검색가져오기목록값
-    comment: 근거검색 @{index} 가져오기목록 @{list_data} 의값 @{get_list_value}
+    title: 인덱스로 목록 값 가져오기
+    comment: 목록 @{list_data}에서 인덱스 @{index}의 값을 가져와 @{get_list_value}에 저장합니다.
     icon: get-list-value-by-index
     helpManual: ''
     inputList:
@@ -399,8 +399,8 @@
         title: 값
         tip: ''
   ListProcess.get_length_of_list:
-    title: 가져오기목록길이정도
-    comment: 가져오기목록 @{list_data} 의길이정도 @{get_list_length}
+    title: 목록 길이 가져오기
+    comment: 목록 @{list_data}의 길이를 가져와 @{get_list_length}에 저장합니다.
     icon: get-list-length
     helpManual: ''
     inputList:
@@ -462,7 +462,7 @@
         tip: ''
       - key: add_sub
         title: 증가/
-        tip: 선택예증가예: 
+        tip: 선택한 방식으로 값을 더하거나 뺍니다.
       - key: add_sub_number
         title: 증가또는의숫자
         tip: ''
@@ -472,7 +472,7 @@
         tip: ''
   MathProcess.get_absolute_number:
     title: 가져오기 값
-    comment: 가져오기숫자 @{raw_number} 의값 @{absolute_number}
+    comment: 숫자 @{raw_number}의 절대값을 @{absolute_number}에 저장합니다.
     icon: get-absolute-value
     helpManual: ''
     inputList:
@@ -509,7 +509,7 @@
         title: 계획결과
         tip: ''
   StringProcess.extract_content_from_string:
-    title: 텍스트가져오기내용
+    title: 텍스트 내용 추출
     comment: 에서텍스트 @{text} 중가져오기 @{extract_type} 유형의내용
     icon: text-extract-content
     helpManual: ''
@@ -518,20 +518,20 @@
         title: 기존텍스트
         tip: 입력가져올내용의텍스트
       - key: extract_type
-        title: 가져오기유형
-        tip: 선택할가져오기의유형
+        title: 조회 유형
+        tip: 가져올 유형을 선택합니다.
       - key: regex_formula
         title: 정규식
-        tip: 정규식을 입력하세요. 예: [\\uac00-\\ud7a3]은 한글, \\d는 숫자, [a-zA-Z]는 영문을 추출합니다
+        tip: 정규식을 입력하세요. 예시 - [\\uac00-\\ud7a3]은 한글, \\d는 숫자, [a-zA-Z]는 영문을 추출합니다
       - key: first_flag
         title: 가져오기 일매칭내용
         tip: 여부가져오기 일매칭내용
     outputList:
       - key: extract_from_string
-        title: 가져오기내용
-        tip: 반환가져오기의내용
+        title: 조회 내용
+        tip: 가져온 내용을 반환합니다.
   StringProcess.replace_content_in_string:
-    title: 텍스트내용
+    title: 텍스트 내용
     comment: 를텍스트 @{text} 중의 @{replace_type} 유형내용 로 @{new_value}
     icon: text-replace-content
     helpManual: ''
@@ -594,49 +594,49 @@
         title: 분후의목록
         tip: 반환분후의목록
   StringProcess.concatenate_string:
-    title: 텍스트병합
-    comment: 를 @{string_data_1} 및 @{string_data_2} 병합로 @{concat_string}
+    title: 텍스트 병합
+    comment: 텍스트 @{string_data_1}와 @{string_data_2}를 병합해 @{concat_string}에 저장합니다.
     icon: text-merge
     helpManual: ''
     inputList:
       - key: string_data_1
-        title: 일개텍스트
-        tip: 입력필요병합의일개텍스트
+        title: 첫 번째 텍스트
+        tip: 병합할 첫 번째 텍스트를 입력합니다.
       - key: string_data_2
-        title: 이개텍스트
-        tip: 입력필요병합의이개텍스트
+        title: 두 번째 텍스트
+        tip: 병합할 두 번째 텍스트를 입력합니다.
       - key: concat_type
-        title: 병합유형
-        tip: 선택할병합의유형, 가능으로지정분기호
+        title: 구분 방식
+        tip: 두 텍스트 사이에 넣을 구분 방식을 선택합니다.
       - key: separator
-        title: 분기호
-        tip: 입력분기호
+        title: 구분자
+        tip: 직접 입력 구분자를 사용할 때 입력합니다.
     outputList:
       - key: concat_string
-        title: 병합후의텍스트
-        tip: 반환병합후의텍스트
+        title: 병합된 텍스트
+        tip: 병합 결과 텍스트를 반환합니다.
   StringProcess.fill_string_to_length:
-    title: 텍스트지정길이정도
-    comment: 를텍스트 @{string_data}  @{total_length} 길이정도, 방식로 @{fill_type}
+    title: 텍스트 길이 맞추기
+    comment: 텍스트 @{string_data}를 @{fill_type} 방향으로 채워 총 길이 @{total_length}에 맞춥니다.
     icon: text-pad-to-length
     helpManual: ''
     inputList:
       - key: string_data
-        title: 텍스트데이터
-        tip: 입력필요의텍스트데이터
+        title: 텍스트
+        tip: 길이를 맞출 텍스트를 입력합니다.
       - key: add_str
-        title: 문자
-        tip: ''
+        title: 채울 문자
+        tip: 부족한 길이를 채울 문자를 입력합니다.
       - key: total_length
-        title: 길이정도
-        tip: 입력필요의길이정도
+        title: 전체 길이
+        tip: 맞출 전체 길이를 입력합니다.
       - key: fill_type
-        title: 방식
-        tip: 선택방식, 가능으로선택왼쪽, 오른쪽
+        title: 채우기 방향
+        tip: 왼쪽 또는 오른쪽 중 채울 방향을 선택합니다.
     outputList:
       - key: complete_string
-        title: 후의텍스트
-        tip: ''
+        title: 처리된 텍스트
+        tip: 길이를 맞춘 텍스트를 반환합니다.
   StringProcess.strip_string:
     title: 텍스트제거공백
     comment: 를텍스트 @{string_data} 의공백제거 @{stripped_string}
@@ -656,19 +656,19 @@
   StringProcess.cut_string_to_length:
     title: 가져오기 지정길이정도텍스트
     comment: >-
-      를텍스트 @{string_data} 가져오기 @{length} 길이정도, 가져오기방식로 @{cut_type} , 반환가져오기후의텍스트
+      를텍스트 @{string_data} 가져오기 @{length} 길이정도, 조회 방식로 @{cut_type} , 반환추출 결과 텍스트
       @{cut_string}
     icon: screenshot-fixed-text
     helpManual: ''
     inputList:
       - key: string_data
-        title: 가져오기텍스트
+        title: 대상 텍스트
         tip: ''
       - key: length
-        title: 가져오기길이정도
+        title: 가져올 길이
         tip: ''
       - key: cut_type
-        title: 가져오기유형
+        title: 조회 유형
         tip: ''
       - key: index
         title: 에서개문자열기 가져오기
@@ -678,7 +678,7 @@
         tip: ''
     outputList:
       - key: cut_string
-        title: 가져오기후의텍스트
+        title: 추출 결과 텍스트
         tip: ''
   StringProcess.change_case_of_string:
     title: 변경수정텍스트크기
@@ -697,8 +697,8 @@
         title: 변경수정후의텍스트
         tip: ''
   StringProcess.get_string_length:
-    title: 가져오기텍스트길이정도
-    comment: 가져오기텍스트 @{string_data} 의길이정도 @{string_length}
+    title: 텍스트 길이 가져오기
+    comment: 텍스트 @{string_data}의 길이를 가져와 @{string_length}에 저장합니다.
     icon: get-text-length
     helpManual: ''
     inputList:
@@ -710,18 +710,18 @@
         title: 텍스트길이정도
         tip: ''
   TimeProcess.get_current_time:
-    title: 가져오기현재시간
-    comment: 가져오기현재시간, 형식로 @{time_format}, 반환현재시간객체 @{current_time}
+    title: 현재 시간 가져오기
+    comment: 현재 시간을 @{time_format} 형식으로 가져와 @{current_time}에 저장합니다.
     icon: get-current-time
     helpManual: ''
     inputList:
       - key: time_format
-        title: 시간형식
-        tip: ''
+        title: 시간 형식
+        tip: 현재 시간을 출력할 형식을 선택합니다.
     outputList:
       - key: current_time
-        title: 현재시간객체
-        tip: 반환값로시간객체, 가능통신경과빠름데이터또는변환기존가능출력문자열방식
+        title: 현재 시간
+        tip: 현재 시간을 시간 객체로 반환합니다. 필요하면 문자열로 변환해 사용할 수 있습니다.
   TimeProcess.set_time:
     title: 시간
     comment: 시간 @{time}, 방식로 @{change_type}, 반환후의시간객체 @{set_time}
@@ -757,9 +757,9 @@
         title: 시간객체
         tip: ''
   TimeProcess.time_to_timestamp:
-    title: 시간객체변환시간
+    title: 시간을 타임스탬프로 변환
     comment: >-
-      를시간객체 @{time} 변환로 @{timestamp_unit} 정도의시간, 반환변환후의시간
+      시간 객체 @{time}을 @{timestamp_unit} 단위의 타임스탬프로 변환해 결과에 저장합니다.
       @{converted_timestamp}
     icon: datetime-to-timestamp
     helpManual: ''
@@ -768,15 +768,15 @@
         title: 시간객체
         tip: ''
       - key: timestamp_unit
-        title: 시간정도
+        title: 시간 단위
         tip: ''
     outputList:
       - key: converted_timestamp
         title: 시간
         tip: ''
   TimeProcess.timestamp_to_time:
-    title: 시간변환시간객체
-    comment: 를시간 @{timestamp} 변환로시간객체 @{converted_time}
+    title: 타임스탬프를 시간으로 변환
+    comment: 타임스탬프 @{timestamp}를 시간 객체로 변환해 @{converted_time}에 저장합니다.
     icon: timestamp-to-datetime
     helpManual: ''
     inputList:
@@ -784,15 +784,15 @@
         title: 시간
         tip: ''
       - key: time_zone
-        title: 선택시
+        title: 시간대 선택
         tip: ''
     outputList:
       - key: converted_time
         title: 시간객체
         tip: ''
   TimeProcess.get_time_difference:
-    title: 가져오기시간
-    comment: 가져오기 @{time_1} 및 @{time_2} 의시간, 단일위치로 @{time_unit}, 반환시간 @{time_difference}
+    title: 시간 차이 가져오기
+    comment: 시간 @{time_1}과 @{time_2}의 차이를 @{time_unit} 단위로 계산해 @{time_difference}에 저장합니다.
     icon: get-time-difference
     helpManual: ''
     inputList:
@@ -803,15 +803,15 @@
         title: 시간객체2
         tip: ''
       - key: time_unit
-        title: 시간단일위치
+        title: 시간 단위
         tip: ''
     outputList:
       - key: time_difference
         title: 시간
         tip: ''
   TimeProcess.format_datetime:
-    title: 출력지정형식시간텍스트
-    comment: 를시간객체 @{time} 지정형식 @{format_type} 출력텍스트 @{format_datetime}
+    title: 지정 형식으로 시간 출력
+    comment: 시간 객체 @{time}을 @{format_type} 형식의 텍스트로 변환해 @{format_datetime}에 저장합니다.
     icon: output-formatted-time
     helpManual: ''
     inputList:
@@ -834,7 +834,7 @@ options:
     - value: float
       label: 데이터
     - value: bool
-      label: 불리언
+      label: 불리언 값
     - value: list
       label: 목록
     - value: dict
@@ -858,14 +858,14 @@ options:
     - value: str_to_tuple
       label: 문자열변환원그룹
     - value: str_to_bool
-      label: 문자열변환불리언
+      label: 문자열변환불리언 값
     - value: str_to_int
       label: 문자열변환정수
     - value: str_to_float
       label: 문자열변환데이터
   NoKeyOptionType:
     - value: raise_error
-      label: 출력예외
+      label: 오류 출력
     - value: return_default
       label: 반환값
   ListType:
@@ -920,7 +920,7 @@ options:
       label: 아니오
   ExtractType:
     - value: phone_number
-      label: 중대휴대폰 번호
+      label: 가운데 버튼대휴대폰 번호
     - value: email
       label: 메일함주소
     - value: url
@@ -928,7 +928,7 @@ options:
     - value: digit
       label: 숫자
     - value: id_number
-      label: 중대인증코드
+      label: 가운데 버튼대인증코드
     - value: regex
       label: 정규식
   Bool:
@@ -940,7 +940,7 @@ options:
     - value: string
       label: 문자열
     - value: phone_number
-      label: 중대휴대폰 번호
+      label: 가운데 버튼대휴대폰 번호
     - value: email
       label: 메일함주소
     - value: url
@@ -948,22 +948,22 @@ options:
     - value: digit
       label: 숫자
     - value: id_number
-      label: 중대인증코드
+      label: 가운데 버튼대인증코드
     - value: regex
       label: 정규식
   ConcatStringType:
     - value: none
-      label: 아니오사용분기호
+      label: 사용 안 함
     - value: linebreak
-      label: 행기호
+      label: 줄 바꿈
     - value: space
       label: 공백( )
     - value: hyphen
-      label: 문자(-)
+      label: 하이픈
     - value: underline
-      label: 아래계획(_)
+      label: 밑줄
     - value: other
-      label: 지정
+      label: 직접 입력
   FillStringType:
     - value: right
       label: 오른쪽
@@ -980,7 +980,7 @@ options:
     - value: first
       label: 에서일개문자열기 가져오기
     - value: index
-      label: 에서위치 지정열기 가져오기
+      label: 지정 위치부터 가져오기
     - value: string
       label: 에서지정문자열열기 가져오기
   CaseChangeType:
@@ -1010,11 +1010,11 @@ options:
     - value: '%H:%M:%S'
       label: 시:분:초
     - value: '%w'
-      label: 일의
+      label: 요일 번호
     - value: '%j'
-      label: 일년의
+      label: 연중 일수
     - value: '%W'
-      label: 일년의
+      label: 연중 주차
     - value: '%Y년%m월%d일'
       label: XXXX년XX월XX일
     - value: '%Y년%m월%d일 %H:%M'
@@ -1032,9 +1032,9 @@ options:
     - value: second
       label: 초
     - value: millisecond
-      label: 초
+      label: 밀리초
     - value: microsecond
-      label: 초
+      label: 마이크로초
   TimeZoneType:
     - value: UTC
       label: UTC시간
@@ -1048,7 +1048,7 @@ options:
     - value: hour
       label: 시
     - value: day
-      label: 
+      label: 일
     - value: month
       label: 월
     - value: year

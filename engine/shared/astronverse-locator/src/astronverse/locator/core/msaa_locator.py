@@ -139,7 +139,7 @@ class MSAAElement:
             role_id = self.get_acc_role()
             return ACC_ROLE_NAME_MAP.get(role_id)
         except Exception as e:
-            logger.info(f"가져오기tag_name출력예외{e}")
+            logger.info("MSAA role 이름 조회 중 예외: %s", e)
             return None
 
     def get_type(self):
@@ -320,7 +320,7 @@ class MSAAElement:
                 if is_match:
                     return index
 
-            logger.info(f"찾을 수 없는 매칭요소, 공유조회완료 {len(siblings)} 개요소")
+            logger.info("매칭 요소를 찾지 못했습니다. 확인한 형제 요소 수: %s", len(siblings))
             return 0
 
         except Exception as e:
@@ -479,7 +479,7 @@ class MSAAValidator:
                 if not next_elements:
                     return (
                         [],
-                        f"에서{depth + 1}단계찾을 수 없는 매칭요소: {target_desc['tag_name']} '{target_desc.get('name', '')}'",
+                        f"{depth + 1}단계에서 매칭 요소를 찾지 못했습니다: {target_desc['tag_name']} '{target_desc.get('name', '')}'",
                     )
 
                 current_elements = next_elements
@@ -558,8 +558,8 @@ class MSAAValidator:
                 logger.info("성공까지MSAA요소")
                 return MSAALocator(elements[0])
             else:
-                logger.info("찾을 수 없는 MSAA요소")
-                return False, "찾을 수 없는 MSAA요소", []
+                logger.info("MSAA 요소를 찾을 수 없습니다")
+                return False, "MSAA 요소를 찾을 수 없습니다", []
 
         except Exception as e:
             logger.info(f"MSAA경로검증예외: {str(e)}")

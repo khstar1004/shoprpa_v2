@@ -8,7 +8,7 @@ const isFirefox = Utils.getNavigatorUserAgent() === '$firefox$'
 export function checkDebuggerDetached(tabId, attempts = 0) {
   return new Promise((resolve, reject) => {
     if (attempts > 10) {
-      reject(new Error(ErrorMessage.DEBUGGER_TIMOUT))
+      reject(new Error(ErrorMessage.DEBUGGER_TIMEOUT))
       return
     }
 
@@ -19,7 +19,9 @@ export function checkDebuggerDetached(tabId, attempts = 0) {
         resolve(true)
       }
       else {
-        setTimeout(() => checkDebuggerDetached(tabId, attempts + 1), 500)
+        setTimeout(() => {
+          checkDebuggerDetached(tabId, attempts + 1).then(resolve, reject)
+        }, 500)
       }
     })
   })

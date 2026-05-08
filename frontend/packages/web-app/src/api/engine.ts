@@ -1,4 +1,4 @@
-﻿import http from './http'
+import http from './http'
 
 // 요소 선택 서비스 시작
 export async function startPickServices(data) {
@@ -52,7 +52,9 @@ export async function getCredentialList() {
 /**
  * @description: 생성인증
  * @param data 인증정보
- * @returns
+ * @param data.name 인증이름
+ * @param data.password 인증비밀번호
+ * @returns 생성된 인증정보
  */
 export async function createCredential(data: { name: string, password: string }) {
   return http.post('/scheduler/credential/create', data)
@@ -60,8 +62,8 @@ export async function createCredential(data: { name: string, password: string })
 
 /**
  * @description: 삭제인증
- * @param data 인증정보
- * @returns
+ * @param name 인증이름
+ * @returns 삭제결과
  */
 export async function deleteCredential(name: string) {
   return http.post('/scheduler/credential/delete', { name })

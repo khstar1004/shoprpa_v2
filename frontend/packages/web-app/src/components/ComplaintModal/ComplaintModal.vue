@@ -1,4 +1,4 @@
-﻿<script lang="ts" setup>
+<script lang="ts" setup>
 import { NiceModal } from '@rpa/components'
 import { createReusableTemplate } from '@vueuse/core'
 import type { UploadFile, UploadProps } from 'ant-design-vue'
@@ -135,8 +135,8 @@ async function handleSubmit() {
   const [error] = await to(aiFeedback({
     username: useUserStore().currentUserInfo?.name || useUserStore().currentUserInfo?.loginName,
     categories: JSON.stringify({
-      내용설치전체유형: formData.contentSafety,
-      공가능유형: formData.functionalDefect,
+      콘텐츠_안전: formData.contentSafety,
+      기능_문제: formData.functionalDefect,
     }),
     description: formData.description,
     imageIds: imageIds.filter(Boolean),

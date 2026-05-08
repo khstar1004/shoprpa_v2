@@ -1,4 +1,4 @@
-﻿import { VAR_IN_TYPE } from '@/constants/atom'
+import { VAR_IN_TYPE } from '@/constants/atom'
 import { generateAdvancedItems, generateExceptionItems, generateOutItems } from '@/views/Arrange/utils/generateData'
 
 import { SMART_COMPONENT_KEY_PREFIX } from '../config/constants'

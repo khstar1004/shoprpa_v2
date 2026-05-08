@@ -5,33 +5,33 @@ import { useRunningStore } from '@/stores/useRunningStore'
 import type { ArrangeTools } from '@/views/Arrange/types/arrangeTools'
 
 export function useToolsDebugNextStep() {
- const debugNextStep = () => {
- useRunningStore().nextStepDebug()
- }
- const item: ArrangeTools = {
- key: 'debugNextStep',
- title: 'debuggingNext',
- name: 'debuggingNext',
- fontSize: '',
- icon: 'tools-debug-next-step',
- action: '',
- loading: false,
- hotkey: NEXT_DEBUG,
- show: ({ status }) => ['debug'].includes(status),
- disable: ({ status, isBreak }) => ['free', 'run'].includes(status) || !isBreak,
- clickFn: debugNextStep,
- validateFn: ({ disable, show }) => {
- if (!show) {
- message.warning('먼저 디버그 모드를 시작하세요.')
- return false
- }
- if (disable) {
- message.warning('디버그 실행 중입니다. 잠시 후 다시 시도하세요.')
- return false
- }
+  const debugNextStep = () => {
+    useRunningStore().nextStepDebug()
+  }
+  const item: ArrangeTools = {
+    key: 'debugNextStep',
+    title: 'debuggingNext',
+    name: 'debuggingNext',
+    fontSize: '',
+    icon: 'tools-debug-next-step',
+    action: '',
+    loading: false,
+    hotkey: NEXT_DEBUG,
+    show: ({ status }) => ['debug'].includes(status),
+    disable: ({ status, isBreak }) => ['free', 'run'].includes(status) || !isBreak,
+    clickFn: debugNextStep,
+    validateFn: ({ disable, show }) => {
+      if (!show) {
+        message.warning('먼저 디버그 모드를 시작하세요.')
+        return false
+      }
+      if (disable) {
+        message.warning('디버그 실행 중입니다. 잠시 후 다시 시도하세요.')
+        return false
+      }
 
- return true
- },
- }
- return item
+      return true
+    },
+  }
+  return item
 }

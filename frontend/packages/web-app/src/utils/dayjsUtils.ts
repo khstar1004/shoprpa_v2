@@ -1,4 +1,4 @@
-﻿import dayjs from 'dayjs'
+import dayjs from 'dayjs'
 
 import { WEEK_MAP_INDAYJS } from '@/views/Home/config/task'
 

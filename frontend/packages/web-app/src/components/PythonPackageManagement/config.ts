@@ -1,9 +1,5 @@
 const mirrorList = [
-  { value: 'https://pypi.mirrors.ustc.edu.cn/simple/', disabled: false },
-  { value: 'https://mirrors.aliyun.com/pypi/simple', disabled: false },
-  { value: 'https://pypi.tuna.tsinghua.edu.cn/simple', disabled: false },
-  { value: 'https://pypi.python.org/simple', disabled: false },
-  { value: 'http://pypi.douban.com/simple/', disabled: false },
+  { value: 'https://pypi.org/simple', disabled: false },
 ]
 const pythonLoadingMap = {
   installing: {

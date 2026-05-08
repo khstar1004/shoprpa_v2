@@ -6,6 +6,7 @@ from typing import Any
 from astronverse.actionlib import AtomicFormType, AtomicFormTypeMeta, ReportTip
 from astronverse.actionlib.atomic import atomicMg
 from astronverse.actionlib.report import report
+from astronverse.baseline.logger.logger import logger
 from astronverse.script.error import *
 
 
@@ -80,6 +81,43 @@ class Script:
 
             res = main_func(**inn_kwargs)
             return res
+
+    @staticmethod
+    def _inline_module_call(content: str, module_param: list = None, __env__=None):
+        if not content or not content.strip():
+            return None
+
+        input_kwargs = {}
+        if __env__ is not None and hasattr(__env__, "to_dict"):
+            env_kwargs = __env__.to_dict()
+            if isinstance(env_kwargs, dict):
+                input_kwargs.update(env_kwargs)
+        if module_param:
+            for p in module_param:
+                input_kwargs[p.get("varName")] = p.get("varValue")
+
+        module_globals = {
+            "__builtins__": __builtins__,
+            "logger": logger,
+            "report": report,
+        }
+        exec(content, module_globals)
+
+        main_func = module_globals.get("main")
+        if not main_func or not callable(main_func):
+            return None
+
+        sig = inspect.signature(main_func)
+        params = sig.parameters
+        if any(p.kind == inspect.Parameter.VAR_KEYWORD for p in params.values()):
+            return main_func(**input_kwargs)
+
+        call_kwargs = {
+            key: value
+            for key, value in input_kwargs.items()
+            if key in params and params[key].kind in {inspect.Parameter.POSITIONAL_OR_KEYWORD, inspect.Parameter.KEYWORD_ONLY}
+        }
+        return main_func(**call_kwargs)
 
     @staticmethod
     def _get_auto_context() -> (dict, str):
@@ -176,8 +214,14 @@ class Script:
         ],
         outputList=[atomicMg.param("program_script", types="Any")],
     )
-    def module(content: Any, module_param: list = None):
+    def module(content: Any, module_param: list = None, **kwargs):
         """호출모듈"""
+        runtime_env = kwargs.get("__env__")
+        if isinstance(content, str) and not content.strip():
+            return None
+        if isinstance(content, str) and ("\n" in content or content.strip().startswith(("def ", "import ", "from "))):
+            return Script._inline_module_call(content=content, module_param=module_param, __env__=runtime_env)
+
         if isinstance(content, tuple):
             content, param_meta = content
         else:
@@ -188,6 +232,7 @@ class Script:
                 out_kwargs[p.get("varName")] = p.get("varValue")
 
         inn_kwargs, package, global_vars = Script._get_auto_context()
+        global_vars = global_vars or {}
         inn_kwargs = {**global_vars, **inn_kwargs}
 
         # 로완료내용 버전출력

@@ -71,7 +71,7 @@
         tip: ''
   Encrypt.base64_encoding:
     title: Base64코드
-    comment: 가져오기문자열또는이미지파일코드로Base64문자열, 반환코드후의문자열(@{encoded_string})
+    comment: 문자열 또는 이미지 파일을 Base64 문자열로 인코딩하고 결과를 @{encoded_string}에 저장합니다.
     icon: base64-encode
     helpManual: ''
     inputList:
@@ -101,14 +101,14 @@
         title: Base64문자열
         tip: ''
       - key: file_path
-        title: 이미지저장폴더
+        title: 이미지 저장 폴더
         tip: ''
       - key: file_name
         title: 이미지파일이름
         tip: ''
       - key: exist_handle_type
         title: 저장된 이름파일관리방식
-        tip: 선택존재함파일관리방식, 지원덮어쓰기기존있음파일, 생성파일본, 건너뛰기저장
+        tip: 기존 파일이 있을 때 처리 방식을 선택합니다. 덮어쓰기, 사본 생성, 저장 건너뛰기를 지원합니다.
     outputList:
       - key: decoded_string
         title: 해제코드후의문자열/이미지경로
@@ -150,8 +150,8 @@ options:
       label: 이미지
   FileExistenceType:
     - value: overwrite
-      label: 덮어쓰기기존있음파일
+      label: 기존 파일 덮어쓰기
     - value: rename
-      label: 생성파일본
+      label: 사본 파일 생성
     - value: cancel
-      label: 건너뛰기저장
+      label: 저장 건너뛰기

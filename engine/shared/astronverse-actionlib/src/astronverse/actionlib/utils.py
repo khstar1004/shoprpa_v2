@@ -8,8 +8,9 @@ from astronverse.actionlib.error import *
 from astronverse.actionlib.logger import logger
 
 
-# 근거서비스이름, 사용 keyring 저장
-SERVICE_NAME = "Shoprpa"
+# keyring service names. Keep the legacy spelling readable for existing installs.
+SERVICE_NAME = "ShopRPA"
+LEGACY_SERVICE_NAMES = ("Shoprpa",)
 
 # 빈비밀번호값, 사용분"빈비밀번호"및"아니요저장에서"
 EMPTY_PASSWORD_SENTINEL = "__RPA__Credential__EMPTY__PASSWORD__"
@@ -39,8 +40,12 @@ class Credential:
             인증비밀번호(아니요저장에서반환 None, 저장에서가능반환빈문자열)
         """
         try:
-            stored = keyring.get_password(SERVICE_NAME, name)
-            return Credential._decode_password(stored)
+            for service_name in (SERVICE_NAME, *LEGACY_SERVICE_NAMES):
+                stored = keyring.get_password(service_name, name)
+                decoded = Credential._decode_password(stored)
+                if decoded is not None:
+                    return decoded
+            return None
         except Exception as e:
             logger.exception(f"가져오기 인증실패: {e}")
             return None

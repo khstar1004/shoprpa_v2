@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import {
   CheckCircleOutlined,
   CloseCircleOutlined,
@@ -156,7 +156,6 @@ async function validateTypedEmail(_rule, value) {
   if (type === 'customMail') {
     pattern = /^([\w-])+@([\w-])+\.[\w-]+$/
   }
-  // console.log('pattern: ', pattern)
   if (pattern && pattern.test(email.emailAccount)) {
     return Promise.resolve()
   }

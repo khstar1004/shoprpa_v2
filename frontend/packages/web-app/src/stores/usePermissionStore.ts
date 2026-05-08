@@ -1,7 +1,7 @@
-﻿import { defineStore } from 'pinia'
+import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
-import { permission } from '@/api/permission' // 완료의요청 
+import { permission } from '@/api/permission' // 완료의요청
 
 export interface PermItem {
   resource: string

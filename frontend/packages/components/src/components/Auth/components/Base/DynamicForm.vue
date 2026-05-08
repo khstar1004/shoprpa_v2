@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { Checkbox, Form, Input, Select, Textarea } from 'ant-design-vue'
 import type { FormInstance } from 'ant-design-vue'
 import { h, ref } from 'vue'

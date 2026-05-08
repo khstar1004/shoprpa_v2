@@ -1,4 +1,4 @@
 ﻿"""
-Shoprpaverse CUA - Computer Use Agent
-사용대유형의기존가능컴포넌트
+ShopRPA CUA - Computer Use Agent
+Screen automation components for computer-use workflows.
 """

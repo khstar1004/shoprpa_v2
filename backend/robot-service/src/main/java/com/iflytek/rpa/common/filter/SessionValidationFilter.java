@@ -102,6 +102,10 @@ public class SessionValidationFilter extends OncePerRequestFilter {
             return true;
         }
 
+        if (uri.contains("/health")) {
+            return true;
+        }
+
         if (StringUtils.isBlank(sessionFilterExclude)) {
             return false;
         }

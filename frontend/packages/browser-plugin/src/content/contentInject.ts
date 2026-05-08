@@ -1,4 +1,4 @@
-﻿import { DEEP_SEARCH_TRIGGER, ELEMENT_SEARCH_TRIGGER, ErrorMessage, HIGH_LIGHT_BORDER, HIGH_LIGHT_DURATION, SCROLL_DELAY, SCROLL_TIMES, StatusCode } from './constant'
+import { DEEP_SEARCH_TRIGGER, ELEMENT_SEARCH_TRIGGER, ErrorMessage, HIGH_LIGHT_BORDER, HIGH_LIGHT_DURATION, SCROLL_DELAY, SCROLL_TIMES, StatusCode } from './constant'
 import { similarBatch, similarListBatch, tableColumnDataBatch, tableDataBatch, tableDataFormatterProcure, tableHeaderBatch } from './dataBatch'
 import {
   filterVisibleElements,
@@ -30,6 +30,11 @@ let deepTimeoutId: number | null
 let highlightTime = 0
 const frontCheckEnabled = false
 let deepSearchEnabled = false
+
+function emitDebuggerFrameSignal(frameId: number) {
+  globalThis.console?.log?.(`rpa_debugger_on:${frameId}`)
+}
+
 /**
  * Handles a mouse event to locate and process a DOM element at the event's coordinates.
  *
@@ -119,7 +124,7 @@ function formatElementInfo(element: HTMLElement, target: Document | ShadowRoot, 
   const dirs = shadowDirs.length > 0 ? shadowDirs.concat([{ tag: '$shadow$', checked: true, value: '$shadow$', attrs: [] }], pathDirs) : pathDirs
   const tag = Utils.getTag(element)
   const innerText = Utils.pureText(getText(element)).substring(0, 10)
-  const text = innerText ? Utils.pureText(innerText) : 'unknown'
+  const text = innerText ? Utils.pureText(innerText) : '텍스트 없음'
   const elementData = {
     matchTypes: [],
     checkType: 'shadowRoot' in target ? 'customization' : 'visualization',
@@ -166,10 +171,10 @@ function elementNotFoundReason(data: ElementInfo) {
   if (data.pathDirs && data.pathDirs.length === 0 && checkType === 'visualization') {
     return Utils.fail(ErrorMessage.ELEMENT_INFO_INCOMPLETE, StatusCode.ELEMENT_NOT_FOUND)
   }
-  let message = '찾을 수 없는 요소'
+  let message = '요소를 찾을 수 없습니다.'
   const result = elementChangeWatcher(data)
   if (!result.found) {
-    message = `요소에서${result.notFoundIndex}${result.notFoundStep}발송변수`
+    message = `${result.notFoundIndex}번째 선택자 단계에서 요소를 찾지 못했습니다: ${result.notFoundStep}`
   }
   return Utils.fail(message, StatusCode.ELEMENT_NOT_FOUND)
 }
@@ -183,21 +188,23 @@ function elementNotFoundReason(data: ElementInfo) {
  * @param dom - The target HTMLElement to dispatch mouse events on.
  * @param events - An array of mouse event types (e.g., 'mousedown', 'mouseup', 'click') to dispatch in order.
  * @param coords - Optional coordinates for the mouse events. If not provided, defaults to `{ clientX: 0, clientY: 0 }`.
+ * @param coords.clientX - Optional client X coordinate.
+ * @param coords.clientY - Optional client Y coordinate.
  */
 function dispatchMouseSequence(
   dom: HTMLElement,
   events: string[],
   coords?: { clientX?: number, clientY?: number },
 ) {
+  const eventWindow = dom.ownerDocument?.defaultView || window
   const base: MouseEventInit = {
     bubbles: true,
     cancelable: true,
-    view: window,
     clientX: coords?.clientX ?? 0,
     clientY: coords?.clientY ?? 0,
   }
   for (const type of events) {
-    queueMicrotask(() => dom.dispatchEvent(new MouseEvent(type, base)))
+    queueMicrotask(() => dom.dispatchEvent(new eventWindow.MouseEvent(type, base)))
   }
 }
 
@@ -694,7 +701,7 @@ const ContentHandler = {
         }
       }
       catch (e) {
-        return Utils.fail(`클릭요소실패: ${e}`, StatusCode.EXECUTE_ERROR)
+        return Utils.fail(`요소 클릭에 실패했습니다: ${e}`, StatusCode.EXECUTE_ERROR)
       }
       return Utils.success(true)
     },
@@ -1021,7 +1028,7 @@ const ContentHandler = {
     },
     getFrameInfo(data: { frameId: number }) {
       const { frameId } = data
-      console.log(`rpa_debugger_on:${frameId}`) // !!! Do not delete. Rely on this code to determine which frame chrome.debugger is injected into
+      emitDebuggerFrameSignal(frameId)
       currentFrameInfo.frameId = frameId
       tagFrames()
       return currentFrameInfo

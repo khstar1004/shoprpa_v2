@@ -6,11 +6,11 @@ import Content from './Content.vue'
 
 export default definePlugin({
   activate: async (_context: IPluginContext) => {
-    console.log('[SimplePluginExample] 확장중...')
+    console.log('[SimplePluginExample] 확장이 시작되었습니다.')
   },
   deactivate: () => {
-    console.log('[SimplePluginExample] 확장중지사용중...')
-    console.log('[SimplePluginExample] 확장중지사용완료')
+    console.log('[SimplePluginExample] 확장을 중지하는 중입니다.')
+    console.log('[SimplePluginExample] 확장이 중지되었습니다.')
   },
   contributes: {
     settingsTabs: [

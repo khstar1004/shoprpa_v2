@@ -124,8 +124,7 @@ const editor = useEditor({
           event.preventDefault()
           return true
         }
-        catch (error) {
-          console.log(error)
+        catch {
           return false
         }
       }

@@ -1,4 +1,4 @@
-﻿// TiptapEditor 닫기의유형지정
+// TiptapEditor 닫기의유형지정
 
 export interface ElementAttrs {
   name: string

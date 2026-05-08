@@ -1,4 +1,4 @@
-﻿import { message } from 'ant-design-vue'
+import { message } from 'ant-design-vue'
 import { isUndefined, last } from 'lodash-es'
 import { nextTick } from 'vue'
 
@@ -26,272 +26,269 @@ import { addMultiSelectId, changeSelectAtoms, deleteMultiSelectId, getLastClickA
 export const MAX_ATOM_NUM = 2000
 
 export function getBreakpointClass(atomData?: any) {
- // console.log('중단점')
- const cls = ['row-breakpoint']
- atomData.breakpoint && cls.push('active')
- DISABLED_BREAKPOINT_TYPE.includes(atomData.key) && cls.push('disabled')
- return cls.join(' ')
+  const cls = ['row-breakpoint']
+  atomData.breakpoint && cls.push('active')
+  DISABLED_BREAKPOINT_TYPE.includes(atomData.key) && cls.push('disabled')
+  return cls.join(' ')
 }
 
 // 동작시, 수정위치
 export function draggableAddStyle() {
- nextTick(() => {
- const ghost = document.querySelector('#listwrapper .sortable-ghost') as HTMLElement
- const prevNode = ghost.previousSibling
- const nextNode = ghost.nextSibling
- const level = Math.max(
- Reflect.get(prevNode || {}, '__draggable_context')?.element.level || 1,
- Reflect.get(nextNode || {}, '__draggable_context')?.element.level || 1,
- )
- ghost.style.setProperty('--indent', `${82 + (level - 1) * PAGE_LEVEL_INDENT}px`)
- })
+  nextTick(() => {
+    const ghost = document.querySelector('#listwrapper .sortable-ghost') as HTMLElement
+    const prevNode = ghost.previousSibling
+    const nextNode = ghost.nextSibling
+    const level = Math.max(
+      Reflect.get(prevNode || {}, '__draggable_context')?.element.level || 1,
+      Reflect.get(nextNode || {}, '__draggable_context')?.element.level || 1,
+    )
+    ghost.style.setProperty('--indent', `${82 + (level - 1) * PAGE_LEVEL_INDENT}px`)
+  })
 }
 
 // 추가원자 기능
 export async function addAtomData(key: string, preIndex?: number | number[], isDrag = false) {
- const { simpleFlowUIData, activeAtom } = useFlowStore()
+  const { simpleFlowUIData, activeAtom } = useFlowStore()
 
- let idx = preIndex
- if (isUndefined(idx)) {
- idx = activeAtom ? simpleFlowUIData.findIndex(i => i.id === activeAtom.id) + 1 : simpleFlowUIData.length
- }
+  let idx = preIndex
+  if (isUndefined(idx)) {
+    idx = activeAtom ? simpleFlowUIData.findIndex(i => i.id === activeAtom.id) + 1 : simpleFlowUIData.length
+  }
 
- const atom = await createFlowNode(key, idx, isDrag)
- // 기록원자 기능사용이력
- if (key) {
- const atom = useProcessStore().atomicTreeDataFlat.find(atom => atom.key === key)
- atom && recordAtomUsage(atom)
- }
- BUS.$emit('toggleAtomForm', true)
+  const atom = await createFlowNode(key, idx, isDrag)
+  // 기록원자 기능사용이력
+  if (key) {
+    const atom = useProcessStore().atomicTreeDataFlat.find(atom => atom.key === key)
+    atom && recordAtomUsage(atom)
+  }
+  BUS.$emit('toggleAtomForm', true)
 
- return atom
+  return atom
 }
 
 // 동작원자 기능
 export function moveAtomData(from: number, to: number, dragId: string) {
- const endIdx = backContainNodeIdx(dragId)
- const conditionId = getMultiSelectIds(dragId)
- if ((endIdx > -1 && from < to && endIdx >= to) || (to > 0 && useFlowStore().simpleFlowUIData[to - 1].id === conditionId[conditionId.length - 1])) {
- const dragAtom = useFlowStore().simpleFlowUIData.splice(to, 1)
- useFlowStore().setSimpleFlowUIDataByType(dragAtom, from, false)
- return
- }
- useProjectDocStore().moveProcessNode(from, to, dragId)
- changeSelectAtoms(dragId, conditionId, true)
+  const endIdx = backContainNodeIdx(dragId)
+  const conditionId = getMultiSelectIds(dragId)
+  if ((endIdx > -1 && from < to && endIdx >= to) || (to > 0 && useFlowStore().simpleFlowUIData[to - 1].id === conditionId[conditionId.length - 1])) {
+    const dragAtom = useFlowStore().simpleFlowUIData.splice(to, 1)
+    useFlowStore().setSimpleFlowUIDataByType(dragAtom, from, false)
+    return
+  }
+  useProjectDocStore().moveProcessNode(from, to, dragId)
+  changeSelectAtoms(dragId, conditionId, true)
 }
 
 // 그룹
 export function group(atomIds: string[]) {
- let allIds = atomIds
- if (atomIds.length === 2 && atomIds.every(id => id.startsWith('group_'))) {
- allIds = getMultiSelectIds(atomIds[0])
- }
- let idxList = allIds.map(i => useFlowStore().simpleFlowUIData.findIndex(ui => ui.id === i))
- if (!isContinuous(idxList)) {
- message.error(i18next.t('arrange.nodesNotContinuous'))
- return false
- }
- idxList = idxList.sort((a, b) => a - b)
- addAtomData(Group, [idxList[0], last(idxList) + 2])
- toggleContextmenu({ visible: false })
+  let allIds = atomIds
+  if (atomIds.length === 2 && atomIds.every(id => id.startsWith('group_'))) {
+    allIds = getMultiSelectIds(atomIds[0])
+  }
+  let idxList = allIds.map(i => useFlowStore().simpleFlowUIData.findIndex(ui => ui.id === i))
+  if (!isContinuous(idxList)) {
+    message.error(i18next.t('arrange.nodesNotContinuous'))
+    return false
+  }
+  idxList = idxList.sort((a, b) => a - b)
+  addAtomData(Group, [idxList[0], last(idxList) + 2])
+  toggleContextmenu({ visible: false })
 }
 
 // 해제그룹
 export function ungroup(atomIds: string[]) {
- deleteFlowNode(atomIds)
- toggleContextmenu({ visible: false })
+  deleteFlowNode(atomIds)
+  toggleContextmenu({ visible: false })
 }
 
 function validateAndDeleteNodes(atomIds: string[], isCut: boolean = false) {
- const errors = validateSelectedNodes(atomIds)
+  const errors = validateSelectedNodes(atomIds)
 
- if (errors.includes(ERR_PARENT_NOT_CONTAINS_ALL_CHILD)) {
- message.warning(i18next.t('arrange.hasUnselectedChildNodes'))
- return false
- }
+  if (errors.includes(ERR_PARENT_NOT_CONTAINS_ALL_CHILD)) {
+    message.warning(i18next.t('arrange.hasUnselectedChildNodes'))
+    return false
+  }
 
- if (isCut) {
- const allSelectItem = atomIds.map(i => useProjectDocStore().userFlowNode().find(item => item.id === i))
- setClipBoardData(useProcessStore().project.id, allSelectItem, 'cut')
- }
+  if (isCut) {
+    const allSelectItem = atomIds.map(i => useProjectDocStore().userFlowNode().find(item => item.id === i))
+    setClipBoardData(useProcessStore().project.id, allSelectItem, 'cut')
+  }
 
- deleteFlowNode(atomIds)
- toggleContextmenu({ visible: false })
- return true
+  deleteFlowNode(atomIds)
+  toggleContextmenu({ visible: false })
+  return true
 }
 
 // 삭제원자 기능
 export function deleteAtomData(deleteNodes: string[]) {
- validateAndDeleteNodes(deleteNodes)
- if (useFlowStore().simpleFlowUIData.length < 1) {
- BUS.$emit('toggleAtomForm', false)
- }
+  validateAndDeleteNodes(deleteNodes)
+  if (useFlowStore().simpleFlowUIData.length < 1) {
+    BUS.$emit('toggleAtomForm', false)
+  }
 }
 
 // 량사용/사용 안 함
 export function batchToggleNode(atomIds: string[], atom: any) {
- const flag = atom.disabled
- changeDisable(atomIds, !flag)
- const idxArr = []
- const nodes = []
- atomIds.forEach((i) => {
- const idx = useFlowStore().simpleFlowUIData.findIndex(ui => ui.id === i)
- idxArr.push(idx)
- nodes.push(useFlowStore().simpleFlowUIData[idx])
- })
- useProjectDocStore().updateProcessNode(idxArr, nodes)
- if (atomIds.includes(useFlowStore().activeAtom?.id)) {
- useFlowStore().activeAtom.disabled = !flag
- }
- toggleContextmenu({ visible: false })
+  const flag = atom.disabled
+  changeDisable(atomIds, !flag)
+  const idxArr = []
+  const nodes = []
+  atomIds.forEach((i) => {
+    const idx = useFlowStore().simpleFlowUIData.findIndex(ui => ui.id === i)
+    idxArr.push(idx)
+    nodes.push(useFlowStore().simpleFlowUIData[idx])
+  })
+  useProjectDocStore().updateProcessNode(idxArr, nodes)
+  if (atomIds.includes(useFlowStore().activeAtom?.id)) {
+    useFlowStore().activeAtom.disabled = !flag
+  }
+  toggleContextmenu({ visible: false })
 }
 
 export function toggleBreakPoint(atomIds: string[], flag: boolean) {
- const flowUIData = useFlowStore().simpleFlowUIData
- const docStore = useProjectDocStore()
- atomIds.forEach((i) => {
- const findIdx = flowUIData.findIndex(ui => ui.id === i)
- if (DISABLED_BREAKPOINT_TYPE.includes(flowUIData[findIdx]?.key)) {
- return message.warning(i18next.t('arrange.breakpointNotAllowed'))
- }
- flowUIData[findIdx].breakpoint = flag
- docStore.updateProcessNode([findIdx], [flowUIData[findIdx]])
- })
- useRunningStore().breakPointDebug(flag, atomIds.map((i) => { return { process_id: useProcessStore().activeProcessId, line: flowUIData.findIndex(ui => ui.id === i) + 1 } }))
- toggleContextmenu({ visible: false })
+  const flowUIData = useFlowStore().simpleFlowUIData
+  const docStore = useProjectDocStore()
+  atomIds.forEach((i) => {
+    const findIdx = flowUIData.findIndex(ui => ui.id === i)
+    if (DISABLED_BREAKPOINT_TYPE.includes(flowUIData[findIdx]?.key)) {
+      return message.warning(i18next.t('arrange.breakpointNotAllowed'))
+    }
+    flowUIData[findIdx].breakpoint = flag
+    docStore.updateProcessNode([findIdx], [flowUIData[findIdx]])
+  })
+  useRunningStore().breakPointDebug(flag, atomIds.map((i) => { return { process_id: useProcessStore().activeProcessId, line: flowUIData.findIndex(ui => ui.id === i) + 1 } }))
+  toggleContextmenu({ visible: false })
 }
 
-// 열기 
+// 열기
 export function toggleFold(atom: RPA.Atom) {
- atom.isOpen = !atom.isOpen
- useFlowStore().setFlowNodeExpand(atom)
- toggleContextmenu({ visible: false })
+  atom.isOpen = !atom.isOpen
+  useFlowStore().setFlowNodeExpand(atom)
+  toggleContextmenu({ visible: false })
 };
 
 // 클릭원자 기능
 export function clickAtom($event: MouseEvent, atomData?: RPA.Atom) {
- toggleContextmenu({
- visible: false,
- })
- const findIdx = useFlowStore().simpleFlowUIData.findIndex(i => i.id === atomData?.id)
- if (findIdx === -1)
- return
- if (useFlowStore().multiSelect) {
- console.log('선택중상태', atomData.checked)
- // 열기시작다중선택방식시-지원하지 않음ctrl, shift다중선택, 만약완료선택중, 이면가져오기메시지선택중, 아니오이면선택중
- atomData.checked ? deleteMultiSelectId(atomData.id) : addMultiSelectId(atomData.id)
- useFlowStore().setActiveAtom(useFlowStore().simpleFlowUIData[findIdx])
- }
- else {
- // 미완료열기시작다중선택방식시, 지원ctrl, shift다중선택
- setMultiSelectByClick(atomData, findIdx, $event.ctrlKey, $event.shiftKey)
- }
+  toggleContextmenu({
+    visible: false,
+  })
+  const findIdx = useFlowStore().simpleFlowUIData.findIndex(i => i.id === atomData?.id)
+  if (findIdx === -1)
+    return
+  if (useFlowStore().multiSelect) {
+    // 열기시작다중선택방식시-지원하지 않음ctrl, shift다중선택, 만약완료선택중, 이면가져오기메시지선택중, 아니오이면선택중
+    atomData.checked ? deleteMultiSelectId(atomData.id) : addMultiSelectId(atomData.id)
+    useFlowStore().setActiveAtom(useFlowStore().simpleFlowUIData[findIdx])
+  }
+  else {
+    // 미완료열기시작다중선택방식시, 지원ctrl, shift다중선택
+    setMultiSelectByClick(atomData, findIdx, $event.ctrlKey, $event.shiftKey)
+  }
 }
 
 // 더블클릭원자 기능
 export function dbclickAtom($event: MouseEvent, atomData?: RPA.Atom) {
- toggleContextmenu({
- visible: false,
- })
- const findIdx = useFlowStore().simpleFlowUIData.findIndex(i => i.id === atomData?.id)
- if (useFlowStore().multiSelect) {
- // 열기시작다중선택방식시-지원하지 않음ctrl, shift다중선택, 만약미완료선택중, 이면선택중
- !atomData.checked && addMultiSelectId(atomData.id)
- useFlowStore().setActiveAtom(useFlowStore().simpleFlowUIData[findIdx])
- }
- else {
- setMultiSelectByClick(atomData, findIdx, $event.ctrlKey, $event.shiftKey)
- }
- BUS.$emit('toggleAtomForm', true)
+  toggleContextmenu({
+    visible: false,
+  })
+  const findIdx = useFlowStore().simpleFlowUIData.findIndex(i => i.id === atomData?.id)
+  if (useFlowStore().multiSelect) {
+    // 열기시작다중선택방식시-지원하지 않음ctrl, shift다중선택, 만약미완료선택중, 이면선택중
+    !atomData.checked && addMultiSelectId(atomData.id)
+    useFlowStore().setActiveAtom(useFlowStore().simpleFlowUIData[findIdx])
+  }
+  else {
+    setMultiSelectByClick(atomData, findIdx, $event.ctrlKey, $event.shiftKey)
+  }
+  BUS.$emit('toggleAtomForm', true)
 }
 
 // 열기시작다중선택방식, 체크박스change
 export function checkboxChange(checkValue: boolean, atomData?: any) {
- checkValue ? addMultiSelectId(atomData.id) : deleteMultiSelectId(atomData.id)
+  checkValue ? addMultiSelectId(atomData.id) : deleteMultiSelectId(atomData.id)
 }
 
 // 오른쪽 버튼메뉴
 export function contextmenu($event: MouseEvent, atomData?: any) {
- toggleContextmenu({
- visible: true,
- $event,
- atom: atomData,
- })
+  toggleContextmenu({
+    visible: true,
+    $event,
+    atom: atomData,
+  })
 }
 
 export function copy(atomIds: string[]) {
- const flowStore = useFlowStore()
- const processStore = useProcessStore()
- const allSelectUserItem = flowStore.simpleFlowUIData.reduce((acc, item) => {
- if (atomIds.includes(item.id))
- acc.push(item)
- return acc
- }, [] as any[])
- setClipBoardData(processStore.project.id, allSelectUserItem, 'copy')
- toggleContextmenu({ visible: false })
- message.success('복사성공')
+  const flowStore = useFlowStore()
+  const processStore = useProcessStore()
+  const allSelectUserItem = flowStore.simpleFlowUIData.reduce((acc, item) => {
+    if (atomIds.includes(item.id))
+      acc.push(item)
+    return acc
+  }, [] as any[])
+  setClipBoardData(processStore.project.id, allSelectUserItem, 'copy')
+  toggleContextmenu({ visible: false })
+  message.success('복사성공')
 }
 
 export function cut(atomIds: string[]) {
- validateAndDeleteNodes(atomIds, true)
+  validateAndDeleteNodes(atomIds, true)
 }
 
 export function paste() {
- const flowStore = useFlowStore()
- toggleContextmenu({ visible: false })
- getClipBoardData((clipBoardData) => {
- const clipBoardAtoms = clipBoardData.atoms
- const lastSelectId = getLastClickAtomId() ?? flowStore.selectedAtomIds[flowStore.selectedAtomIds.length - 1]
- if (!clipBoardAtoms) {
- message.warning('클립보드가 비어 있어 붙여넣을 수 없습니다.')
- return
- }
- if (flowStore.simpleFlowUIData.length && !flowStore.activeAtom) {
- message.warning('붙여넣을 위치를 먼저 선택하세요.')
- return
- }
- const pasteAtoms = generatePasteAtoms(clipBoardAtoms)
- Promise.allSettled(pasteAtoms.map(i => loopAtomByKey(i.key))).then(() => {
- let idx = flowStore.simpleFlowUIData.findIndex(i => i.id === lastSelectId) + 1
- useProjectDocStore().insertASTFlowNode(lastSelectId, idx, pasteAtoms, false)
- useProjectDocStore().addProcessNode(idx, pasteAtoms)
- pasteAtoms.forEach((item) => {
- item.level = useProjectDocStore().gainASTNodeById(item.id).level
- flowStore.setSimpleFlowUIDataByType(item, idx, false)
- idx++
- })
- changeSelectAtoms(pasteAtoms[pasteAtoms.length - 1].id, pasteAtoms.map(i => i.id), true)
- })
- })
+  const flowStore = useFlowStore()
+  toggleContextmenu({ visible: false })
+  getClipBoardData((clipBoardData) => {
+    const clipBoardAtoms = clipBoardData.atoms
+    const lastSelectId = getLastClickAtomId() ?? flowStore.selectedAtomIds[flowStore.selectedAtomIds.length - 1]
+    if (!clipBoardAtoms) {
+      message.warning('클립보드가 비어 있어 붙여넣을 수 없습니다.')
+      return
+    }
+    if (flowStore.simpleFlowUIData.length && !flowStore.activeAtom) {
+      message.warning('붙여넣을 위치를 먼저 선택하세요.')
+      return
+    }
+    const pasteAtoms = generatePasteAtoms(clipBoardAtoms)
+    Promise.allSettled(pasteAtoms.map(i => loopAtomByKey(i.key))).then(() => {
+      let idx = flowStore.simpleFlowUIData.findIndex(i => i.id === lastSelectId) + 1
+      useProjectDocStore().insertASTFlowNode(lastSelectId, idx, pasteAtoms, false)
+      useProjectDocStore().addProcessNode(idx, pasteAtoms)
+      pasteAtoms.forEach((item) => {
+        item.level = useProjectDocStore().gainASTNodeById(item.id).level
+        flowStore.setSimpleFlowUIDataByType(item, idx, false)
+        idx++
+      })
+      changeSelectAtoms(pasteAtoms[pasteAtoms.length - 1].id, pasteAtoms.map(i => i.id), true)
+    })
+  })
 }
 
 export function debug(atomIds: any) {
- const processStore = useProcessStore()
+  const processStore = useProcessStore()
 
- const idxList = atomIds.map(i => useFlowStore().simpleFlowUIData.findIndex(ui => ui.id === i))
- if (atomIds.length > 0 && !isContinuous(idxList)) {
- message.warning('선택한 노드가 연속되어 있지 않아 실행하거나 디버그할 수 없습니다.')
- return false
- }
- processStore.saveProject().then(() => {
- const startLine = idxList[0] + 1
- const endLine = atomIds.length === 1 ? startLine : idxList[idxList.length - 1] + 1
- useRunningStore().startRun(useProcessStore().project.id, useProcessStore().activeProcessId, startLine, endLine)
- })
+  const idxList = atomIds.map(i => useFlowStore().simpleFlowUIData.findIndex(ui => ui.id === i))
+  if (atomIds.length > 0 && !isContinuous(idxList)) {
+    message.warning('선택한 노드가 연속되어 있지 않아 실행하거나 디버그할 수 없습니다.')
+    return false
+  }
+  processStore.saveProject().then(() => {
+    const startLine = idxList[0] + 1
+    const endLine = atomIds.length === 1 ? startLine : idxList[idxList.length - 1] + 1
+    useRunningStore().startRun(useProcessStore().project.id, useProcessStore().activeProcessId, startLine, endLine)
+  })
 }
 
-export function recordFromHere(atomIds: any) {
- console.log('recordFromHere', atomIds)
+export function recordFromHere(_atomIds: any) {
 }
 
 export function runFromHere(atomIds: string[]) {
- const processStore = useProcessStore()
+  const processStore = useProcessStore()
 
- processStore.saveProject().then(() => {
- useRunningStore().startRun(useProcessStore().project.id, useProcessStore().activeProcessId, useFlowStore().simpleFlowUIData.findIndex(ui => ui.id === atomIds[0]) + 1)
- })
+  processStore.saveProject().then(() => {
+    useRunningStore().startRun(useProcessStore().project.id, useProcessStore().activeProcessId, useFlowStore().simpleFlowUIData.findIndex(ui => ui.id === atomIds[0]) + 1)
+  })
 }
 
 export function addDataBatchAtomData() {
- addAtomData('BrowserElement.data_batch')
+  addAtomData('BrowserElement.data_batch')
 }

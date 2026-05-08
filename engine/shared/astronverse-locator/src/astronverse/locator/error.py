@@ -12,4 +12,4 @@ from astronverse.baseline.i18n.i18n import _
 RPABaseException = RPABaseException
 BaseException = RPABaseException
 
-NO_FIND_ELEMENT: ErrorCode = ErrorCode(BizCode.LocalErr, _("요소불가까지"))
+NO_FIND_ELEMENT: ErrorCode = ErrorCode(BizCode.LocalErr, _("요소를 찾을 수 없습니다"))

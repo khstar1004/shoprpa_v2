@@ -1,4 +1,4 @@
-﻿import type { BasicColorSchema } from '@vueuse/core'
+import type { BasicColorSchema } from '@vueuse/core'
 import { message } from 'ant-design-vue'
 import deepmerge from 'deepmerge'
 import { defineStore } from 'pinia'
@@ -23,8 +23,8 @@ const useUserSettingStore = defineStore('useUserSetting', () => {
     commonSetting: { // 일반
       startupSettings: false, // 시작 - 연결가져오기저장, true 열기시작시작, false-닫기열기기기시작
       closeMainPage: false, // true-소  false-출력사용
-      hideLogWindow: false, // 런타임의오른쪽아래역할로그창 true-열기시작  false-닫기 
-      hideDetailLogWindow: false, // 실행의로그창 true-열기시작  false-닫기 
+      hideLogWindow: false, // 런타임의오른쪽아래역할로그창 true-열기시작  false-닫기
+      hideDetailLogWindow: false, // 실행의로그창 true-열기시작  false-닫기
       autoSave: true, // 저장 true-열기시작  false-닫기
       theme: 'auto',
     },

@@ -1,7 +1,7 @@
 package com.iflytek.rpa.auth.sp.casdoor.constant;
 
 /**
- * @desc: TODO
+ * @desc: ShopRPA authentication compatibility component.
  * @author: weilai <laiwei3@iflytek.com>
  * @create: 2025/12/11 10:21
  */

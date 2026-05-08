@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { useAsyncState, watchDeep } from '@vueuse/core'
 import { DatePicker, Form, Select, Spin } from 'ant-design-vue'
 import dayjs from 'dayjs'

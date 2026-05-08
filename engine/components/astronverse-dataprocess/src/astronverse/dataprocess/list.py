@@ -90,27 +90,28 @@ class ListProcess:
         """
         생성새목록
         """
-        if isinstance(value, str) and value.startswith("[") and value.endswith("]"):
-            try:
-                value = ast.literal_eval(value)
-            except Exception as e:
-                raise BaseException(INVALID_LIST_FORMAT_ERROR_FORMAT.format(e), "입력하세요정상의목록형식")
         new_array = []
         if list_type == ListType.EMPTY:
             pass
         elif list_type == ListType.SAME_DATA:
+            if isinstance(value, str) and value.startswith("[") and value.endswith("]"):
+                try:
+                    value = ast.literal_eval(value)
+                except Exception as e:
+                    raise BaseException(INVALID_LIST_FORMAT_ERROR_FORMAT.format(e), "올바른 목록 형식을 입력하세요")
             new_array = [value] * size
         elif list_type == ListType.USER_DEFINED:
-            if isinstance(custom_list, str):
-                if custom_list.startswith("[") and custom_list.endswith("]"):
+            source_list = custom_list if custom_list not in ("", None) else value
+            if isinstance(source_list, str):
+                if source_list.startswith("[") and source_list.endswith("]"):
                     try:
-                        new_array = ast.literal_eval(custom_list)
+                        new_array = ast.literal_eval(source_list)
                     except Exception as e:
-                        new_array = [custom_list]
+                        raise BaseException(INVALID_LIST_FORMAT_ERROR_FORMAT.format(e), "올바른 목록 형식을 입력하세요")
                 else:
-                    new_array = [custom_list]
-            elif isinstance(custom_list, list):
-                new_array = custom_list
+                    new_array = [source_list]
+            elif isinstance(source_list, list):
+                new_array = source_list
             else:
                 raise ValueError("사용자지정목록유형오류!")
         return new_array
@@ -251,9 +252,9 @@ class ListProcess:
         if del_mode == DeleteMethodType.INDEX:
             if isinstance(del_pos_int, list):
                 # 에서대까지소정렬검색, 삭제시검색변수
-                sorted_indices = sorted(del_pos, reverse=True)
+                sorted_indices = sorted(del_pos_int, reverse=True)
                 for index in sorted_indices:
-                    del list_data[int(index)]
+                    del list_data[index]
             else:
                 del list_data[del_pos_int]
             return list_data

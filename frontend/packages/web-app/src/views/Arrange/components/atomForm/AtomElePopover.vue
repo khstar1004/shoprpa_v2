@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { NiceModal } from '@rpa/components'
 import { Empty, message } from 'ant-design-vue'
 import { debounce } from 'lodash-es'

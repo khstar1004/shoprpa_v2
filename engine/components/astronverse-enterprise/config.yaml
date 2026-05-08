@@ -22,15 +22,15 @@
         title: 공유폴더파일
         tip: ''
       - key: save_folder
-        title: 파일저장경로
+        title: 파일 저장 경로
         tip: ''
     outputList:
       - key: download_result
         title: 다운로드결과
         tip: ''
   Enterprise.get_shared_variable:
-    title: 가져오기공유 변수
-    comment: 가져오기공유 변수 @{shared_variable} 변수 @{variable_data}
+    title: 공유 변수 가져오기
+    comment: 공유 변수 @{shared_variable}의 값을 가져와 @{variable_data}에 저장합니다.
     icon: get-shared-variable
     helpManual: ''
     inputList:

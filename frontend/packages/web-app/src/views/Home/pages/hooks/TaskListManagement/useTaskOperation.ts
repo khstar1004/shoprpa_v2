@@ -68,7 +68,6 @@ export function useTaskOperation() {
       title: t('aboutExecuteTime'),
       content: h('div', { class: `max-h-96 overflow-y-auto ${record.enable ? '' : 'text-gray-600'}` }, timeList),
       onOk() {
-        console.log('ok')
       },
       centered: true,
       keyboard: false,

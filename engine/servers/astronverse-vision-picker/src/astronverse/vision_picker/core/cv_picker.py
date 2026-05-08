@@ -415,7 +415,7 @@ class ImageDetector:
             try:
                 cv2.imwrite(save_path, self.original_img)
             except Exception as e:
-                raise Exception(f"저장이미지시발송오류: {e}")
+                raise Exception(f"이미지 저장 중 오류: {e}")
 
 
 if __name__ == "__main__":

@@ -6,10 +6,6 @@ import type { ProcessNode } from '../type'
 import { UndoManager } from './UndoManager'
 import type { Operation } from './UndoManager'
 
-/**
- * 의프로세스기기.
- * TODO:  move 대기의검색가장자리파일, undo/restore 필요시도인증
- */
 export class ProcessEditor {
   private id: string
   private nodes: ProcessNode[] | RPA.Atom[]
@@ -27,8 +23,7 @@ export class ProcessEditor {
     return this.nodes
   }
 
-  public addNode(node: ProcessNode[], index: number[], option: Record<string, unknown>) {
-    console.log(option)
+  public addNode(node: ProcessNode[], index: number[], _option: Record<string, unknown>) {
     this.undoManager.perform({
       type: 'insert',
       index,
@@ -186,6 +181,5 @@ export class ProcessEditor {
         }
         break
     }
-    console.log('테이블', this.nodes)
   }
 }

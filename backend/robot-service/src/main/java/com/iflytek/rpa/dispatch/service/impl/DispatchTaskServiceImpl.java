@@ -16,6 +16,7 @@ import com.iflytek.rpa.utils.IdWorker;
 import com.iflytek.rpa.utils.RedisKeyUtils;
 import com.iflytek.rpa.utils.RedisUtils;
 import com.iflytek.rpa.utils.response.AppResponse;
+import com.iflytek.rpa.utils.response.ErrorCodeEnum;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -145,8 +146,7 @@ public class DispatchTaskServiceImpl extends ServiceImpl<DispatchTaskDao, Dispat
             return AppResponse.success(terminalTaskDetail);
         } catch (Exception e) {
             log.error("가져오기단말작업실패, terminalId: {}", terminalId, e);
-            // 반환null테이블가져오기실패, 오류정보완료에서로그중기록
-            return AppResponse.success(null);
+            return AppResponse.error(ErrorCodeEnum.E_SERVICE, "단말 작업 정보를 가져오지 못했습니다");
         }
     }
 

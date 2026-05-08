@@ -1,4 +1,4 @@
-﻿import { useTranslation } from 'i18next-vue'
+import { useTranslation } from 'i18next-vue'
 
 import { baseUrl } from '@/utils/env'
 

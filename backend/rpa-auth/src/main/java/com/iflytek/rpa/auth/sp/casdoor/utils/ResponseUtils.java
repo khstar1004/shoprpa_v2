@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 
 /**
- * @desc: TODO
+ * @desc: ShopRPA authentication compatibility component.
  * @author: weilai <laiwei3@iflytek.com>
  * @create: 2025/12/11 10:28
  */

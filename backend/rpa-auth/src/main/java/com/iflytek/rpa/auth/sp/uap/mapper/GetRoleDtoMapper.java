@@ -7,7 +7,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
 /**
- * @desc: TODO
+ * @desc: ShopRPA authentication compatibility component.
  * @author: weilai <laiwei3@iflytek.com>
  * @create: 2025/11/25 16:32
  */

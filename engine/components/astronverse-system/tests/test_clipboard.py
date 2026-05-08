@@ -1,17 +1,36 @@
 ﻿import os
+from pathlib import Path
 import shutil
-import tempfile
+import stat
 import unittest
+from uuid import uuid4
 from unittest import TestCase
 
 from astronverse.system import *
 from astronverse.system.clipboard import Clipboard
 
 
+def _make_temp_dir() -> str:
+    temp_root = Path(__file__).resolve().parents[4] / "build" / "tmp" / "system-tests"
+    temp_root.mkdir(parents=True, exist_ok=True)
+    temp_dir = temp_root / f"clipboard-{uuid4().hex}"
+    temp_dir.mkdir()
+    return str(temp_dir)
+
+
+def _remove_tree(path: str):
+    def _handle_remove_error(func, target, _exc_info):
+        os.chmod(target, stat.S_IWRITE)
+        func(target)
+
+    if os.path.exists(path):
+        shutil.rmtree(path, onerror=_handle_remove_error)
+
+
 class TestClipboard(TestCase):
     def setUp(self):
         """시도전의준비"""
-        self.temp_dir = tempfile.mkdtemp()
+        self.temp_dir = _make_temp_dir()
         self.test_file_path = os.path.join(self.temp_dir, "test_file.txt")
         self.test_folder_path = os.path.join(self.temp_dir, "test_folder")
 
@@ -25,8 +44,8 @@ class TestClipboard(TestCase):
 
     def tearDown(self):
         """시도후의관리"""
-        if os.path.exists(self.temp_dir):
-            shutil.rmtree(self.temp_dir)
+        Clipboard.clear_clip()
+        _remove_tree(self.temp_dir)
 
     def test_copy_clip_message_success(self):
         """시도복사까지 - 텍스트메시지성공"""

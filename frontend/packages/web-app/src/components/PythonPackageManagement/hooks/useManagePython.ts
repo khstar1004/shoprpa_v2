@@ -1,4 +1,4 @@
-﻿import { nextTick } from 'vue'
+import { nextTick } from 'vue'
 
 import { getBaseURL } from '@/api/http/env'
 import { addPyPackageApi, deletePyPackageApi, packageVersion, updatePyPackageApi } from '@/api/resource'

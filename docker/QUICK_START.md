@@ -1,45 +1,66 @@
-# Shoprpa Quick Start Guide
+# ShopRPA Server Quick Start
 
-## 🚀 Quick Start
+## Quick Start
 
-1. **Copy environment file:**
-   ```bash
+1. Copy the environment file.
+
+   ```powershell
    cp .env.example .env
    ```
 
-2. **Start all services:**
-   ```bash
+   Before production use, replace `INTERNAL_ADMIN_API_KEY` and `REGISTER_BEARER_TOKEN` in `.env`.
+   They protect internal service-to-service admin calls and registration bridge calls.
+
+2. Validate the Compose file.
+
+   ```powershell
+   docker compose --env-file .env -f docker-compose.yml config --quiet
+   ```
+
+3. Start all services.
+
+   ```powershell
    docker compose up -d
    ```
 
-3. **Access services:**
-   - AI Service: http://localhost:8010
-   - OpenAPI Service: http://localhost:8020
-   - Resource Service: http://localhost:8030
-   - Robot Service: http://localhost:8040
-   - MinIO Console: http://localhost:9001
+4. Check service status.
 
-## 🛑 Stop Services
+   ```powershell
+   docker compose ps
+   ```
 
-```bash
+## Access
+
+The public entry point is the OpenResty gateway:
+
+```text
+http://127.0.0.1:32742
+```
+
+Most backend services are intentionally kept on the internal Docker network. Expose individual service ports only when debugging locally.
+
+| Service | Internal port | Default external access |
+| --- | ---: | --- |
+| openresty-nginx | 80 | `http://127.0.0.1:32742` |
+| casdoor | 8000 | `http://127.0.0.1:8000` |
+| ai-service | 8010 | Internal only |
+| openapi-service | 8020 | Internal only |
+| resource-service | 8030 | Internal only |
+| robot-service | 8040 | Internal only |
+| rpa-auth | 10251 | Internal only |
+| mysql | 3306 | Internal only |
+| redis | 6379 | Internal only |
+| minio | 9000/9001 | Internal only |
+
+## Stop Services
+
+```powershell
 docker compose stop
 ```
 
-## 📋 Service Details
+## Common Commands
 
-| Service | Port | Description |
-|---------|------|-------------|
-| ai-service | 8010 | Python FastAPI AI service |
-| openapi-service | 8020 | Python FastAPI OpenAPI service |
-| resource-service | 8030 | Java Spring Boot resource service |
-| robot-service | 8040 | Java Spring Boot robot service |
-| mysql | 3306 | MySQL 8.4.6 database |
-| redis | 6379 | Redis 8.0 cache |
-| minio | 9000/9001 | MinIO object storage |
-
-## 🔧 Common Commands
-
-```bash
+```powershell
 # View logs
 docker compose logs -f [service-name]
 
@@ -56,9 +77,9 @@ docker compose down -v
 docker compose ps
 ```
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
-1. **Port conflicts:** Change ports in `.env` file
-2. **Permission issues:** Ensure Docker has proper permissions
-3. **Service won't start:** Check logs with `docker compose logs [service-name]`
-4. **Database issues:** Wait for MySQL to be healthy before starting other services
+1. Port conflicts: change published ports in `docker-compose.yml`.
+2. Docker API permission errors: start Docker Desktop and make sure the current Windows user can access the Docker engine.
+3. Service startup failures: inspect `docker compose logs [service-name]`.
+4. Database startup: wait for MySQL health checks before debugging dependent services.

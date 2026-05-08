@@ -4,6 +4,7 @@ import sys
 import threading
 import time
 from ast import literal_eval
+from urllib.parse import unquote, urlparse
 import requests
 from astronverse.actionlib import AtomicFormType, AtomicFormTypeMeta, AtomicLevel, DynamicsItem
 from astronverse.actionlib.atomic import atomicMg
@@ -469,9 +470,10 @@ class BrowserSoftware:
         else:
             raise NotImplementedError()
         if data:
-            data = data.replace("data:image/jpeg;base64,", "")
+            if data.startswith("data:") and "," in data:
+                data = data.split(",", 1)[1]
         else:
-            raise Exception("확장반환 데이터가 비어 있습니다")
+            raise Exception("브라우저 확장에서 스크린샷 데이터를 반환하지 않았습니다.")
         with open(dest_path, "wb") as f:
             f.write(base64.b64decode(data))
         return dest_path
@@ -668,16 +670,23 @@ class BrowserSoftware:
                 link_strs = [link_str]
             down_tag = []
 
-            def download_from_req(file_name_out):
+            def resolve_link_file_name(link_item, custom_name):
+                url_path = unquote(urlparse(link_item).path).rstrip("/")
+                source_name = os.path.basename(url_path) or "download"
+                source_ext = os.path.splitext(source_name)[1]
+                custom_name = (custom_name or "").strip()
+                if not custom_flag or not custom_name:
+                    return source_name
+                if os.path.splitext(custom_name)[1]:
+                    return custom_name
+                return f"{custom_name}{source_ext}"
+
+            def download_from_req(custom_name):
                 for link_item in link_strs:
-                    url_file = link_item.split("?")[0]
                     res = requests.get(link_item, timeout=300, allow_redirects=True, stream=True)
                     if res.status_code != 200:
                         raise requests.RequestException("요청 의주소예외")
-                    if not custom_flag:
-                        file_name_out = url_file.split("/")[-1]
-                    else:
-                        file_name_out = file_name_out + "." + url_file.split("/")[-1].rsplit(".", 1)[-1]
+                    file_name_out = resolve_link_file_name(link_item, custom_name)
                     file_path = os.path.join(save_path, file_name_out)
                     file_path_arr.append(file_path)
                     with open(file_path, "wb") as f:
@@ -745,3 +754,4 @@ class BrowserSoftware:
             element_timeout=10,
         )
         BrowserCore.upload_window_operate(browser_type=browser_obj.browser_type, upload_path=upload_path)
+        return upload_path

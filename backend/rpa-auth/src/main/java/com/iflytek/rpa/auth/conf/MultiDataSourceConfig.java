@@ -208,7 +208,7 @@ public class MultiDataSourceConfig {
 
     /**
      * MarketUserDao의단일매칭
-     * 지정사용 rpa 데이터(방문rpa-opensource-mysql)
+     * 지정사용 rpa 데이터(방문shoprpa-mysql)
      * 비고: MarketUserDao 에서 com.iflytek.rpa.auth.sp.casdoor.dao 패키지아래, 필요사용 RPA 데이터
      * 원인필요회원가입, 및 CasdoorDaoMapperScanConfig 
      */
@@ -222,7 +222,7 @@ public class MultiDataSourceConfig {
 
     /**
      * RPA서비스데이터베이스DAO의MapperScan매칭
-     * 지정사용 rpa 데이터(방문rpa-opensource-mysql)
+     * 지정사용 rpa 데이터(방문shoprpa-mysql)
      */
     @Configuration
     @MapperScan(
@@ -240,7 +240,7 @@ public class MultiDataSourceConfig {
     /**
      * 데이터분매칭설명: 
      * 1. CasdoorUserDao, CasdoorTenantDao, CasdoorRoleDao, CasdoorGroupDao 사용 casdoor 데이터(방문astron-agent-casdoor-mysql)
-     * 2. 으로아래DAO사용 rpa 데이터(방문rpa-opensource-mysql): 
+     * 2. 으로아래DAO사용 rpa 데이터(방문shoprpa-mysql):
      *    - MarketUserDao(방문app_market_user테이블)
      *    - AuditRecordDao(방문audit_record테이블)
      *    - UserBlacklistDao(방문user_blacklist테이블)

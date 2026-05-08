@@ -1,5 +1,11 @@
-﻿import type { IPluginManagerConfig } from './manager'
+import type { IPluginManagerConfig } from './manager'
 import { PluginManager } from './manager'
+
+function logPlugin(...args: unknown[]) {
+  if (import.meta.env.DEV) {
+    console.debug(...args)
+  }
+}
 
 /**
  * 확장관리관리기기
@@ -21,7 +27,7 @@ export async function initializePluginManager(config: Partial<IPluginManagerConf
 
   pluginManager = new PluginManager(managerConfig)
   setupPluginManagerEvents()
-  console.log('[pluginManager] Plugin manager initialized')
+  logPlugin('[pluginManager] Plugin manager initialized')
   return pluginManager
 }
 
@@ -33,23 +39,23 @@ function setupPluginManagerEvents() {
     return
 
   pluginManager.on('plugin:install', (instance) => {
-    console.log(`[pluginManager] Plugin installed: ${instance.config.name}`)
+    logPlugin(`[pluginManager] Plugin installed: ${instance.config.name}`)
   })
 
   pluginManager.on('plugin:uninstall', (instance) => {
-    console.log(`[pluginManager] Plugin uninstalled: ${instance.config.name}`)
+    logPlugin(`[pluginManager] Plugin uninstalled: ${instance.config.name}`)
   })
 
   pluginManager.on('plugin:activate', (instance) => {
-    console.log(`[pluginManager] Plugin activated: ${instance.config.name}`)
+    logPlugin(`[pluginManager] Plugin activated: ${instance.config.name}`)
   })
 
   pluginManager.on('plugin:deactivate', (instance) => {
-    console.log(`[pluginManager] Plugin deactivated: ${instance.config.name}`)
+    logPlugin(`[pluginManager] Plugin deactivated: ${instance.config.name}`)
   })
 
   pluginManager.on('plugin:load', (instance) => {
-    console.log(`[pluginManager] Plugin loaded: ${instance.config.name}`)
+    logPlugin(`[pluginManager] Plugin loaded: ${instance.config.name}`)
   })
 
   pluginManager.on('plugin:error', (instance, error) => {
@@ -76,16 +82,16 @@ export async function loadPlugins() {
 
     // 가져오기확장목록
     const pluginConfigs = await manager.getPluginList()
-    console.log(`[pluginManager] Found ${pluginConfigs.length} plugins`)
+    logPlugin(`[pluginManager] Found ${pluginConfigs.length} plugins`)
 
     // 설치확장
     const installedPlugins = await manager.installPlugins(pluginConfigs)
-    console.log(`[pluginManager] Installed ${installedPlugins.length} plugins`)
+    logPlugin(`[pluginManager] Installed ${installedPlugins.length} plugins`)
 
     // 로드확장
     const instanceIds = installedPlugins.map(plugin => plugin.instanceId)
     const loadedPlugins = await manager.loadPlugins(instanceIds)
-    console.log(`[pluginManager] Loaded ${loadedPlugins.length} plugins`)
+    logPlugin(`[pluginManager] Loaded ${loadedPlugins.length} plugins`)
 
     // 확장
     for (const plugin of loadedPlugins) {
@@ -112,7 +118,7 @@ export async function activatePlugin(instanceId: string) {
   try {
     const manager = getPluginManager()
     await manager.activatePlugin(instanceId)
-    console.log(`[pluginManager] Plugin activated: ${instanceId}`)
+    logPlugin(`[pluginManager] Plugin activated: ${instanceId}`)
   }
   catch (error) {
     console.error(`[pluginManager] Failed to activate plugin ${instanceId}:`, error)
@@ -127,7 +133,7 @@ export async function deactivatePlugin(instanceId: string) {
   try {
     const manager = getPluginManager()
     await manager.deactivatePlugin(instanceId)
-    console.log(`[pluginManager] Plugin deactivated: ${instanceId}`)
+    logPlugin(`[pluginManager] Plugin deactivated: ${instanceId}`)
   }
   catch (error) {
     console.error(`[pluginManager] Failed to deactivate plugin ${instanceId}:`, error)
@@ -168,7 +174,7 @@ export function isPluginLoaded(instanceId: string) {
 }
 
 /**
- * 가져오기 
+ * 가져오기
  */
 export function getExtensions() {
   const manager = getPluginManager()
@@ -183,5 +189,5 @@ export async function destroyPluginManager() {
     await pluginManager.destroy()
     pluginManager = null
   }
-  console.log('[pluginManager] Plugin manager destroyed')
+  logPlugin('[pluginManager] Plugin manager destroyed')
 }

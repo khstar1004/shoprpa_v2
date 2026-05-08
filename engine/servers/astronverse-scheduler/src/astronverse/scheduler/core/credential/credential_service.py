@@ -11,8 +11,9 @@ import keyring
 import keyring.errors
 from astronverse.scheduler.logger import logger
 
-# 서비스이름, 사용 keyring 저장
-SERVICE_NAME = "Shoprpa"
+# keyring service names. Keep legacy spelling readable for existing installs.
+SERVICE_NAME = "ShopRPA"
+LEGACY_SERVICE_NAMES = ("Shoprpa",)
 
 # 검색 key, 사용저장모든인증이름
 INDEX_KEY = "__credential_index__"
@@ -43,11 +44,13 @@ class CredentialService:
     @staticmethod
     def _get_index() -> list[str]:
         """가져오기 인증이름검색"""
+        names: set[str] = set()
         try:
-            raw = keyring.get_password(SERVICE_NAME, INDEX_KEY)
-            if not raw:
-                return []
-            return json.loads(raw)
+            for service_name in (SERVICE_NAME, *LEGACY_SERVICE_NAMES):
+                raw = keyring.get_password(service_name, INDEX_KEY)
+                if raw:
+                    names.update(json.loads(raw))
+            return sorted(names)
         except json.JSONDecodeError:
             return []
         except Exception as e:
@@ -63,6 +66,15 @@ class CredentialService:
             logger.exception(f"저장인증검색실패: {e}")
 
     @staticmethod
+    def _get_raw_credential(name: str) -> Optional[str]:
+        """Read a credential from the current service name, then legacy names."""
+        for service_name in (SERVICE_NAME, *LEGACY_SERVICE_NAMES):
+            stored = keyring.get_password(service_name, name)
+            if stored is not None:
+                return stored
+        return None
+
+    @staticmethod
     def _cleanup_index():
         """
         관리 index 중완료삭제의인증
@@ -72,7 +84,7 @@ class CredentialService:
         valid = []
 
         for name in names:
-            stored = keyring.get_password(SERVICE_NAME, name)
+            stored = CredentialService._get_raw_credential(name)
             if stored is not None:
                 valid.append(name)
 
@@ -145,10 +157,11 @@ class CredentialService:
         """
         try:
             # 삭제비밀번호(아니오저장된 아니오오류)
-            try:
-                keyring.delete_password(SERVICE_NAME, name)
-            except keyring.errors.PasswordDeleteError:
-                pass
+            for service_name in (SERVICE_NAME, *LEGACY_SERVICE_NAMES):
+                try:
+                    keyring.delete_password(service_name, name)
+                except keyring.errors.PasswordDeleteError:
+                    pass
 
             # 업데이트검색
             names = CredentialService._get_index()
@@ -174,7 +187,7 @@ class CredentialService:
             인증여부존재함
         """
         try:
-            stored = keyring.get_password(SERVICE_NAME, name)
+            stored = CredentialService._get_raw_credential(name)
             return stored is not None
         except Exception as e:
             logger.exception(f"조회인증여부존재함실패: {e}")
@@ -192,7 +205,7 @@ class CredentialService:
             인증비밀번호(찾을 수 없습니다반환 None, 존재함가능반환빈문자열)
         """
         try:
-            stored = keyring.get_password(SERVICE_NAME, name)
+            stored = CredentialService._get_raw_credential(name)
             return CredentialService._decode_password(stored)
         except Exception as e:
             logger.exception(f"가져오기 인증실패: {e}")

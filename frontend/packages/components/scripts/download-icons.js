@@ -5,13 +5,13 @@ import path from 'node:path'
 import axios from 'axios'
 import dotenv from 'dotenv'
 
-const { parsed: envConfig } = dotenv.config()
+const { parsed: envConfig = {} } = dotenv.config()
 
 async function downloadCDNFile(options) {
   const { fileName, cdnUrl, output } = options
 
-  if (!fileName || !cdnUrl || !output) {
-    throw new Error('fileName, CDN URL, and output are required.')
+  if (!fileName || !output) {
+    throw new Error('fileName and output are required.')
   }
 
   const resolvedOutput = path.resolve('./', output)
@@ -19,6 +19,14 @@ async function downloadCDNFile(options) {
   const recordFileName = path.join(resolvedOutput, 'cdn-info.json') // CDN 정보기록파일
 
   await fs.mkdir(resolvedOutput, { recursive: true })
+
+  if (!cdnUrl) {
+    if (fss.existsSync(resolvedOutputFile)) {
+      console.warn(`ICONS_CDN is not set. Using vendored ${resolvedOutputFile}.`)
+      return
+    }
+    throw new Error(`ICONS_CDN is not set and ${resolvedOutputFile} does not exist.`)
+  }
 
   try {
     const shouldDownload = await checkFileNeedDownload(
@@ -104,6 +112,6 @@ async function recordCDNInfo(cdnUrl, fileName, recordFileName) {
 
 downloadCDNFile({
   fileName: 'iconpark.js',
-  cdnUrl: envConfig.ICONS_CDN,
+  cdnUrl: envConfig.SHOPRPA_ICONS_CDN || envConfig.ICONS_CDN,
   output: 'lib',
 })

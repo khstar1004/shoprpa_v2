@@ -42,7 +42,7 @@ public class TenantResourceFilter extends OncePerRequestFilter {
      * 이름단일경로, 아니요필요행검증
      */
     private static final String[] EXCLUDE_PATHS = {
-        "/login", "/logout", "/error", "/actuator", "/swagger", "/v2/api-docs", "/favicon.ico"
+        "/login", "/logout", "/error", "/health", "/actuator", "/swagger", "/v2/api-docs", "/favicon.ico"
     };
 
     @Override

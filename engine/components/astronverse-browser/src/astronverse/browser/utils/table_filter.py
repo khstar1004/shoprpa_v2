@@ -274,7 +274,7 @@ class DataFilter:
                 if isinstance(parameter, list):
                     filter_logic_str = f"({filter_col_str} >= '{parameter[0]}')&({filter_col_str} <= '{parameter[1]}')"
                 else:
-                    raise ValueError("파일예외, 입력하세요정상의파일!")
+                    raise ValueError("파일 오류입니다. 올바른 파일을 입력하세요.")
         elif logical == "regular":
             filter_logic_str = f'{filter_col_str}.astype(str).str.contains(r"{parameter}", regex=True)'
         elif logical == "enumerate":
@@ -283,7 +283,7 @@ class DataFilter:
             if isinstance(parameter, list):
                 filter_logic_str = f"{filter_col_str}.isin({parameter})"
             else:
-                raise ValueError("파일예외, 입력하세요정상의파일!")
+                raise ValueError("파일 오류입니다. 올바른 파일을 입력하세요.")
         else:
             filter_logic_str = None
 
@@ -397,7 +397,7 @@ class DataFilter:
                         elif process_type == "Suffix":
                             self.suffix(index, parameters)
                     except Exception as e:
-                        raise ValueError(f"매개변수예외, 입력하세요정상의매개변수!{process_type}{e}")
+                        raise ValueError(f"매개변수 오류입니다. 올바른 매개변수를 입력하세요. {process_type}: {e}")
 
     def data_filter_main(self):
         """data filter"""

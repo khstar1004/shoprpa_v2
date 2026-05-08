@@ -1,4 +1,4 @@
-﻿import { message } from 'ant-design-vue'
+import { message } from 'ant-design-vue'
 import { useTranslation } from 'i18next-vue'
 import { cloneDeep } from 'lodash-es'
 import { reactive, ref, watch } from 'vue'
@@ -112,7 +112,6 @@ export function useDataBatch() {
 
   // 테이블열메뉴
   const menuClick = (item, index) => {
-    console.log('item: ', item)
     if (item.domEvent?.target.tagName === 'INPUT')
       return
     const { keyPath } = item
@@ -345,7 +344,7 @@ export function useDataBatch() {
     const path = colElement
     path.checkType = colElement.checkType || VISUALIZATION
     path.matchTypes = []
-    path.columnIndex = index + 1 // 에서1열기 
+    path.columnIndex = index + 1 // 에서1열기
     const ele = {
       app: colElement.app,
       type: colElement.type,
@@ -354,8 +353,7 @@ export function useDataBatch() {
     }
     const eleStr = JSON.stringify(ele)
     isHightLight = true
-    useBatchPick.highLight(eleStr, (res) => {
-      console.log('highLight res: ', res)
+    useBatchPick.highLight(eleStr, (_res) => {
       isHightLight = false
     })
   }
@@ -631,7 +629,6 @@ export function useDataBatch() {
    * @param values
    */
   const tableTypeHandle = (values: any[]) => {
-    console.log('tableTypeHandle: ', values)
     const tbody = []
     values.forEach((col) => {
       col.value.forEach((item, index2) => {
@@ -678,7 +675,6 @@ export function useDataBatch() {
     const batchType = batchFormType.value === 'similar' ? 'similar' : ''
     gridOptions.loading = true
     useBatchPick.startBatchPick('batch', { path: { batchType } }, (res) => {
-      console.log('newBatch result: ', res)
       gridOptions.loading = false
       if (res.success) {
         const { type } = res.data
@@ -700,7 +696,6 @@ export function useDataBatch() {
     useBatchPick.startBatchPick('batch', { path: { batchType: 'head' } }, (res) => {
       if (res.success) {
         const { type, path } = res.data
-        console.log('batchTableHead res: ', res)
         if (type === 'web') {
           columns = tableHeadHandle(path)
           columns = columnsConfig(columns)
@@ -766,7 +761,6 @@ export function useDataBatch() {
   }
   // 팝업
   const handleModalOk = (params) => {
-    // console.log('params: ', params);
     const data = params.column
     batchModalVisible.value = false
     const { dataIndex } = data
@@ -781,7 +775,7 @@ export function useDataBatch() {
       // 테이블요소
       tableElement = { ...data }
     }
-    // 제거완료열이름, 전송요청 
+    // 제거완료열이름, 전송요청
     if (params.type !== 'editColumnName') {
       send2FetchData(columns)
     }
@@ -819,7 +813,6 @@ export function useDataBatch() {
     const robotId = getUrlQueryField('robotId')
     const _name = formState.name
     let elementDataObj
-    console.log('columns: ', columns)
     if (batchFormType.value === 'similar') {
       elementDataObj = {
         ...batchElementData,
@@ -849,7 +842,6 @@ export function useDataBatch() {
         return removeColumnUselessKey(item)
       })
     }
-    console.log('elementDataObj: ', elementDataObj)
 
     if (isEdit) {
       updateElement({
@@ -910,7 +902,7 @@ export function useDataBatch() {
     return newItem
   }
 
-  // 가져오기 
+  // 가져오기
   const cancel = () => {
     closeDataBatch(false)
   }
@@ -953,7 +945,7 @@ export function useDataBatch() {
     getElementData(batchObject, true)
   }
 
-  // 
+  //
   const hookInit = () => {
     http.resolveReadyPromise()
     isEdit = getUrlQueryField('isEdit') === 'true'
@@ -992,12 +984,10 @@ export function useDataBatch() {
 
   // 데이터
   function getElementData(data: { name: string, elementData: string }, openSourcePage: boolean = false) {
-    console.log('getElementData data: ', data)
     const { name, elementData } = data
     formState.name = name
     gridOptions.loading = true
     const element = elementData ? JSON.parse(elementData) : {}
-    console.log('getElementData element: ', element)
     batchElementData = element
     const { produceType } = element?.path
     batchFormType.value = produceType
@@ -1048,7 +1038,6 @@ export function useDataBatch() {
   }
 
   function send2FetchData(cols) {
-    console.log('send2FetchData cols: ', cols)
     gridOptions.loading = true
     if (batchFormType.value === 'similar') {
       batchElementData.path = {
@@ -1071,9 +1060,7 @@ export function useDataBatch() {
         }),
       }
     }
-    console.log('send2FetchData batchElementData: ', batchElementData)
     useBatchPick.getBatchData('batch', JSON.stringify(batchElementData), (res) => {
-      console.log('getBatchData res: ', res)
       if (res.success && res.data) {
         const { produceType } = res.data
         if (produceType === 'table') {

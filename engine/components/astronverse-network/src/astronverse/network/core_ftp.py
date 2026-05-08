@@ -60,9 +60,9 @@ class FtpCore:
 
             ftp_instance.retrlines("LIST", callback)
         except ftplib.error_perm as e:
-            raise ValueError("권한오류또는명령지원하지 않음: {e}")
+            raise ValueError(f"권한 오류 또는 지원하지 않는 FTP 명령입니다: {e}")
         except Exception as e:
-            raise ValueError("발송오류: {}".format(e))
+            raise ValueError("FTP 목록 조회 오류: {}".format(e))
 
         return raw_data
 
@@ -98,12 +98,12 @@ class FtpCore:
         FTP지정디렉터리업로드폴더
         """
         if not os.path.isdir(src):
-            raise ValueError("{}있음디렉터리".format(src))
+            raise ValueError("{} 경로는 디렉터리가 아닙니다".format(src))
 
         if not FtpCore.is_dir(ftp_instance, folder_name):
             res = FtpCore.create_dir(ftp_instance, folder_name)
             if not res:
-                raise ValueError("디렉터리생성실패, 확인하세요FTP연결")
+                raise ValueError("디렉터리 생성에 실패했습니다. FTP 연결을 확인하세요.")
 
         ftp_instance.cwd(folder_name)
 

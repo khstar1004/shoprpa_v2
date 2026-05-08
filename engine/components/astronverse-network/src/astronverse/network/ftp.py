@@ -258,13 +258,13 @@ class FTP:
 
         if file_type == FileType.FILE:
             if cur_file_name not in exist_file:
-                raise BaseException(FILE_EXIST_FORMAT.format(cur_file_name), "대기이름 변경파일찾을 수 없습니다")
+                raise BaseException(FILE_EXIST_FORMAT.format(cur_file_name), "이름을 변경할 파일을 찾을 수 없습니다")
 
             file_ext = os.path.splitext(cur_file_name)[1]
             if not file_ext:
                 raise BaseException(
                     FILE_NAME_FORMAT.format(cur_file_name),
-                    "입력파일이름이름실패, 확인하세요입력내용",
+                    "파일 이름이 올바른지 입력 내용을 확인하세요",
                 )
 
             new_file_name = new_file_name + file_ext
@@ -281,16 +281,16 @@ class FTP:
                 FtpCore.ftp_rename(ftp_instance, cur_file_name, new_file_name)
                 return FtpCore.get_path(ftp_instance, new_file_name)
             except Exception as e:
-                raise BaseException(FTP_RENAME_FORMAT.format(e), "FTP파일이름 변경실패")
+                raise BaseException(FTP_RENAME_FORMAT.format(e), "FTP 파일 이름 변경에 실패했습니다")
 
         elif file_type == FileType.FOLDER:
             if cur_folder_name not in exist_file:
-                raise BaseException(FOLDER_EXIST_FORMAT.format(cur_folder_name), "대기이름 변경폴더찾을 수 없습니다")
+                raise BaseException(FOLDER_EXIST_FORMAT.format(cur_folder_name), "이름을 변경할 폴더를 찾을 수 없습니다")
 
             if not FtpCore.is_dir(ftp_instance, cur_folder_name):
                 raise BaseException(
                     FILE_NAME_FORMAT.format(cur_folder_name),
-                    "대기이름 변경내용 폴더, 확인하세요입력정보",
+                    "이름 변경 대상이 폴더인지 입력 정보를 확인하세요",
                 )
 
             if new_folder_name in exist_file:
@@ -306,7 +306,7 @@ class FTP:
                 FtpCore.ftp_rename(ftp_instance, cur_file_name, new_folder_name)
                 return FtpCore.get_path(ftp_instance, new_folder_name)
             except Exception as e:
-                raise BaseException(FTP_RENAME_FORMAT.format(e), "FTP파일이름 변경실패")
+                raise BaseException(FTP_RENAME_FORMAT.format(e), "FTP 폴더 이름 변경에 실패했습니다")
 
     @staticmethod
     @atomicMg.atomic(
@@ -365,7 +365,7 @@ class FTP:
                 if not FtpCore.create_dir(ftp_instance, ftp_pwd):
                     raise BaseException(
                         FTP_CREATE_FORMAT.format(ftp_pwd),
-                        "지정{}디렉터리생성실패, 확인하세요FTP연결또는디렉터리이름, 요청 사용중국어디렉터리".format(ftp_pwd),
+                        "지정한 디렉터리 생성에 실패했습니다: {}. FTP 연결 또는 디렉터리 이름을 확인하세요".format(ftp_pwd),
                     )
             FtpCore.change_working_dir(ftp_instance, ftp_pwd)
 
@@ -376,7 +376,7 @@ class FTP:
             file_list = get_file_list(file_path)
             for file in file_list:
                 if not file_is_exist(file):
-                    raise BaseException(FILE_EXIST_FORMAT.format(file), "대기업로드파일찾을 수 없습니다또는형식오류")
+                    raise BaseException(FILE_EXIST_FORMAT.format(file), "업로드할 파일을 찾을 수 없거나 형식이 올바르지 않습니다")
 
                 file_name = os.path.basename(file)
 
@@ -392,14 +392,14 @@ class FTP:
                 try:
                     dst_path = FtpCore.ftp_upload_file(ftp_instance, file, file_name)
                 except Exception as e:
-                    raise BaseException(FTP_UPLOAD_FORMAT.format(file), "파일업로드실패, 확인하세요FTP연결")
+                    raise BaseException(FTP_UPLOAD_FORMAT.format(file), "파일 업로드에 실패했습니다. FTP 연결을 확인하세요")
                 upload_ftp_list.append(dst_path)
 
         elif file_type == FileType.FOLDER:
             folder_list = get_file_list(folder_path)
             for folder in folder_list:
                 if not folder_is_exist(folder):
-                    raise BaseException(FOLDER_EXIST_FORMAT.format(folder), "대기업로드폴더찾을 수 없습니다")
+                    raise BaseException(FOLDER_EXIST_FORMAT.format(folder), "업로드할 폴더를 찾을 수 없습니다")
 
                 folder_name = os.path.basename(folder)
                 if folder_name in dst_list:
@@ -414,7 +414,7 @@ class FTP:
                 try:
                     dst_path = FtpCore.ftp_upload_dir(ftp_instance, folder, folder_name)
                 except Exception as e:
-                    raise BaseException(FTP_UPLOAD_FORMAT.format(folder), "파일업로드실패, 확인하세요FTP연결")
+                    raise BaseException(FTP_UPLOAD_FORMAT.format(folder), "폴더 업로드에 실패했습니다. FTP 연결을 확인하세요")
                 upload_ftp_list.append(dst_path)
         else:
             raise NotImplementedError()
@@ -525,7 +525,7 @@ class FTP:
                         os.path.join(dst_path, file_name),
                     )
                 except Exception as e:
-                    raise BaseException(FTP_DOWNLOAD_FORMAT.format(file), "파일다운로드실패, 확인하세요FTP연결")
+                    raise BaseException(FTP_DOWNLOAD_FORMAT.format(file), "파일 다운로드에 실패했습니다. FTP 연결을 확인하세요")
 
                 download_ftp_path.append(download_file)
 
@@ -535,7 +535,7 @@ class FTP:
                 if folder not in ftp_list:
                     raise BaseException(
                         FOLDER_EXIST_FORMAT.format(folder),
-                        "현재디렉터리중아니오저장된 지정다운로드폴더: {}, 확인하세요다운로드이름".format(folder),
+                        "현재 디렉터리에 다운로드할 폴더가 없습니다: {}. 다운로드 이름을 확인하세요".format(folder),
                     )
                 folder_new = folder
                 if folder in local_exist_list:
@@ -558,7 +558,7 @@ class FTP:
                 except Exception as e:
                     raise BaseException(
                         FTP_DOWNLOAD_FORMAT.format(folder),
-                        "파일다운로드실패, 확인하세요FTP연결",
+                        "폴더 다운로드에 실패했습니다. FTP 연결을 확인하세요",
                     )
 
                 download_ftp_path.append(download_folder)
@@ -614,7 +614,7 @@ class FTP:
                     if item not in exist_list:
                         raise BaseException(
                             FTP_DELETE_FORMAT.format(delete_file_name),
-                            "현재디렉터리중국어파일찾을 수 없습니다, 확인하세요파일이름",
+                            "현재 디렉터리에서 삭제할 파일을 찾을 수 없습니다. 파일 이름을 확인하세요",
                         )
                     FtpCore.ftp_delete_file(ftp_instance, item)
                 return True
@@ -624,11 +624,11 @@ class FTP:
                     if item not in exist_list:
                         raise BaseException(
                             FTP_DELETE_FORMAT.format(delete_folder_name),
-                            "현재디렉터리중국어파일폴더찾을 수 없습니다, 확인하세요대기삭제이름",
+                            "현재 디렉터리에서 삭제할 폴더를 찾을 수 없습니다. 삭제할 이름을 확인하세요",
                         )
                     FtpCore.ftp_delete_dir(ftp_instance, item)
                 return True
             else:
                 raise NotImplementedError()
         except Exception as e:
-            raise BaseException(FTP_DELETE_FORMAT.format(e), "확인하세요파일/폴더여부삭제됨")
+            raise BaseException(FTP_DELETE_FORMAT.format(e), "파일 또는 폴더 삭제 여부를 확인하세요")

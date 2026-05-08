@@ -1,6 +1,7 @@
 ﻿import base64
 import io
 import json
+import logging
 import os
 from abc import ABC, abstractmethod
 
@@ -13,6 +14,7 @@ from PIL import Image
 
 current_directory = os.getcwd()
 match_filepath = os.path.join(current_directory, "imgs", "match_img.png")
+logger = logging.getLogger(__name__)
 
 
 class IRectHandler(ABC):
@@ -97,24 +99,21 @@ class IPickCore(ABC):
             return None
 
         try:
-            # 해제코드 base64 문자열
             image_data = base64.b64decode(base64_str)
-            # 를문자데이터변환로이미지
             image = Image.open(io.BytesIO(image_data))
             return image
         except Exception as e:
-            print(f"Error converting base64 to image: {e}")
+            logger.warning("Failed to convert base64 data to image: %s", e)
             return None
 
     @staticmethod
     def get_url(input_url, remote_addr):
-        print("요청 열기  {}{}".format(remote_addr, input_url))
+        logger.debug("Fetching picker image from %s%s", remote_addr, input_url)
         try:
             response = requests.get(f"{remote_addr}{input_url}")
-            response.raise_for_status()  # 출력HTTP오류
+            response.raise_for_status()
         except requests.exceptions.RequestException as e:
             raise Exception(f"서버 오류: {e}")
-        print(response.content)
         base64_encoded_data = base64.b64encode(response.content).decode("utf-8")
         return base64_encoded_data
 
@@ -128,15 +127,13 @@ class IPickCore(ABC):
 
         if target.startswith("/api"):
             target = IPickCore.get_url(target, remote_addr)
-            print("가져오기까지목록 url의base64로: {}".format(target))
 
         target_img = IPickCore.base64_to_image(target)
         center_coords_aim = f"{data['pos']['self_x']},{data['pos']['self_y']}"
 
         if anchor:
-            if target.startswith("/api"):
+            if anchor.startswith("/api"):
                 anchor = IPickCore.get_url(anchor, remote_addr)
-                print("가져오기까지url의base64로: {}".format(anchor))
             anchor_img = IPickCore.base64_to_image(anchor)
             center_coords_anchor = f"{data['pos']['parent_x']},{data['pos']['parent_y']}"
         else:

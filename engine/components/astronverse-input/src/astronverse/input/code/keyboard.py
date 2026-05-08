@@ -49,7 +49,7 @@ class Keyboard:
                 elif language == 0x0804:  # 중국어 - 상태로2()
                     expected_status = 2
                 else:
-                    logger.info(f"지원하지 않음의코드: {hex(language)}")
+                    logger.info(f"지원하지 않는 코드: {hex(language)}")
                     return
 
                 # 여부필요
@@ -65,7 +65,7 @@ class Keyboard:
                         stderr=subprocess.DEVNULL,
                     )
             except Exception as e:
-                (logger.info(f"입력법시발송오류: {e}"))
+                logger.info(f"입력기 확인 중 오류: {e}")
 
     @staticmethod
     def write_char(char: str):

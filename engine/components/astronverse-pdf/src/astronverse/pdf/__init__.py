@@ -12,10 +12,10 @@ def _handle_files_input(files_path):
             files_path = files_path.split(".pdf,")
             for i in range(len(files_path)):
                 if i != len(files_path) - 1:
-                    # 후일예보통경로
                     files_path[i] = files_path[i].strip() + ".pdf"
     elif not isinstance(files_path, list):
-        raise BaseException(FILE_PATH_ERROR_FORMAT.format(str(files_path)), "PDF파일 경로있음오류, 입력하세요정상의경로")
+        raise BaseException(FILE_PATH_ERROR_FORMAT.format(str(files_path)), "PDF 파일 경로가 올바르지 않습니다")
+    return files_path
 
 
 class FileExistenceType(Enum):

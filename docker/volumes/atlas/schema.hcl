@@ -6100,7 +6100,7 @@ table "user_entitlement" {
 }
 table "astron_agent_auth" {
   schema = schema.rpa
-  comment = "ShoprpaAgent항목권한항목저장"
+  comment = "ShopRPAAgent항목권한항목저장"
   charset = "utf8mb4"
   collate = "utf8mb4_0900_ai_ci"
   column "id" {

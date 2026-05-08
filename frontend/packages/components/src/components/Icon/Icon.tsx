@@ -1,4 +1,4 @@
-﻿import { defineComponent, onMounted, ref, watch } from 'vue'
+import { defineComponent, onMounted, ref, watch } from 'vue'
 import '@rpa/components/icon'
 
 export const Icon = defineComponent({

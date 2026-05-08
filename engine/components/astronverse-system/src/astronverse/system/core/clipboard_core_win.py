@@ -1,5 +1,7 @@
 ﻿import base64
+import os
 import re
+import shutil
 import subprocess
 
 import pyperclip
@@ -7,48 +9,97 @@ from astronverse.baseline.logger.logger import logger
 from astronverse.system.core.clipboard_core import IClipBoardCore
 from astronverse.system.error import *
 
+_fallback_text_clip = ""
+_fallback_file_clip = ""
+
 
 class ClipBoardCore(IClipBoardCore):
     @staticmethod
     def copy_str_clip(data: str = ""):
-        return pyperclip.copy(data)
+        global _fallback_text_clip, _fallback_file_clip
+        _fallback_text_clip = data
+        _fallback_file_clip = ""
+        try:
+            return pyperclip.copy(data)
+        except Exception as e:
+            logger.warning(f"System clipboard text copy unavailable; using in-process clipboard: {e}")
 
     @staticmethod
     def paste_str_clip() -> str:
-        return pyperclip.paste()
+        try:
+            return pyperclip.paste()
+        except Exception as e:
+            logger.warning(f"System clipboard text paste unavailable; using in-process clipboard: {e}")
+            return _fallback_text_clip
 
     @staticmethod
     def clear_clip():
-        return pyperclip.copy("")
+        global _fallback_text_clip, _fallback_file_clip
+        _fallback_text_clip = ""
+        _fallback_file_clip = ""
+        try:
+            return pyperclip.copy("")
+        except Exception as e:
+            logger.warning(f"System clipboard clear unavailable; using in-process clipboard: {e}")
 
     @staticmethod
     def copy_file_clip(file_path: str = ""):
-        pyperclip.copy(file_path)
-        subprocess.run(
-            ["powershell", "-command", f'set-Clipboard -Path "{file_path}"'],
-            stdin=subprocess.DEVNULL,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
+        global _fallback_text_clip, _fallback_file_clip
+        _fallback_text_clip = file_path
+        _fallback_file_clip = file_path
+        try:
+            pyperclip.copy(file_path)
+        except Exception as e:
+            logger.warning(f"System clipboard file text copy unavailable; using in-process clipboard: {e}")
+        system_root = os.environ.get("SystemRoot", r"C:\Windows")
+        bundled_powershell = os.path.join(system_root, "System32", "WindowsPowerShell", "v1.0", "powershell.exe")
+        powershell_bin = (
+            shutil.which("powershell.exe")
+            or shutil.which("powershell")
+            or shutil.which("pwsh.exe")
+            or (bundled_powershell if os.path.exists(bundled_powershell) else "")
         )
+        if not powershell_bin:
+            logger.warning("System clipboard file copy unavailable; PowerShell was not found")
+            return
+        try:
+            subprocess.run(
+                [powershell_bin, "-NoProfile", "-Command", f'Set-Clipboard -Path "{file_path}"'],
+                stdin=subprocess.DEVNULL,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                check=False,
+            )
+        except Exception as e:
+            logger.warning(f"System clipboard file copy unavailable; using in-process clipboard: {e}")
 
     @staticmethod
     def paste_file_clip() -> str:
         import win32clipboard as cp
 
-        cp.OpenClipboard()
+        if _fallback_file_clip:
+            fallback_file_clip = _fallback_file_clip
+        else:
+            fallback_file_clip = ""
         try:
+            cp.OpenClipboard()
             file_list = cp.GetClipboardData(cp.CF_HDROP)
-        except TypeError as e:
+            return file_list[0]
+        except TypeError:
             raise BaseException(
                 CONTENT_TYPE_ERROR_FORMAT,
                 "잘라내기중내용로텍스트내용, 확인하세요잘라내기내용 가져오기유형여부정상",
             )
-        file_path = file_list[0]
-        try:
-            cp.CloseClipboard()
         except Exception as e:
+            if fallback_file_clip:
+                logger.warning(f"System clipboard file paste unavailable; using in-process clipboard: {e}")
+                return fallback_file_clip
             raise e
-        return file_path
+        finally:
+            try:
+                cp.CloseClipboard()
+            except Exception:
+                pass
 
     @staticmethod
     def __extract_html_fragment__(html_clipboard_data):
@@ -89,7 +140,7 @@ class ClipBoardCore(IClipBoardCore):
             cp.CloseClipboard()
 
         if html_data:
-            html_fragment = ClipBoardCoreWin.__extract_html_fragment__(html_data)
+            html_fragment = ClipBoardCore.__extract_html_fragment__(html_data)
             if html_fragment:
                 # 정상이면테이블방식방식, 매칭 src=" 및 " 의내용
                 pattern = r'src="file:///(.*?\.(?:jpg|png|gif))"'

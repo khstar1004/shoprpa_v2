@@ -1,23 +1,23 @@
 ﻿atomic:
   Script.process:
-    title: 실행하위 프로세스
-    comment: 실행하위 프로세스(@{process:하위 프로세스})
+    title: 하위 프로세스 실행
+    comment: 하위 프로세스 실행(@{process:하위 프로세스})
     icon: run-sub-process
     helpManual: ''
     inputList:
       - key: process
-        title: 선택하위 프로세스
-        tip: 선택할실행의하위 프로세스
+        title: 하위 프로세스 선택
+        tip: 실행할 하위 프로세스를 선택합니다.
       - key: process_param
-        title: 입력매개변수
+        title: 매개변수 입력
         tip: ''
     outputList:
       - key: process_res
-        title: 저장프로세스출력결과
+        title: 프로세스 실행 결과
         tip: ''
   Script.module:
-    title: 실행Python모듈
-    comment: 실행Python모듈(@{content:Python모듈})
+    title: Python 모듈 실행
+    comment: Python 모듈 실행(@{content:Python모듈})
     icon: run-python-module
     helpManual: ''
     inputList:
@@ -25,7 +25,7 @@
         title: 선택Python모듈
         tip: ''
       - key: module_param
-        title: 입력매개변수
+        title: 매개변수 입력
         tip: ''
     outputList:
       - key: program_script

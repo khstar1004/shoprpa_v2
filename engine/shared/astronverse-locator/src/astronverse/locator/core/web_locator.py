@@ -91,26 +91,26 @@ class WebFactory:
             )
 
             if response.status_code != 200:
-                raise Exception("브라우저 확장통신통신출력오류, 요청재시작사용")
+                raise Exception("브라우저 확장 통신 오류입니다. 브라우저와 확장 서비스를 재시작한 뒤 다시 시도하세요.")
 
             logger.info(f"브라우저 확장반환결과: {response.text}")
             res_json = response.json()
 
             if not res_json or res_json.get("code", "") != "0000":  # 통신오류
-                raise Exception("브라우저 확장통신실패, 확인하세요확장여부설치사용")
+                raise Exception("브라우저 확장 통신에 실패했습니다. 확장이 설치되어 있고 실행 중인지 확인하세요.")
             elif res_json.get("code", "") == "0000":
                 data = res_json.get("data", {})
                 if data.get("code", "") != "0000":  # 원오류
-                    raise Exception(data.get("msg", "브라우저 확장가져오기요소실패"))
+                    raise Exception(data.get("msg", "브라우저 확장에서 요소 정보를 가져오지 못했습니다."))
                 web_info = data.get("data", {})
                 return web_info["rect"]
 
         except requests.exceptions.ConnectionError:
-            raise Exception("불가연결브라우저 확장서비스, 확인하세요확장상태")
+            raise Exception("브라우저 확장 서비스에 연결할 수 없습니다. 확장 상태를 확인하세요.")
         except requests.exceptions.Timeout:
-            raise Exception("브라우저 확장시간 초과, 확인하세요확장여부설치사용")
+            raise Exception("브라우저 확장 응답 시간이 초과되었습니다. 확장 설치 및 실행 상태를 확인하세요.")
         except Exception as e:
-            raise Exception(f"가져오기요소실패: {e}")
+            raise Exception(f"요소 정보를 가져오지 못했습니다: {e}")
 
     @classmethod
     def __get_web_top__(cls, element: dict, app: str) -> tuple[int, int]:
@@ -141,7 +141,7 @@ class WebFactory:
                 break
 
         if base_ctrl is None:
-            raise Exception(f"찾을 수 없는 {app_name}브라우저창, 확인하세요브라우저여부완료시작")
+            raise Exception(f"{app_name} 브라우저 창을 찾을 수 없습니다. 브라우저가 실행 중인지 확인하세요.")
 
         # 창
         try:

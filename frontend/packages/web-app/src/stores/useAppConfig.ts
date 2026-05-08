@@ -1,14 +1,14 @@
-﻿import { NiceModal } from '@rpa/components'
+import { NiceModal } from '@rpa/components'
 import type { IAppConfig, UpdateInfo } from '@rpa/shared/platform'
 import { useAsyncState, useLocalStorage } from '@vueuse/core'
 import { defineStore } from 'pinia'
 import { computed, reactive } from 'vue'
 
-import { checkBrowerPlugin, getSupportBrowser } from '@/api/plugin'
+import { checkBrowserPlugin, getSupportBrowser } from '@/api/plugin'
 import { UpdaterModal } from '@/components/Updater'
 import { CLOSE_UPDATE_MODAL_VERSION } from '@/constants'
 import type { PLUGIN_ITEM } from '@/constants/plugin'
-import { BROWER_PLUGIN_LIST } from '@/constants/plugin'
+import { BROWSER_PLUGIN_LIST } from '@/constants/plugin'
 import { updaterManager, utilsManager } from '@/platform'
 
 const ENV = import.meta.env
@@ -51,7 +51,7 @@ export const useAppConfigStore = defineStore('appConfig', () => {
       return plugins
 
     // 조회브라우저 확장수정pluginList중브라우저 확장의상태--isInstall및IsNewest
-    const { data } = await checkBrowerPlugin(plugins.map(it => it.type))
+    const { data } = await checkBrowserPlugin(plugins.map(it => it.type))
     return plugins.map((it) => {
       const target = data[it.type]
 
@@ -71,7 +71,7 @@ export const useAppConfigStore = defineStore('appConfig', () => {
   // 브라우저 확장목록
   const { state: browserPlugins } = useAsyncState<PLUGIN_ITEM[]>(async () => {
     const browser = await getSupportBrowser()
-    const plugins = BROWER_PLUGIN_LIST.filter(it => browser.includes(it.type))
+    const plugins = BROWSER_PLUGIN_LIST.filter(it => browser.includes(it.type))
     return updateBrowserPluginStatus(plugins)
   }, [])
 
@@ -96,7 +96,7 @@ export const useAppConfigStore = defineStore('appConfig', () => {
   /**
    * 조회업데이트
    * @param manualCheck 여부조회업데이트
-   * @returns
+   * @returns 업데이트 검사 결과
    */
   const checkUpdate = async (manualCheck = false) => {
     if (updaterState.checkLoading)
@@ -133,7 +133,6 @@ export const useAppConfigStore = defineStore('appConfig', () => {
 
     // 다운로드완료후, 예결과새의버전완료업데이트, 이면아니오안내
     if (closeUpdateModalVersion.value.includes(updaterState.manifest?.version)) {
-      console.log('새의버전완료업데이트, 아니오안내')
       return
     }
 

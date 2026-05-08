@@ -93,7 +93,7 @@ public class CronJsonServiceImpl implements CronJsonService {
             case "advance":
                 return cron.getCronExpression();
             default:
-                throw new IllegalArgumentException("지원하지 않음의유형: " + frequencyFlag);
+                throw new IllegalArgumentException("지원하지 않는 예약 유형입니다: " + frequencyFlag);
         }
     }
 
@@ -174,7 +174,7 @@ public class CronJsonServiceImpl implements CronJsonService {
      */
     private String generateWeeksCron(Integer minutes, Integer hours, List<Integer> weeks) {
         if (minutes == null || hours == null || weeks == null || weeks.isEmpty()) {
-            throw new IllegalArgumentException("분, 시간및Shoprpa비워 둘 수 없습니다");
+            throw new IllegalArgumentException("분, 시간 및 요일은 비워 둘 수 없습니다");
         }
         if (minutes < 0 || minutes >= 60) {
             throw new IllegalArgumentException("분에서0-59");
@@ -182,13 +182,13 @@ public class CronJsonServiceImpl implements CronJsonService {
         if (hours < 0 || hours >= 24) {
             throw new IllegalArgumentException("시간에서0-23");
         }
-        // 인증Shoprpa값 (0=일요일, 1=월요일, ... 6=토요일)
+        // 요일 값 검증 (0=일요일, 1=월요일, ... 6=토요일)
         for (Integer week : weeks) {
             if (week < 0 || week > 6) {
-                throw new IllegalArgumentException("Shoprpa에서0-6");
+                throw new IllegalArgumentException("요일은 0-6 범위여야 합니다");
             }
         }
-        // 변환로Spring cron형식의Shoprpa (1=일요일, 2=월요일, ... 7=토요일)
+        // Spring cron 요일 형식으로 변환 (1=일요일, 2=월요일, ... 7=토요일)
         List<String> springWeeks = new ArrayList<>();
         for (Integer week : weeks) {
             springWeeks.add(String.valueOf(week + 2));
@@ -207,7 +207,7 @@ public class CronJsonServiceImpl implements CronJsonService {
                 || months == null
                 || weeks.isEmpty()
                 || months.isEmpty()) {
-            throw new IllegalArgumentException("분, 시간, Shoprpa및월비워 둘 수 없습니다");
+            throw new IllegalArgumentException("분, 시간, 요일 및 월은 비워 둘 수 없습니다");
         }
         if (minutes < 0 || minutes >= 60) {
             throw new IllegalArgumentException("분에서0-59");
@@ -215,10 +215,10 @@ public class CronJsonServiceImpl implements CronJsonService {
         if (hours < 0 || hours >= 24) {
             throw new IllegalArgumentException("시간에서0-23");
         }
-        // 인증Shoprpa값
+        // 요일 값 검증
         for (Integer week : weeks) {
             if (week < 0 || week > 6) {
-                throw new IllegalArgumentException("Shoprpa에서0-6");
+                throw new IllegalArgumentException("요일은 0-6 범위여야 합니다");
             }
         }
         // 인증월값
@@ -227,9 +227,9 @@ public class CronJsonServiceImpl implements CronJsonService {
                 throw new IllegalArgumentException("월에서1-12");
             }
         }
-        // 변환Shoprpa형식
+        // 요일 형식 변환
         List<String> springWeeks = new ArrayList<>();
-        // 변환로Spring cron형식의Shoprpa (1=일요일, 2=월요일, ... 7=토요일)
+        // Spring cron 요일 형식으로 변환 (1=일요일, 2=월요일, ... 7=토요일)
         for (Integer week : weeks) {
             springWeeks.add(String.valueOf(week + 2));
         }

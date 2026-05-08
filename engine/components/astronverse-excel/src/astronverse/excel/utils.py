@@ -131,7 +131,7 @@ def handle_row_input(row: Any, used_row: int) -> int:
         int: 관리후의행(1-based), 빈문자열반환1
 
     Raises:
-        ValueError: 입력값불가변환로숫자시출력예외
+        ValueError: 입력값을 숫자로 변환할 수 없는 경우
     """
     if not row:
         return 1
@@ -163,7 +163,7 @@ def handle_column_input(col: str, used_col: int) -> int:
         int: 관리후의열(1-based), 빈문자열반환1
 
     Raises:
-        ValueError: 입력값불가변환로숫자또는문자시출력예외
+        ValueError: 입력값을 숫자 또는 문자로 변환할 수 없는 경우
     """
     if not col:
         return 1
@@ -250,15 +250,15 @@ def check_color(color: str):
         try:
             color = [int(c.strip()) for c in color]
         except Exception as e:
-            raise ValueError("입력하세요정상의색상형식!")
+            raise ValueError("올바른 색상 형식을 입력하세요.")
     if isinstance(color, list):
         if len(color) != 3:
-            raise ValueError("입력하세요정상의색상형식!")
+            raise ValueError("올바른 색상 형식을 입력하세요.")
         for rgb in color:
             if (not isinstance(rgb, int)) or rgb >= 256 or rgb < 0:
-                raise ValueError("입력하세요정상의색상형식!")
+                raise ValueError("올바른 색상 형식을 입력하세요.")
     else:
-        raise ValueError("입력하세요정상의색상형식!")
+        raise ValueError("올바른 색상 형식을 입력하세요.")
     return color
 
 
@@ -297,12 +297,12 @@ def calculate_cell_positions(
         raw = raw.replace(", ", ",").replace(": ", ":")
         if ":" in raw:
             if not support_colon:
-                raise Exception("지원하지 않음입력(분)")
+                raise Exception("범위 입력은 지원하지 않습니다.")
             a, b = raw.split(":", 1)
             positions.append(range_fn(a, b))
         elif "," in raw:
             if not support_comma:
-                raise Exception("지원하지 않음다중개값입력(분)")
+                raise Exception("여러 값 입력은 지원하지 않습니다.")
             for item in raw.split(","):
                 positions.append(single_fn(item))
         else:

@@ -1,4 +1,4 @@
-﻿export const BOOT = 'boot' // 시작
+export const BOOT = 'boot' // 시작
 export const LOGIN = 'login' // 로그인
 export const ARRANGE = 'arrange' // 정렬
 export const DESIGNER = 'designer' // 계획기기

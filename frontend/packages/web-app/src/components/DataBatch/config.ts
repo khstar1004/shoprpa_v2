@@ -1,4 +1,4 @@
-﻿import i18next from '@/plugins/i18next'
+import i18next from '@/plugins/i18next'
 
 import type { BatchDataTableMenu } from '@/types/databatch.d'
 
@@ -146,7 +146,7 @@ export const webData = {
       value: [
         {
           type: 'other',
-          value: '//input[@id="su"]',
+          value: '//a[contains(@href,"iana.org")]',
         },
       ],
     },
@@ -155,15 +155,15 @@ export const webData = {
       value: [
         {
           type: 'other',
-          value: '#su',
+          value: 'a',
         },
       ],
     },
     pathDirs: [
       {
-        tag: 'input',
+        tag: 'a',
         checked: true,
-        value: 'input',
+        value: 'a',
         attrs: [
           {
             name: 'index',
@@ -180,65 +180,37 @@ export const webData = {
             type: 0,
           },
           {
-            name: 'id',
+            name: 'href',
             value: {
               rpa: 'special',
               value: [
                 {
                   type: 'other',
-                  value: 'su',
+                  value: 'https://www.iana.org/help/example-domains',
                 },
               ],
             },
             checked: true,
-            type: 0,
-          },
-          {
-            name: 'class',
-            value: {
-              rpa: 'special',
-              value: [
-                {
-                  type: 'other',
-                  value: 'bg s_btn btnhover',
-                },
-              ],
-            },
-            checked: false,
-            type: 0,
-          },
-          {
-            name: 'type',
-            value: {
-              rpa: 'special',
-              value: [
-                {
-                  type: 'other',
-                  value: 'submit',
-                },
-              ],
-            },
-            checked: false,
-            type: 0,
+            type: 1,
           },
         ],
       },
     ],
-    parentClass: 'bg s_btn_wr',
-    tag: '제출버튼',
-    text: '정도일아래',
+    parentClass: '',
+    tag: '링크',
+    text: 'More information...',
     url: {
       rpa: 'special',
       value: [
         {
           type: 'other',
-          value: 'https://www.baidu.com/',
+          value: 'https://www.iana.org/help/example-domains',
         },
       ],
     },
     shadowRoot: false,
-    tabTitle: '정도일아래, 알림',
-    tabUrl: 'https://www.baidu.com/',
+    tabTitle: 'IANA Example Domains',
+    tabUrl: 'https://www.iana.org/help/example-domains',
     isFrame: false,
     frameId: 0,
     checkType: 'visualization',
@@ -264,45 +236,45 @@ export const ColumnsKeys = [
 
 export const expSelectList = [
   {
-    label: '데이터',
+    label: '숫자',
     key: 'math',
     options: [
-      { label: '대기', value: '==', key: 'equal' },
-      { label: '아니오대기', value: '!=', key: 'notEqual' },
-      { label: '소대기', value: '<=', key: 'lessEqual' },
-      { label: '대대기', value: '>=', key: 'greaterEqual' },
-      { label: '소', value: '<', key: 'less' },
-      { label: '대', value: '>', key: 'greater' },
+      { label: '같음', value: '==', key: 'equal' },
+      { label: '같지 않음', value: '!=', key: 'notEqual' },
+      { label: '작거나 같음', value: '<=', key: 'lessEqual' },
+      { label: '크거나 같음', value: '>=', key: 'greaterEqual' },
+      { label: '작음', value: '<', key: 'less' },
+      { label: '큼', value: '>', key: 'greater' },
     ],
   },
   {
     label: '문자열',
     key: 'string',
     options: [
-      { label: '로빈', value: 'isnull', key: 'isNull' },
-      { label: '아니오로빈', value: 'notnull', key: 'notNull' },
-      { label: '패키지', value: 'contains', key: 'contains' },
-      { label: '아니오패키지', value: 'not_contains', key: 'notContains' },
-      { label: '', value: 'enumerate', key: 'enumerate' },
-      { label: '으로열기 ', value: 'startswith', key: 'startsWith' },
-      { label: '아니오으로열기 ', value: 'not_startswith', key: 'notStartsWith' },
-      { label: '으로결과', value: 'endswith', key: 'endsWith' },
-      { label: '아니오으로결과', value: 'not_endswith', key: 'notEndsWith' },
+      { label: '비어 있음', value: 'isnull', key: 'isNull' },
+      { label: '비어 있지 않음', value: 'notnull', key: 'notNull' },
+      { label: '포함', value: 'contains', key: 'contains' },
+      { label: '포함하지 않음', value: 'not_contains', key: 'notContains' },
+      { label: '목록에 포함', value: 'enumerate', key: 'enumerate' },
+      { label: '시작함', value: 'startswith', key: 'startsWith' },
+      { label: '시작하지 않음', value: 'not_startswith', key: 'notStartsWith' },
+      { label: '끝남', value: 'endswith', key: 'endsWith' },
+      { label: '끝나지 않음', value: 'not_endswith', key: 'notEndsWith' },
     ],
   },
   {
-    label: '날짜시간',
+    label: '날짜/시간',
     key: 'datetime',
     options: [
-      { label: '에서해당시간전', value: 'time_befor', key: 'timeBefore' },
-      { label: '에서해당시간후', value: 'time_after', key: 'timeAfter' },
-      { label: '에서해당시간내부', value: 'time_between', key: 'timeBetween' },
+      { label: '기준 시간 이전', value: 'time_befor', key: 'timeBefore' },
+      { label: '기준 시간 이후', value: 'time_after', key: 'timeAfter' },
+      { label: '기간 내', value: 'time_between', key: 'timeBetween' },
     ],
   },
 ]
 
 export const dateSelectList = [
-  { label: '기존형식', value: '', key: 'original' },
+  { label: '기존 형식', value: '', key: 'original' },
   { label: '%Y-%m-%d %H:%M:%S', value: '%Y-%m-%d %H:%M:%S', key: 'ymd_hms' },
   { label: '%Y/%m/%d %H:%M:%S', value: '%Y/%m/%d %H:%M:%S', key: 'y_m_d_hms' },
   { label: '%Y.%m.%d %H:%M:%S', value: '%Y.%m.%d %H:%M:%S', key: 'y.m.d_hms' },
@@ -336,7 +308,7 @@ export const dateSelectList = [
   { label: '%H시%M분%S초', value: '%H시%M분%S초', key: 'hms_cn' },
   { label: '%H:%M', value: '%H:%M', key: 'hm' },
   { label: '%H시%M분', value: '%H시%M분', key: 'hm_cn' },
-  { label: '%w (숫자테이블일요일까지토요일)', value: '%w', key: 'week_num' },
-  { label: '%j (숫자테이블일년중)', value: '%j', key: 'day_of_year' },
-  { label: '%W (숫자테이블일년중)', value: '%W', key: 'week_of_year' },
+  { label: '%w (요일 번호, 일요일=0)', value: '%w', key: 'week_num' },
+  { label: '%j (연중 일수)', value: '%j', key: 'day_of_year' },
+  { label: '%W (연중 주차)', value: '%W', key: 'week_of_year' },
 ]

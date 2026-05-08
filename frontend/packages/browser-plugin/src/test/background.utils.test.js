@@ -33,6 +33,10 @@ describe('background/utils', () => {
     expect(Utils.isSupportProtocal('file://a')).toBe(true);
     expect(Utils.isSupportProtocal('chrome://a')).toBe(false);
   });
+  it('isSupportProtocol should work', () => {
+    expect(Utils.isSupportProtocol('https://a')).toBe(true);
+    expect(Utils.isSupportProtocol('chrome://a')).toBe(false);
+  });
   it('isNumberStartString should work', () => {
     expect(Utils.isNumberStartString('1abc')).toBe(true);
     expect(Utils.isNumberStartString('abc')).toBe(false);

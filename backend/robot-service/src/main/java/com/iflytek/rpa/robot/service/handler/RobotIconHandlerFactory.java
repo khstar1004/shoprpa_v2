@@ -51,7 +51,7 @@ public class RobotIconHandlerFactory {
     public RobotIconModeHandler getHandler(String mode) {
         RobotIconModeHandler handler = handlerMap.get(mode);
         if (handler == null) {
-            throw new ServiceException(ErrorCodeEnum.E_PARAM.getCode(), "지원하지 않음의매개변수 방식: " + mode);
+            throw new ServiceException(ErrorCodeEnum.E_PARAM.getCode(), "지원하지 않는 매개변수 방식입니다: " + mode);
         }
         return handler;
     }

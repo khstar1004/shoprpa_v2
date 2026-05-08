@@ -1,17 +1,26 @@
 ﻿import os
+from pathlib import Path
 import shutil
-import tempfile
 import unittest
+from uuid import uuid4
 from unittest import TestCase, mock
 
 from astronverse.system import *
 from astronverse.system.folder import Folder
 
 
+def _make_temp_dir() -> str:
+    temp_root = Path(__file__).resolve().parents[4] / "build" / "tmp" / "system-tests"
+    temp_root.mkdir(parents=True, exist_ok=True)
+    temp_dir = temp_root / f"folder-{uuid4().hex}"
+    temp_dir.mkdir()
+    return str(temp_dir)
+
+
 class TestFolder(TestCase):
     def setUp(self):
         """시도전의준비"""
-        self.temp_dir = tempfile.mkdtemp()
+        self.temp_dir = _make_temp_dir()
         self.test_folder_path = os.path.join(self.temp_dir, "test_folder")
         self.test_content = "시도파일내용"
 
@@ -421,7 +430,7 @@ class TestFolder(TestCase):
 
     def test_folder_with_special_characters(self):
         """시도폴더 - 패키지문자의폴더이름"""
-        special_folder_name = "시도폴더: 패키지중국어, 영어, 숫자123및기호!@#￥%"
+        special_folder_name = "시도폴더_패키지중국어, 영어, 숫자123및기호!@#￥%"
         special_folder_path = os.path.join(self.temp_dir, special_folder_name)
         os.makedirs(special_folder_path, exist_ok=True)
 

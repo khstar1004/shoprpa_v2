@@ -306,6 +306,9 @@ public class AppMarketResourceServiceImpl extends ServiceImpl<AppMarketResourceD
         marketResourceDto.setCreatorId(userId);
         marketResourceDto.setUpdaterId(userId);
         marketResourceDto.setTenantId(tenantId);
+        if (CollectionUtils.isEmpty(obtainDirectory)) {
+            return AppResponse.error(ErrorCodeEnum.E_PARAM_LOSE, "가져오기 대상을 선택하세요");
+        }
 
         // 해당버전봇여부저장에서
         RobotVersion robotVersion = robotVersionDao.getVersionInfo(marketResourceDto);
@@ -403,6 +406,9 @@ public class AppMarketResourceServiceImpl extends ServiceImpl<AppMarketResourceD
         MarketDto marketDto = new MarketDto();
         BeanUtils.copyProperties(marketResourceDto, marketDto);
         AppMarketResource appResource = appMarketResourceDao.getAppInfoByAppId(marketDto);
+        if (appResource == null) {
+            throw new ServiceException(ErrorCodeEnum.E_SQL_EMPTY.getCode(), "마켓 봇 정보를 찾을 수 없습니다");
+        }
         String robotId = appResource.getRobotId();
         String creatorId = marketResourceDto.getCreatorId();
         String tenantId = marketResourceDto.getTenantId();
@@ -425,6 +431,9 @@ public class AppMarketResourceServiceImpl extends ServiceImpl<AppMarketResourceD
         Integer authorVersion = authorRobotVersion.getVersion();
         List<ComponentRobotUse> compUseListAuth =
                 componentUseDao.getByRobotIdAndVersion(authorRobotId, authorVersion, tenantId);
+        if (CollectionUtils.isEmpty(compUseListAuth)) {
+            return;
+        }
 
         List<ComponentRobotUse> newCompUseList = new ArrayList<>();
 
@@ -450,8 +459,12 @@ public class AppMarketResourceServiceImpl extends ServiceImpl<AppMarketResourceD
     private void increaseDownloadNum(MarketResourceDto marketResourceDto) {
         AppMarketResource appResource =
                 appMarketResourceDao.getAppResource(marketResourceDto.getAppId(), marketResourceDto.getMarketId());
-        appResource.setDownloadNum(appResource.getDownloadNum() + 1);
-        int i = appMarketResourceDao.updateById(appResource);
+        if (appResource == null) {
+            throw new ServiceException(ErrorCodeEnum.E_SQL_EMPTY.getCode(), "마켓 봇 정보를 찾을 수 없습니다");
+        }
+        Long downloadNum = appResource.getDownloadNum();
+        appResource.setDownloadNum(downloadNum == null ? 1L : downloadNum + 1L);
+        appMarketResourceDao.updateById(appResource);
     }
 
     /**
@@ -490,6 +503,9 @@ public class AppMarketResourceServiceImpl extends ServiceImpl<AppMarketResourceD
         // 조회사용자지정버전의모든매개변수
         List<CParam> cParamList =
                 paramDao.getAllParams(null, authorRobotVersion.getRobotId(), authorRobotVersion.getVersion());
+        if (CollectionUtils.isEmpty(cParamList)) {
+            return;
+        }
         for (CParam cParam : cParamList) {
             cParam.setId(idWorker.nextId() + "");
             cParam.setRobotId(obtainedRobotDesign.getRobotId());
@@ -500,9 +516,7 @@ public class AppMarketResourceServiceImpl extends ServiceImpl<AppMarketResourceD
             cParam.setUpdaterId(obtainedRobotDesign.getUpdaterId());
             cParam.setUpdateTime(new Date());
         }
-        if (!cParamList.isEmpty()) {
-            paramDao.createParamForCurrentVersion(cParamList);
-        }
+        paramDao.createParamForCurrentVersion(cParamList);
     }
 
     @Override
@@ -789,6 +803,9 @@ public class AppMarketResourceServiceImpl extends ServiceImpl<AppMarketResourceD
         marketDto.setAppId(appId);
         marketDto.setMarketId(marketId);
         AppMarketResource appResource = appMarketResourceDao.getAppInfoByAppId(marketDto);
+        if (appResource == null) {
+            return AppResponse.error(ErrorCodeEnum.E_SQL_EMPTY, "삭제할 봇을 찾을 수 없습니다");
+        }
         // app_resource 삭제
         Integer i = appMarketResourceDao.deleteApp(appId, marketId, tenantId);
         Integer j = appMarketVersionDao.deleteAppVersion(appId, marketId);
@@ -796,32 +813,42 @@ public class AppMarketResourceServiceImpl extends ServiceImpl<AppMarketResourceD
         RobotDesign robotDesign = robotDesignDao.getRobotRegardlessLogicDel(appResource.getRobotId(), userId, tenantId);
         if (robotDesign != null) {
             String transformStatus = robotDesign.getTransformStatus();
-            transformStatus = transformStatus.equals("shared") ? "published" : transformStatus;
+            transformStatus = "shared".equals(transformStatus) ? "published" : transformStatus;
             robotDesign.setUpdateTime(new Date());
             robotDesign.setTransformStatus(transformStatus);
             Integer z = robotDesignDao.updateById(robotDesign);
-            if (!i.equals(0) && !j.equals(0) && !z.equals(0)) {
+            if (isUpdated(i) && isUpdated(j) && isUpdated(z)) {
                 return AppResponse.success("삭제봇성공");
             } else {
-                throw new Exception();
+                throw new ServiceException(ErrorCodeEnum.E_SQL_EXCEPTION.getCode(), "삭제봇실패");
             }
         } else {
-            if (!i.equals(0) && !j.equals(0)) {
+            if (isUpdated(i) && isUpdated(j)) {
                 return AppResponse.success("삭제봇성공");
             } else {
-                throw new Exception();
+                throw new ServiceException(ErrorCodeEnum.E_SQL_EXCEPTION.getCode(), "삭제봇실패");
             }
         }
     }
 
+    private boolean isUpdated(Integer count) {
+        return count != null && count > 0;
+    }
+
     @Override
     public AppResponse<?> getALlAppList(AllAppListDto allAppListDto) throws NoLoginException {
+        if (allAppListDto == null) {
+            return AppResponse.error(ErrorCodeEnum.E_PARAM_LOSE);
+        }
 
         Long pageNo = allAppListDto.getPageNo();
         Long pageSize = allAppListDto.getPageSize();
         String appName = allAppListDto.getAppName();
         String marketId = allAppListDto.getMarketId();
         String category = allAppListDto.getCategory();
+        if (pageNo == null || pageSize == null || pageNo <= 0 || pageSize <= 0) {
+            return AppResponse.error(ErrorCodeEnum.E_PARAM_CHECK, "페이지 번호와 크기가 올바르지 않습니다");
+        }
 
         AppResponse<User> response = rpaAuthFeign.getLoginUser();
         if (response == null || !response.ok()) {
@@ -845,7 +872,7 @@ public class AppMarketResourceServiceImpl extends ServiceImpl<AppMarketResourceD
         String sortKey = allAppListDto.getSortKey();
         sortKey = StringUtils.isBlank(sortKey) ? "createTime" : sortKey; // 로createTime 순서
         if (StringUtils.isNotBlank(sortKey) && !set.contains(sortKey)) {
-            AppResponse.error(ErrorCodeEnum.E_PARAM_CHECK);
+            return AppResponse.error(ErrorCodeEnum.E_PARAM_CHECK, "지원하지 않는 정렬 기준입니다");
         }
         // 분
         Page<AppMarketResource> rePage = appMarketResourceDao.pageAllAppList(
@@ -938,7 +965,8 @@ public class AppMarketResourceServiceImpl extends ServiceImpl<AppMarketResourceD
         if (appResource == null || latestAppVersion == null) return AppResponse.error(ErrorCodeEnum.E_SQL_EMPTY);
 
         // 조회데이터목록추가일
-        appResource.setCheckNum(appResource.getCheckNum() + 1);
+        Long checkNum = appResource.getCheckNum();
+        appResource.setCheckNum(checkNum == null ? 1L : checkNum + 1L);
         appMarketResourceDao.updateById(appResource);
 
         setAppDetailVo(appDetailVo, appResource, latestAppVersion, userId, tenantId);
@@ -961,6 +989,9 @@ public class AppMarketResourceServiceImpl extends ServiceImpl<AppMarketResourceD
 
         RobotVersion robotVersion = robotVersionDao.getOnlineVersionRegardlessDel(robotId);
         List<RobotVersion> robotVersionList = robotVersionDao.getAllVersionWithoutUser(robotId);
+        if (robotVersion == null) {
+            throw new ServiceException(ErrorCodeEnum.E_SQL_EMPTY.getCode(), "봇 버전 정보를 찾을 수 없습니다");
+        }
         String fileName = robotVersionDao.getFileName(robotVersion.getAppendixId());
 
         AppResponse<String> realNameResp = rpaAuthFeign.getNameById(robotVersion.getCreatorId());
@@ -990,8 +1021,11 @@ public class AppMarketResourceServiceImpl extends ServiceImpl<AppMarketResourceD
         // 버전정보 
         List<AppDetailVersionInfo> appDetailVersionInfoList = new ArrayList<>();
 
-        for (int i = 0; i < robotVersionList.size(); i++) {
-            RobotVersion rVersion = robotVersionList.get(i);
+        if (CollectionUtils.isEmpty(robotVersionList)) {
+            robotVersionList = Collections.singletonList(robotVersion);
+        }
+
+        for (RobotVersion rVersion : robotVersionList) {
 
             AppDetailVersionInfo appDetailVersionInfo = new AppDetailVersionInfo();
 

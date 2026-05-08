@@ -1,4 +1,4 @@
-﻿export const WINDOW_WIDTH = 1056
+export const WINDOW_WIDTH = 1056
 export const WINDOW_HEIGHT = 700
 
 export const SMART_COMPONENT_KEY_PREFIX = 'Smart.run_code'

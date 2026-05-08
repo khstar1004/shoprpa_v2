@@ -1,4 +1,4 @@
-﻿import { difference, has, isArray, isEmpty, some } from 'lodash-es'
+import { difference, has, isArray, isEmpty, some } from 'lodash-es'
 
 import { getConfigParams } from '@/api/atom'
 import { getComponentDetail } from '@/api/project'
@@ -138,7 +138,7 @@ export async function getComponentForm(params: {
 }
 
 /**
- * 가져오기`지정컴포넌트팝업`테이블단일원데이터, 
+ * 가져오기`지정컴포넌트팝업`테이블단일원데이터,
  */
 export function getComponentPreviewForm(params: {
   componentAttrs?: RPA.ConfigParamData[]

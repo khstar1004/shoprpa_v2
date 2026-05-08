@@ -1,4 +1,4 @@
-﻿from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 
 from app.dependencies import get_api_key_service, get_astron_api_key_service, get_user_id_from_header
 from app.logger import get_logger
@@ -16,20 +16,23 @@ router = APIRouter(
 
 
 @router.get(
-    "/get", response_model=StandardResponse, summary="가져오기모든 API Key", description="가져오기현재사용자의모든 API Key 목록"
+    "/get",
+    response_model=StandardResponse,
+    summary="List API keys",
+    description="List API keys owned by the current user.",
 )
 async def get_api_keys(
-    pageNo: int = Query(1, ge=1, description="가져오기 일"),
-    pageSize: int = Query(100, ge=1, le=50, description="일있음다중적음기록"),
+    pageNo: int = Query(1, ge=1, description="Page number"),
+    pageSize: int = Query(50, ge=1, le=50, description="Page size"),
     user_id: str = Depends(get_user_id_from_header),
     service: ApiKeyService = Depends(get_api_key_service),
 ):
-    """가져오기 API Key 목록"""
+    """List API keys."""
     try:
         api_keys = await service.get_api_keys(user_id, pageNo, pageSize)
         return StandardResponse(code=ResCode.SUCCESS, msg="", data={"total": len(api_keys), "records": api_keys})
     except Exception as e:
-        logger.error(f"Error getting API keys: {str(e)}")
+        logger.error("Error getting API keys: %s", str(e))
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to get API keys")
 
 
@@ -37,20 +40,20 @@ async def get_api_keys(
     "/create",
     response_model=StandardResponse,
     status_code=status.HTTP_201_CREATED,
-    summary="생성새의 API Key",
-    description="로현재사용자생성새의 API Key",
+    summary="Create API key",
+    description="Create a new API key for the current user.",
 )
 async def create_api_key(
     api_key_data: ApiKeyCreate,
     user_id: str = Depends(get_user_id_from_header),
     service: ApiKeyService = Depends(get_api_key_service),
 ):
-    """생성 API Key"""
+    """Create an API key."""
     try:
         api_key = await service.create_api_key(api_key_data, user_id)
         return StandardResponse(code=ResCode.SUCCESS, msg="", data={"api_key": api_key})
     except Exception as e:
-        logger.error(f"Error creating API key: {str(e)}")
+        logger.error("Error creating API key: %s", str(e))
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to create API key",
@@ -61,17 +64,17 @@ async def create_api_key(
     "/remove",
     response_model=StandardResponse,
     status_code=status.HTTP_200_OK,
-    summary="삭제지정 API Key",
-    description="삭제지정의 API Key",
+    summary="Delete API key",
+    description="Delete an API key owned by the current user.",
 )
 async def delete_api_key(
     request: ApiKeyDelete,
     user_id: str = Depends(get_user_id_from_header),
     service: ApiKeyService = Depends(get_api_key_service),
 ):
-    """삭제 API Key"""
+    """Delete an API key."""
+    api_key_id = str(request.id)
     try:
-        api_key_id = int(request.id)  # 변환로 int 유형
         success = await service.delete_api_key(str(api_key_id), user_id)
         if not success:
             return StandardResponse(
@@ -82,7 +85,7 @@ async def delete_api_key(
 
         return StandardResponse(code=ResCode.SUCCESS, msg="", data=None)
     except Exception as e:
-        logger.error(f"Error deleting API key {api_key_id}: {str(e)}")
+        logger.error("Error deleting API key %s: %s", api_key_id, str(e))
         return StandardResponse(code=ResCode.ERR, msg="Failed to delete API key", data=None)
 
 
@@ -90,33 +93,31 @@ async def delete_api_key(
     "/create-astron",
     response_model=StandardResponse,
     status_code=status.HTTP_201_CREATED,
-    summary="생성ShoprpaAgent",
-    description="로현재사용자생성ShoprpaAgent",
+    summary="Create ShopRPA Agent credential",
+    description="Create a ShopRPA Agent credential for the current user.",
 )
 async def create_astron_agent(
     astron_agent_data: ShoprpaAgentCreate,
     user_id: str = Depends(get_user_id_from_header),
     service: ShoprpaApiKeyService = Depends(get_astron_api_key_service),
 ):
-    """생성ShoprpaAgent"""
+    """Create a ShopRPA Agent credential."""
     try:
-        # 인증데이터
         if not astron_agent_data.api_key or not astron_agent_data.api_secret:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="api_key 및 api_secret 비워 둘 수 없습니다",
+                detail="api_key and api_secret are required",
             )
 
         # GET http://dev-agent.xfyun.cn/xingchen-api/manage/workflow/get_info
         # X-Consumer-Username [appId]
         # Authorization [Bearer api_key:api_secret]
 
-        # 호출서비스생성ShoprpaAgent
         astron_auth = await service.create_astron_agent(astron_agent_data, user_id)
 
         return StandardResponse(
             code=ResCode.SUCCESS,
-            msg="ShoprpaAgent권한 부여생성성공",
+            msg="ShopRPA Agent credential created",
             data={
                 "id": astron_auth.id,
                 "created_at": astron_auth.created_at,
@@ -126,116 +127,122 @@ async def create_astron_agent(
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Error creating ShoprpaAgent: {str(e)}")
+        logger.error("Error creating ShopRPA Agent credential: %s", str(e))
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="생성ShoprpaAgent인증실패",
+            detail="Failed to create ShopRPA Agent credential",
         )
 
 
 @router.get(
     "/get-astron",
     response_model=StandardResponse,
-    summary="가져오기모든ShoprpaAgent",
-    description="가져오기현재사용자의모든ShoprpaAgent목록",
+    summary="List ShopRPA Agent credentials",
+    description="List ShopRPA Agent credentials owned by the current user.",
 )
 async def get_astron_agents(
-    pageNo: int = Query(1, ge=1, description="가져오기 일"),
-    pageSize: int = Query(10, ge=1, le=50, description="일있음다중적음기록"),
+    pageNo: int = Query(1, ge=1, description="Page number"),
+    pageSize: int = Query(10, ge=1, le=50, description="Page size"),
     user_id: str = Depends(get_user_id_from_header),
     service: ShoprpaApiKeyService = Depends(get_astron_api_key_service),
 ):
-    """가져오기ShoprpaAgent목록"""
+    """List ShopRPA Agent credentials."""
     try:
         astron_agents = await service.get_astron_agents(user_id, pageNo, pageSize)
         return StandardResponse(
-            code=ResCode.SUCCESS, msg="가져오기성공", data={"total": len(astron_agents), "records": astron_agents}
+            code=ResCode.SUCCESS, msg="Loaded", data={"total": len(astron_agents), "records": astron_agents}
         )
     except Exception as e:
-        logger.error(f"Error getting ShoprpaAgents: {str(e)}")
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to get ShoprpaAgents")
+        logger.error("Error getting ShopRPA Agent credentials: %s", str(e))
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to get ShopRPA Agent credentials",
+        )
 
 
 @router.get(
     "/get-astron-by-id",
     response_model=StandardResponse,
-    summary="근거ID가져오기ShoprpaAgent",
-    description="근거ID가져오기 지정의ShoprpaAgent정보",
+    summary="Get ShopRPA Agent credential",
+    description="Get a ShopRPA Agent credential by id.",
 )
 async def get_astron_agent_by_id(
-    id: int = Query(..., description="ShoprpaAgent의ID"),
+    id: int = Query(..., description="ShopRPA Agent credential id"),
     user_id: str = Depends(get_user_id_from_header),
     service: ShoprpaApiKeyService = Depends(get_astron_api_key_service),
 ):
-    """근거ID가져오기ShoprpaAgent"""
+    """Get a ShopRPA Agent credential by id."""
     try:
         astron_agent = await service.get_astron_agent_by_id(id, user_id)
         if astron_agent is None:
             return StandardResponse(
                 code=ResCode.ERR,
-                msg=f"ShoprpaAgent with ID {id} not found",
+                msg=f"ShopRPA Agent credential with ID {id} not found",
                 data=None,
             )
 
-        return StandardResponse(code=ResCode.SUCCESS, msg="가져오기성공", data=astron_agent)
+        return StandardResponse(code=ResCode.SUCCESS, msg="Loaded", data=astron_agent)
     except Exception as e:
-        logger.error(f"Error getting ShoprpaAgent by id {id}: {str(e)}")
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to get ShoprpaAgent")
+        logger.error("Error getting ShopRPA Agent credential by id %s: %s", id, str(e))
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to get ShopRPA Agent credential",
+        )
 
 
 @router.post(
     "/remove-astron",
     response_model=StandardResponse,
     status_code=status.HTTP_200_OK,
-    summary="삭제지정ShoprpaAgent",
-    description="삭제지정의ShoprpaAgent",
+    summary="Delete ShopRPA Agent credential",
+    description="Delete a ShopRPA Agent credential owned by the current user.",
 )
 async def delete_astron_agent(
     request: ShoprpaAgentDelete,
     user_id: str = Depends(get_user_id_from_header),
     service: ShoprpaApiKeyService = Depends(get_astron_api_key_service),
 ):
-    """삭제ShoprpaAgent"""
+    """Delete a ShopRPA Agent credential."""
+    astron_agent_id = str(request.id)
     try:
-        astron_agent_id = str(request.id)  # 변환로문자열유형
         success = await service.delete_astron_agent(astron_agent_id, user_id)
         if not success:
             return StandardResponse(
                 code=ResCode.ERR,
-                msg=f"ShoprpaAgent with ID {astron_agent_id} not found",
+                msg=f"ShopRPA Agent credential with ID {astron_agent_id} not found",
                 data=None,
             )
 
-        return StandardResponse(code=ResCode.SUCCESS, msg="삭제성공", data=None)
+        return StandardResponse(code=ResCode.SUCCESS, msg="Deleted", data=None)
     except Exception as e:
-        logger.error(f"Error deleting ShoprpaAgent {astron_agent_id}: {str(e)}")
-        return StandardResponse(code=ResCode.ERR, msg="Failed to delete ShoprpaAgent", data=None)
+        logger.error("Error deleting ShopRPA Agent credential %s: %s", astron_agent_id, str(e))
+        return StandardResponse(code=ResCode.ERR, msg="Failed to delete ShopRPA Agent credential", data=None)
 
 
 @router.post(
     "/update-astron",
     response_model=StandardResponse,
     status_code=status.HTTP_200_OK,
-    summary="업데이트지정ShoprpaAgent",
-    description="업데이트지정의ShoprpaAgent정보",
+    summary="Update ShopRPA Agent credential",
+    description="Update a ShopRPA Agent credential owned by the current user.",
 )
 async def update_astron_agent(
     request: ShoprpaAgentUpdate,
     user_id: str = Depends(get_user_id_from_header),
     service: ShoprpaApiKeyService = Depends(get_astron_api_key_service),
 ):
-    """업데이트ShoprpaAgent"""
-    astron_agent_id = str(request.id)  # 변환로문자열유형
+    """Update a ShopRPA Agent credential."""
+    astron_agent_id = str(request.id)
     try:
         success = await service.update_astron_agent(astron_agent_id, user_id, request)
         if not success:
             return StandardResponse(
                 code=ResCode.ERR,
-                msg=f"ShoprpaAgent with ID {astron_agent_id} not found",
+                msg=f"ShopRPA Agent credential with ID {astron_agent_id} not found",
                 data=None,
             )
 
-        return StandardResponse(code=ResCode.SUCCESS, msg="업데이트성공", data=None)
+        return StandardResponse(code=ResCode.SUCCESS, msg="Updated", data=None)
     except Exception as e:
-        logger.error(f"Error updating ShoprpaAgent {astron_agent_id}: {str(e)}")
-        return StandardResponse(code=ResCode.ERR, msg="Failed to update ShoprpaAgent", data=None)
+        logger.error("Error updating ShopRPA Agent credential %s: %s", astron_agent_id, str(e))
+        return StandardResponse(code=ResCode.ERR, msg="Failed to update ShopRPA Agent credential", data=None)

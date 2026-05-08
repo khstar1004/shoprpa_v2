@@ -23,15 +23,18 @@ class Clipboard:
     @staticmethod
     def paste_html_clip() -> str:
         if sys.platform != "win32":
-            result = subprocess.run(
-                ["xclip", "-selection", "clipboard", "-o", "-t", "text/html"],
-                capture_output=True,
-                text=True,
-                encoding="utf-8",
-                errors="replace",
-            )
-            html_data = result.stdout
-            return html_data
+            try:
+                result = subprocess.run(
+                    ["xclip", "-selection", "clipboard", "-o", "-t", "text/html"],
+                    capture_output=True,
+                    text=True,
+                    encoding="utf-8",
+                    errors="replace",
+                    check=False,
+                )
+                return result.stdout or Clipboard.paste_str_clip()
+            except FileNotFoundError:
+                return Clipboard.paste_str_clip()
 
         import win32clipboard as cp
 
@@ -65,7 +68,10 @@ class Clipboard:
 
     @staticmethod
     def _extract_html_fragment(html_clipboard_data):
-        html_clipboard_str = html_clipboard_data.decode("utf-8")
+        if isinstance(html_clipboard_data, bytes):
+            html_clipboard_str = html_clipboard_data.decode("utf-8", errors="replace")
+        else:
+            html_clipboard_str = str(html_clipboard_data)
 
         start_marker = "<!--StartFragment-->"
         end_marker = "<!--EndFragment-->"
@@ -76,8 +82,12 @@ class Clipboard:
         if start_index == -1 or end_index == -1:
             # 사용정상이면테이블방식행매칭
             # 일소의예방식
-            match_start = re.search(r"StartHTML:(\d+)\r", html_clipboard_str).group(1)
-            match_end = re.search(r"EndHTML:(\d+)\r", html_clipboard_str).group(1)
+            match_start = re.search(r"StartHTML:(\d+)", html_clipboard_str)
+            match_end = re.search(r"EndHTML:(\d+)", html_clipboard_str)
+            if not match_start or not match_end:
+                return html_clipboard_str
+            match_start = match_start.group(1)
+            match_end = match_end.group(1)
             return html_clipboard_str[int(match_start) : int(match_end)]
 
         start_offset = start_index + len(start_marker)

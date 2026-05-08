@@ -1,4 +1,4 @@
-﻿<script lang="ts" setup>
+<script lang="ts" setup>
 import { message } from 'ant-design-vue'
 import { useTranslation } from 'i18next-vue'
 import { inject, onBeforeMount, ref, watch } from 'vue'
@@ -9,20 +9,20 @@ import { useProcessStore } from '@/stores/useProcessStore'
 import { useRunningStore } from '@/stores/useRunningStore'
 
 const columns = [
- {
- title: '변수명',
- field: 'variableName',
- width: 120,
- },
- {
- title: '변수값',
- field: 'variableValue',
- },
- {
- title: '변수유형',
- field: 'variableType',
- width: 120,
- },
+  {
+    title: '변수명',
+    field: 'variableName',
+    width: 120,
+  },
+  {
+    title: '변수값',
+    field: 'variableValue',
+  },
+  {
+    title: '변수유형',
+    field: 'variableType',
+    width: 120,
+  },
 ]
 
 const { t } = useTranslation()
@@ -35,34 +35,34 @@ const height = inject('logTableHeight', 200) // 만약있음비고입력, 기본
 let tempData: { [key: string]: { value: any, types: string } } = {}
 
 function menuClickHandle({ menu, row, column }) {
- if (menu.code === 'copy' && row && column) {
- const text = row[column.field]
- clipboardManager.writeClipboardText(text)
- message.info(t('contentCopied'))
- }
+  if (menu.code === 'copy' && row && column) {
+    const text = row[column.field]
+    clipboardManager.writeClipboardText(text)
+    message.info(t('contentCopied'))
+  }
 }
 
 watch(() => useRunning.debugDataVar, (newVal) => {
- tempData = newVal || {}
- dataSource.value = Object.entries(tempData).map(([key, { value, types }]) => ({
- variableName: key,
- variableValue: value,
- variableType: processStore.globalVarTypeList[types]?.desc || types,
- }))
+  tempData = newVal || {}
+  dataSource.value = Object.entries(tempData).map(([key, { value, types }]) => ({
+    variableName: key,
+    variableValue: value,
+    variableType: processStore.globalVarTypeList[types]?.desc || types,
+  }))
 })
 onBeforeMount(() => {
- tempData = {}
+  tempData = {}
 })
 </script>
 
 <template>
- <div class="logs-manager">
- <RpaVxeTable
- :height="height"
- :columns="columns"
- :data-source="dataSource"
- :is-scroll-bottom="true"
- @menu-click="menuClickHandle"
- />
- </div>
+  <div class="logs-manager">
+    <RpaVxeTable
+      :height="height"
+      :columns="columns"
+      :data-source="dataSource"
+      :is-scroll-bottom="true"
+      @menu-click="menuClickHandle"
+    />
+  </div>
 </template>

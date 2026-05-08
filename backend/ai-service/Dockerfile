@@ -1,40 +1,42 @@
-# 사용항목방법Python항목이미지항목로항목항목이미지
+# Python service runtime image
 FROM python:3.13-slim
 
-# 항목항목디렉터리
+ARG UV_VERSION=0.11.9
+
+# Application directory
 WORKDIR /app
 
-# 항목항목변수
+# Runtime defaults
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PYTHONPATH=/app \
+    VIRTUAL_ENV=/app/.venv \
+    PATH="/app/.venv/bin:$PATH" \
+    UV_NO_CACHE=1 \
     PIP_NO_CACHE_DIR=1 \
     PIP_DISABLE_PIP_VERSION_CHECK=1
 
-# 설치시스템시스템항목
+# System build dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# 업그레이드pip
-RUN pip install --upgrade pip
+# Install the lockfile-aware Python package manager.
+RUN pip install --upgrade pip "uv==${UV_VERSION}"
 
-# 복사항목목록항목파일
-COPY backend/ai-service/pyproject.toml backend/ai-service/uv.lock ./
+# Copy dependency metadata first for better Docker cache reuse.
+COPY backend/ai-service/pyproject.toml backend/ai-service/uv.lock backend/ai-service/README.md ./
 
-# 설치항목목록항목
-RUN pip install --no-cache-dir -e .
+# Install locked runtime dependencies.
+RUN uv sync --locked --no-dev --no-install-project
 
-# 복사항목목록항목코드
+# Copy application code.
 COPY backend/ai-service/app/ ./app/
 
-# 복사매칭항목파일(예결과저장에서)
+# Optional environment file for local debugging.
 # COPY docker/.env ./.env
 
-# 항목단말항목
 EXPOSE 8010
 
-
-# 시작항목사용
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8010", "--proxy-headers", "--workers", "4"]

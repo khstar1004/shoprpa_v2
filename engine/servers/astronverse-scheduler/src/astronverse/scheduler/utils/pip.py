@@ -14,6 +14,17 @@ class PipManager:
     DOWNLOADED_PACKAGES = {}
 
     @staticmethod
+    def mirror_args(mirror):
+        if not mirror:
+            return []
+
+        args = ["--index-url={}".format(mirror)]
+        hostname = urlparse(mirror).hostname
+        if hostname:
+            args.extend(["--trusted-host", hostname])
+        return args
+
+    @staticmethod
     def get_installed_packages(exec_python=None):
         if not exec_python:
             exec_python = sys.executable
@@ -78,9 +89,7 @@ class PipManager:
             pck,
             "-w",
             pip_cache_dir,
-            "--index-url={}".format(mirror),
-            "--trusted-host",
-            urlparse(mirror).hostname,
+            *PipManager.mirror_args(mirror),
             "--disable-pip-version-check",
             "--prefer-binary",
         ]
@@ -102,7 +111,7 @@ class PipManager:
             # 결과가다운로드있음완료, 의시간, 있음초과경과직선연결반환
             if time.time() - last < time_out:
                 return
-        PipManager.DOWNLOADED_PACKAGES[package] = time.time()  # 로그
+        PipManager.DOWNLOADED_PACKAGES[pck] = time.time()  # 로그
         # 다운로드
 
         cmd = [
@@ -113,9 +122,7 @@ class PipManager:
             pck,
             "-w",
             pip_cache_dir,
-            "--index-url={}".format(mirror),
-            "--trusted-host",
-            urlparse(mirror).hostname,
+            *PipManager.mirror_args(mirror),
             "--disable-pip-version-check",
             "--prefer-binary",
         ]
@@ -125,7 +132,7 @@ class PipManager:
             raise Exception("download_pip error:{}".format(error_data))
 
         # 저장
-        PipManager.DOWNLOADED_PACKAGES[package] = -1  # 결과
+        PipManager.DOWNLOADED_PACKAGES[pck] = -1  # 결과
 
     @staticmethod
     def install_pip_cmd(package, ver, exec_python=None, pip_cache_dir="pip_cache"):
@@ -180,9 +187,7 @@ class PipManager:
             "install",
             pck,
             "--find-links={}".format(pip_cache_dir),
-            "--index-url={}".format(mirror),
-            "--trusted-host",
-            urlparse(mirror).hostname,
+            *PipManager.mirror_args(mirror),
             "--no-warn-script-location",
             "--disable-pip-version-check",
         ]

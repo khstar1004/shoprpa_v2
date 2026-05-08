@@ -1,4 +1,4 @@
-﻿from datetime import datetime
+from datetime import datetime
 from typing import Optional
 
 import pytz
@@ -20,26 +20,23 @@ class ApiKeyService:
         self.redis = redis
 
     async def _invalidate_api_keys_cache(self, user_id: str) -> None:
-        """지우기사용자API Key저장"""
+        """Invalidate cached API key lists for a user."""
         if self.redis:
-            # 지우기가능의모든분저장
             keys = await self.redis.keys(f"api_keys:{user_id}:*")
             if keys:
                 await self.redis.delete(*keys)
 
-    async def create_api_key(self, api_key_data: ApiKeyCreate, user_id: str) -> OpenAPIDB:
-        """생성새API Key"""
-
-        # 완료일ID및키
+    async def create_api_key(self, api_key_data: ApiKeyCreate, user_id: str) -> str:
+        """Create an API key and return the plaintext value once."""
         api_key = APIKeyUtils.generate_api_key()
-        logger.info("Generated API key: %s", api_key)
         hashed_key = APIKeyUtils.hash_api_key(api_key)
         prefix = api_key[:8]
         name = api_key_data.name
+        logger.info("Generated API key for user %s with prefix %s", user_id, prefix)
 
         new_api_key = OpenAPIDB(
             user_id=user_id,
-            api_key=hashed_key,  # 데이터베이스중아니오저장API_KEY
+            api_key=hashed_key,
             prefix=prefix,
             created_at=datetime.now(pytz.timezone("Asia/Seoul")).replace(tzinfo=None),
             name=name,
@@ -57,37 +54,33 @@ class ApiKeyService:
         return api_key
 
     async def get_api_key(self, api_key_id: str, user_id: str | None = None) -> Optional[OpenAPIDB]:
-        """가져오기 지정API Key"""
+        """Get an active API key row by id."""
         query = select(OpenAPIDB).where(OpenAPIDB.id == api_key_id)
         if user_id is not None:
             query = query.where(OpenAPIDB.user_id == user_id)
-        query = query.where(OpenAPIDB.is_active == 1)  # 반환상태의기록
+        query = query.where(OpenAPIDB.is_active == 1)
 
         result = await self.db.execute(query)
         return result.scalars().first()
 
     async def get_api_keys(self, user_id: str, page_no: int = 0, page_size: int = 10) -> list[OpenAPIDB]:
-        """가져오기API Key목록"""
-        # 완료저장
+        """List active API keys for a user."""
         skip = (page_no - 1) * page_size
         cache_key = f"api_keys:{user_id}:{skip}:{page_size}"
 
-        # 결과가Redis가능사용, 시도에서저장가져오기
         if self.redis:
             cached_data = await self.redis.get(cache_key)
             if cached_data:
-                # 목록중가능필요변경복사의순서열/반대순서열방법
                 pass
 
-        # 생성조회
         query = (
             select(OpenAPIDB)
             .where(OpenAPIDB.user_id == user_id)
-            .where(OpenAPIDB.is_active == 1)  # 반환상태의기록
-            .where(~OpenAPIDB.name.startswith("default_key_"))  # 정렬제거으로 default_key_ 열기 의기록
-            .order_by(OpenAPIDB.created_at.desc())  # 생성 시간순서정렬
-            .offset(skip)  # 계획량(에서 0 열기 )
-            .limit(page_size)  # 제한매개수
+            .where(OpenAPIDB.is_active == 1)
+            .where(~OpenAPIDB.name.startswith("default_key_"))
+            .order_by(OpenAPIDB.created_at.desc())
+            .offset(skip)
+            .limit(page_size)
         )
         query_result = await self.db.execute(query)
         api_keys = query_result.scalars().all()
@@ -103,39 +96,39 @@ class ApiKeyService:
                 }
             )
 
-        # 저장조회결과
         if self.redis:
-            # 객체순서열복사, 목록중가능사용사용라이브러리또는지정순서열방법법
             pass
 
         return result
 
     async def delete_api_key(self, api_key_id: str, user_id: str) -> bool:
-        """소프트삭제API Key"""
-        # 조회API Key여부저장된 현재사용자
+        """Soft-delete an API key."""
         api_key = await self.get_api_key(api_key_id, user_id)
         if not api_key:
             return False
 
-        # 실행소프트삭제 - 를 is_active 로 0
         stmt = update(OpenAPIDB).where(OpenAPIDB.id == api_key_id, OpenAPIDB.user_id == user_id).values(is_active=0)
 
         await self.db.execute(stmt)
 
-        # 지우기저장
         await self._invalidate_api_keys_cache(user_id)
 
         return True
 
     async def validate_api_key(self, key: str) -> Optional[str]:
-        """인증API Key반환닫기 의사용자ID"""
-        query = select(OpenAPIDB).where(OpenAPIDB.key == key)
-        query = query.where(OpenAPIDB.is_active == 1)  # 인증상태의기록
-        result = await self.db.execute(query)
-        api_key = result.scalars().first()
+        """Validate a plaintext API key and return its user id."""
+        if not key:
+            return None
 
-        if api_key:
-            return str(api_key.user_id)
+        prefix = key[:8]
+        query = select(OpenAPIDB).where(OpenAPIDB.prefix == prefix)
+        query = query.where(OpenAPIDB.is_active == 1)
+        result = await self.db.execute(query)
+        api_keys = result.scalars().all()
+
+        for api_key in api_keys:
+            if APIKeyUtils.verify_api_key(key, api_key.api_key):
+                return str(api_key.user_id)
         return None
 
 
@@ -145,9 +138,8 @@ class ShoprpaApiKeyService:
         self.redis = redis
 
     async def create_astron_agent(self, astron_agent_data, user_id: str):
-        """생성ShoprpaAgent"""
+        """Create a ShopRPA Agent credential."""
 
-        # 생성새의ShoprpaAgent기록
         new_astron_agent = ShoprpaAgentDB(
             user_id=user_id,
             name=astron_agent_data.name,
@@ -163,14 +155,13 @@ class ShoprpaApiKeyService:
         await self.db.flush()
         await self.db.refresh(new_astron_agent)
 
-        logger.info("Created ShoprpaAgent for user %s: %s", user_id, new_astron_agent.id)
+        logger.info("Created ShopRPA Agent credential for user %s: %s", user_id, new_astron_agent.id)
 
         return new_astron_agent
 
     async def delete_astron_agent(self, astron_agent_id: str, user_id: str) -> bool:
-        """소프트삭제ShoprpaAgent(is_active로0)"""
+        """Soft-delete a ShopRPA Agent credential."""
         try:
-            # 업데이트지정사용자및ID의ShoprpaAgent, 를is_active로0
             stmt = (
                 update(ShoprpaAgentDB)
                 .where(ShoprpaAgentDB.id == astron_agent_id, ShoprpaAgentDB.user_id == user_id)
@@ -182,19 +173,19 @@ class ShoprpaApiKeyService:
 
             # 조회여부업데이트완료기록
             if result.rowcount > 0:
-                logger.info("Soft deleted ShoprpaAgent %s for user %s", astron_agent_id, user_id)
+                logger.info("Soft deleted ShopRPA Agent %s for user %s", astron_agent_id, user_id)
                 return True
             else:
-                logger.warning("ShoprpaAgent %s for user %s not found", astron_agent_id, user_id)
+                logger.warning("ShopRPA Agent %s for user %s not found", astron_agent_id, user_id)
                 return False
 
         except Exception as e:
-            logger.error("Error soft deleting ShoprpaAgent %s for user %s: %s", astron_agent_id, user_id, str(e))
+            logger.error("Error soft deleting ShopRPA Agent %s for user %s: %s", astron_agent_id, user_id, str(e))
             await self.db.rollback()
             raise
 
     async def get_astron_agents(self, user_id: str, pageNo: int = 1, pageSize: int = 10) -> list[dict]:
-        """가져오기ShoprpaAgent목록"""
+        """List ShopRPA Agent credentials."""
         try:
             skip = (pageNo - 1) * pageSize
 
@@ -229,11 +220,11 @@ class ShoprpaApiKeyService:
             return formatted_agents
 
         except Exception as e:
-            logger.error("Error getting ShoprpaAgents for user %s: %s", user_id, str(e))
+            logger.error("Error getting ShopRPA Agents for user %s: %s", user_id, str(e))
             raise
 
     async def get_all_astron_agents(self, user_id: str) -> list[dict]:
-        """가져오기사용자의모든ShoprpaAgent(아니오분)"""
+        """List all active ShopRPA Agent credentials for a user."""
         try:
             # 생성조회, 가져오기 의기록
             query = (
@@ -264,13 +255,13 @@ class ShoprpaApiKeyService:
             return formatted_agents
 
         except Exception as e:
-            logger.error("Error getting all ShoprpaAgents for user %s: %s", user_id, str(e))
+            logger.error("Error getting all ShopRPA Agents for user %s: %s", user_id, str(e))
             raise
 
     async def update_astron_agent(self, astron_agent_id: str, user_id: str, update_data) -> bool:
-        """업데이트ShoprpaAgent"""
+        """Update a ShopRPA Agent credential."""
         try:
-            # 업데이트지정사용자및ID의ShoprpaAgent
+            # Update the ShopRPA Agent credential owned by this user.
             update_values = {"updated_at": datetime.now(pytz.timezone("Asia/Seoul")).replace(tzinfo=None)}
 
             # 업데이트의필드
@@ -298,19 +289,19 @@ class ShoprpaApiKeyService:
 
             # 조회여부업데이트완료기록
             if result.rowcount > 0:
-                logger.info("Updated ShoprpaAgent %s for user %s", astron_agent_id, user_id)
+                logger.info("Updated ShopRPA Agent %s for user %s", astron_agent_id, user_id)
                 return True
             else:
-                logger.warning("ShoprpaAgent %s for user %s not found or not active", astron_agent_id, user_id)
+                logger.warning("ShopRPA Agent %s for user %s not found or not active", astron_agent_id, user_id)
                 return False
 
         except Exception as e:
-            logger.error("Error updating ShoprpaAgent %s for user %s: %s", astron_agent_id, user_id, str(e))
+            logger.error("Error updating ShopRPA Agent %s for user %s: %s", astron_agent_id, user_id, str(e))
             await self.db.rollback()
             raise
 
     async def get_astron_agent_by_id(self, astron_agent_id: int, user_id: str) -> Optional[dict]:
-        """근거ID가져오기단일개ShoprpaAgent"""
+        """Get one ShopRPA Agent credential by id."""
         try:
             # 생성조회, 가져오기 의기록
             query = (
@@ -338,5 +329,5 @@ class ShoprpaApiKeyService:
             return None
 
         except Exception as e:
-            logger.error("Error getting ShoprpaAgent %s for user %s: %s", astron_agent_id, user_id, str(e))
+            logger.error("Error getting ShopRPA Agent %s for user %s: %s", astron_agent_id, user_id, str(e))
             raise

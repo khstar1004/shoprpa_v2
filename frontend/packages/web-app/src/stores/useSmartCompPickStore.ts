@@ -34,14 +34,14 @@ export const useSmartCompPickStore = defineStore('smartCompPickStore', () => {
       startPickAction('SMART_COMPONENT_NEXT')
     }
     else if (eventType === SMART_COMP_PICK_EVENT.CONFIRM) {
-      // 
+      //
       startPickAction('SMART_COMPONENT_END', () => {
         finishPick()
         currentCallback && currentCallback({ success: true, data: pickData.value })
       })
     }
     else if (eventType === SMART_COMP_PICK_EVENT.CANCEL) {
-      // 가져오기 
+      // 가져오기
       startPickAction('SMART_COMPONENT_CANCEL', () => {
         finishPick()
         currentCallback && currentCallback({ success: false, data: null })
@@ -150,7 +150,6 @@ export const useSmartCompPickStore = defineStore('smartCompPickStore', () => {
       }
     }
 
-    console.log('smartpick position', { x, y })
     return { x, y }
   }
 
@@ -171,7 +170,7 @@ export const useSmartCompPickStore = defineStore('smartCompPickStore', () => {
     pickData.value = null
     currentCallback = callback // 저장현재돌아가기조정
 
-    // 열기 
+    // 열기
     openPickMenuWindow()
 
     startPickAction('SMART_COMPONENT_START')
@@ -191,7 +190,6 @@ export const useSmartCompPickStore = defineStore('smartCompPickStore', () => {
     })
     // 지정메시지
     RpaPicker.bindMessage((res) => {
-      console.log('startCheck res: ', res)
       if (res && res.key === 'success') {
         callback && callback({
           success: true,
@@ -244,7 +242,6 @@ export const useSmartCompPickStore = defineStore('smartCompPickStore', () => {
     // 지정메시지
     RpaPicker.bindMessage((res) => {
       const { key, data, err_msg } = res || {} // key: 'success' | 'error' | 'ping'
-      console.log('smartCompPick bindMessage: ', res)
 
       if (key === 'success' && data) {
         pickData.value = JSON.parse(data)

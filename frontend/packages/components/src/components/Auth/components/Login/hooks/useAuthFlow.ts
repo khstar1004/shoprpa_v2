@@ -1,6 +1,6 @@
-﻿import { message } from 'ant-design-vue'
-import { ref, watch } from 'vue'
+import { message } from 'ant-design-vue'
 import { useTranslation } from 'i18next-vue'
+import { ref, watch } from 'vue'
 
 import { setBaseUrl } from '../../../api/http'
 import {
@@ -48,6 +48,20 @@ export function useAuthFlow(opts: UseAuthFlowOptions = {}, emits: { (e: 'finish'
   const tempToken = ref<string>('')
   const running = ref<AsyncAction>('IDLE')
   const cacheFormData = ref<Record<string, any>>({})
+  const lastError = ref('')
+
+  const getErrorMessage = (error: any, fallback: string) => {
+    const raw = error?.userMessage || error?.message || error?.msg || error?.data?.message || error?.data?.msg
+    return String(raw || fallback || '').trim()
+  }
+
+  const setActionError = (error: any, fallback: string) => {
+    lastError.value = getErrorMessage(error, fallback)
+  }
+
+  const clearActionError = () => {
+    lastError.value = ''
+  }
 
   const setCacheFormData = (data: any) => {
     const cacheKey = currentFormMode.value
@@ -60,6 +74,7 @@ export function useAuthFlow(opts: UseAuthFlowOptions = {}, emits: { (e: 'finish'
 
   const run = async <T>(action: AsyncAction, task: () => Promise<T>) => {
     running.value = action
+    clearActionError()
     try {
       return await task()
     }
@@ -87,7 +102,7 @@ export function useAuthFlow(opts: UseAuthFlowOptions = {}, emits: { (e: 'finish'
       }
     }
     catch (e) {
-      console.log(e)
+      setActionError(e, '백엔드 연결 상태를 확인할 수 없습니다. 서버 주소와 서비스 실행 상태를 확인해 주세요.')
       currentFormMode.value = 'login'
     }
   }
@@ -106,6 +121,7 @@ export function useAuthFlow(opts: UseAuthFlowOptions = {}, emits: { (e: 'finish'
       switchMode('login')
     }
     catch (e) {
+      setActionError(e, t('components.auth.fetchTenantsFailed'))
       console.error(t('components.auth.fetchTenantsFailed'), e)
     }
   }
@@ -128,6 +144,7 @@ export function useAuthFlow(opts: UseAuthFlowOptions = {}, emits: { (e: 'finish'
       switchMode('tenantSelect')
     }
     catch (e) {
+      setActionError(e, t('components.auth.fetchTenantsFailed'))
       console.error(t('components.auth.fetchTenantsFailed'), e)
     }
   }
@@ -155,6 +172,7 @@ export function useAuthFlow(opts: UseAuthFlowOptions = {}, emits: { (e: 'finish'
       switchToTenants(autoLogin)
     }
     catch (e) {
+      setActionError(e, t('components.auth.loginFailed'))
       console.error(t('components.auth.loginFailed'), e)
     }
   })
@@ -166,6 +184,7 @@ export function useAuthFlow(opts: UseAuthFlowOptions = {}, emits: { (e: 'finish'
       emits('finish')
     }
     catch (e) {
+      setActionError(e, t('components.auth.enterSpaceFailed'))
       console.error(t('components.auth.enterSpaceFailed'), e)
     }
   }
@@ -185,8 +204,7 @@ export function useAuthFlow(opts: UseAuthFlowOptions = {}, emits: { (e: 'finish'
       message.success(t('components.auth.submitSuccess'))
       switchMode('login')
     }
-    catch (e) {
-      console.log(e)
+    catch {
     }
   })
 
@@ -200,8 +218,7 @@ export function useAuthFlow(opts: UseAuthFlowOptions = {}, emits: { (e: 'finish'
       tempToken.value = token
       switchMode(currentFormMode.value === 'forgotPassword' ? 'setPassword' : 'setPasswordWithSysUpgrade')
     }
-    catch (e) {
-      console.log(e)
+    catch {
     }
   })
 
@@ -250,6 +267,7 @@ export function useAuthFlow(opts: UseAuthFlowOptions = {}, emits: { (e: 'finish'
   return {
     currentFormMode,
     cacheFormData,
+    lastError,
     preFormMode,
     tenants,
     running,

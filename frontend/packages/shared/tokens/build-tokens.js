@@ -1,173 +1,134 @@
-﻿import { readFileSync, writeFileSync } from 'node:fs'
+import { mkdirSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-import StyleDictionary from 'style-dictionary'
-import { formats, transformGroups, transformTypes } from 'style-dictionary/enums'
+import tokens from './color.js'
 
-import { isDark } from './config/filter.js'
-import { jsVarsPlugin, scssVarsPlugin, tailwindPreset } from './config/format.js'
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
+const distPath = join(__dirname, '..', 'dist', 'tokens')
 
-const { value: transformTypeValue } = transformTypes
+mkdirSync(distPath, { recursive: true })
 
-const pickDarkName = 'css/pick-dark'
+const entries = Object.entries(tokens)
 
-// 지정형식: 완료사용 CSS 변수의 SCSS 변수
-StyleDictionary.registerFormat({
-  name: 'scss/variables-ref',
-  format: scssVarsPlugin,
-})
-
-// 지정형식: 완료 less 변수의 js 파일
-// StyleDictionary.registerFormat({
-//   name: 'less/variables-esm',
-//   format: lessVarsPlugin,
-// })
-
-// 지정형식: 완료 css 변수의 js 파일
-StyleDictionary.registerFormat({
-  name: 'javascript/css-variables',
-  format: jsVarsPlugin,
-})
-
-StyleDictionary.registerTransform({
-  name: pickDarkName,
-  type: transformTypeValue,
-  filter: isDark,
-  transform: token => token.dark,
-})
-
-StyleDictionary.registerTransformGroup({
-  name: 'tailwind',
-  transforms: ['name/kebab', 'color/rgb'],
-})
-
-StyleDictionary.registerFormat({
-  name: 'tailwind/preset',
-  format: tailwindPreset,
-})
-
-const buildPath = 'dist/tokens/'
-
-const sd = new StyleDictionary({
-  source: [`tokens/**/*.js`],
-  platforms: {
-    'css': {
-      transformGroup: transformGroups.css,
-      buildPath,
-      files: [
-        {
-          destination: 'variables.css',
-          format: formats.cssVariables,
-          options: { outputReferences: true },
-        },
-      ],
-    },
-    'css/variables-dark': {
-      transformGroup: transformGroups.css,
-      transforms: ['css/pick-dark'],
-      buildPath,
-      files: [
-        {
-          destination: 'variables.dark.css',
-          format: formats.cssVariables,
-          filter: token => token.dark,
-          options: {
-            outputReferences: true,
-            showFileHeader: false,
-            selector: '.dark',
-          },
-        },
-      ],
-    },
-    'scss': {
-      transformGroup: transformGroups.scss,
-      buildPath,
-      files: [
-        {
-          destination: 'variables.scss',
-          format: 'scss/variables-ref',
-          options: { outputReferences: true },
-        },
-      ],
-    },
-    'js': {
-      transformGroup: transformGroups.js,
-      buildPath,
-      files: [
-        {
-          destination: 'variables.js',
-          format: formats.javascriptEs6,
-        },
-        {
-          destination: 'variables.cjs',
-          format: formats.javascriptModuleFlat,
-        },
-        {
-          destination: 'variables.css.js',
-          format: 'javascript/css-variables',
-        },
-        {
-          destination: 'variables.d.ts',
-          format: formats.typescriptEs6Declarations,
-        },
-      ],
-    },
-    'js/variables-dark': {
-      transformGroup: transformGroups.js,
-      transforms: [pickDarkName],
-      buildPath,
-      files: [
-        {
-          destination: 'variables.dark.js',
-          format: formats.javascriptEs6,
-        },
-        {
-          destination: 'variables.dark.cjs',
-          format: formats.javascriptModuleFlat,
-        },
-      ],
-    },
-    'tailwindPreset': {
-      transformGroup: 'tailwind',
-      buildPath,
-      files: [
-        {
-          destination: 'tailwind-preset.js',
-          format: 'tailwind/preset',
-        },
-      ],
-    },
-  },
-})
-
-// 병합 css 변수파일
-function mergeCss() {
-  // 가져오기현재파일 경로
-  const __filename = fileURLToPath(import.meta.url)
-  const __dirname = dirname(__filename)
-
-  const distPath = join(__dirname, '../', buildPath)
-
-  const lightFile = join(distPath, 'variables.css')
-  const darkFile = join(distPath, 'variables.dark.css')
-
-  try {
-    const lightVars = readFileSync(lightFile, 'utf8')
-    const darkVars = readFileSync(darkFile, 'utf8')
-    const combined = `${lightVars}\n\n/* Dark mode variables */\n${darkVars}`
-
-    writeFileSync(lightFile, combined)
-    console.log('CSS variables merged successfully!')
-  }
-  catch (err) {
-    console.error('Error merging files:', err.message)
-  }
+function toCssName(name) {
+  return name
+    .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
+    .replace(/_/g, '-')
+    .toLowerCase()
 }
 
-async function build() {
-  await sd.buildAllPlatforms()
-  mergeCss()
+function toExportName(name) {
+  return name
+    .replace(/-([a-z0-9])/gi, (_, letter) => letter.toUpperCase())
+    .replace(/[^a-zA-Z0-9_$]/g, '_')
+    .replace(/^([^a-zA-Z_$])/, '_$1')
 }
 
-build()
+function isColor(token) {
+  return token.type === 'color' || token.$type === 'color'
+}
+
+function normalizeCssValue(value) {
+  return String(value).replace(/\s+/g, ' ').trim()
+}
+
+function tokenValue(token, mode = 'light') {
+  if (mode === 'dark' && token.dark !== undefined) {
+    return token.dark
+  }
+  return token.value ?? token.$value
+}
+
+function renderCssVariables(mode = 'light') {
+  return entries
+    .filter(([, token]) => mode === 'light' || token.dark !== undefined)
+    .map(([name, token]) => `  --${toCssName(name)}: ${normalizeCssValue(tokenValue(token, mode))};`)
+    .join('\n')
+}
+
+function renderScssVariables() {
+  return entries
+    .map(([name]) => {
+      const cssName = toCssName(name)
+      return `$${cssName}: var(--${cssName});`
+    })
+    .join('\n')
+}
+
+function renderEsmVariables(mode = 'light', cssReference = false) {
+  const usedNames = new Set()
+
+  return entries
+    .map(([name, token]) => {
+      let exportName = toExportName(name)
+      if (usedNames.has(exportName)) {
+        exportName = `${exportName}_`
+      }
+      usedNames.add(exportName)
+
+      const value = cssReference ? `var(--${toCssName(name)})` : tokenValue(token, mode)
+      return `export const ${exportName} = ${JSON.stringify(value)};`
+    })
+    .join('\n')
+}
+
+function renderCjsVariables(mode = 'light') {
+  return entries
+    .map(([name, token]) => `exports.${toExportName(name)} = ${JSON.stringify(tokenValue(token, mode))};`)
+    .join('\n')
+}
+
+function renderTypes() {
+  return entries
+    .map(([name]) => `export const ${toExportName(name)}: string | number;`)
+    .join('\n')
+}
+
+function renderTailwindPreset() {
+  const defaultColors = {
+    transparent: 'transparent',
+    current: 'currentColor',
+    inherit: 'inherit',
+  }
+
+  const colors = Object.fromEntries(
+    entries
+      .filter(([, token]) => isColor(token))
+      .map(([name]) => {
+        const cssName = toCssName(name)
+        const tailwindName = cssName.startsWith('color-') ? cssName.slice(6) : cssName
+        return [tailwindName, `var(--${cssName})`]
+      }),
+  )
+
+  const payload = {
+    theme: {
+      colors: {
+        ...defaultColors,
+        ...colors,
+      },
+    },
+  }
+
+  return `/** @type {import('tailwindcss').Config} */\nexport default ${JSON.stringify(payload, null, 2)};\n`
+}
+
+const lightCss = `:root {\n${renderCssVariables('light')}\n}\n`
+const darkCss = `.dark {\n${renderCssVariables('dark')}\n}\n`
+const scss = `${renderScssVariables()}\n`
+
+writeFileSync(join(distPath, 'variables.css'), `${lightCss}\n/* Dark mode variables */\n${darkCss}`)
+writeFileSync(join(distPath, 'variables.dark.css'), darkCss)
+writeFileSync(join(distPath, 'variables.scss'), scss)
+writeFileSync(join(distPath, '_variables.scss'), scss)
+writeFileSync(join(distPath, 'variables.js'), `${renderEsmVariables('light')}\n`)
+writeFileSync(join(distPath, 'variables.cjs'), `${renderCjsVariables('light')}\n`)
+writeFileSync(join(distPath, 'variables.css.js'), `${renderEsmVariables('light', true)}\n`)
+writeFileSync(join(distPath, 'variables.d.ts'), `${renderTypes()}\n`)
+writeFileSync(join(distPath, 'variables.dark.js'), `${renderEsmVariables('dark')}\n`)
+writeFileSync(join(distPath, 'variables.dark.cjs'), `${renderCjsVariables('dark')}\n`)
+writeFileSync(join(distPath, 'tailwind-preset.js'), renderTailwindPreset())
+
+console.log(`Generated ${entries.length} design tokens in ${distPath}`)

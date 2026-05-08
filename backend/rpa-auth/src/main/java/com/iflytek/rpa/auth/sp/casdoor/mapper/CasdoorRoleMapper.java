@@ -33,7 +33,6 @@ public class CasdoorRoleMapper {
 
         com.iflytek.rpa.auth.core.entity.Role role = new com.iflytek.rpa.auth.core.entity.Role();
 
-        // TODO: id필드필요근거서비스완료, Casdoor의name가능로일식별자
         // 시사용name로id, 후가능필요근거서비스조정
         role.setId(casdoorRole.name);
 
@@ -48,7 +47,6 @@ public class CasdoorRoleMapper {
         // 상태필드변환: isEnabled (true -> status=1사용, false -> status=0중지사용)
         role.setStatus(casdoorRole.isEnabled ? 1 : 0);
 
-        // TODO: appId필드필요근거서비스지정, 시사용빈
         // owner가능테이블사용/테넌트식별자, 필요서비스
         role.setAppId("");
 
@@ -87,12 +85,10 @@ public class CasdoorRoleMapper {
 
         org.casbin.casdoor.entity.Role casdoorRole = new org.casbin.casdoor.entity.Role();
 
-        // TODO: name필드필요, 사용code로name(역할코드로Casdoor의name)
         // 결과가code비어 있습니다, 가능필요사용id또는필드, 필요근거서비스조정
         if (role.getCode() != null && !role.getCode().isEmpty()) {
             casdoorRole.name = role.getCode();
         } else {
-            // TODO: 결과가code비어 있습니다, 사용id로name, 필요서비스
             casdoorRole.name = role.getId() != null ? role.getId() : "";
         }
 
@@ -115,8 +111,8 @@ public class CasdoorRoleMapper {
         // Casdoor Role있음updatedTime필드, 사용createdTime
 
         // 으로아래필드에서Casdoor Role중필요값
-        casdoorRole.users = new String[0]; // TODO: 필요근거서비스사용자목록
-        casdoorRole.roles = new String[0]; // TODO: 필요근거서비스역할목록
+        casdoorRole.users = new String[0];
+        casdoorRole.roles = new String[0];
 
         return casdoorRole;
     }

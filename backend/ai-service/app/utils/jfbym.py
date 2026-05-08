@@ -15,7 +15,9 @@ logger = get_logger(__name__)
 class CaptchaVerificationError(Exception):
     """Exception raised for errors in the CAPTCHA verification process."""
 
-    pass
+    def __init__(self, message: str):
+        super().__init__(message)
+        self.message = message
 
 
 async def verify_captcha(type: str, image: str, direction: str = "") -> JFBYMGeneralResponseBody:
@@ -41,16 +43,17 @@ async def verify_captcha(type: str, image: str, direction: str = "") -> JFBYMGen
         try:
             response = await client.post(API_ENDPOINT, json=payload, timeout=30.0)
             response.raise_for_status()
-            logger.info(f"JFBYM response: {response.json()}")
-            model = JFBYMGeneralResponseBody.model_validate(response.json())
+            response_data = response.json()
+            logger.info("JFBYM response received. code=%s", response_data.get("code"))
+            model = JFBYMGeneralResponseBody.model_validate(response_data)
             return model
 
         except httpx.HTTPError as e:
-            logger.error(f"HTTP error during OCR request: {e}")
-            raise  # Re-raise httpx.HTTPError instead of wrapping it
+            logger.error("HTTP error during CAPTCHA request: %s", e)
+            raise
         except json.JSONDecodeError as e:
-            logger.error(f"Failed to decode JSON response: {e}")
+            logger.error("Failed to decode CAPTCHA response: %s", e)
             raise CaptchaVerificationError("Invalid response format") from e
         except Exception as e:
-            logger.error(f"Unexpected error during : {e}")
+            logger.error("Unexpected error during CAPTCHA verification: %s", e)
             raise CaptchaVerificationError(f"Unexpected error: {str(e)}")

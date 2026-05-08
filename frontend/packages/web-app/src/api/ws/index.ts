@@ -114,7 +114,6 @@ class Socket {
    */
   onopen(callback?: any) {
     this.ws.onopen = (event: any) => {
-      console.log('onopen:', this.OPTIONS.url)
       clearTimeout(this.timer) // 지우기시간 초과예약기기
       if (this.OPTIONS.isHeart)
         this.heart()
@@ -134,7 +133,6 @@ class Socket {
   onclose(callback?: any) {
     if (this.ws) {
       this.ws.onclose = (event: any) => {
-        console.log('onclose:', event)
         clearTimeout(this.timer) // 지우기시간 초과예약기기
         this.msgStack = []
         if (this.OPTIONS.isHeart)
@@ -157,7 +155,6 @@ class Socket {
    */
   onerror(callback?: any) {
     this.ws.onerror = (event: any) => {
-      console.log('onerror:', event)
       clearTimeout(this.timer)
       this.msgStack = []
       this.ERRORCALLBACK ? this.ERRORCALLBACK(event) : typeof callback === 'function' && callback(event)
@@ -170,7 +167,18 @@ class Socket {
    */
   onmessage() {
     this.ws.onmessage = (event: any) => {
-      const dataAll = JSON.parse(event.data) // 일지정보관인증반환의데이터예json형식
+      let dataAll: any
+      try {
+        dataAll = JSON.parse(event.data)
+      }
+      catch (error) {
+        console.error('WebSocket 메시지 파싱 실패:', error, event.data)
+        return
+      }
+
+      if (!dataAll || typeof dataAll !== 'object')
+        return
+
       if (ignoreMsg.includes(dataAll.channel))
         return
       this.eventId = dataAll.event_id
@@ -216,7 +224,7 @@ class Socket {
 
   sendText(data: string) {
     if (typeof data !== 'string')
-      throw new Error('요청전송텍스트메시지')
+      throw new Error('전송할 메시지는 문자열이어야 합니다.')
     this.msgStack.pop()
     this.ws.send(data)
   }

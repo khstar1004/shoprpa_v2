@@ -258,7 +258,7 @@ function expandedInit(val: string) {
   expandedKeys.value = expanded
 }
 
-// 까지 name 
+// 까지 name
 function scrollInto(name: string) {
   const isExist = flatElementData.value.some(item => item.name === name)
   if (!isExist)

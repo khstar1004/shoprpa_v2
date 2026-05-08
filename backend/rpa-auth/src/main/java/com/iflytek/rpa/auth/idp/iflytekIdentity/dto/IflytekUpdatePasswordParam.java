@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Shoprpa계정수정비밀번호매개변수
+ * ShopRPA 계정수정비밀번호매개변수
  */
 @Data
 @NoArgsConstructor

@@ -80,7 +80,7 @@ class WordDocumentCore(IDocumentCore):
                 word_application = wc.Dispatch(params)
                 return word_application
             except Exception:
-                logger.debug(f"생성Word객체실패: {params}")
+                logger.debug("Word 객체 생성 실패: %s", params)
                 return None
 
     @classmethod
@@ -111,9 +111,9 @@ class WordDocumentCore(IDocumentCore):
                 if cls.word_application_instance:
                     return cls.word_application_instance
         except Exception as e:
-            raise Exception("실패, 요청 시도삭제 %LOCALAPPDATA%\\Temp\\gen_py 디렉터리실행!")
+            raise Exception("Word COM 초기화에 실패했습니다. %LOCALAPPDATA%\\Temp\\gen_py 디렉터리를 삭제한 뒤 다시 시도하세요.")
 
-        raise Exception("감지하지 못한 wps및office회원가입테이블정보!")
+        raise Exception("사용 가능한 WPS 또는 Microsoft Word 설치 정보를 찾지 못했습니다.")
 
     @classmethod
     def open(
@@ -151,9 +151,9 @@ class WordDocumentCore(IDocumentCore):
                 Visible=is_visible,
             )
             cls.word_application_instance.DisplayAlerts = True
-            print(document.Name)
+            logger.debug("Opened Word document: %s", document.Name)
         else:
-            raise LookupError("있음입력경로, 확인하세요입력의word경로여부정상!")
+            raise LookupError("Word 파일 경로가 비어 있거나 올바르지 않습니다.")
         return document
 
     @classmethod
@@ -268,7 +268,7 @@ class WordDocumentCore(IDocumentCore):
         if enter_flag:
             selection.TypeParagraph()
         selection.TypeText(text)
-        # 를돌아가기삽입문서문자의열기 위치형식;형식실패, 텍스트완료삽입, 기록로그아니오오류
+        # 서식 적용에 실패해도 텍스트 삽입 자체는 유지한다.
         try:
             selection.Start = selection.Start - len(text)  # 를돌아가기까지삽입의문서문자열기 위치
             selection.End = selection.End  # 를까지삽입의문서문자결과위치
@@ -281,11 +281,11 @@ class WordDocumentCore(IDocumentCore):
             rgb_color = text_format["font_color"].split(",")
             selection.Font.Color = RGB(int(rgb_color[0]), int(rgb_color[1]), int(rgb_color[2]))
         except Exception as e:
-            logger.warning(f"Word 삽입텍스트후형식실패(텍스트완료삽입): {e}")
+            logger.warning("Word 삽입 후 서식 적용 실패(텍스트 삽입은 완료됨): %s", e)
         try:
             selection.Start = selection.End  # 를까지
         except Exception as e:
-            logger.warning(f"Word 복사위치실패: {e}")
+            logger.warning("Word 커서 위치 이동 실패: %s", e)
 
     @classmethod
     def replace(
@@ -431,7 +431,7 @@ class WordDocumentCore(IDocumentCore):
                 else:
                     s.SetRange(Start=s.End, End=s.End)
             except Exception as e:
-                raise BaseException(CONTENT_FORMAT_ERROR_FORMAT, "내용찾을 수 없습니다!") from e
+                raise BaseException(CONTENT_FORMAT_ERROR_FORMAT, "내용을 찾을 수 없습니다") from e
         elif by == CursorPointerType.ALL:  # 문서위치 지정
             try:
                 p_num = doc.Paragraphs.Count  # 가져오기전체
@@ -440,7 +440,7 @@ class WordDocumentCore(IDocumentCore):
                 else:  # 까지개문서열기 
                     s.Move(4, -p_num)
             except Exception as e:
-                raise BaseException(CONTENT_FORMAT_ERROR_FORMAT, "문서비어 있습니다!") from e
+                raise BaseException(CONTENT_FORMAT_ERROR_FORMAT, "문서가 비어 있습니다") from e
         elif by == CursorPointerType.PARAGRAPH:  # 위치 지정
             if pos == CursorPositionType.TAIL:  # 위치 지정까지개
                 s.SetRange(
@@ -455,7 +455,7 @@ class WordDocumentCore(IDocumentCore):
             else:
                 raise BaseException(
                     CONTENT_FORMAT_ERROR_FORMAT,
-                    "지원하지 않음의매개위치, 요청프론트엔드조회입력의p_pos매개변수!",
+                    "지원하지 않는 위치 매개변수입니다. p_pos 값을 확인하세요",
                 )
         elif by == CursorPointerType.ROW:
             try:
@@ -465,7 +465,7 @@ class WordDocumentCore(IDocumentCore):
                     s.GoTo(3, 1, r_idx)
                     s.EndKey(5)
             except Exception as e:
-                raise BaseException(CONTENT_FORMAT_ERROR_FORMAT, "내용비어 있습니다!") from e
+                raise BaseException(CONTENT_FORMAT_ERROR_FORMAT, "내용이 비어 있습니다") from e
 
     @classmethod
     def move_cursor(
@@ -506,7 +506,7 @@ class WordDocumentCore(IDocumentCore):
         else:
             raise BaseException(
                 CONTENT_FORMAT_ERROR_FORMAT,
-                "지원하지 않음의direction, 요청프론트엔드조회입력의direction매개변수!",
+                "지원하지 않는 방향 매개변수입니다. direction 값을 확인하세요",
             )
 
     @classmethod
@@ -520,7 +520,7 @@ class WordDocumentCore(IDocumentCore):
         else:
             raise BaseException(
                 CONTENT_FORMAT_ERROR_FORMAT,
-                "지원하지 않음의분기호유형, 요청프론트엔드조회입력의sep_type매개변수!!!",
+                "지원하지 않는 구분 기호 유형입니다. sep_type 값을 확인하세요",
             )
 
     @classmethod
@@ -569,15 +569,13 @@ class WordDocumentCore(IDocumentCore):
                 img = win32clipboard.GetClipboardData(win32clipboard.CF_DIBV5)
             else:
                 win32clipboard.CloseClipboard()
-                raise BaseException(CLIPBOARD_PASTE_ERROR.format("있음이미지데이터"), "")
-            # 를문자데이터변환로Image객체
+                raise BaseException(CLIPBOARD_PASTE_ERROR.format("이미지 데이터"), "")
             image = Image.open(io.BytesIO(img))
             if image.mode != "RGB":
                 image = image.convert("RGB")
             with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as temp_file:
                 temp_file_path = temp_file.name
-                print("시파일 경로:", temp_file_path)
-                # 를문자데이터변환로Image객체
+                logger.debug("Temporary image path: %s", temp_file_path)
                 image.save(temp_file_path, "PNG")
                 img_shape = s.InlineShapes.AddPicture(temp_file_path)
                 img_shape.ScaleWidth = scale
@@ -589,7 +587,7 @@ class WordDocumentCore(IDocumentCore):
         else:
             img_shape = s.InlineShapes.AddPicture(img_path)
             if not os.path.isfile(img_path):
-                raise BaseException(DOCUMENT_PATH_ERROR_FORMAT.format(img_path), "이미지경로오류")
+                raise BaseException(DOCUMENT_PATH_ERROR_FORMAT.format(img_path), "이미지 경로 오류")
         img_shape.ScaleWidth = scale
         img_shape.ScaleHeight = scale
 

@@ -23,7 +23,7 @@
   WinPick:
     desc: "Win요소"
   FeishuBaseInstance:
-    desc: "Shoprpa서객체"
+    desc: "ShopRPA 객체"
   DialogResult:
     desc: "대화상자출력결과"
 options:

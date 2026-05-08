@@ -7,7 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * 추가이름단일 DTO
+ * 사용자 차단 추가 DTO
  *
  * @author system
  * @date 2025-12-16
@@ -32,8 +32,8 @@ public class AddBlacklistDto implements Serializable {
     private String username;
 
     /**
-     * 원인
+     * 차단 사유
      */
-    @NotBlank(message = "원인비워 둘 수 없습니다")
+    @NotBlank(message = "차단 사유는 비워 둘 수 없습니다")
     private String reason;
 }

@@ -112,7 +112,7 @@ export function base64ToString(base64: string) {
  * @returns {enum} 1: 필요업데이트, 2: 강함제어업데이트(시아니오사용), 0/-1: 아니오필요업데이트
  */
 export function compareVersion(version1, version2) {
-  // version1>version2 이면필요업데이트, 
+  // version1>version2 이면필요업데이트,
   let res = 0
   const v1 = version1.split('.')
   const v2 = version2.split('.')
@@ -165,7 +165,7 @@ export function blob2Text<T>(blob: Blob) {
  * blob변환file
  * @param blob blob객체
  * @param fileName 파일이름
- * @returns
+ * @returns 변환된 File 객체
  */
 export function blob2File(blob: Blob, fileName: string) {
   return new File([blob], fileName, { type: blob.type })

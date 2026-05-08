@@ -1,24 +1,24 @@
-﻿from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field
 
 
 class UserRegisterRequest(BaseModel):
-    """사용자회원가입요청 유형"""
+    """Request body for user registration."""
 
-    phone: str = Field(..., description="사용자휴대폰 번호", min_length=1, max_length=20)
+    phone: str = Field(..., description="User phone number", min_length=1, max_length=20)
 
 
 class UserRegisterResponse(BaseModel):
-    """사용자회원가입유형"""
+    """Registration response with the generated API credentials."""
 
-    user_id: str = Field(..., description="사용자ID")
+    user_id: str = Field(..., description="User ID")
     api_key: str = Field(..., description="API Key")
-    account: str = Field(..., description="계정")
-    password: str = Field(..., description="비밀번호")
-    url: str = Field(..., description="다운로드연결")
+    account: str = Field(..., description="Account")
+    password: str = Field(..., description="Password")
+    url: str = Field(..., description="Download URL")
 
 
 class UserAPIKeyResponse(BaseModel):
-    """사용자회원가입유형"""
+    """Response containing an existing user API key."""
 
-    user_id: str = Field(..., description="사용자ID")
+    user_id: str = Field(..., description="User ID")
     api_key: str = Field(..., description="API Key")

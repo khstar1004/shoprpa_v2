@@ -1,4 +1,4 @@
-﻿<script lang="tsx">
+<script lang="tsx">
 import { useElementSize } from '@vueuse/core'
 import { Empty, Pagination, Table } from 'ant-design-vue'
 import { to } from 'await-to-js'

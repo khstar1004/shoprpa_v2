@@ -1,4 +1,5 @@
 ﻿import os
+import logging
 import subprocess
 import tempfile
 import time
@@ -37,6 +38,8 @@ from docx import Document
 from docx.shared import RGBColor
 from pywpsrpc import rpcwpsapi
 from pywpsrpc.rpcwpsapi import *
+
+logger = logging.getLogger(__name__)
 
 APP = None
 
@@ -381,7 +384,7 @@ class WordDocumentCore(IDocumentCore):
                 else:
                     s.SetRange(Start=s.End, End=s.End)
             except Exception as e:
-                raise BaseException(CONTENT_FORMAT_ERROR_FORMAT, "내용찾을 수 없습니다!!!") from e
+                raise BaseException(CONTENT_FORMAT_ERROR_FORMAT, "내용을 찾을 수 없습니다") from e
         elif by == SelectTextType.ALL:  # 문서위치 지정
             try:
                 p_num = doc.Paragraphs.Count  # 가져오기전체
@@ -390,7 +393,7 @@ class WordDocumentCore(IDocumentCore):
                 else:  # 까지개문서열기 
                     s.Move(4, -p_num)
             except Exception as e:
-                raise BaseException(CONTENT_FORMAT_ERROR_FORMAT, "문서비어 있습니다!!!") from e
+                raise BaseException(CONTENT_FORMAT_ERROR_FORMAT, "문서가 비어 있습니다") from e
         elif by == SelectTextType.PARAGRAPH:  # 위치 지정
             if pos == CursorPositionType.TAIL:  # 위치 지정까지개
                 s.SetRange(
@@ -402,7 +405,7 @@ class WordDocumentCore(IDocumentCore):
             else:
                 raise BaseException(
                     CONTENT_FORMAT_ERROR_FORMAT,
-                    "지원하지 않음의매개위치, 요청프론트엔드조회입력의p_pos매개변수!!!",
+                    "지원하지 않는 위치 매개변수입니다. p_pos 값을 확인하세요",
                 )
         elif by == SelectTextType.ROW:
             try:
@@ -412,7 +415,7 @@ class WordDocumentCore(IDocumentCore):
                     s.GoTo(3, 1, r_idx)
                     s.EndKey(5)
             except Exception as e:
-                raise BaseException(CONTENT_FORMAT_ERROR_FORMAT, "내용비어 있습니다!!!") from e
+                raise BaseException(CONTENT_FORMAT_ERROR_FORMAT, "내용이 비어 있습니다") from e
 
     @classmethod
     def move_cursor(
@@ -453,7 +456,7 @@ class WordDocumentCore(IDocumentCore):
         else:
             raise BaseException(
                 CONTENT_FORMAT_ERROR_FORMAT,
-                "지원하지 않음의direction, 요청프론트엔드조회입력의direction매개변수!!!",
+                "지원하지 않는 방향 매개변수입니다. direction 값을 확인하세요",
             )
 
     @classmethod
@@ -467,7 +470,7 @@ class WordDocumentCore(IDocumentCore):
         else:
             raise BaseException(
                 CONTENT_FORMAT_ERROR_FORMAT,
-                "지원하지 않음의분기호유형, 요청프론트엔드조회입력의sep_type매개변수!!!",
+                "지원하지 않는 구분 기호 유형입니다. sep_type 값을 확인하세요",
             )
 
     @classmethod
@@ -510,7 +513,7 @@ class WordDocumentCore(IDocumentCore):
                 )
                 clipboard_data = process.communicate()[0].strip()
             except subprocess.CalledProcessError as e:
-                raise BaseException("불가에서가져오기데이터") from e
+                raise BaseException("클립보드 데이터를 가져오지 못했습니다") from e
 
             # 조회데이터여부로파일 경로, 파일후로 .png, .jpg, .jpeg
             if os.path.isfile(clipboard_data):
@@ -533,29 +536,27 @@ class WordDocumentCore(IDocumentCore):
                 image_data, _ = process.communicate()
                 image = PIL.Image.open(BytesIO(image_data))
             except subprocess.CalledProcessError as e:
-                raise BaseException("있음이미지데이터") from e
+                raise BaseException("클립보드에 이미지 데이터가 없습니다") from e
             if image.mode != "RGB":
                 image = image.convert("RGB")
 
-            # 생성시파일
+            # 임시 파일로 저장한 뒤 Word에 삽입한다.
             with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as temp_file:
                 temp_file_path = temp_file.name
                 image.save(temp_file, format="PNG")
 
             try:
-                # 삽입이미지
                 _, img_shape = s.InlineShapes.AddPicture(temp_file_path)
                 img_shape.ScaleWidth = scale
                 img_shape.ScaleHeight = scale
             finally:
-                # 삭제시파일
                 os.remove(temp_file_path)
 
         else:
             _, img_shape = s.InlineShapes.AddPicture(img_path)
-            print(f"Inserted image shape: {img_shape}")
+            logger.debug("Inserted image shape: %s", img_shape)
             if not os.path.isfile(img_path):
-                raise BaseException(DOCUMENT_PATH_ERROR_FORMAT.format(img_path), "이미지경로오류")
+                raise BaseException(DOCUMENT_PATH_ERROR_FORMAT.format(img_path), "이미지 경로 오류")
         img_shape.ScaleWidth = scale
         img_shape.ScaleHeight = scale
 

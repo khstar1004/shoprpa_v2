@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { onBeforeUnmount, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 
@@ -22,36 +22,36 @@ processStore.setProject({ id: projectId, name: projectName, version: projectVers
 let isStart = false
 
 onMounted(async () => {
- taskNotify({ event: 'login' })
- runningStore.fetchDataTable()
- await startPickServices({})
- isStart = true
+  taskNotify({ event: 'login' })
+  runningStore.fetchDataTable()
+  await startPickServices({})
+  isStart = true
 })
 
 onUnmounted(async () => {
- if (!isStart)
- return
- await stopPickServices({})
- isStart = false
+  if (!isStart)
+    return
+  await stopPickServices({})
+  isStart = false
 })
 
 onBeforeUnmount(() => {
- useRunlogStore().clearLogs() // 빈로그
- runningStore.closeDataTableListener()
+  useRunlogStore().clearLogs() // 빈로그
+  runningStore.closeDataTableListener()
 })
 </script>
 
 <template>
- <div class="flex flex-col w-full h-full bg-[#ecedf4] dark:bg-[#141414]">
- <Header>
- <template #headControl>
- <HeaderControl :user-info="false" />
- </template>
- </Header>
- <router-view v-slot="{ Component }">
- <keep-alive :include="['EditorPage']">
- <component :is="Component" />
- </keep-alive>
- </router-view>
- </div>
+  <div class="flex flex-col w-full h-full bg-[#ecedf4] dark:bg-[#141414]">
+    <Header>
+      <template #headControl>
+        <HeaderControl :user-info="false" />
+      </template>
+    </Header>
+    <router-view v-slot="{ Component }">
+      <keep-alive :include="['EditorPage']">
+        <component :is="Component" />
+      </keep-alive>
+    </router-view>
+  </div>
 </template>

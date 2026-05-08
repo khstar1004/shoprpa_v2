@@ -1,4 +1,4 @@
-﻿import type { Element, ElementGroup, GlobalVariable, Process, ProcessNode, Robot as Project, PythonPackage } from './type'
+import type { Element, ElementGroup, GlobalVariable, Process, ProcessNode, Robot as Project, PythonPackage } from './type'
 
 /**
  * NOTE: VM 테이블 ViewModel, 예서비스의데이터.

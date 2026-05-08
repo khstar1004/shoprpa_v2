@@ -1,4 +1,4 @@
-﻿import type { ClipboardManager, ShortCutManager, UpdaterManager, UtilsManager, WindowManager } from '@rpa/shared/platform'
+import type { ClipboardManager, ShortCutManager, UpdaterManager, UtilsManager, WindowManager } from '@rpa/shared/platform'
 
 import ClipBoard from './clipboard'
 import ShortCut from './short-cut'
@@ -9,8 +9,7 @@ import Window from './window-manager'
 export const updaterManager: UpdaterManager = window.UpdaterManager ?? Updater
 export const shortCutManager: ShortCutManager = window.ShortCutManager ?? ShortCut
 export const clipboardManager: ClipboardManager = window.ClipboardManager ?? ClipBoard
-// TODO: 의 window.UtilsManager 유형아니오, 로 UtilsManager 유형
-export const utilsManager: UtilsManager = window.UtilsManager as UtilsManager ?? Utils
+export const utilsManager: UtilsManager = (window.UtilsManager ?? Utils) as UtilsManager
 export const windowManager: WindowManager = window.WindowManager ?? new Window()
 
 export const isBrowser = utilsManager.getAppEnv() === 'browser'

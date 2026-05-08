@@ -14,7 +14,6 @@ function workerhandler(key: string, params: any) {
 }
 
 function flowDataElementUpdate(params: { currentFlowData: any, element: any, type: string }) {
- console.log('params: ', params);
  const { currentFlowData, element, type } = params;
  const userNodes = JSON.parse(currentFlowData)
  const changeItem = []

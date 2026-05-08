@@ -36,7 +36,6 @@ public class CasdoorOrganizationMapper {
 
         com.iflytek.rpa.auth.core.entity.Org org = new com.iflytek.rpa.auth.core.entity.Org();
 
-        // TODO: id필드필요근거서비스완료, Casdoor의name가능로일식별자
         // 시사용name로id, 후가능필요근거서비스조정
         org.setId(casdoorGroup.name);
 
@@ -63,11 +62,9 @@ public class CasdoorOrganizationMapper {
         org.setCreateTime(parseDateTime(casdoorGroup.createdTime));
         org.setUpdateTime(parseDateTime(casdoorGroup.updatedTime));
 
-        // TODO: isTopGroup필드필요근거서비스관리, 가능사용level또는firstLevelId
         // 결과가예단계그룹, 가능필요level=1또는firstLevelId
         if (casdoorGroup.isTopGroup) {
             org.setLevel(1);
-            // TODO: firstLevelId가능필요로현재id, 필요서비스
             org.setFirstLevelId(casdoorGroup.name);
         }
 
@@ -106,13 +103,11 @@ public class CasdoorOrganizationMapper {
             org.setExtInfo(extInfoBuilder.toString());
         }
 
-        // TODO: owner필드필요근거서비스지정, 가능테이블테넌트식별자
         // 시가능으로저장까지thirdExtInfo중
         if (casdoorGroup.owner != null && !casdoorGroup.owner.isEmpty()) {
             org.setThirdExtInfo("owner:" + casdoorGroup.owner);
         }
 
-        // TODO: children필드필요근거서비스관리, 가능필요관리조직
         // 시아니요관리, 필요서비스
 
         // 으로아래필드에서Casdoor Group중있음, 로null또는값
@@ -137,12 +132,10 @@ public class CasdoorOrganizationMapper {
 
         org.casbin.casdoor.entity.Group casdoorGroup = new org.casbin.casdoor.entity.Group();
 
-        // TODO: name필드필요, 사용code로name(기기코드로Casdoor의name)
         // 결과가code비어 있습니다, 가능필요사용id또는필드, 필요근거서비스조정
         if (org.getCode() != null && !org.getCode().isEmpty()) {
             casdoorGroup.name = org.getCode();
         } else {
-            // TODO: 결과가code비어 있습니다, 사용id로name, 필요서비스
             casdoorGroup.name = org.getId() != null ? org.getId() : "";
         }
 
@@ -167,21 +160,19 @@ public class CasdoorOrganizationMapper {
         casdoorGroup.createdTime = formatDateTime(org.getCreateTime());
         casdoorGroup.updatedTime = formatDateTime(org.getUpdateTime());
 
-        // TODO: isTopGroup필드필요근거서비스, 가능근거level또는firstLevelId
         // 결과가level=1또는firstLevelId대기현재id, 가능예단계그룹
         casdoorGroup.isTopGroup = (org.getLevel() != null && org.getLevel() == 1)
                 || (org.getFirstLevelId() != null && org.getFirstLevelId().equals(org.getId()));
 
-        // TODO: owner필드필요서비스, 가능으로에서thirdExtInfo중파싱
         // 시빈, 필요근거서비스
         casdoorGroup.owner = "";
 
         // 으로아래필드에서Casdoor Group중필요값
-        casdoorGroup.manager = ""; // TODO: 가능으로에서extInfo중파싱manager, 필요근거서비스
-        casdoorGroup.contactEmail = ""; // TODO: 가능으로에서extInfo중파싱contactEmail, 필요근거서비스
-        casdoorGroup.users = new ArrayList<>(); // TODO: 가능으로에서extInfo중파싱users, 필요근거서비스
-        casdoorGroup.key = ""; // TODO: 가능으로에서extInfo중파싱key, 필요근거서비스
-        casdoorGroup.children = new ArrayList<>(); // TODO: 필요근거서비스조직목록
+        casdoorGroup.manager = "";
+        casdoorGroup.contactEmail = "";
+        casdoorGroup.users = new ArrayList<>();
+        casdoorGroup.key = "";
+        casdoorGroup.children = new ArrayList<>();
 
         // 시도에서extInfo중가져오기manager, contactEmail, users, key대기정보
         if (org.getExtInfo() != null && !org.getExtInfo().isEmpty()) {

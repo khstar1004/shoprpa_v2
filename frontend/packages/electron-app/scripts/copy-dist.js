@@ -12,10 +12,9 @@ if (!fs.existsSync(srcDir)) {
   process.exit(1);
 }
 
-// Ensure destination directory exists
-if (!fs.existsSync(destDir)) {
-  fs.mkdirSync(destDir, { recursive: true });
-}
+// Recreate the renderer output so stale hashed assets cannot ship in portable builds.
+fs.rmSync(destDir, { force: true, recursive: true });
+fs.mkdirSync(destDir, { recursive: true });
 
 // Copy files
 // fs.cpSync is available in Node.js >= 16.7.0

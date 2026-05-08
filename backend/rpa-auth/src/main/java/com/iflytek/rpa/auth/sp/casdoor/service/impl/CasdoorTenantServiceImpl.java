@@ -29,7 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 /**
- * @desc: TODO
+ * @desc: ShopRPA authentication compatibility component.
  * @author: weilai <laiwei3@iflytek.com>
  * @create: 2025/12/10 17:28
  */
@@ -183,7 +183,6 @@ public class CasdoorTenantServiceImpl implements TenantService {
             tenantInfoDto.setName(tenant.getName());
             tenantInfoDto.setCode(tenant.getTenantCode());
 
-            // TODO: 조회관리관리원정보, 목록전시예admin(casdoor내부테넌트)
             if (organization.owner != null && !organization.owner.isEmpty()) {
                 tenantInfoDto.setManagerId(organization.owner);
                 // 시사용owner로managerName, 후가능으로근거필요조회사용자정보

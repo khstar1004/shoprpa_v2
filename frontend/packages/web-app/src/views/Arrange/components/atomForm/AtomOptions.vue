@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { message } from 'ant-design-vue'
 import { useTranslation } from 'i18next-vue'
 import { cloneDeep } from 'lodash-es'

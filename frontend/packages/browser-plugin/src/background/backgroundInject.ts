@@ -534,8 +534,7 @@ const Handlers = {
           const mergedInfo = { ...params.data, ...htmlResult.data }
           return Utils.success(mergedInfo)
         }
-        catch (error) {
-          console.log('ignore getOuterHTML error: ', error)
+        catch {
           const elementInfo = globalThis.activeElement
           return Utils.success(elementInfo)
         }

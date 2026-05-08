@@ -1,4 +1,4 @@
-﻿<script lang="tsx">
+<script lang="tsx">
 import { Button, Tooltip } from 'ant-design-vue'
 import { useTranslation } from 'i18next-vue'
 import type { PropType } from 'vue'

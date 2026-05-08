@@ -1,9 +1,9 @@
 ﻿types:
   ExcelObj:
-    desc: Excel객체
+    desc: Excel 객체
     funcList:
       - key: ExcelObj.get_full_name
-        funcDesc: 파일에서위치
+        funcDesc: 파일 위치
       - key: ExcelObj.get_row_count
         funcDesc: 가능사용행의행데이터
       - key: ExcelObj.get_first_free_row

@@ -1,4 +1,4 @@
-﻿export type SmartType = 'web_auto' | 'data_process'
+export type SmartType = 'web_auto' | 'data_process'
 
 export type SceneCode = `smart_${SmartType | 'optimize_input'}`
 

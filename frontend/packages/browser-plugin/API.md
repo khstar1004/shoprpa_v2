@@ -1,30 +1,30 @@
 ﻿<!-- @format -->
 
-# shoprpa Browser Plugin API 문서
+# ShopRPA Browser Plugin API 문서
 
 ## 1. 개요
 
-- **확장**: shoprpa Browser Plugin예shoprpa 에서web의재필요그룹성공부서분, 로shoprpaChrome/Edge/Firefox 대기브라우저웹 페이지가능
-- **필요**: 
+- **확장**: ShopRPA 클라이언트와 Chrome, Edge, Firefox 브라우저를 연결해 웹 페이지 자동화 기능을 제공합니다.
+- **주요 기능**:
 
-* 브라우저Tab 
-* 웹 페이지요소
-* Cookie 
-* 본비고입력
-* iframe 
+* 브라우저 탭 제어
+* 웹 페이지 요소 선택 및 조작
+* Cookie 조회 및 설정
+* 사용자 입력 처리
+* iframe 탐색
 
 - **버전정보**: 5.2.4
 
 ## 2. 빠른 시작
 
-- **설치**: npm run build 열기패키지후사용브라우저 확장관리관리로드확장
-- **매칭**: Chrome 브라우저, node 권장 node버전 v20+
+- **설치**: `npm run build` 실행 후 생성된 확장 패키지를 브라우저의 확장 관리 화면에서 로드합니다.
+- **실행 환경**: Chrome 계열 브라우저 기준으로 동작하며, Node.js v20 이상을 권장합니다.
 
 ## 3. API 매개
 
-- **연결: http://127.0.0.1:{port}/browser/transition** port: 9082
-- **유형: POST**
-- **요청 :application/json**
+- **연결**: `http://127.0.0.1:{port}/browser/transition` (기본 port: 9082)
+- **유형**: `POST`
+- **요청**: `application/json`
 
 ```json
 {
@@ -36,7 +36,7 @@
 }
 ```
 
-- **반환:application/json**
+- **반환**: `application/json`
 
 ```json
 {
@@ -111,7 +111,7 @@
 // 열기웹 페이지
 {
     "browser_type": "chrome",
-    "data": { "url": "https://www.baidu.com/"},
+    "data": { "url": "https://example.com/"},
     "key": "openNewTab"
 }
 
@@ -140,7 +140,7 @@
 }
 //검증요소반환의예요소위치
 
-// 까지가능
+// optional
 {
     "browser_type": "chrome",
     "data": {
@@ -186,7 +186,7 @@
     },
     "key": "getTitle"
 }
-// 웹 페이지가능스크린샷
+// full-page screenshot
 {
     "browser_type": "chrome",
     "data": {
@@ -331,13 +331,13 @@
     "key": "forward"
 }
 
-// 닫기웹 페이지
+// 웹 페이지 닫기
 {
     "browser_type": "chrome",
     "data": { "url": "https://developer.mozilla.org/zh-CN/plus"},
     "key": "closeTab"
 }
-// 까지지정페이지
+// 지정 페이지로 전환
 {
     "browser_type": "chrome",
     "data": { "url": "https://developer.mozilla.org/zh-CN/plus"},
@@ -501,13 +501,13 @@
       "xpath": "//div[@id=\"spa-mount-point\"]/div/div[1]/div/div[2]/div[2]/div[1]/div[1]/div[1]/div[1]/div/div",
       "cssSelector": "#spa-mount-point>div>div.ent-resource>div>div.ent-resource-main>div.ent-resource-body>div.branch-tabs-wrap>div.tabs-container>div.branch-tabs>div.el-tabs__header>div>div",
       "abXpath": "/html/body/div/section/section/main/div/div/div[1]/div/div[2]/div[2]/div[1]/div[1]/div[1]/div[1]/div/div",
-      "originXpath": "/html/body/div/section/section/main/div/div/div[1]/div/div[2]/div[2]/div[1]/div[1]/div[1]/div[1]/div/div", // 아니오저장된 가져오기값abXpath, 해당값예단일일가져오기의요소의abXpath, 사용대선택후소선택까지요소경로위의요소,  에서소선택시있음사용
+      "originXpath": "/html/body/div/section/section/main/div/div/div[1]/div/div[2]/div[2]/div[1]/div[1]/div[1]/div[1]/div/div", // 선택 기준이 되는 원본 요소의 절대 XPath입니다.
       ...
    },
   "key": "getChildElement"
 }
 
-// 가져오기요소객체
+// 요소 객체 가져오기
 {
   "browser_type": "chrome",
   "data": {
@@ -547,25 +547,26 @@ curl -X POST 'http://127.0.0.1:9082/browser/transition' -H 'User-Agent: Reqable/
   "key": "getElement"
 }'
 ```
-## 5. 높음단계매칭및완료
-일반브라우저, 가능행매칭의브라우저이름및token, 일로브라우저실행 파일의파일이름
+## 5. 고급 브라우저 매칭
+
+일반 브라우저는 브라우저 이름과 token으로 매칭합니다. 커스텀 Chromium 계열 브라우저는 실행 파일 이름을 기준으로 매칭할 수 있습니다.
 
 ## 6. 비고
 
-- 확장통신shoprpa 클라이언트서비스, 요청 열기shoprpa 클라이언트
-- 확장통신회원가입의token,token 코드, 예Chrome 브라우저 token=$chrome$
+- 확장은 ShopRPA 클라이언트 서비스와 통신합니다. 요청 전에 ShopRPA 클라이언트가 실행되어 있어야 합니다.
+- 확장 등록 시 브라우저 token을 사용합니다. 예: Chrome 브라우저 token은 `$chrome$`입니다.
 
-## 7. 자주 묻는 질문해제
+## 7. 자주 묻는 질문
 
-- 부서분Chromium열기발송의브라우저로드 Chrome 브라우저의확장, 로드완료본확장, 저장에서 token 및브라우저아니오매칭, 불가사용
+- 일부 Chromium 기반 브라우저는 Chrome 확장을 로드할 수 있지만, 등록된 token과 브라우저 매칭 정보가 맞지 않으면 사용할 수 없습니다.
 
 ## 8. 기록
 
 - **오류코드목록**: 
 ```
   SUCCESS = '0000', // 성공
-  UNKNOWN_ERROR = '5001', // 미완료알림예외
-  ELEMENT_NOT_FOUND = '5002', // 요소찾을 수 없는 
-  EXECUTE_ERROR = '5003', // 실행오류
-  VERSION_ERROR = '5004', // 버전오류
+  UNKNOWN_ERROR = '5001', // 알 수 없는 예외
+  ELEMENT_NOT_FOUND = '5002', // 요소를 찾을 수 없음
+  EXECUTE_ERROR = '5003', // 실행 오류
+  VERSION_ERROR = '5004', // 버전 오류
 ```

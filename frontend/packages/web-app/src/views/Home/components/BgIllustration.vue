@@ -43,10 +43,12 @@ export type Illustration = 'robot1' | 'robot2'
   border: 1px solid rgba(15, 23, 42, 0.08);
   background:
     linear-gradient(rgba(15, 23, 42, 0.045) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(15, 23, 42, 0.045) 1px, transparent 1px),
-    rgba(255, 255, 255, 0.64);
-  background-size: 28px 28px, 28px 28px, auto;
-  box-shadow: 0 28px 80px rgba(15, 23, 42, 0.10);
+    linear-gradient(90deg, rgba(15, 23, 42, 0.045) 1px, transparent 1px), rgba(255, 255, 255, 0.64);
+  background-size:
+    28px 28px,
+    28px 28px,
+    auto;
+  box-shadow: 0 28px 80px rgba(15, 23, 42, 0.1);
   backdrop-filter: blur(20px);
 }
 

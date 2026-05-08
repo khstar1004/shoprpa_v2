@@ -1,5 +1,5 @@
 ﻿"""
- IMAP4 의메일수신및파싱도구유형.
+ IMAP4 메일 수신 및 파싱 유틸리티입니다.
 """
 
 import base64
@@ -16,7 +16,7 @@ from astronverse.baseline.logger.logger import logger
 
 def encode_imap_utf7(folder_name: str) -> bytes:
     """
-    를메일함폴더이름코드로 IMAP 수정버전 UTF-7 형식(RFC 3501).
+    메일함 폴더 이름을 IMAP modified UTF-7 형식(RFC 3501)으로 인코딩합니다.
     - 통신가능인쇄 ASCII(제거 & 외부)기존보관
     - & 코드로 &-
     -  ASCII 문자(예중국어)코드로 &<base64(UTF-16BE)>-, 중 base64 중의 / 로 ,
@@ -71,12 +71,12 @@ def decode_imap_utf7(encoded: str) -> str:
 
 
 def decode_folder_list(raw_list) -> list:
-    """를 showFolders 반환의기존문자목록해제코드로가능문자열목록"""
+    """showFolders 결과의 modified UTF-7 폴더 이름을 문자열 목록으로 디코딩합니다."""
     folders = []
     for item in raw_list or []:
         try:
             text = item.decode("ascii") if isinstance(item, bytes) else str(item)
-            # 가져오기 내부의폴더이름, 예 () "/" "&XfJT0ZAB-"
+            # 내부 폴더 이름을 추출합니다. 예: () "/" "&XfJT0ZAB-"
             match = re.search(r'"([^"]*)"\s*$', text) or re.search(r'"([^"]+)"[^"]*$', text)
             if match:
                 raw_name = match.group(1)
@@ -115,15 +115,15 @@ def decode_data(b, added_encode=None):
 
 class EmailImap4Receive:
     """
-     IMAP4 의메일수신및파싱도구유형.
-    로그인, 메일검색, 파싱, 완료대기공가능.
+     IMAP4 메일 수신 및 파싱 유틸리티입니다.
+    로그인, 메일 검색, 파싱, 읽음 처리를 제공합니다.
     """
 
     def __init__(self):
         self.mail_handler: IMAP4_SSL
 
     def login(self, server, port: int, user, password):
-        """로그인메일함서비스서버"""
+        """메일 서버에 로그인합니다."""
         self.mail_handler = imaplib.IMAP4_SSL(server, port)
         self.mail_handler.login(user, password)
         self.__build_header__(user)
@@ -147,7 +147,7 @@ class EmailImap4Receive:
 
     def showFolders(self):
         """
-        반환모든폴더
+        모든 메일함 폴더를 반환합니다.
 
         """
         return self.mail_handler.list()
@@ -170,7 +170,7 @@ class EmailImap4Receive:
 
     def search(self, charset="utf-8", *criteria):
         """
-        조회메일 검색메일(매개RFC문서http://tools.ietf.org/html/rfc3501#page-49)
+        메일을 검색합니다. 자세한 조건 문법은 RFC 3501 SEARCH를 따릅니다.
 
         :param charset:
         :param criteria:
@@ -186,7 +186,7 @@ class EmailImap4Receive:
 
     def __get_email_format__(self, num):
         """
-        으로RFC822형식반환메일의email객체
+        RFC822 형식의 메일을 email 객체로 반환합니다.
 
         :param num:
         :return: msg
@@ -225,7 +225,7 @@ class EmailImap4Receive:
 
     @staticmethod
     def __get_sender_info__(msg):
-        """반환전송의정보——원그룹(메일명칭, 메일주소)"""
+        """발신자 정보를 (이름, 이메일 주소) 튜플로 반환합니다."""
         name = email.utils.parseaddr(msg["from"])[0]
         de_name = email.header.decode_header(name)[0]
         if de_name[1] is not None:
@@ -235,7 +235,7 @@ class EmailImap4Receive:
 
     @staticmethod
     def __get_receiver_info__(msg):
-        """반환연결의정보——원그룹(메일명칭, 메일주소)"""
+        """수신자 정보를 (이름, 이메일 주소) 튜플로 반환합니다."""
         name = email.utils.parseaddr(msg["to"])[0]
         de_name = email.header.decode_header(name)[0]
         if de_name[1] is not None:
@@ -245,7 +245,7 @@ class EmailImap4Receive:
 
     @staticmethod
     def __get_subject_content__(msg):
-        """반환메일의제목(매개변수msg예email객체, 가능호출getEmailFormat가져오기 )"""
+        """메일 제목을 반환합니다."""
         try:
             de_content = email.header.decode_header(msg["subject"])[0]
         except Exception:
@@ -266,8 +266,8 @@ class EmailImap4Receive:
 
     def get_entire_mail_info(self, num):
         """
-        반환메일의파싱후정보모듈분
-        반환목록패키지(제목, 텍스트정상문서모듈분, html의정상문서모듈분, 발송파일사람원그룹, 파일사람원그룹, 파일목록)
+        파싱한 메일 정보를 반환합니다.
+        제목, 텍스트 본문, HTML 본문, 발신자, 수신자, 첨부파일 목록을 포함합니다.
         """
         msg = self.__get_email_format__(num)
         attachments = []
@@ -301,5 +301,5 @@ class EmailImap4Receive:
         }
 
     def mask_as_read(self, num):
-        """필요비고로완료"""
+        """메일을 읽음 상태로 표시합니다."""
         self.mail_handler.store(num, "+FLAGS", "\\Seen")

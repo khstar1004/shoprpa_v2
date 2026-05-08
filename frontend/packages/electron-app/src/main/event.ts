@@ -1,19 +1,18 @@
-﻿import { Buffer } from 'node:buffer'
+import { Buffer } from 'node:buffer'
 import fs from 'node:fs/promises'
 import { join } from 'node:path'
 
-import { BrowserWindow } from 'electron'
-import { clipboard, dialog, globalShortcut, ipcMain, screen, shell } from 'electron'
-import throttle from 'lodash/throttle'
-import { IPluginConfig } from '@rpa/shared'
+import type { IPluginConfig } from '@rpa/shared'
 import { to } from 'await-to-js'
+import { BrowserWindow, clipboard, dialog, globalShortcut, ipcMain, screen, shell } from 'electron'
+import throttle from 'lodash/throttle'
 
-import logger from './log'
-import { openPath } from './path'
-import { getMainWindow, getWindowFromLabel } from './window'
-import { checkForUpdates, quitAndInstallUpdates } from './updater'
 import { config } from './config'
 import { loadExtensions } from './extension'
+import logger from './log'
+import { openPath } from './path'
+import { checkForUpdates, quitAndInstallUpdates } from './updater'
+import { getMainWindow, getWindowFromLabel } from './window'
 
 type MainToRender = (channel: string, msg: string, _win?: BrowserWindow, encode?: boolean) => void
 
@@ -26,6 +25,22 @@ export const mainToRender: MainToRender = throttle<MainToRender>(
   1000,
   { leading: true, trailing: false },
 )
+
+function normalizeExternalUrl(value: unknown): string {
+  if (typeof value !== 'string')
+    return ''
+
+  try {
+    const url = new URL(value.trim())
+    if (['http:', 'https:', 'mailto:'].includes(url.protocol))
+      return url.toString()
+  }
+  catch {
+    return ''
+  }
+
+  return ''
+}
 
 export function listenRender() {
   // window-show
@@ -44,8 +59,7 @@ export function listenRender() {
     const win = label ? getWindowFromLabel(label) : BrowserWindow.fromWebContents(event.sender)
 
     if (confirm) {
-      // 예결과 confirm 로 true, 이면아니오닫기창
-      // 전송일개파일, 알림창닫기필요
+      // Ask the renderer to confirm before closing this window.
       win?.webContents.send('window-close-confirm', true)
     }
     else {
@@ -159,7 +173,12 @@ export function listenRender() {
   })
 
   ipcMain.on('open-in-browser', (_event, url) => {
-    shell.openExternal(url).catch((err: Error) => {
+    const safeUrl = normalizeExternalUrl(url)
+    if (!safeUrl) {
+      logger.warn('Blocked invalid external URL request')
+      return
+    }
+    shell.openExternal(safeUrl).catch((err: Error) => {
       logger.error('Failed to open URL in browser:', err)
     })
   })
@@ -205,7 +224,7 @@ export function listenRender() {
   ipcMain.handle('save-file', async (_event, fileName: string, buffer: Buffer | string): Promise<boolean> => {
     try {
       const { canceled, filePath } = await dialog.showSaveDialog({
-        title: '저장파일',
+        title: '파일 저장',
         defaultPath: fileName,
       })
 

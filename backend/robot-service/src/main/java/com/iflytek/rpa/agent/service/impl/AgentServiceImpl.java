@@ -12,6 +12,7 @@ import com.iflytek.rpa.utils.IdWorker;
 import com.iflytek.rpa.utils.exception.NoLoginException;
 import com.iflytek.rpa.utils.exception.ServiceException;
 import com.iflytek.rpa.utils.response.AppResponse;
+import com.iflytek.rpa.utils.response.ErrorCodeEnum;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
@@ -64,7 +65,7 @@ public class AgentServiceImpl implements AgentService {
         // agentId저장에서, 이면업데이트완료있음의Agent매칭
         int result = agentDao.updateContent(agent);
         if (result != 1) {
-            throw new RuntimeException("Failed to update agent configuration");
+            throw new ServiceException(ErrorCodeEnum.E_SQL_EXCEPTION.getCode(), "Agent 설정 업데이트에 실패했습니다");
         }
 
         return AppResponse.success(new AgentVo().setAgentId(agentId));
@@ -75,9 +76,7 @@ public class AgentServiceImpl implements AgentService {
         Agent agent = agentDao.getByAgentId(agentId);
 
         if (agent == null) {
-            AppResponse<AgentVo> response = AppResponse.success(null);
-            response.setMessage("Agent configuration not found");
-            return response;
+            return AppResponse.error(ErrorCodeEnum.E_SQL_EMPTY, "Agent 설정을 찾을 수 없습니다");
         }
 
         // 를저장의JSON문자열파싱로DTO
@@ -107,7 +106,7 @@ public class AgentServiceImpl implements AgentService {
         int result = agentDao.deleteAgent(agentId, userId);
 
         if (result != 1) {
-            throw new RuntimeException("Failed to delete agent configuration");
+            throw new ServiceException(ErrorCodeEnum.E_SQL_EXCEPTION.getCode(), "Agent 설정 삭제에 실패했습니다");
         }
         return AppResponse.success(new AgentVo().setAgentId(agentId));
     }
@@ -149,7 +148,7 @@ public class AgentServiceImpl implements AgentService {
         int insert = agentDao.insertAgent(agent);
 
         if (insert != 1) {
-            throw new RuntimeException("Failed to create agent configuration");
+            throw new ServiceException(ErrorCodeEnum.E_SQL_EXCEPTION.getCode(), "Agent 설정 생성에 실패했습니다");
         }
 
         return insert;

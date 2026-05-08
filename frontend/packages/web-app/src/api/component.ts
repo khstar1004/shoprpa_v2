@@ -1,4 +1,4 @@
-﻿import http from './http'
+import http from './http'
 
 /**
  * @description: 게시컴포넌트
@@ -48,7 +48,7 @@ export async function getSmartComp(data: { robotId: string, smartId: string }) {
 }
 
 /**
- * @description: 
+ * @description:
  */
 export async function optimizeQuestion(data: {
   sceneCode: string
@@ -58,16 +58,16 @@ export async function optimizeQuestion(data: {
   const res = await http.post<RPA.Atom>('/api/rpa-ai-service/smart/chat', { ...data, chatHistory: [] })
   return res.data?.choices?.[0]?.message?.content || ''
 }
-// 반환값예시: 
+// 반환값예시:
 // ```new_prompt
 // 에서`{요소_AI_8:1993287190512476160}`중완료가능요소의
 
-// : 
+// :
 // 1. 클릭`{요소_AI_8:1993287190512476160}`, 트리거AI공가능
 // 2. 대기`{AI공가능}`열기또는로드완료
 // 3. 에서열기의`{AI공가능}`중, 완료`[내용]`(예: 입력제목, 선택유형, 클릭완료버튼대기)
 
-// 비고: 
+// 비고:
 // 1. 확인`{요소_AI_8:1993287190512476160}`가능클릭상태
 // 2. 클릭후필요대기전체로드, 후실패
 // 3. 요청 근거필요`[내용]`의

@@ -33,7 +33,7 @@ export async function createBuildServer(options: { dev?: boolean }): Promise<voi
   const mode = options.dev ? 'development' : 'production'
 
   const userConfig = await loadRpaConfig(root, command, mode)
-  const remoteName = userConfig?.name || 'remote';
+  const remoteName = userConfig?.name || 'remote'
 
   const config: InlineConfig = {
     build: {

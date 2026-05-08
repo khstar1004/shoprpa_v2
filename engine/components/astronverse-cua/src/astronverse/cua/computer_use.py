@@ -57,7 +57,7 @@ API_URL = "http://127.0.0.1:{}/api/rpa-ai-service/cua/chat".format(
 
 
 class ComputerUseAgent:
-    """계획기기사용관리유형 - 사용대유형"""
+    """Screen-based computer-use agent."""
 
     def __init__(
         self,
@@ -68,8 +68,8 @@ class ComputerUseAgent:
         Agent
 
         Args:
-            max_steps: 대실행데이터
-            temperature: 유형정도매개변수
+            max_steps: Maximum number of execution steps.
+            temperature: Model sampling temperature.
         """
 
         self.max_steps = max_steps
@@ -527,7 +527,7 @@ class ComputerUseAgent:
                 "error": "사용자중",
             }
         except Exception as e:
-            logger.info(f"\n\n[작업실패] 발송오류: {e}")
+            logger.info(f"\n\n[작업 실패] 오류: {e}")
             return {
                 "success": False,
                 "steps": step,
@@ -562,15 +562,15 @@ class ComputerUse:
         temperature: float = 0.0,
     ):
         """
-        실행계획기기사용관리작업
+        화면 기반 GUI 작업을 실행합니다.
 
         Args:
-            instruction: 사용자
-            max_steps: 대실행데이터
-            temperature: 유형정도매개변수
+            instruction: 자연어 작업 지시.
+            max_steps: 최대 실행 단계 수.
+            temperature: 응답 다양성 값.
 
         Returns:
-            실행 결과, 패키지success, steps, action_steps, duration, screenshots, error대기필드
+            success, steps, duration, screenshots, error 필드를 포함한 실행 결과.
         """
 
         agent = ComputerUseAgent(
@@ -579,7 +579,7 @@ class ComputerUse:
         )
         result = agent.run(instruction)
 
-        # 반환결과, 확인모든출력매개변수 있음값
+        # 항상 고정된 출력 필드를 반환한다.
         return {
             "success": result.get("success", False),
             "steps": result.get("steps", 0),
@@ -606,15 +606,15 @@ class ComputerUse:
         temperature: float = 0.0,
     ):
         """
-        지정AI화면
+        지정한 화면에서 GUI 작업을 실행합니다.
 
         Args:
-            instruction: 사용자
-            max_steps: 대실행데이터
-            temperature: 유형정도매개변수
+            instruction: 자연어 작업 지시.
+            max_steps: 최대 실행 단계 수.
+            temperature: 응답 다양성 값.
 
         Returns:
-            실행 결과, 패키지success, steps, action_steps, duration, screenshots, error대기필드
+            success, steps, duration, screenshots, error, thought, data 필드를 포함한 실행 결과.
         """
 
         agent = CustomActionScreen(
@@ -623,7 +623,7 @@ class ComputerUse:
         )
         result = agent.run(instruction)
 
-        # 반환결과, 확인모든출력매개변수 있음값
+        # 항상 고정된 출력 필드를 반환한다.
         return {
             "success": result.get("success", False),
             "steps": result.get("steps", 0),
@@ -638,7 +638,7 @@ class ComputerUse:
     @atomicMg.atomic(
         "ComputerUse",
         inputList=[
-            atomicMg.param("instruction", types="Str", default="에서화면중가져오기데이터, 반환 JSON 형식."),
+            atomicMg.param("instruction", types="Str", default="화면의 주문번호와 금액을 JSON 형식으로 추출"),
             atomicMg.param("max_steps", types="Int", required=False),
             atomicMg.param("temperature", types="Float", required=False),
         ],
@@ -652,15 +652,15 @@ class ComputerUse:
         temperature: float = 0.0,
     ):
         """
-        가져오기화면데이터
+        화면 데이터를 추출합니다.
 
         Args:
-            instruction: 사용자
-            max_steps: 대실행데이터
-            temperature: 유형정도매개변수
+            instruction: 추출할 데이터와 반환 형식에 대한 지시.
+            max_steps: 최대 실행 단계 수.
+            temperature: 응답 다양성 값.
 
         Returns:
-            실행 결과, 패키지success, steps, action_steps, duration, screenshots, error대기필드
+            success, steps, duration, screenshots, error, thought, data 필드를 포함한 실행 결과.
         """
 
         agent = CustomActionScreen(
@@ -669,7 +669,7 @@ class ComputerUse:
         )
         result = agent.run(instruction)
 
-        # 반환결과, 확인모든출력매개변수 있음값
+        # 항상 고정된 출력 필드를 반환한다.
         return {
             "success": result.get("success", False),
             "steps": result.get("steps", 0),
@@ -684,7 +684,7 @@ class ComputerUse:
     @atomicMg.atomic(
         "ComputerUse",
         inputList=[
-            atomicMg.param("instruction", types="Str", default="를 [데이터내용] 까지화면중의테이블단일.데이터내용: "),
+            atomicMg.param("instruction", types="Str", default="화면의 양식에 [데이터내용]을 입력"),
             atomicMg.param("max_steps", types="Int", required=False),
             atomicMg.param("temperature", types="Float", required=False),
         ],
@@ -698,15 +698,15 @@ class ComputerUse:
         temperature: float = 0.0,
     ):
         """
-        테이블단일
+        화면의 입력란이나 표에 값을 입력합니다.
 
         Args:
-            instruction: 사용자
-            max_steps: 대실행데이터
-            temperature: 유형정도매개변수
+            instruction: 입력 대상과 입력 값에 대한 지시.
+            max_steps: 최대 실행 단계 수.
+            temperature: 응답 다양성 값.
 
         Returns:
-            실행 결과, 패키지success, steps, action_steps, duration, screenshots, error대기필드
+            success, steps, duration, screenshots, error, thought, data 필드를 포함한 실행 결과.
         """
 
         agent = CustomActionScreen(
@@ -715,7 +715,7 @@ class ComputerUse:
         )
         result = agent.run(instruction)
 
-        # 반환결과, 확인모든출력매개변수 있음값
+        # 항상 고정된 출력 필드를 반환한다.
         return {
             "success": result.get("success", False),
             "steps": result.get("steps", 0),
@@ -730,7 +730,7 @@ class ComputerUse:
     @atomicMg.atomic(
         "ComputerUse",
         inputList=[
-            atomicMg.param("instruction", types="Str", default="관리닫기화면중의인증 코드."),
+            atomicMg.param("instruction", types="Str", default="화면의 인증 코드를 입력"),
             atomicMg.param("max_steps", types="Int", required=False),
             atomicMg.param("temperature", types="Float", required=False),
         ],
@@ -744,15 +744,15 @@ class ComputerUse:
         temperature: float = 0.0,
     ):
         """
-        관리인증 코드
+        화면의 인증 코드나 검증 단계를 처리합니다.
 
         Args:
-            instruction: 사용자
-            max_steps: 대실행데이터
-            temperature: 유형정도매개변수
+            instruction: 처리할 인증 코드나 검증 단계에 대한 지시.
+            max_steps: 최대 실행 단계 수.
+            temperature: 응답 다양성 값.
 
         Returns:
-            실행 결과, 패키지success, steps, action_steps, duration, screenshots, error대기필드
+            success, steps, duration, screenshots, error, thought, data 필드를 포함한 실행 결과.
         """
 
         agent = CustomActionScreen(
@@ -761,7 +761,7 @@ class ComputerUse:
         )
         result = agent.run(instruction)
 
-        # 반환결과, 확인모든출력매개변수 있음값
+        # 항상 고정된 출력 필드를 반환한다.
         return {
             "success": result.get("success", False),
             "steps": result.get("steps", 0),

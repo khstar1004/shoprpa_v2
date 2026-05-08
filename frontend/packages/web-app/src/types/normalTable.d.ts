@@ -1,4 +1,4 @@
-﻿// packages/web-app/src/types/normalTable.d.ts
+// packages/web-app/src/types/normalTable.d.ts
 
 // 지정테이블단일컴포넌트유형
 export type FormComponentType

@@ -1,19 +1,26 @@
 <script setup lang="ts">
 import { NiceModal } from '@rpa/components'
 import { isEmpty } from 'lodash-es'
-import { computed, ref } from 'vue'
-
-import extensionManager from '@/plugins/extension'
+import { computed, onMounted, ref, shallowRef } from 'vue'
 
 import SettingMenu from './components/settingMenu.vue'
 import type { MenuItem } from './config'
 import { menuConfig } from './config'
 
+type ExtensionManager = typeof import('@/plugins/extension').default
+type ExtensionRegistry = Awaited<ReturnType<ExtensionManager['init']>>
+
 const modal = NiceModal.useModal()
 const currentSettingWin = ref(menuConfig[0].key)
+const extensions = shallowRef<ExtensionRegistry>(null)
+
+onMounted(async () => {
+  const { default: extensionManager } = await import('@/plugins/extension')
+  extensions.value = await extensionManager.init()
+})
 
 const menuItems = computed(() => {
-  const pluginItems: MenuItem[] = (extensionManager.extensions?.settings.getAll() ?? []).map(item => ({
+  const pluginItems: MenuItem[] = (extensions.value?.settings.getAll() ?? []).map(item => ({
     key: item.id,
     icon: item.icon,
     name: item.title,

@@ -1,4 +1,4 @@
-﻿from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status
 
 from app.dependencies import check_user_id_equality, get_user_id_from_api_key
 from app.logger import get_logger
@@ -10,6 +10,11 @@ router = APIRouter(
     prefix="/health",
     tags=["health"],
 )
+
+
+@router.get("", status_code=status.HTTP_200_OK, summary="Service health")
+async def health():
+    return {"service": "ShopRPA OpenAPI Service", "status": "ok"}
 
 
 @router.get(

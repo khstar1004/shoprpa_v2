@@ -1,5 +1,4 @@
-﻿import { createInstance } from '@module-federation/enhanced/runtime'
-import type { ModuleFederation } from '@module-federation/enhanced/runtime'
+import type { ModuleFederation } from '@module-federation/runtime'
 import type {
   IPluginConfig,
   IPluginContext,
@@ -14,6 +13,12 @@ import * as Vue from 'vue'
 import { utilsManager } from '@/platform'
 
 import { createPluginContext, getPluginContextManager, PluginExtension } from './context'
+
+function logPlugin(...args: unknown[]) {
+  if (import.meta.env.DEV) {
+    console.debug(...args)
+  }
+}
 
 /**
  * 확장연결
@@ -75,7 +80,7 @@ export class PluginManager extends EventEmitter<IPluginManagerEvents> {
   private config: Required<IPluginManagerConfig>
   private loadingQueue: Set<string> = new Set()
   private cache = new Map<string, { data: IPluginConfig[], timestamp: number }>()
-  private mf: ModuleFederation
+  private mf: ModuleFederation | null = null
 
   constructor(config: IPluginManagerConfig) {
     super()
@@ -87,7 +92,14 @@ export class PluginManager extends EventEmitter<IPluginManagerEvents> {
       timeout: config.timeout ?? 30000, // 30초
       enableCache: config.enableCache ?? true,
     }
+  }
 
+  private async getFederationRuntime(): Promise<ModuleFederation> {
+    if (this.mf) {
+      return this.mf
+    }
+
+    const { createInstance } = await import('@module-federation/runtime')
     this.mf = createInstance({
       name: 'host',
       remotes: [],
@@ -112,6 +124,7 @@ export class PluginManager extends EventEmitter<IPluginManagerEvents> {
         },
       },
     })
+    return this.mf
   }
 
   /**
@@ -240,14 +253,15 @@ export class PluginManager extends EventEmitter<IPluginManagerEvents> {
 
     try {
       // 매칭
-      this.mf.registerRemotes([{
+      const mf = await this.getFederationRuntime()
+      mf.registerRemotes([{
         name: instance.config.name,
         entry: instance.config.entry,
       }])
 
       // 가져오기 모듈
       const remoteModule = await Promise.race([
-        this.mf.loadRemote(`${instance.config.name}/index`).then((res: any) => res.default),
+        mf.loadRemote(`${instance.config.name}/index`).then((res: any) => res.default),
         new Promise((_, reject) =>
           setTimeout(() => reject(new Error('Plugin loading timeout')), this.config.timeout),
         ),
@@ -282,7 +296,7 @@ export class PluginManager extends EventEmitter<IPluginManagerEvents> {
     }
 
     if (instance.isActivated) {
-      console.log(`[PluginManager] Plugin ${instance.config.name} is already activated`)
+      logPlugin(`[PluginManager] Plugin ${instance.config.name} is already activated`)
       return
     }
 
@@ -291,7 +305,7 @@ export class PluginManager extends EventEmitter<IPluginManagerEvents> {
     }
 
     try {
-      console.log(`[PluginManager] Activating plugin ${instance.config.name}`)
+      logPlugin(`[PluginManager] Activating plugin ${instance.config.name}`)
 
       // 생성확장위아래문서
       const extension = new PluginExtension(
@@ -317,7 +331,7 @@ export class PluginManager extends EventEmitter<IPluginManagerEvents> {
       instance.isActivated = true
       this.emit('plugin:activate', instance)
 
-      console.log(`[PluginManager] Plugin ${instance.config.name} activated successfully`)
+      logPlugin(`[PluginManager] Plugin ${instance.config.name} activated successfully`)
     }
     catch (error) {
       console.error(`[PluginManager] Failed to activate plugin ${instance.config.name}:`, error)
@@ -335,12 +349,12 @@ export class PluginManager extends EventEmitter<IPluginManagerEvents> {
     }
 
     if (!instance.isActivated) {
-      console.log(`[PluginManager] Plugin ${instance.config.name} is not activated`)
+      logPlugin(`[PluginManager] Plugin ${instance.config.name} is not activated`)
       return
     }
 
     try {
-      console.log(`[PluginManager] Deactivating plugin ${instance.config.name}`)
+      logPlugin(`[PluginManager] Deactivating plugin ${instance.config.name}`)
 
       // 실행확장중지사용데이터
       if (instance.module?.deactivate) {
@@ -356,7 +370,7 @@ export class PluginManager extends EventEmitter<IPluginManagerEvents> {
       instance.isActivated = false
       this.emit('plugin:deactivate', instance)
 
-      console.log(`[PluginManager] Plugin ${instance.config.name} deactivated successfully`)
+      logPlugin(`[PluginManager] Plugin ${instance.config.name} deactivated successfully`)
     }
     catch (error) {
       console.error(`[PluginManager] Failed to deactivate plugin ${instance.config.name}:`, error)
@@ -383,7 +397,7 @@ export class PluginManager extends EventEmitter<IPluginManagerEvents> {
    */
   private unregisterContributions(pluginId: string, _contributes: any): void {
     // 가능으로비고판매
-    console.log(`[PluginManager] Unregistering contributions for plugin: ${pluginId}`)
+    logPlugin(`[PluginManager] Unregistering contributions for plugin: ${pluginId}`)
   }
 
   /**
@@ -461,7 +475,7 @@ export class PluginManager extends EventEmitter<IPluginManagerEvents> {
   }
 
   /**
-   * 가져오기 
+   * 가져오기
    */
   getExtensions() {
     return getPluginContextManager().getExtensions()

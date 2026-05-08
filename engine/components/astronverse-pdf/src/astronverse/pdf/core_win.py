@@ -130,7 +130,7 @@ class PDFCore(IPDFCore):
                 if not os.path.exists(file):
                     raise BaseException(
                         FILE_PATH_ERROR_FORMAT.format(file),
-                        "PDF파일 경로있음오류, 입력하세요정상의경로",
+                        "PDF 파일 경로가 올바르지 않습니다",
                     )
                 merger.append(file)
 
@@ -234,7 +234,7 @@ class PDFCore(IPDFCore):
         except PDFPasswordIncorrect:
             raise BaseException(
                 PDF_PASSWORD_ERROR_FORMAT.format(pwd),
-                "PDF파일 경로있음오류, 입력하세요정상의경로",
+                "PDF 파일 경로가 올바르지 않습니다",
             )
 
         # 를가져오기의테이블데이터변환로pandas DataFrame

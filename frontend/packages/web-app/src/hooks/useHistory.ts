@@ -1,4 +1,4 @@
-﻿import { applyPatches, enablePatches, produceWithPatches } from 'immer'
+import { applyPatches, enablePatches, produceWithPatches } from 'immer'
 import type { Patch } from 'immer'
 import { computed, ref, shallowRef } from 'vue'
 

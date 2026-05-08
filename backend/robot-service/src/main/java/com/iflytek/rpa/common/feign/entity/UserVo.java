@@ -3,7 +3,7 @@ package com.iflytek.rpa.common.feign.entity;
 import lombok.Data;
 
 /**
- * @desc: TODO
+ * @desc: ShopRPA authentication compatibility component.
  * @author: weilai <laiwei3@iflytek.com>
  * @create: 2025/11/27 17:22
  */

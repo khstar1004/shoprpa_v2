@@ -33,7 +33,7 @@ class LinuxVirtualDesk:
                 "-screen",
                 self.resolution,
                 "-title",
-                "Shoprpa",
+                "ShopRPA",
             ]
 
             # 사용가져오기까지의분시작Xephyr

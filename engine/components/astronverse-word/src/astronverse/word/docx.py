@@ -1,4 +1,5 @@
 ﻿import os
+import logging
 import platform
 import sys
 from pathlib import Path
@@ -38,6 +39,8 @@ from astronverse.word import (
 from astronverse.word.core import IDocumentCore
 from astronverse.word.docx_obj import DocumentObject
 from astronverse.word.error import *
+
+logger = logging.getLogger(__name__)
 
 if sys.platform == "win32":
     from astronverse.word.core_win import WordDocumentCore
@@ -133,7 +136,7 @@ class Docx:
     )
     def read_docx(doc: DocumentObject, select_range: SelectRangeType = SelectRangeType.ALL):
         if not doc:
-            raise BaseException(DOCUMENT_NOT_EXIST_ERROR_FORMAT, "문서찾을 수 없습니다, 요청 열기문서!")
+            raise BaseException(DOCUMENT_NOT_EXIST_ERROR_FORMAT, "문서를 찾을 수 없습니다. 문서가 열려 있는지 확인하세요.")
         try:
             doc_data = WordDocumentCore.read(doc.document_object, select_range)
             return doc_data
@@ -170,7 +173,7 @@ class Docx:
         if not os.path.exists(file_path):
             raise BaseException(
                 DOCUMENT_PATH_ERROR_FORMAT.format(file_path),
-                "의사용프로그램경로있음오류, 입력하세요정상의경로!",
+                "프로그램 경로가 올바르지 않습니다. 올바른 경로를 입력하세요.",
             )
         try:
             if file_name:
@@ -240,7 +243,7 @@ class Docx:
         close_flag: bool = False,
     ):
         if not doc:
-            raise BaseException(DOCUMENT_NOT_EXIST_ERROR_FORMAT, "문서찾을 수 없습니다, 요청 열기문서!")
+            raise BaseException(DOCUMENT_NOT_EXIST_ERROR_FORMAT, "문서를 찾을 수 없습니다. 문서가 열려 있는지 확인하세요.")
         try:
             save_file_path = WordDocumentCore.save(
                 doc.document_object,
@@ -323,7 +326,7 @@ class Docx:
         pkill_flag: bool = False,
     ):
         if not doc:
-            raise BaseException(DOCUMENT_NOT_EXIST_ERROR_FORMAT, "문서찾을 수 없습니다, 요청 열기문서!")
+            raise BaseException(DOCUMENT_NOT_EXIST_ERROR_FORMAT, "문서를 찾을 수 없습니다. 문서가 열려 있는지 확인하세요.")
         try:
             WordDocumentCore.close(
                 doc.document_object,
@@ -391,7 +394,7 @@ class Docx:
         font_color: str = "0,0,0",
     ):
         if not doc:
-            raise BaseException(DOCUMENT_NOT_EXIST_ERROR_FORMAT, "문서찾을 수 없습니다, 요청 열기문서!")
+            raise BaseException(DOCUMENT_NOT_EXIST_ERROR_FORMAT, "문서를 찾을 수 없습니다. 문서가 열려 있는지 확인하세요.")
         try:
             # 선택파일가져오기시, 에서 txt 파일가져오기텍스트
             if text_source == TextInputSourceType.FILE:
@@ -483,7 +486,7 @@ class Docx:
         r_end: int = 1,
     ):
         if not doc:
-            raise BaseException(DOCUMENT_NOT_EXIST_ERROR_FORMAT, "문서찾을 수 없습니다, 요청 열기문서!")
+            raise BaseException(DOCUMENT_NOT_EXIST_ERROR_FORMAT, "문서를 찾을 수 없습니다. 문서가 열려 있는지 확인하세요.")
         if (
             p_start > p_end
             or r_start > r_end
@@ -553,10 +556,10 @@ class Docx:
         if not doc:
             raise BaseException(
                 DOCUMENT_NOT_EXIST_ERROR_FORMAT,
-                "있음조회까지Word객체, 확인하세요입력의Word객체여부정상!",
+                "Word 문서 객체를 찾을 수 없습니다. 입력한 문서 객체가 정상인지 확인하세요.",
             )
         if not IDocumentCore.are_positive_integers(c_idx, p_idx, r_idx):
-            raise BaseException(CONTENT_FORMAT_ERROR_FORMAT, "입력하세요정상의데이터값!")
+            raise BaseException(CONTENT_FORMAT_ERROR_FORMAT, "올바른 데이터 값을 입력하세요.")
         try:
             WordDocumentCore.cursor_position(doc.document_object, by, pos, content, c_idx, p_idx, r_idx)
         except Exception as e:
@@ -601,10 +604,10 @@ class Docx:
         if not doc:
             raise BaseException(
                 DOCUMENT_NOT_EXIST_ERROR_FORMAT,
-                "있음조회까지Word객체, 확인하세요입력의Word객체여부정상!",
+                "Word 문서 객체를 찾을 수 없습니다. 입력한 문서 객체가 정상인지 확인하세요.",
             )
         if not IDocumentCore.are_positive_integers(distance):
-            raise BaseException(CONTENT_FORMAT_ERROR_FORMAT, "입력하세요정상의데이터값!")
+            raise BaseException(CONTENT_FORMAT_ERROR_FORMAT, "올바른 데이터 값을 입력하세요.")
         try:
             WordDocumentCore.move_cursor(
                 doc.document_object,
@@ -626,7 +629,7 @@ class Docx:
         if not doc:
             raise BaseException(
                 DOCUMENT_NOT_EXIST_ERROR_FORMAT,
-                "있음조회까지Word객체, 확인하세요입력의Word객체여부정상!",
+                "Word 문서 객체를 찾을 수 없습니다. 입력한 문서 객체가 정상인지 확인하세요.",
             )
         try:
             WordDocumentCore.insert_sep(doc.document_object, sep_type)
@@ -639,7 +642,7 @@ class Docx:
         if not doc:
             raise BaseException(
                 DOCUMENT_NOT_EXIST_ERROR_FORMAT,
-                "있음조회까지Word객체, 확인하세요입력의Word객체여부정상!",
+                "Word 문서 객체를 찾을 수 없습니다. 입력한 문서 객체가 정상인지 확인하세요.",
             )
         WordDocumentCore.insert_hyperlink(doc.document_object, url, display)
 
@@ -673,7 +676,7 @@ class Docx:
         if not doc:
             raise BaseException(
                 DOCUMENT_NOT_EXIST_ERROR_FORMAT,
-                "있음조회까지Word객체, 확인하세요입력의Word객체여부정상!",
+                "Word 문서 객체를 찾을 수 없습니다. 입력한 문서 객체가 정상인지 확인하세요.",
             )
         WordDocumentCore.insert_img(doc.document_object, img_from, img_path, scale, newline)
 
@@ -704,16 +707,16 @@ class Docx:
         if not doc:
             raise BaseException(
                 DOCUMENT_NOT_EXIST_ERROR_FORMAT,
-                "있음조회까지Word객체, 확인하세요입력의Word객체여부정상!",
+                "Word 문서 객체를 찾을 수 없습니다. 입력한 문서 객체가 정상인지 확인하세요.",
             )
         try:
             table_content = WordDocumentCore.read_table(doc.document_object, search_type, idx, text)
             return table_content
         except Exception as e:
-            print(e)
+            logger.debug("Failed to read table from document: %s", e)
             raise BaseException(
                 DOCUMENT_READ_ERROR_FORMAT.format(doc),
-                "가져오기테이블실패, 확인하세요문서여부열기!",
+                "테이블을 가져오지 못했습니다. 문서가 열려 있는지 확인하세요.",
             ) from e
 
     @staticmethod
@@ -797,7 +800,7 @@ class Docx:
         if not doc:
             raise BaseException(
                 DOCUMENT_NOT_EXIST_ERROR_FORMAT,
-                "있음조회까지Word객체, 확인하세요입력의Word객체여부정상!",
+                "Word 문서 객체를 찾을 수 없습니다. 입력한 문서 객체가 정상인지 확인하세요.",
             )
         try:
             WordDocumentCore.insert_table(
@@ -906,7 +909,7 @@ class Docx:
         if not doc:
             raise BaseException(
                 DOCUMENT_NOT_EXIST_ERROR_FORMAT,
-                "있음조회까지Word객체, 확인하세요입력의Word객체여부정상!",
+                "Word 문서 객체를 찾을 수 없습니다. 입력한 문서 객체가 정상인지 확인하세요.",
             )
         try:
             WordDocumentCore.delete(
@@ -952,15 +955,6 @@ class Docx:
                     )
                 ],
             ),
-            atomicMg.param(
-                "delete_idx",
-                dynamics=[
-                    DynamicsItem(
-                        key="$this.delete_idx.show",
-                        expression="return $this.str_delete_all.value == false",
-                    )
-                ],
-            ),
         ],
         outputList=[],
     )
@@ -976,7 +970,7 @@ class Docx:
         if not doc:
             raise BaseException(
                 DOCUMENT_NOT_EXIST_ERROR_FORMAT,
-                "있음조회까지Word객체, 확인하세요입력의Word객체여부정상!",
+                "Word 문서 객체를 찾을 수 없습니다. 입력한 문서 객체가 정상인지 확인하세요.",
             )
         try:
             _ = WordDocumentCore.replace(
@@ -1069,7 +1063,7 @@ class Docx:
         if not doc:
             raise BaseException(
                 DOCUMENT_NOT_EXIST_ERROR_FORMAT,
-                "있음조회까지Word객체, 확인하세요입력의Word객체여부정상!",
+                "Word 문서 객체를 찾을 수 없습니다. 입력한 문서 객체가 정상인지 확인하세요.",
             )
         try:
             WordDocumentCore.create_comment(
@@ -1109,7 +1103,7 @@ class Docx:
         if not doc:
             raise BaseException(
                 DOCUMENT_NOT_EXIST_ERROR_FORMAT,
-                "있음조회까지Word객체, 확인하세요입력의Word객체여부정상!",
+                "Word 문서 객체를 찾을 수 없습니다. 입력한 문서 객체가 정상인지 확인하세요.",
             )
         try:
             WordDocumentCore.delete_comment(doc.document_object, comment_index, delete_all)
@@ -1183,7 +1177,7 @@ class Docx:
         if not doc:
             raise BaseException(
                 DOCUMENT_NOT_EXIST_ERROR_FORMAT,
-                "있음조회까지Word객체, 확인하세요입력의Word객체여부정상!",
+                "Word 문서 객체를 찾을 수 없습니다. 입력한 문서 객체가 정상인지 확인하세요.",
             )
         if default_name:
             document_name = doc.document_object.Name
@@ -1205,5 +1199,5 @@ class Docx:
         except Exception as exc:
             raise BaseException(
                 FILENAME_ALREADY_EXISTS_ERROR.format(output_name),
-                "내보내기실패, 파일이름완료존재함!",
+                "내보내기에 실패했습니다. 같은 파일 이름이 이미 존재합니다.",
             ) from exc

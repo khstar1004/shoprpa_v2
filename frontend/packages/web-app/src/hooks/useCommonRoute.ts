@@ -1,4 +1,4 @@
-﻿import type { RouteLocationAsRelativeGeneric } from 'vue-router'
+import type { RouteLocationAsRelativeGeneric } from 'vue-router'
 
 import { refreshModal } from '@/utils/antd.common'
 

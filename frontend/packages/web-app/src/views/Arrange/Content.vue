@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { Splitter } from '@rpa/components'
 import { useElementSize } from '@vueuse/core'
 import { onActivated, onBeforeUnmount, reactive, useTemplateRef } from 'vue'

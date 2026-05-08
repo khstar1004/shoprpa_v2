@@ -103,7 +103,7 @@ class VerifyCode:
 
         slider_element = Locator.locator(slider_pick.get("elementData"), cur_target_app=browser_obj.browser_type.value)
         if isinstance(slider_element.rect(), list):
-            raise Exception("브라우저요소위치 지정아니오일, 확인하세요!")
+            raise Exception("슬라이더 요소 위치를 확인할 수 없습니다.")
         start_pos = slider_element.point()
         if not unmatched_flag:
             end_pos = (start_pos.x + drag_distance, start_pos.y)

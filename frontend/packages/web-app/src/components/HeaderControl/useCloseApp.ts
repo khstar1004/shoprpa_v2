@@ -1,4 +1,4 @@
-﻿import { ExclamationCircleOutlined } from '@ant-design/icons-vue'
+import { ExclamationCircleOutlined } from '@ant-design/icons-vue'
 import { App } from 'ant-design-vue'
 import { useTranslation } from 'i18next-vue'
 import { createVNode } from 'vue'

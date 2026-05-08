@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { EditOutlined } from '@ant-design/icons-vue'
 import { NiceModal } from '@rpa/components'
 import { Empty, Tag } from 'ant-design-vue'
@@ -87,7 +87,7 @@ function addPresetItem(op: string) {
     <div v-if="code !== 2" class="preset">
       <div class="preset-search">
         <div class="preset-search_title">
-          {{ $t('presetElements') }}: 
+          {{ $t('presetElements') }}:
         </div>
         <a-dropdown>
           <a-input v-model:value="searchValue" :placeholder="$t('selectPresetElements')" />

@@ -134,7 +134,7 @@ class TimeProcess:
             return int(base * 1000)
         if timestamp_unit == TimestampUnitType.MICROSECOND:
             return int(base * 1_000_000)
-        raise ValueError("지원하지 않음의시간단일위치")
+        raise NotImplementedError("지원하지 않는 시간 단위입니다")
 
     @staticmethod
     @atomicMg.atomic("TimeProcess", outputList=[atomicMg.param("converted_time", types="Date")])
@@ -190,7 +190,7 @@ class TimeProcess:
             if time_unit == TimeUnitType.MONTH:
                 return delta.years * 12 + delta.months
             return delta.years
-        raise ValueError("지원하지 않음의시간단일위치")
+        raise NotImplementedError("지원하지 않는 시간 단위입니다")
 
     @staticmethod
     @atomicMg.atomic(

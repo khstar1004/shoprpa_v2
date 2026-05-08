@@ -127,7 +127,7 @@ class GuiMouse:
                 except Exception as e:
                     raise BaseException(
                         SCROLL_FAILURE,
-                        "경과중실패, 확인하세요여부출력예외 {}".format(e),
+                        "작업 중 실패했습니다. 오류 여부를 확인하세요: {}".format(e),
                     )
         finally:
             # 열기 
@@ -207,7 +207,7 @@ class GuiMouse:
 
         screen_weight, screen_height = Mouse.screen_size()
         if position_x < 0 or position_x > screen_weight or position_y < 0 or position_y > screen_height:
-            raise BaseException(REGION_ERROR, "매개변수아니오합치기법!")
+            raise BaseException(REGION_ERROR, "마우스 좌표가 화면 범위를 벗어났습니다.")
 
         # Get current mouse position
         current_x, current_y = Mouse.position()
@@ -297,7 +297,7 @@ class GuiMouse:
 
         screen_weight, screen_height = Mouse.screen_size()
         if position_x < 0 or position_x > screen_weight or position_y < 0 or position_y > screen_height:
-            raise BaseException(REGION_ERROR, "매개변수아니오합치기법!")
+            raise BaseException(REGION_ERROR, "마우스 좌표가 화면 범위를 벗어났습니다.")
 
         # Get current mouse position
         current_x, current_y = Mouse.position()
@@ -394,7 +394,7 @@ class GuiMouse:
             or end_pos_y < 0
             or end_pos_y > screen_height
         ):
-            raise BaseException(REGION_ERROR, "매개변수아니오합치기법!")
+            raise BaseException(REGION_ERROR, "마우스 드래그 좌표가 화면 범위를 벗어났습니다.")
 
         if ctrl_type != ControlType.EMPTY:
             Keyboard.key_down(ctrl_type.value)

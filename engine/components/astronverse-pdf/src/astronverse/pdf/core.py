@@ -15,7 +15,7 @@ class IPDFCore(ABC):
                 # 통신경과매개변수 이름가져오기매개변수 값
                 path = kwargs.get(param_name)
 
-                # 결과가매개변수 값찾을 수 없습니다, 출력예외
+                # 매개변수 값을 찾을 수 없는 경우 오류 처리
                 if path is None or not os.path.exists(path):
                     raise ValueError(f"{param_name} 경로찾을 수 없습니다")
 

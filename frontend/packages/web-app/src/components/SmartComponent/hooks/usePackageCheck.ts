@@ -1,4 +1,4 @@
-﻿import { useTranslation } from 'i18next-vue'
+import { useTranslation } from 'i18next-vue'
 import { computed, inject, provide, ref } from 'vue'
 
 import { getBaseURL } from '@/api/http/env'
@@ -46,7 +46,7 @@ export function usePackageCheckContext() {
       }
     }
     catch (error) {
-      console.error('조회실패:', error)
+      console.error('조회 실패:', error)
     }
     finally {
       isChecking.value = false
@@ -71,9 +71,8 @@ export function usePackageCheckContext() {
           try {
             newData = JSON.parse(res.data).stdout
           }
-          catch (e) {
+          catch {
             newData = res.data
-            console.log(e)
           }
 
           if (newData.includes('stderr')) {
@@ -128,7 +127,7 @@ export function usePackageCheckContext() {
           installResults.success.push(pkgName)
         }
         catch (error) {
-          console.error(`설치 ${pkgName} 실패:`, error)
+          console.error(`${pkgName} 설치 실패:`, error)
           installResults.failed.push(pkgName)
         }
       }
@@ -140,7 +139,7 @@ export function usePackageCheckContext() {
       )
     }
     catch (error) {
-      console.error('설치실패:', error)
+      console.error('설치 실패:', error)
     }
     finally {
       isInstalling.value = false

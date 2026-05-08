@@ -78,9 +78,9 @@ class BrowserScript:
             with open(file_path, encoding="utf8") as f:
                 content = f.read()
         if not content:
-            raise BaseException(CODE_EMPTY, f"본데이터비어 있습니다 {input_type} {content} {file_path}")
+            raise BaseException(CODE_EMPTY, f"스크립트 내용이 비어 있습니다. input_type={input_type}, file_path={file_path}")
         if "function main" not in content:
-            raise BaseException(CODE_NO_MAIN_FUNC, "코드중패키지main데이터")
+            raise BaseException(CODE_NO_MAIN_FUNC, "JavaScript 코드에 main 함수가 없습니다.")
         is_await = False
         if "await function main" in content:
             is_await = True

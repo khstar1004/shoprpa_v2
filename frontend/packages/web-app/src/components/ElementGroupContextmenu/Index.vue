@@ -1,4 +1,4 @@
-﻿<script lang="ts" setup>
+<script lang="ts" setup>
 import { computed } from 'vue'
 
 import CvUploadBtn from '@/views/Arrange/components/cvPick/CvUploadBtn.vue'

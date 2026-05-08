@@ -1,4 +1,4 @@
-﻿import { Button, Checkbox } from 'ant-design-vue'
+import { Button, Checkbox } from 'ant-design-vue'
 import i18next from 'i18next'
 
 import { sendCaptcha } from '../api/login'

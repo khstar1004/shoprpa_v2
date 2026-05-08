@@ -1,16 +1,16 @@
 import type { ICellValue, ISheetWorkbookData, Sheet as SheetComponent } from '@rpa/components'
 import { createInjectionState } from '@vueuse/core'
 import { get, isEmpty } from 'lodash-es'
-import { markRaw, ref, shallowRef, watch } from 'vue'
+import { defineAsyncComponent, markRaw, ref, shallowRef, watch } from 'vue'
 
 import { useRunningStore } from '@/stores/useRunningStore.ts'
 
 import type { TabConfig } from '../../types.ts'
 
 import RightExtra from './RightExtra.vue'
-import Sheet from './Sheet.vue'
 
 type SheetType = InstanceType<typeof SheetComponent>
+const Sheet = defineAsyncComponent(() => import('./Sheet.vue'))
 
 const [useProvideDataSheetStore, useDataSheetStore] = createInjectionState(() => {
   const runningStore = useRunningStore()

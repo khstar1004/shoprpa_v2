@@ -1,4 +1,4 @@
-﻿<script lang="ts" setup>
+<script lang="ts" setup>
 import { useTheme } from '@rpa/components'
 import { message } from 'ant-design-vue'
 import { Bubble } from 'ant-design-x-vue'
@@ -86,7 +86,7 @@ async function restoreChat(smartId: string, targetVersion?: number) {
     }
   }
   catch (error) {
-    console.error('복사가능컴포넌트실패:', error)
+    console.error('스마트 컴포넌트 복사에 실패했습니다:', error)
   }
 }
 
@@ -252,17 +252,17 @@ function handleCancelInstall() {
           v-if="showInstallConfirm && hasLackPackages"
           class="flex justify-between items-center mx-4 p-3 rounded-t-lg bg-[#D7D7FF]/[.4] dark:bg-[#5D59FF]/[.35]"
         >
-          <span class="text-primary">여부설치실패라이브러리?</span>
+          <span class="text-primary">필요한 라이브러리를 설치할까요?</span>
           <div class="flex items-center gap-2">
             <a-button type="text" :disabled="isInstalling" @click="handleCancelInstall">
-              가져오기 
+              나중에
             </a-button>
             <a-button
               type="primary"
               :loading="isInstalling"
               @click="handleConfirmInstall"
             >
-              지정
+              설치
             </a-button>
           </div>
         </div>

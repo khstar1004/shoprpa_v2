@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { Button, Modal } from 'ant-design-vue'
 import { ref } from 'vue'
 
@@ -91,8 +91,8 @@ defineExpose({
             <span class="text-gradient">{{ tenantTypeMap[confData?.buttonConf?.currentEdition] }}</span>
           </div>
           <span v-if="confData?.buttonConf?.expirationDate" class="text-[12px] mt-[8px]">
-            까지시간:  {{ confData?.buttonConf?.expirationDate }}
-            <span v-if="confData?.buttonConf?.shouldAlert" class="bg-[#ec483e] text-white px-[6px] py-[1px] !text-[12px] rounded-[3px]">를까지</span>
+            만료일: {{ confData?.buttonConf?.expirationDate }}
+            <span v-if="confData?.buttonConf?.shouldAlert" class="bg-[#ec483e] text-white px-[6px] py-[1px] !text-[12px] rounded-[3px]">만료 임박</span>
           </span>
         </div>
         <div v-else class="w-full text-left" :class="{ 'min-h-[38px] leading-[38px]': !confData?.buttonConf?.currentEdition }" @click="openModal">
@@ -101,7 +101,7 @@ defineExpose({
           </div>
           <div v-if="confData?.authType !== 'casdoor'" class="flex items-center justify-start" :class="confData?.buttonConf?.currentEdition ? 'text-[12px] mt-[2px]' : ''">
             <RpaIcon class="w-[26px] h-[26px] mr-[8px]" :class="confData?.buttonConf?.currentEdition ? '!w-[20px] !h-[20px] !mr-[4px]' : ''" name="upgrade-icon" />
-            <span class="text-gradient">{{ confData?.buttonConf?.buttonTxt || '열기통신버전/버전' }}</span>
+            <span class="text-gradient">{{ confData?.buttonConf?.buttonTxt || '요금제 문의/업그레이드' }}</span>
           </div>
         </div>
       </div>

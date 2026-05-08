@@ -1,4 +1,4 @@
-﻿import logging
+import logging
 from collections.abc import AsyncGenerator
 
 from redis.asyncio import ConnectionPool, Redis
@@ -22,12 +22,11 @@ async def init_redis_pool():
             retry_on_timeout=True,
             health_check_interval=30,
         )
-        # 시도연결
         redis = Redis(connection_pool=redis_pool)
         await redis.ping()
         logger.info("Redis connection established successfully")
     except Exception as e:
-        logger.error(f"Failed to connect to Redis: {e}")
+        logger.error("Failed to connect to Redis: %s", e)
         raise
 
 
@@ -48,5 +47,4 @@ async def get_redis() -> AsyncGenerator[Redis]:
     try:
         yield redis
     finally:
-        # Connections are returned to pool automatically
         pass

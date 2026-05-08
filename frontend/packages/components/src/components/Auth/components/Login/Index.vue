@@ -25,6 +25,7 @@ const { t } = useTranslation()
 const {
   currentFormMode,
   cacheFormData,
+  lastError,
   preFormMode,
   tenants,
   running,
@@ -55,6 +56,7 @@ defineExpose({
       :invite-info="inviteInfo"
       :edition="edition"
       :auth-type="authType"
+      :error-message="lastError"
       :running="running"
       @submit="preLogin"
       @switch-to-register="() => switchMode('register')"

@@ -1,12 +1,12 @@
-﻿declare namespace RPA {
+declare namespace RPA {
   type Theme = 'light' | 'dark' | 'auto'
 
   interface UserSetting {
     commonSetting: { // 일반
       startupSettings: boolean // 시작 - 연결가져오기저장, true 열기시작시작, false-닫기열기기기시작
       closeMainPage: boolean // true-소  false-출력사용
-      hideLogWindow: boolean // 런타임의오른쪽아래역할로그창 true-열기시작  false-닫기 
-      hideDetailLogWindow: boolean // 실행의로그창 true-열기시작  false-닫기 
+      hideLogWindow: boolean // 런타임의오른쪽아래역할로그창 true-열기시작  false-닫기
+      hideDetailLogWindow: boolean // 실행의로그창 true-열기시작  false-닫기
       autoSave: boolean // 저장 true-열기시작  false-닫기
       theme?: Theme // 제목 가능선택값: light, dark, system
     }
@@ -24,7 +24,7 @@
     sender_mail?: string // 메일계정
     password?: string // 메일비밀번호(필요사용키, 저장의예키이름)
     use_ssl?: boolean // 여부SSL
-    cc?: string // 
+    cc?: string //
   }
 
   interface PhoneFormMap {

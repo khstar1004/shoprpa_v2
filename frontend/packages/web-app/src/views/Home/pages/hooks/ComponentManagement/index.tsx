@@ -1,4 +1,4 @@
-﻿import { SearchOutlined } from '@ant-design/icons-vue'
+import { SearchOutlined } from '@ant-design/icons-vue'
 import { Icon } from '@rpa/components'
 import { Tooltip } from 'ant-design-vue'
 import { useTranslation } from 'i18next-vue'
@@ -13,93 +13,93 @@ import StatusCircle from '../../../components/StatusCircle.vue'
 import { useOperate } from './useOpetate'
 
 export function useComponentTableOption() {
- const { t } = useTranslation()
- const { baseOpts, moreOpts, handleEdit, handleRename } = useOperate(refreshTable)
- const tableRef = ref(null)
+  const { t } = useTranslation()
+  const { baseOpts, moreOpts, handleEdit, handleRename } = useOperate(refreshTable)
+  const tableRef = ref(null)
 
- function refreshTable() {
- tableRef?.value.fetchTableData()
- }
+  function refreshTable() {
+    tableRef?.value.fetchTableData()
+  }
 
- const columns = computed(() => [
- {
- title: t('components.componentName'),
- ellipsis: true,
- dataIndex: 'name',
- key: 'name',
- customRender: ({ record }) => (
- <div class="flex items-center gap-2 overflow-hidden w-full group">
- <Tooltip title={t('common.idWithColon', { id: record.componentId })}>
- <span class="truncate flex-1">{ record.name }</span>
- </Tooltip>
- <Tooltip title={t('rename')} class="hidden group-hover:inline">
- <Icon name="projedit" class="hover:text-primary cursor-pointer" onClick={() => handleRename(record)} />
- </Tooltip>
- </div>
- ),
- },
- {
- title: t('updated'),
- ellipsis: true,
- dataIndex: 'updateTime',
- key: 'updateTime',
- },
- {
- title: t('common.publishStatus'),
- ellipsis: true,
- dataIndex: 'transformStatus',
- key: 'transformStatus',
- customRender: ({ record }) => <StatusCircle type={`${record.transformStatus}`} />,
- },
- {
- title: t('currentVersion'),
- ellipsis: true,
- dataIndex: 'version',
- key: 'version',
- customRender: ({ record }) => Number(record?.version) === 0 ? '--' : `V${record?.version}`,
- },
- {
- title: t('operate'),
- dataIndex: 'oper',
- key: 'oper',
- width: 150,
- customRender: ({ record }) => (
- <OperMenu moreOpts={moreOpts} baseOpts={baseOpts} row={record} />
- ),
- },
- ])
+  const columns = computed(() => [
+    {
+      title: t('components.componentName'),
+      ellipsis: true,
+      dataIndex: 'name',
+      key: 'name',
+      customRender: ({ record }) => (
+        <div class="flex items-center gap-2 overflow-hidden w-full group">
+          <Tooltip title={t('common.idWithColon', { id: record.componentId })}>
+            <span class="truncate flex-1">{ record.name }</span>
+          </Tooltip>
+          <Tooltip title={t('rename')} class="hidden group-hover:inline">
+            <Icon name="projedit" class="hover:text-primary cursor-pointer" onClick={() => handleRename(record)} />
+          </Tooltip>
+        </div>
+      ),
+    },
+    {
+      title: t('updated'),
+      ellipsis: true,
+      dataIndex: 'updateTime',
+      key: 'updateTime',
+    },
+    {
+      title: t('common.publishStatus'),
+      ellipsis: true,
+      dataIndex: 'transformStatus',
+      key: 'transformStatus',
+      customRender: ({ record }) => <StatusCircle type={`${record.transformStatus}`} />,
+    },
+    {
+      title: t('currentVersion'),
+      ellipsis: true,
+      dataIndex: 'version',
+      key: 'version',
+      customRender: ({ record }) => Number(record?.version) === 0 ? '--' : `V${record?.version}`,
+    },
+    {
+      title: t('operate'),
+      dataIndex: 'oper',
+      key: 'oper',
+      width: 150,
+      customRender: ({ record }) => (
+        <OperMenu moreOpts={moreOpts} baseOpts={baseOpts} row={record} />
+      ),
+    },
+  ])
 
- const tableOption = reactive<TableOption>({
- refresh: false, // 제어테이블데이터새로고침
- getData: params => getComponentList({
- name: '',
- dataSource: 'create',
- pageNum: params.pageNo,
- ...params,
- }),
- formList: [
- // 테이블위방법의테이블단일매칭
- {
- componentType: 'input',
- bind: 'name',
- placeholder: t('common.enterPlaceholder', {
- name: t('components.componentName'),
- }),
- prefix: h(SearchOutlined),
- },
- ],
- tableProps: {
- columns: columns.value,
- customRow: record => ({
- onDblclick: () => { // 더블클릭행
- handleEdit(record)
- },
- }),
- },
- params: { // 지정의테이블단일매칭의데이터
- name: '',
- },
- })
+  const tableOption = reactive<TableOption>({
+    refresh: false, // 제어테이블데이터새로고침
+    getData: params => getComponentList({
+      name: '',
+      dataSource: 'create',
+      pageNum: params.pageNo,
+      ...params,
+    }),
+    formList: [
+      // 테이블위방법의테이블단일매칭
+      {
+        componentType: 'input',
+        bind: 'name',
+        placeholder: t('common.enterPlaceholder', {
+          name: t('components.componentName'),
+        }),
+        prefix: h(SearchOutlined),
+      },
+    ],
+    tableProps: {
+      columns: columns.value,
+      customRow: record => ({
+        onDblclick: () => { // 더블클릭행
+          handleEdit(record)
+        },
+      }),
+    },
+    params: { // 지정의테이블단일매칭의데이터
+      name: '',
+    },
+  })
 
- return { tableOption, tableRef }
+  return { tableOption, tableRef }
 }

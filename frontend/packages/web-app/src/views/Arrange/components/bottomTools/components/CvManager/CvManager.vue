@@ -11,9 +11,9 @@ import { PICK_TYPE_CV } from '@/views/Arrange/config/atom'
 import { quoteManage } from '@/views/Arrange/hook/useQuoteManage'
 
 defineProps({
- operates: {
- type: Object,
- },
+  operates: {
+    type: Object,
+  },
 })
 
 const collapsed = inject<Ref<boolean>>('collapsed')
@@ -29,14 +29,14 @@ const processStore = useProcessStore()
 
 // 기본값표시의이미지데이터
 const cvTreeData = computed(() => {
- if (!searchText.value)
- return cvStore.cvTreeData
- return cvStore.cvTreeData.map((i) => {
- return {
- ...i,
- elements: i.elements.filter(i => i.name.toLowerCase().includes(searchText.value.toLowerCase())),
- }
- }).filter(i => i.elements.length > 0)
+  if (!searchText.value)
+    return cvStore.cvTreeData
+  return cvStore.cvTreeData.map((i) => {
+    return {
+      ...i,
+      elements: i.elements.filter(i => i.name.toLowerCase().includes(searchText.value.toLowerCase())),
+    }
+  }).filter(i => i.elements.length > 0)
 })
 
 // 사용이미지의프로세스데이터
@@ -45,58 +45,58 @@ const flowItems = ref([])
 const unuseTreeData = ref([])
 
 function refreshData(moduleType: string) {
- if (activeTab.value !== 'cvManagement')
- return
- switch (moduleType) {
- case 'unuse':
- cvStore.getUnUseTreeData(unuseTreeData, unUseNum, PICK_TYPE_CV)
- break
- case 'quoted':
- quoteManage(cvStore.quotedItem, list => flowItems.value = list, PICK_TYPE_CV)
- break
- }
+  if (activeTab.value !== 'cvManagement')
+    return
+  switch (moduleType) {
+    case 'unuse':
+      cvStore.getUnUseTreeData(unuseTreeData, unUseNum, PICK_TYPE_CV)
+      break
+    case 'quoted':
+      quoteManage(cvStore.quotedItem, list => flowItems.value = list, PICK_TYPE_CV)
+      break
+  }
 }
 
 watch(() => moduleType.value, (val) => {
- if (val !== 'quoted')
- useCvStore().setQuotedItem()
- refreshData(val)
+  if (val !== 'quoted')
+    useCvStore().setQuotedItem()
+  refreshData(val)
 })
 
 watch(() => cvStore.cvTreeData, () => {
- if (moduleType.value === 'unuse')
- refreshData(moduleType.value)
+  if (moduleType.value === 'unuse')
+    refreshData(moduleType.value)
 }, { immediate: true })
 
 watch(() => refresh.value, () => {
- if (activeTab.value !== 'cvManagement')
- return
- refreshData(moduleType.value)
- message.success('새로고침성공')
+  if (activeTab.value !== 'cvManagement')
+    return
+  refreshData(moduleType.value)
+  message.success('새로고침성공')
 })
 
 watch(() => cvStore.quotedItem?.id, (val) => {
- if (val)
- moduleType.value = 'quoted'
+  if (val)
+    moduleType.value = 'quoted'
 })
 </script>
 
 <template>
- <div class="cv-manager" :style="{ height: `${height}px` }">
- <!-- 이미지관리관리및검색 -->
- <template v-if="moduleType === 'default'">
- <CvTree v-if="cvTreeData.length > 0" :storage-id="processStore.project.id" :tree-data="cvTreeData" :default-collapse="!searchText" :collapsed="collapsed" />
- <a-empty v-else :image="Empty.PRESENTED_IMAGE_SIMPLE" :description="searchText ? '검색 결과 없음' : $t('noData')" />
- </template>
- <!-- 조회사용할 수 없습니다요소 -->
- <template v-else-if="moduleType === 'unuse'">
- <CvTree v-if="unuseTreeData.length > 0" :tree-data="unuseTreeData" :default-collapse="false" :collapsed="collapsed" />
- <a-empty v-else description="사용되지 않은 이미지가 없습니다." />
- </template>
- <!-- 조회요소사용 -->
- <template v-else-if="moduleType === 'quoted'">
- <ElementUseFlowList v-if="flowItems.length > 0" :use-name="cvStore.quotedItem?.name" :use-flow-items="flowItems" :collapsed="collapsed" />
- <a-empty v-else description="참조 없음" />
- </template>
- </div>
+  <div class="cv-manager" :style="{ height: `${height}px` }">
+    <!-- 이미지관리관리및검색 -->
+    <template v-if="moduleType === 'default'">
+      <CvTree v-if="cvTreeData.length > 0" :storage-id="processStore.project.id" :tree-data="cvTreeData" :default-collapse="!searchText" :collapsed="collapsed" />
+      <a-empty v-else :image="Empty.PRESENTED_IMAGE_SIMPLE" :description="searchText ? '검색 결과 없음' : $t('noData')" />
+    </template>
+    <!-- 조회사용할 수 없습니다요소 -->
+    <template v-else-if="moduleType === 'unuse'">
+      <CvTree v-if="unuseTreeData.length > 0" :tree-data="unuseTreeData" :default-collapse="false" :collapsed="collapsed" />
+      <a-empty v-else description="사용되지 않은 이미지가 없습니다." />
+    </template>
+    <!-- 조회요소사용 -->
+    <template v-else-if="moduleType === 'quoted'">
+      <ElementUseFlowList v-if="flowItems.length > 0" :use-name="cvStore.quotedItem?.name" :use-flow-items="flowItems" :collapsed="collapsed" />
+      <a-empty v-else description="참조 없음" />
+    </template>
+  </div>
 </template>

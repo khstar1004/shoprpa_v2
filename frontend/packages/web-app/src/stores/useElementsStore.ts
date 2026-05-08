@@ -1,4 +1,4 @@
-﻿import { message } from 'ant-design-vue'
+import { message } from 'ant-design-vue'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
@@ -94,7 +94,6 @@ export const useElementsStore = defineStore('elements', () => {
   }
   // 요청 까지현재요소
   const renameElement = async (params: ElementsType) => {
-    console.log('params: ', params)
     const _name = params.name.trim()
     if (_name === '') {
       message.error('요소 이름을 입력하세요.')
@@ -117,11 +116,6 @@ export const useElementsStore = defineStore('elements', () => {
     }
   }
 
-  /**
-   * 추가요소(아니오필요경과, 를선택까지의데이터직선연결업로드)
-   * TODO: 부서분공가능및아래의 saveElement 재복사, 필요
-   * @param data 요소데이터
-   */
   const addNewElement = async (data: PickElementType) => {
     const groupName = data.app
     const robotId = route.query?.projectId as string
@@ -406,7 +400,6 @@ export const useElementsStore = defineStore('elements', () => {
 
   const elementsListener = () => {
     BUS.$on('get-elements', () => {
-      console.log('on get-elements')
       requestAllElements()
     })
   }

@@ -1,4 +1,4 @@
-﻿import { ref, toRaw } from 'vue'
+import { ref, toRaw } from 'vue'
 
 import { isBase64Image, trimBase64Header } from '@/utils/common'
 

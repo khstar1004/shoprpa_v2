@@ -1,4 +1,4 @@
-﻿export const SUPPORTED_PROTOCOLS = ['http://', 'https://', 'file://', 'ftp://']
+export const SUPPORTED_PROTOCOLS = ['http://', 'https://', 'file://', 'ftp://']
 
 export const OLD_EXTENSION_IDS = ['dibfknoajiboamheempfppeapcedplgm', 'gfpcfabhkgenjcmjgnldmkhjieekeeea']
 
@@ -17,27 +17,29 @@ export enum StatusCode {
 }
 
 export enum ErrorMessage {
-  TAB_GET_ERROR = '가져오기탭실패',
-  ACTIVE_TAB_ERROR = '찾을 수 없는 탭, 확인하세요여부목록창',
-  NUMBER_ID_ERROR = 'id 예숫자',
-  FRAME_GET_ERROR = '찾을 수 없는 요소의iframe',
-  CURRENT_TAB_UNSUPPORT_ERROR = '현재탭지원하지 않음web선택',
-  NOT_SIMILAR_ELEMENT = '해당요소아니오예요소',
-  SIMILAR_NOT_FOUND = '찾을 수 없는 요소',
-  RELATIVE_ELEMENT_PARAMS_ERROR = '닫기 요소매개변수오류',
-  ELEMENT_NOT_FOUND = '찾을 수 없는 요소',
-  UNSUPPORT_ERROR = '미완료,요청업그레이드까지새버전',
-  PARAMS_URL_NOT_FOUND = '적음url필드!',
-  PARAMS_NAME_NOT_FOUND = '적음name필드!',
-  PARAMS_NAME_VALUE_NOT_FOUND = '적음필드name, value!',
-  CONTEXT_NOT_FOUND = '찾을 수 없는 실행위아래문서, 요청확인페이지완료로드완료',
-  EXECUTE_ERROR = '실행실패, 가져올 수 없는 결과',
-  DEBUGGER_TIMOUT = '감지 Debugger 상태시간 초과',
-  CONTENT_MESSAGE_ERROR = '내용본메시지오류',
+  TAB_GET_ERROR = '탭 정보를 가져오지 못했습니다.',
+  ACTIVE_TAB_ERROR = '대상 탭을 찾을 수 없습니다. 브라우저 창을 확인하세요.',
+  NUMBER_ID_ERROR = '탭 ID는 숫자여야 합니다.',
+  FRAME_GET_ERROR = '대상 iframe을 찾을 수 없습니다.',
+  CURRENT_TAB_UNSUPPORT_ERROR = '현재 탭에서는 웹 요소 선택을 지원하지 않습니다.',
+  NOT_SIMILAR_ELEMENT = '선택한 요소가 유사 요소가 아닙니다.',
+  SIMILAR_NOT_FOUND = '요소를 찾을 수 없습니다.',
+  RELATIVE_ELEMENT_PARAMS_ERROR = '상대 요소 매개변수가 올바르지 않습니다.',
+  // Two legacy error codes intentionally share the same user-facing message.
+  // eslint-disable-next-line ts/no-duplicate-enum-values
+  ELEMENT_NOT_FOUND = '요소를 찾을 수 없습니다.',
+  UNSUPPORT_ERROR = '현재 버전에서 지원하지 않는 기능입니다. 최신 버전으로 업데이트하세요.',
+  PARAMS_URL_NOT_FOUND = 'url 필드가 필요합니다.',
+  PARAMS_NAME_NOT_FOUND = 'name 필드가 필요합니다.',
+  PARAMS_NAME_VALUE_NOT_FOUND = 'name 및 value 필드가 필요합니다.',
+  CONTEXT_NOT_FOUND = '실행 컨텍스트를 찾을 수 없습니다. 페이지가 완전히 로드된 뒤 다시 시도하세요.',
+  EXECUTE_ERROR = '실행에 실패하여 결과를 가져올 수 없습니다.',
+  DEBUGGER_TIMEOUT = '디버거 분리 상태 확인 시간이 초과되었습니다',
+  CONTENT_MESSAGE_ERROR = '콘텐츠 스크립트 메시지 처리 중 오류가 발생했습니다.',
 }
 
 export enum SuccessMessage {
-  DELETE_SUCCESS = '삭제성공',
+  DELETE_SUCCESS = '삭제되었습니다.',
   SET_SUCCESS = '완료',
-  EMPTY_SUCCESS = '빈성공',
+  EMPTY_SUCCESS = '비웠습니다.',
 }

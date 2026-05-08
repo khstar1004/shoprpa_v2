@@ -1,10 +1,10 @@
-﻿from sqlalchemy import Column, DateTime, Integer, String, func
+from sqlalchemy import Column, DateTime, Integer, String, func
 
 from app.database import Base
 
 
 class User(Base):
-    """사용자데이터베이스유형"""
+    """OpenAPI user account."""
 
     __tablename__ = "openapi_users"
 

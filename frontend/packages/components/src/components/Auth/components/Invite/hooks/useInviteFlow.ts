@@ -84,7 +84,7 @@ export function useInviteFlow(emits: { (e: 'joinSuccess'): void }) {
       }
     }
     catch (e) {
-      console.error('가져오기초대정보실패', e)
+      console.error('초대 정보를 가져오지 못했습니다.', e)
       switchPage('linkExpired')
     }
   }
@@ -96,7 +96,12 @@ export function useInviteFlow(emits: { (e: 'joinSuccess'): void }) {
       updateInviteInfo(data, false)
     }
     catch (e) {
-      console.error('추가입력실패', e)
+      console.error('초대 참여에 실패했습니다.', e)
+      Modal.error({
+        title: '초대 참여 실패',
+        content: '초대 참여 처리 중 오류가 발생했습니다. 잠시 후 다시 시도하세요.',
+        okText: '확인',
+      })
     }
   }
 
@@ -116,11 +121,8 @@ export function useInviteFlow(emits: { (e: 'joinSuccess'): void }) {
 
       Modal.warn({
         title: '설치안내',
-        content: 'shoprpa가 설치되어 있지 않습니다. 다운로드 페이지로 이동하시겠습니까?',
-        okText: '다운로드',
-        onOk() {
-          window.open('https://www.shoprpa.com', '_blank')
-        },
+        content: 'ShopRPA가 설치되어 있지 않습니다. 관리자에게 설치 패키지를 요청하세요.',
+        okText: '확인',
       })
     }, timeout)
   }

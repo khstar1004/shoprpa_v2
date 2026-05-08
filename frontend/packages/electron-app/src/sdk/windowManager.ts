@@ -1,6 +1,6 @@
-﻿import type { WindowManager } from '@rpa/shared/platform'
-import { noop } from 'lodash-es'
+import type { WindowManager } from '@rpa/shared/platform'
 import { to } from 'await-to-js'
+import { noop } from 'lodash-es'
 
 const { ipcRenderer } = window.electron
 
@@ -15,9 +15,6 @@ class ElectronWindowManager implements WindowManager {
   public platform = 'electron'
   public windows = new Map<string, any>()
 
-  /**
-   * 생성창
-   */
   public async createWindow(options: any, closeCallback?: () => void): Promise<number | string> {
     const winId = await ipcRenderer.invoke('ipcCreateWindow', {
       ...options,
@@ -29,35 +26,23 @@ class ElectronWindowManager implements WindowManager {
     return winId
   }
 
-  /**
-   *  창통신
-   */
   async emitTo(message: {
-    target: string // 목록창
-    type: string // 메시지유형
-    data?: any // 메시지내용
-    from?: string // 전송방법
+    target: string
+    type: string
+    data?: any
+    from?: string
   }): Promise<any> {
     return ipcRenderer.invoke('w2w', message)
   }
 
-  /**
-   * 창
-   */
   async showWindow() {
     ipcRenderer.send('window-show')
   }
 
-  /**
-   * 창
-   */
   async hideWindow() {
     ipcRenderer.send('window-hide')
   }
 
-  /**
-   * 대창, 예결과완료대, 이면기존
-   */
   async maximizeWindow(always: boolean = false): Promise<boolean> {
     const isMaximized = await this.isMaximized()
 
@@ -72,32 +57,18 @@ class ElectronWindowManager implements WindowManager {
     }
   }
 
-  /**
-   * 소창
-   */
   async minimizeWindow() {
     return await ipcRenderer.invoke('window-minimize')
   }
 
-  /**
-   * 기존창
-   */
   async restoreWindow() {
     return await ipcRenderer.invoke('window-restore')
   }
 
-  /**
-   * 닫기창
-   */
   closeWindow(label?: string | number) {
-    ipcRenderer.send('window-close', { label }) // 전송닫기창의요청 
+    ipcRenderer.send('window-close', { label })
   }
 
-  /**
-   * 창대소
-   * @param width 화면너비정도
-   * @param height 로화면높음정도
-   */
   setWindowSize: WindowManager['setWindowSize'] = async (params) => {
     const width = params?.width ?? screen.availWidth - 40
     const height = params?.height ?? screen.availHeight - 40
@@ -120,7 +91,6 @@ class ElectronWindowManager implements WindowManager {
   async isMaximized(): Promise<boolean> {
     const [err, isMaximized] = await to<boolean>(ipcRenderer.invoke('window-is-maximized'))
     if (err) {
-      console.error('Error checking window maximized state:', err)
       return false
     }
 
@@ -130,18 +100,16 @@ class ElectronWindowManager implements WindowManager {
   async isMinimized(): Promise<boolean> {
     const [err, isMinimized] = await to<boolean>(ipcRenderer.invoke('window-is-minimized'))
     if (err) {
-      console.error('Error checking window minimized state:', err)
       return false
     }
 
     return isMinimized
   }
 
-  async foucsWindow() {
+  async focusWindow() {
     const [err, focused] = await to<boolean>(ipcRenderer.invoke('window-focus'))
 
     if (err) {
-      console.error('Error focusing the window:', err)
       return
     }
 
@@ -150,9 +118,10 @@ class ElectronWindowManager implements WindowManager {
     }
   }
 
-  /**
-   * 복사까지로그인창대소
-   */
+  async foucsWindow() {
+    return this.focusWindow()
+  }
+
   restoreLoginWindow() {
     ipcRenderer.send('window-set-size', loginWinState.width, loginWinState.height)
     this.centerWindow()
@@ -170,7 +139,6 @@ class ElectronWindowManager implements WindowManager {
           resolve(workArea)
         })
         .catch((err) => {
-          console.error('Error getting screen work area:', err)
           reject(err)
         })
     })

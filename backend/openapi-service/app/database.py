@@ -1,4 +1,4 @@
-﻿import asyncio
+import asyncio
 from collections.abc import AsyncGenerator
 from functools import wraps
 from urllib.parse import quote
@@ -8,31 +8,54 @@ from sqlalchemy.orm import DeclarativeBase, sessionmaker
 
 from app.config import get_settings
 
-engine = create_async_engine(
-    get_settings()
-    .DATABASE_URL.replace("{username}", get_settings().DATABASE_USERNAME)
-    .replace("{password}", quote(get_settings().DATABASE_PASSWORD)),
-    echo=False,
-    future=True,
-    pool_pre_ping=True,
-    pool_recycle=1800,  # 적음까지30분, 연결경과
-    pool_size=20,  # 증가추가연결크기으로지원변경높이발송
-    max_overflow=30,  # 증가추가대출력연결데이터
-    pool_timeout=60,  # 증가추가연결시간 초과시간까지60초
-    pool_reset_on_return="commit",  # 반환연결시재
-    connect_args={
-        "autocommit": False,
-        "charset": "utf8mb4",
-        "connect_timeout": 60,  # 연결시간 초과시간
-    },
-)
+_engine = None
+_session_factory = None
 
 
 class Base(DeclarativeBase):
     pass
 
 
-AsyncSessionLocal = sessionmaker(bind=engine, class_=AsyncSession, expire_on_commit=False, autoflush=False)
+def _database_url() -> str:
+    settings = get_settings()
+    return settings.DATABASE_URL.replace("{username}", settings.DATABASE_USERNAME).replace(
+        "{password}",
+        quote(settings.DATABASE_PASSWORD),
+    )
+
+
+def get_engine():
+    global _engine
+    if _engine is None:
+        _engine = create_async_engine(
+            _database_url(),
+            echo=False,
+            future=True,
+            pool_pre_ping=True,
+            pool_recycle=1800,
+            pool_size=20,
+            max_overflow=30,
+            pool_timeout=60,
+            pool_reset_on_return="commit",
+            connect_args={
+                "autocommit": False,
+                "charset": "utf8mb4",
+                "connect_timeout": 60,
+            },
+        )
+    return _engine
+
+
+def AsyncSessionLocal() -> AsyncSession:
+    global _session_factory
+    if _session_factory is None:
+        _session_factory = sessionmaker(
+            bind=get_engine(),
+            class_=AsyncSession,
+            expire_on_commit=False,
+            autoflush=False,
+        )
+    return _session_factory()
 
 
 async def get_db() -> AsyncGenerator[AsyncSession]:
@@ -51,7 +74,7 @@ async def create_db_and_tables():
     """Create the database and tables."""
     from app.models import load_models  # noqa: F401
 
-    async with engine.begin() as conn:
+    async with get_engine().begin() as conn:
         await conn.run_sync(Base.metadata.create_all, checkfirst=True)
 
 

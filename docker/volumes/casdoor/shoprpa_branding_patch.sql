@@ -5,34 +5,38 @@ SET @shoprpa_icon = 'http://127.0.0.1:32742/shoprpa-static/shoprpa-icon.svg';
 
 UPDATE application
 SET
-  display_name = 'Shoprpa',
+  name = 'shoprpa-app',
+  organization = 'shoprpa-org',
+  display_name = 'ShopRPA',
   logo = @shoprpa_logo,
   homepage_url = '',
-  description = 'Shoprpa 로그인'
-WHERE name = 'example-app';
+  description = 'ShopRPA 로그인'
+WHERE name IN ('shoprpa-app', 'example-app');
 
 UPDATE application
 SET
-  display_name = 'Shoprpa Admin',
+  display_name = 'ShopRPA Admin',
   logo = @shoprpa_logo,
   homepage_url = '',
-  description = 'Shoprpa 관리자'
+  description = 'ShopRPA 관리자'
 WHERE name = 'app-built-in';
 
 UPDATE organization
 SET
-  display_name = 'Shoprpa',
+  name = 'shoprpa-org',
+  default_application = 'shoprpa-app',
+  display_name = 'ShopRPA',
   website_url = '',
   logo = @shoprpa_logo,
   logo_dark = @shoprpa_logo,
   favicon = @shoprpa_icon,
   default_avatar = @shoprpa_icon,
   country_codes = '["KR","US"]'
-WHERE name = 'example-org';
+WHERE name IN ('shoprpa-org', 'example-org');
 
 UPDATE organization
 SET
-  display_name = 'Shoprpa Admin',
+  display_name = 'ShopRPA Admin',
   logo = @shoprpa_logo,
   logo_dark = @shoprpa_logo,
   favicon = @shoprpa_icon,
@@ -50,17 +54,19 @@ WHERE owner = 'built-in'
 CREATE TEMPORARY TABLE tmp_shoprpa_admin AS
 SELECT *
 FROM user
-WHERE owner = 'example-org'
-  AND name = 'example-user'
+WHERE owner IN ('shoprpa-org', 'example-org')
+  AND name IN ('admin', 'example-user')
+ORDER BY name = 'admin' DESC
 LIMIT 1;
 
 UPDATE tmp_shoprpa_admin
 SET
+  owner = 'shoprpa-org',
   name = 'admin',
   id = '9a0f6b82-7fa5-4415-9d46-f7a0eac00001',
   password = '123456',
   password_type = 'plain',
-  display_name = 'Shoprpa Admin',
+  display_name = 'ShopRPA Admin',
   email = 'admin@shoprpa.local',
   phone = '01000000000',
   country_code = 'KR',
@@ -68,7 +74,7 @@ SET
   is_admin = 1,
   is_forbidden = 0,
   is_deleted = 0,
-  signup_application = 'example-app';
+  signup_application = 'shoprpa-app';
 
 INSERT INTO user
 SELECT *
@@ -89,6 +95,14 @@ ON DUPLICATE KEY UPDATE
 DROP TEMPORARY TABLE tmp_shoprpa_admin;
 
 UPDATE role
-SET users = '["example-org/example-user","example-org/admin"]'
-WHERE owner = 'example-org'
-  AND name = 'example-role';
+SET
+  owner = 'shoprpa-org',
+  name = 'shoprpa-admin',
+  display_name = 'ShopRPA Admin',
+  users = '["shoprpa-org/admin"]'
+WHERE owner IN ('shoprpa-org', 'example-org')
+  AND name IN ('shoprpa-admin', 'example-role');
+
+DELETE FROM user
+WHERE owner IN ('shoprpa-org', 'example-org')
+  AND name = 'example-user';

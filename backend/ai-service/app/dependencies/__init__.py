@@ -1,4 +1,4 @@
-﻿from fastapi import Depends, Header, HTTPException
+from fastapi import Depends, Header, HTTPException
 from redis.asyncio import Redis
 from sqlalchemy.ext.asyncio import AsyncSession
 

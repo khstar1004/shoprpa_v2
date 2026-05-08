@@ -1,17 +1,26 @@
 ﻿import os
+from pathlib import Path
 import shutil
-import tempfile
 import unittest
+from uuid import uuid4
 from unittest import TestCase
 
 from astronverse.system import *
 from astronverse.system.compress import Compress
 
 
+def _make_temp_dir() -> str:
+    temp_root = Path(__file__).resolve().parents[4] / "build" / "tmp" / "system-tests"
+    temp_root.mkdir(parents=True, exist_ok=True)
+    temp_dir = temp_root / f"compress-{uuid4().hex}"
+    temp_dir.mkdir()
+    return str(temp_dir)
+
+
 class TestCompress(TestCase):
     def setUp(self):
         """시도전의준비"""
-        self.temp_dir = tempfile.mkdtemp()
+        self.temp_dir = _make_temp_dir()
         self.test_file_path = os.path.join(self.temp_dir, "test_file.txt")
         self.test_folder_path = os.path.join(self.temp_dir, "test_folder")
         self.compress_dir = os.path.join(self.temp_dir, "compress_output")

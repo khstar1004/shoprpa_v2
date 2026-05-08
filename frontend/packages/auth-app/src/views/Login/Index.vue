@@ -4,7 +4,6 @@ import { Auth } from '@rpa/components/auth'
 const ENV = import.meta.env
 
 function loginSuccess() {
-  console.log('로그인성공: ')
   location.replace(`/admin`)
 }
 </script>

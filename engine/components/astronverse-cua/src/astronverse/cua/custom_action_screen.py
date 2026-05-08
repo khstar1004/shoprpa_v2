@@ -239,7 +239,7 @@ class CustomActionScreen:
                 thought = action.get("thought")
                 param = action.get("param", {})
 
-                print(f"[실행] 유형: {action_type}, : {thought}")
+                logger.debug("Executing CUA action type=%s thought=%s", action_type, thought)
 
                 # 근거유형실행아니오의
                 if action_type == "click":
@@ -357,24 +357,24 @@ class CustomActionScreen:
                 elif action_type == "data":
                     # 관리데이터반환
                     data = param.get("data", None)
-                    print(f"[실행] 반환데이터: {data}")
+                    logger.debug("CUA action returned data of type %s", type(data).__name__)
                     return True, thought, param
                     # 데이터 유형아니오필요관리, 필요기록
 
                 elif action_type == "finished":
                     # 관리완료
-                    print("[실행] 작업완료")
+                    logger.debug("CUA action sequence finished")
                     return True, thought, param
 
                 elif action_type == "error":
                     # 관리오류 
                     reason = param.get("reason", "지원하지 않는오류")
-                    print(f"[실행] 오류: {reason}")
+                    logger.warning("CUA action reported an error: %s", reason)
                     # 근거 prompt 중의설명, 까지 error 시해당종료작업
                     return True, thought, param
 
                 else:
-                    print(f"[실행] 지원하지 않는유형: {action_type}")
+                    logger.warning("Unsupported CUA action type: %s", action_type)
 
                 # 매개후대기일소시간
                 time.sleep(0.5)
@@ -382,10 +382,7 @@ class CustomActionScreen:
             return False, thought, param  # 완료되지 않은, 계속
 
         except Exception as e:
-            print(f"[오류] 실행시출력오류: {e}")
-            import traceback
-
-            traceback.print_exc()
+            logger.exception("Failed to execute CUA action")
             return False, "", e
 
     def run(self, instruction: str) -> dict:
@@ -496,7 +493,7 @@ class CustomActionScreen:
                 "data": param,
             }
         except Exception as e:
-            logger.info(f"\n\n[작업실패] 발송오류: {e}")
+            logger.info(f"\n\n[작업 실패] 오류: {e}")
             return {
                 "success": False,
                 "steps": step,

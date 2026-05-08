@@ -725,7 +725,7 @@ class PrinterCore:
 
         except Exception as e:
             # 관리예외인쇄오류정보
-            print(f"발송오류: {e}")
+            logger.error("프린터 작업 확인 중 오류: %s", e)
             return None
 
     @staticmethod

@@ -75,14 +75,14 @@ class HTMLProcessorManager:
             name: 관리기기이름
         """
         if name not in self._processors:
-            raise ValueError(f"찾을 수 없는 이름로 '{name}' 의관리기기")
+            raise ValueError(f"'{name}' HTML 처리기를 찾을 수 없습니다")
 
         self._current_processor = self._processors[name]
 
     def get_current_processor(self) -> HTMLProcessor:
         """가져오기현재관리기기"""
         if self._current_processor is None:
-            raise RuntimeError("미완료현재관리기기")
+            raise RuntimeError("현재 HTML 처리기가 설정되지 않았습니다")
 
         return self._current_processor
 
@@ -93,7 +93,7 @@ class HTMLProcessorManager:
     def remove_processor(self, name: str) -> None:
         """제거관리기기"""
         if name == "default":
-            raise ValueError("할 수 없음제거관리기기")
+            raise ValueError("기본 HTML 처리기는 제거할 수 없습니다")
 
         if name in self._processors:
             del self._processors[name]

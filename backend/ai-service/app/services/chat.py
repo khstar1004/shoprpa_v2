@@ -1,4 +1,4 @@
-﻿from urllib.parse import urljoin
+from urllib.parse import urljoin
 
 import httpx
 from fastapi import HTTPException
@@ -14,17 +14,15 @@ API_ENDPOINT = urljoin(get_settings().AICHAT_BASE_URL, "chat/completions")
 logger = get_logger(__name__)
 
 long_timeout = httpx.Timeout(
-    connect=10.0,  # 연결시간 초과: 10초
-    read=360.0,  # 가져오기시간 초과: 6분
-    write=10.0,  # 입력시간 초과: 10초
-    pool=320.0,  # 시간 초과: 6분20초
+    connect=10.0,
+    read=360.0,
+    write=10.0,
+    pool=320.0,
 )
 
 
 async def chat_completions(params: ChatCompletionParam, key: str = API_KEY, endpoint: str = API_ENDPOINT):
-    logger.info("Processing chat completion request...")
-    logger.info(f"Request params: {params}")
-    # 요청 매개변수
+    logger.info("Processing chat completion request. stream=%s, model=%s", params.stream, params.model)
     headers = {
         "Authorization": f"Bearer {key}",
         "Content-Type": "application/json",
@@ -35,23 +33,18 @@ async def chat_completions(params: ChatCompletionParam, key: str = API_KEY, endp
         for message in data["messages"]:
             if not message.get("content"):
                 message["content"] = "You are a helpful assistant."
-        logger.info(f"Request data: {data}")
     except KeyError:
         raise HTTPException(status_code=400, detail="Invalid request body")
 
-    logger.info(f"Request headers: {headers}")
-    logger.info(f"Request params.stream: {params.stream}")
-    # 관리요청 
     try:
         if params.stream:
             response = await handle_stream_request(headers, data, endpoint)
         else:
             response = await handle_non_stream_request(headers, data, endpoint)
-        logger.info(f"Response: {response}")
 
         return response
     except HTTPException as e:
-        logger.warning(f"HTTP error: {e.detail}")
+        logger.warning("HTTP error: %s", e.detail)
         raise e
     except Exception:
         logger.error("Internal server error", exc_info=True)
@@ -59,7 +52,7 @@ async def chat_completions(params: ChatCompletionParam, key: str = API_KEY, endp
 
 
 async def handle_stream_request(headers, data, endpoint):
-    """관리방식요청 """
+    """Proxy a streaming chat completion request."""
     response_meta = {"media_type": "text/event-stream"}
 
     async def stream_response():
@@ -76,22 +69,19 @@ async def handle_stream_request(headers, data, endpoint):
                     async for chunk in upstream_response.aiter_raw():
                         yield chunk
             except httpx.HTTPStatusError as e:
-                # 위API오류
-                logger.warning(f"Upstream API error: {e.response.status_code}")
+                logger.warning("Upstream API error: %s", e.response.status_code)
                 raise HTTPException(
                     status_code=e.response.status_code,
                     detail=f"Upstream API error: {e.response.status_code}",
                 )
             except httpx.TimeoutException as e:
-                # 시간 초과오류
-                logger.error(f"Request timeout: {str(e)}")
+                logger.error("Request timeout: %s", str(e))
                 raise HTTPException(
                     status_code=504,
-                    detail="대유형호출시간 초과, 요청 후재시도",
+                    detail="Chat completion timed out. Please try again.",
                 )
             except Exception as e:
-                # 오류
-                logger.error(f"Request error: {str(e)}")
+                logger.error("Request error: %s", str(e))
                 raise e
 
     return StreamingResponse(
@@ -101,7 +91,7 @@ async def handle_stream_request(headers, data, endpoint):
 
 
 async def handle_non_stream_request(headers, data, endpoint):
-    """관리방식요청 """
+    """Proxy a non-streaming chat completion request."""
     async with httpx.AsyncClient(timeout=long_timeout) as client:
         try:
             upstream_response = await client.post(
@@ -117,31 +107,28 @@ async def handle_non_stream_request(headers, data, endpoint):
                 status_code=upstream_response.status_code,
             )
         except httpx.HTTPStatusError as e:
-            # 가져오기요청 의 URL 및 방법법
             url = e.request.url
             method = e.request.method
-
-            # 가져오기위반환의내용 (통신일반패키지의오류원인, 예 "Invalid API Key")
             error_content = e.response.text
 
-            # 기록로그
             logger.error(
-                f"Upstream API error: {e.response.status_code} | Request: {method} {url} | Response: {error_content}"
+                "Upstream API error: %s | Request: %s %s | Response: %s",
+                e.response.status_code,
+                method,
+                url,
+                error_content[:500],
             )
 
-            # 위출력예외
             raise HTTPException(
                 status_code=e.response.status_code,
                 detail=f"Upstream API error: {e.response.status_code}",
             )
         except httpx.TimeoutException as e:
-            # 시간 초과오류
-            logger.error(f"Request timeout: {str(e)}")
+            logger.error("Request timeout: %s", str(e))
             raise HTTPException(
                 status_code=504,
-                detail="대유형호출시간 초과, 요청 후재시도",
+                detail="Chat completion timed out. Please try again.",
             )
         except Exception as e:
-            # 오류
-            logger.error(f"Request error: {str(e)}")
+            logger.error("Request error: %s", str(e))
             raise e

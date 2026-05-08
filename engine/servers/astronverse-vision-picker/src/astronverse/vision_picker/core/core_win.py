@@ -19,32 +19,6 @@ class RectHandler(IRectHandler):
         width, height = pyautogui.size()
         return hwnd, title, (0, 0, width, height)  # rect
 
-    # @staticmethod
-    # def find_window_by_title(window_title):
-    #     hwnds = []
-    #
-    #     def callback(hwnd, _):
-    #         try:
-    #             title = win32gui.GetWindowText(hwnd)
-    #             if window_title in title:
-    #                 hwnds.append(hwnd)
-    #                 return False  # Stop enumeration
-    #             return True
-    #         except Exception as e:
-    #             print(f"Error processing window {hwnd}: {e}")
-    #             return True  # Continue with enumeration
-    #
-    #     try:
-    #         win32gui.EnumWindows(callback, 0)
-    #     except Exception as e:
-    #         return hwnds[0] if hwnds else None
-    #
-    #     return hwnds[0] if hwnds else None
-    #
-    # @staticmethod
-    # def set_window_on_top(hwnd):
-    #     win32gui.SetWindowPos(hwnd, win32con.HWND_TOPMOST, 0, 0, 0, 0, win32con.SWP_NOMOVE | win32con.SWP_NOSIZE)
-
 
 class PickCore(IPickCore):
     @staticmethod

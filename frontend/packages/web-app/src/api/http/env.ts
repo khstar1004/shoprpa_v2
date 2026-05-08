@@ -1,6 +1,7 @@
-﻿import { message } from 'ant-design-vue'
+import { message } from 'ant-design-vue'
 
 import { isBase64Image } from '@/utils/common'
+import { baseUrl } from '@/utils/env'
 import { storage } from '@/utils/storage'
 
 import GlobalModal from '@/components/GlobalModal/index.ts'
@@ -33,7 +34,7 @@ export function unauthorize(response) {
     message.error(response.data.message || response.data.msg || '로그인이 만료되었습니다. 다시 로그인해 주세요.')
   }
   const code = response.data.code || response.data.ret
-  location.href = `/boot.html?code=${code}`
+  location.href = `${baseUrl}/boot.html?code=${code}`
 }
 
 let isUnauthorized = null

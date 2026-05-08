@@ -234,7 +234,7 @@ class StringProcess:
         if fill_type == FillStringType.LEFT:  # 왼쪽단말
             result_str = (add_str * n)[0 : total_length_int - len(string_data)] + string_data
         elif fill_type == FillStringType.RIGHT:  # 오른쪽단말
-            result_str = (string_data + add_str * n)[0:total_length]
+            result_str = (string_data + add_str * n)[0:total_length_int]
         return result_str
 
     @staticmethod
@@ -328,7 +328,7 @@ class StringProcess:
             return string_data.upper()
         if case_type == CaseChangeType.CAPS:
             return string_data.capitalize()
-        raise ValueError("지원하지 않음의크기변환유형")
+        raise ValueError("지원하지 않는 대소문자 변환 유형입니다")
 
     @staticmethod
     @atomicMg.atomic(

@@ -1,4 +1,4 @@
-﻿<script lang="ts" setup>
+<script lang="ts" setup>
 import {
   BorderTopOutlined,
   EditOutlined,
@@ -144,7 +144,7 @@ onMounted(() => {
       <div v-if="batchFormType" class="absolute bottom-0 left-0 n-result">
         <div class="data-type">
           <span v-if="batchFormType === 'table'">
-            {{ t("dataBatch.reconizeTable") }}, 
+            {{ t("dataBatch.reconizeTable") }},
             <span
               class="text-primary cursor-pointer"
               @click="() => editTableElement()"
@@ -154,7 +154,7 @@ onMounted(() => {
           </span>
           <span v-if="batchFormType === 'similar'">
             {{ t("dataBatch.currentColumn") }}&nbsp;<b>
-              {{ activeColumn?.title }}</b>, 
+              {{ activeColumn?.title }}</b>,
             <span
               class="text-primary cursor-pointer"
               @click="() => addSimilarData(selectedColumnIndex)"
@@ -245,7 +245,7 @@ onMounted(() => {
               <template #description>
                 <span v-if="!checkData">{{ t("dataBatch.emptyData") }}</span>
                 <span v-else>
-                  {{ t("dataBatch.openOriginWebPage") }}, 
+                  {{ t("dataBatch.openOriginWebPage") }},
                   <span class="link" @click="openSourcePage">{{ t("dataBatch.openNow") }}</span>
                 </span>
               </template>

@@ -39,7 +39,6 @@ watch(() => props.atom, (newVal, oldVal) => {
     activeKey.value = 0
   }
   renderForm(newVal)
-  console.log('atomForm', atomTab.value)
 }, { immediate: true })
 
 const alias = computed(() => atomTab.value

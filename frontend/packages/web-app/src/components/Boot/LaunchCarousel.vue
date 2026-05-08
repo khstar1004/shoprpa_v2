@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { Carousel } from 'ant-design-vue'
 import type { CarouselRef } from 'ant-design-vue/es/carousel'
 import { ref, useTemplateRef } from 'vue'
@@ -87,17 +87,15 @@ function onSwitch(idx: number) {
   height: 238px;
   padding: 22px;
   border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 24px;
-  background:
-    radial-gradient(circle at 18% 18%, rgba(45, 212, 191, 0.26), transparent 34%),
-    linear-gradient(145deg, rgba(22, 30, 40, 0.92), rgba(9, 14, 20, 0.92));
-  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.36);
+  border-radius: 8px;
+  background: linear-gradient(145deg, rgba(22, 30, 40, 0.94), rgba(9, 14, 20, 0.94));
+  box-shadow: 0 24px 72px rgba(0, 0, 0, 0.32);
 }
 
 .panel-grid {
   position: relative;
   height: 128px;
-  border-radius: 18px;
+  border-radius: 8px;
   background:
     linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
@@ -113,7 +111,7 @@ function onSwitch(idx: number) {
 .node {
   width: 42px;
   height: 42px;
-  border-radius: 14px;
+  border-radius: 8px;
   background: rgba(255, 255, 255, 0.12);
   border: 1px solid rgba(255, 255, 255, 0.16);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14);

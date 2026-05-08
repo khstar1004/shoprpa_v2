@@ -84,8 +84,7 @@ public class RobotVersionAop {
                             .invoke(argValue, baseDto.getRobotVersion());
 
                 } catch (Exception e) {
-                    e.printStackTrace();
-                    log.error("가져오기또는수정 robotId 또는 version 실패, message:{}", e.getMessage());
+                    log.error("가져오기또는수정 robotId 또는 version 실패, message:{}", e.getMessage(), e);
                     return AppResponse.error(ErrorCodeEnum.E_SERVICE, "가져오기또는수정봇정보실패");
                 }
             }

@@ -7,9 +7,17 @@ const ShortCut: ShortCutManager = {
 
   unregisterAll() {},
 
-  regeisterToolbar() {},
+  registerToolbar() {},
 
-  regeisterFlow() {},
+  registerFlow() {},
+
+  regeisterToolbar() {
+    this.registerToolbar()
+  },
+
+  regeisterFlow() {
+    this.registerFlow()
+  },
 }
 
 export default ShortCut

@@ -1,4 +1,4 @@
-﻿import type { VNode } from 'vue'
+import type { VNode } from 'vue'
 
 // 목록유형
 export interface resourceListType {
@@ -120,7 +120,7 @@ export interface PickParams {
 /**
  * 기록제어
  * RECORD_LISTENING: 열기시작기록제어
- * RECORD_START: 기록제어열기 
+ * RECORD_START: 기록제어열기
  * RECORD_PAUSE: 기록제어일시중지
  * RECORD_END: 기록제어결과
  * RECORD_AUTOMIC_HOVER_START: 프론트엔드창hover알림알림백엔드닫기선택

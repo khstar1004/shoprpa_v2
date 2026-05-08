@@ -1,4 +1,4 @@
-﻿/**
+/**
  *  마켓데이터
  */
 import { defineStore } from 'pinia'

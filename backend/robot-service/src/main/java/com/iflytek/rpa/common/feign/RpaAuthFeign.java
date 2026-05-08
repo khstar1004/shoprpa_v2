@@ -551,7 +551,7 @@ public interface RpaAuthFeign {
      * @return token
      */
     @GetMapping("/api/rpa-auth/token")
-    String getToken();
+    AppResponse<String> getToken();
 
     /**
      * 일: 인증
@@ -598,7 +598,7 @@ public interface RpaAuthFeign {
 
     /**
      * 비밀번호
-     * 사용자비밀번호후, 업데이트Shoprpa계정및UAP비밀번호
+     * 사용자비밀번호후, 업데이트ShopRPA 계정및UAP비밀번호
      * @param setPasswordDto 비밀번호요청 매개변수
      * @return 여부성공
      */
@@ -614,7 +614,7 @@ public interface RpaAuthFeign {
     AppResponse<Boolean> checkUserExist(@RequestParam("phone") String phone);
 
     /**
-     * 삭제Shoprpa계정
+     * 삭제ShopRPA 계정
      * @param phone 휴대폰 번호
      * @return 삭제결과
      */
@@ -624,7 +624,7 @@ public interface RpaAuthFeign {
     /**
      * 사용자회원가입(일)
      * 입력휴대폰 번호, 인증 코드, 사용자명
-     * 에서Shoprpa계정및UAP생성사용자(사용비밀번호)
+     * 에서ShopRPA 계정및UAP생성사용자(사용비밀번호)
      * 반환시인증사용후비밀번호
      * @param registerDto 회원가입요청 매개변수
      * @return 시인증

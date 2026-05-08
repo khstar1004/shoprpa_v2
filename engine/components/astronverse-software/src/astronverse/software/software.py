@@ -55,7 +55,7 @@ class Software:
         if not os.path.exists(app_absolute_path):
             raise SoftwareBaseException(
                 INVALID_APP_PATH_ERROR_CODE.format(app_absolute_path),
-                "의사용프로그램경로있음오류, 입력하세요정상의경로!",
+                "프로그램 경로가 올바르지 않습니다. 올바른 경로를 입력하세요.",
             )
 
         warnings.filterwarnings("ignore", category=ResourceWarning)
@@ -94,7 +94,7 @@ class Software:
         if not os.path.exists(app_absolute_path):
             raise SoftwareBaseException(
                 INVALID_APP_PATH_ERROR_CODE.format(app_absolute_path),
-                "의사용프로그램경로있음오류, 입력하세요정상의경로!",
+                "프로그램 경로가 올바르지 않습니다. 올바른 경로를 입력하세요.",
             )
 
         exe_name = os.path.split(app_absolute_path)[1]

@@ -25,7 +25,7 @@ class UIALocator(ILocator):
     def rect(self) -> Optional[Rect]:
         if self.__rect is None:
             rect = self.__control.BoundingRectangle
-            logger.info(f"검증결과의rect {rect.left} {rect.top} {rect.right} {rect.bottom}")
+            logger.info("검증된 rect %s %s %s %s", rect.left, rect.top, rect.right, rect.bottom)
             is_valid_rect = validate_window_rect(rect.left, rect.top, rect.right, rect.bottom)
             # logger.info(f'UIALocator rect  {is_valid_rect}')
             if not is_valid_rect:
@@ -34,7 +34,7 @@ class UIALocator(ILocator):
                 rect.right = pyautogui.size().width - 1 if rect.right > pyautogui.size().width else rect.right
                 rect.bottom = pyautogui.size().height - 1 if rect.bottom > pyautogui.size().height else rect.bottom
             self.__rect = Rect(rect.left, rect.top, rect.right, rect.bottom)
-        logger.info(f"검증결과의rect {self.__rect.to_json()}")
+        logger.info("검증된 rect %s", self.__rect.to_json())
         return self.__rect
 
     def control(self) -> Any:
@@ -198,7 +198,7 @@ class UIAFactory:
         parent_ele["path"] = parent_path
         parent_locator = cls.__find_one__(parent_ele, picker_type=picker_type, **kwarg)
         if not parent_locator:
-            raise Exception("요소불가까지")
+            raise Exception("요소를 찾을 수 없습니다")
         assert isinstance(parent_locator.control(), Control)
 
         # 2. 요소
@@ -325,20 +325,20 @@ class UIAFactory:
         root_handles = list(set(root_handles))
 
         if not root_handles:
-            raise Exception("요소불가까지")
+            raise Exception("요소를 찾을 수 없습니다")
 
-        logger.info(f"까지 {len(root_handles)} 개창, 열기 조회")
+        logger.info("%s개 창에서 요소를 조회합니다", len(root_handles))
 
         # 3. 모든, 시도까지요소
         for idx, root_handle in enumerate(root_handles):
             try:
-                logger.debug(f"정상에서시도 {idx + 1} 개: {root_handle}")
+                logger.debug("창 후보 %s 시도: %s", idx + 1, root_handle)
                 root_ctrl = ControlFromHandle(handle=root_handle)
                 top_window(handle=root_handle, ctrl=root_ctrl)  # 창
 
                 # 4. 결과가서비스유형 WINDOW, 직선연결결과
                 if picker_type == PickerType.WINDOW.value:
-                    logger.info(f"까지WINDOW유형요소, 사용: {root_handle}")
+                    logger.info("WINDOW 유형 요소를 사용합니다: %s", root_handle)
                     return UIALocator(control=root_ctrl)
 
                 # 5. index의일일조회
@@ -396,19 +396,19 @@ class UIAFactory:
                     # 요소, 의
                     cls.__show_desktop_ele__(root_handle, root_ctrl, match.rect)
                     res = UIALocator(control=match.control)
-                    logger.info(f"성공까지요소, 사용: {root_handle}, 검증결과의rect {res.rect().to_json()}")
+                    logger.info("요소를 찾았습니다. window=%s rect=%s", root_handle, res.rect().to_json())
                     return res
                 else:
-                    logger.debug(f" {root_handle} 찾을 수 없는 매칭요소, 계속시도아래일개")
+                    logger.debug("%s 창에서 매칭 요소를 찾지 못했습니다. 다음 후보를 시도합니다.", root_handle)
 
             except Exception as e:
                 # 결과가현재관리실패, 계속시도아래일개
-                logger.debug(f"관리 {root_handle} 시출력오류: {e}")
+                logger.debug("%s 창 처리 중 오류: %s", root_handle, e)
                 continue
 
-        # 결과가모든불가까지요소, 출력예외
-        logger.error(f"완료 {len(root_handles)} 개, 찾을 수 없는 매칭요소")
-        raise Exception("요소불가까지")
+        # 모든 후보 창에서 요소를 찾지 못한 경우 예외 처리한다.
+        logger.error("%s개 창을 확인했지만 매칭 요소를 찾지 못했습니다", len(root_handles))
+        raise Exception("요소를 찾을 수 없습니다")
 
     @classmethod
     def __find_partial_match__(cls, ele: dict, picker_type: str, **kwargs) -> Union[UIALocator, None]:
@@ -462,9 +462,9 @@ class UIAFactory:
         root_handles = list(set(root_handles))
 
         if not root_handles:
-            raise Exception("요소불가까지")
+            raise Exception("요소를 찾을 수 없습니다")
 
-        logger.info(f"까지 {len(root_handles)} 개창, 열기 조회")
+        logger.info("%s개 창에서 요소를 조회합니다", len(root_handles))
 
         # 3. 모든, 시도까지요소
         best_match = None
@@ -472,7 +472,7 @@ class UIAFactory:
 
         for idx, root_handle in enumerate(root_handles):
             try:
-                logger.debug(f"정상에서시도 {idx + 1} 개: {root_handle}")
+                logger.debug("창 후보 %s 시도: %s", idx + 1, root_handle)
                 root_ctrl = ControlFromHandle(handle=root_handle)
                 top_window(handle=root_handle, ctrl=root_ctrl)  # 창
 
@@ -528,16 +528,16 @@ class UIAFactory:
                         # 전체매칭, 직선연결반환
                         cls.__show_desktop_ele__(root_handle, root_ctrl, last_valid_match.rect)
                         res = UIALocator(control=last_valid_match.control)
-                        logger.info(f"전체매칭성공, 사용: {root_handle}, 검증결과의rect {res.rect().to_json()}")
+                        logger.info("전체 매칭 성공. window=%s rect=%s", root_handle, res.rect().to_json())
                         return res
                     else:
                         # 모듈분매칭, 저장매칭
                         best_match = (root_handle, root_ctrl, last_valid_match)
-                        logger.debug(f" {root_handle} 모듈분매칭, 정도: {current_depth}")
+                        logger.debug("%s 창에서 부분 매칭됨. depth=%s", root_handle, current_depth)
 
             except Exception as e:
                 # 결과가현재관리실패, 계속시도아래일개
-                logger.debug(f"관리 {root_handle} 시출력오류: {e}")
+                logger.debug("%s 창 처리 중 오류: %s", root_handle, e)
                 continue
 
         # 7. 반환매칭결과
@@ -546,12 +546,15 @@ class UIAFactory:
             cls.__show_desktop_ele__(root_handle, root_ctrl, match_ele.rect)
             res = UIALocator(control=match_ele.control)
             logger.info(
-                f"모듈분매칭성공, 사용: {root_handle}, 매칭정도: {best_match_depth}, 검증결과의rect {res.rect().to_json()}"
+                "부분 매칭 성공. window=%s depth=%s rect=%s",
+                root_handle,
+                best_match_depth,
+                res.rect().to_json(),
             )
             return res
         else:
-            logger.error(f"완료 {len(root_handles)} 개, 찾을 수 없는 작업매칭요소")
-            raise Exception("요소불가까지")
+            logger.error("%s개 창을 확인했지만 작업 매칭 요소를 찾지 못했습니다", len(root_handles))
+            raise Exception("요소를 찾을 수 없습니다")
 
 
 uia_factory = UIAFactory()

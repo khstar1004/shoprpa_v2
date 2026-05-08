@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * 이름단일서비스연결
+ * 사용자 차단 목록 서비스
  *
  * @author system
  * @date 2025-12-16
@@ -15,44 +15,44 @@ import javax.servlet.http.HttpServletResponse;
 public interface BlackListService {
 
     /**
-     * 추가사용자까지이름단일
-     * 결과가사용자완료에서이름단일중, 이면업그레이드대기단계
+     * 사용자를 차단 목록에 추가합니다.
+     * 이미 차단 중이면 차단 단계와 기간을 갱신합니다.
      *
      * @param userId 사용자ID
      * @param username 사용자명
-     * @param reason 원인
-     * @param operator 사람
-     * @return 이름단일기록
+     * @param reason 차단 사유
+     * @param operator 처리자
+     * @return 차단 기록
      */
     UserBlacklist add(String userId, String username, String reason, String operator);
 
     /**
-     * 조회사용자여부
-     * 에서 Redis 조회, miss 시조회 DB 돌아가기
+     * 사용자가 현재 차단 중인지 조회합니다.
+     * Redis 캐시 miss 시 DB를 다시 확인합니다.
      *
      * @param userId 사용자ID
-     * @return 결과가반환정보, 아니요이면반환 null
+     * @return 차단 정보, 차단 중이 아니면 null
      */
     BlacklistCacheDto isBlocked(String userId);
 
     /**
-     * 해제사용자(결과가완료경과)
+     * 차단 기간이 만료된 사용자를 해제합니다.
      *
      * @param userId 사용자ID
      */
     void unbanIfExpired(String userId);
 
     /**
-     * 해제사용자
+     * 사용자를 수동 해제합니다.
      *
      * @param userId 사용자ID
-     * @param operator 사람
-     * @return 여부성공
+     * @param operator 처리자
+     * @return 성공 여부
      */
     boolean unban(String userId, String operator);
 
     /**
-     * 조회사용자의
+     * 사용자의 차단 이력을 조회합니다.
      *
      * @param userId 사용자ID
      * @return 목록
@@ -60,18 +60,17 @@ public interface BlackListService {
     List<UserBlacklist> getHistory(String userId);
 
     /**
-     * 예약작업: 량해제완료경과의사용자
+     * 예약 작업: 만료된 사용자 차단을 일괄 해제합니다.
      *
-     * @return 해제수
+     * @return 해제 수
      */
     int batchUnbanExpired();
 
     /**
-     * 강함제어비고판매사용자
-     * 에서 request 중지우기정보, 호출 UapUserInfoAPI.logout 비고판매
+     * 사용자 세션을 강제 로그아웃합니다.
      *
      * @param request HTTP 요청 
-     * @param response HTTP 
+     * @param response HTTP 응답
      */
     void forceLogout(HttpServletRequest request, HttpServletResponse response);
 }

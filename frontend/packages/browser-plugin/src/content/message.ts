@@ -2,7 +2,7 @@ import { ASTRON_SW_NAME } from './constant'
 
 function isExtensionContextValid() {
   try {
-    return !!(chrome.runtime && chrome.runtime.id)
+    return typeof chrome !== 'undefined' && !!(chrome.runtime && chrome.runtime.id)
   }
   catch (error) {
     console.error('Error checking extension context:', error)
@@ -40,6 +40,9 @@ export function requestFrame() {
 }
 
 export function keepServiceWorkerAlive() {
+  if (!isExtensionContextValid()) {
+    return
+  }
   const port = chrome.runtime.connect(chrome.runtime.id, { name: ASTRON_SW_NAME })
   port.onDisconnect.addListener(() => {
     sendToBackground({ type: 'keepServiceWorkerAlive' }).then(() => {

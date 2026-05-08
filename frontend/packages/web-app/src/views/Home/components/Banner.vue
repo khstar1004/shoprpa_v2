@@ -54,7 +54,10 @@ const emit = defineEmits<{
       linear-gradient(rgba(15, 23, 42, 0.06) 1px, transparent 1px),
       linear-gradient(90deg, rgba(15, 23, 42, 0.06) 1px, transparent 1px),
       linear-gradient(135deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.28));
-    background-size: 28px 28px, 28px 28px, auto;
+    background-size:
+      28px 28px,
+      28px 28px,
+      auto;
     border: 1px solid rgba(15, 23, 42, 0.08);
     box-shadow: 0 22px 54px rgba(15, 23, 42, 0.08);
   }

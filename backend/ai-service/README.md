@@ -1,8 +1,8 @@
-# AI Service - Intelligent Service Platform
+# ShopRPA AI Service
 
 ## 📖 Project Introduction
 
-AI Service is a comprehensive intelligent service platform built on FastAPI, integrating multiple AI capabilities and a complete points management system. The platform provides core functions including chat conversations, OCR text recognition, captcha recognition, and implements fine-grained service usage management through a points mechanism.
+ShopRPA AI Service provides the AI and points-management APIs used by ShopRPA. It integrates chat completion, OCR text recognition, captcha recognition, and fine-grained service usage accounting through the points system.
 
 ### ✨ Key Features
 
@@ -132,14 +132,11 @@ cd ai-service
 ### 2. Install Dependencies
 
 ```bash
-# Install using pip
-pip install -e .
-
-# Or use uv (recommended)
-uv sync
+# Install locked runtime and development dependencies
+uv sync --locked
 ```
 
-> It is recommended to use [uv](https://github.com/astral-sh/uv) for dependency management. The `uv.lock` file has locked dependency versions to ensure environment consistency.
+> Use [uv](https://github.com/astral-sh/uv) for dependency management. The `uv.lock` file is the source of truth for reproducible runtime versions.
 
 ### 3. Configure Environment Variables
 

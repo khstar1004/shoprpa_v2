@@ -6,7 +6,6 @@ import mimetypes
 import os
 import re
 import sys
-from dataclasses import field
 from enum import Enum
 
 from astronverse.scheduler.apis.response import ResCode, res_msg
@@ -20,7 +19,7 @@ from astronverse.scheduler.utils.subprocess import SubPopen
 from astronverse.scheduler.utils.utils import EmitType, emit_to_front
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 router = APIRouter()
 
@@ -56,7 +55,7 @@ class BrowserType(Enum):
     CHROME = "CHROME"
 
 
-class ContractFactors(Enum):
+class ContractFactors(BaseModel):
     contract_type: InputType = InputType.TEXT
     contract_path: str = ""
     contract_content: str = ""
@@ -69,10 +68,12 @@ class CheckBrowserPlugin(BaseModel):
     지정감지설치확장매개변수
     """
 
-    browsers: list[str] = field(default_factory=list)
+    model_config = ConfigDict(validate_default=True)
 
-    @classmethod
+    browsers: list[str] = Field(default_factory=list)
+
     @field_validator("browsers", mode="before")
+    @classmethod
     def set_default_browsers(cls, v):
         default_browser_list = [browser.value.lower() for browser in BrowserType]
         if not v:
@@ -144,13 +145,15 @@ def read_write(write_file: WriteFile):
     """
     프론트엔드통신사용의덮어쓰기파일의방법법
     """
-    # 조회폴더여부존재함
-    if not os.path.exists(os.path.dirname(write_file.path)):
-        os.mkdir(os.path.dirname(write_file.path))
+    if write_file.mode not in {"w", "a"}:
+        return res_msg(code=ResCode.ERR, msg="mode must be 'w' or 'a'", data=None)
 
     # 입력파일
     try:
-        with open(write_file.path, "w", encoding="utf-8") as f:
+        dir_name = os.path.dirname(os.path.abspath(write_file.path))
+        if dir_name:
+            os.makedirs(dir_name, exist_ok=True)
+        with open(write_file.path, write_file.mode, encoding="utf-8") as f:
             f.write(write_file.content)
         return res_msg(code=ResCode.SUCCESS, msg="", data=None)
     except Exception as e:
@@ -299,13 +302,11 @@ def update_installed_plugins():
 
 
 @router.post("/clipboard/get")
-def clipboard_get(is_html: bool):
+def clipboard_get(params: ClipboardParams):
     """
     가져오기 내용
     """
-    from astronverse.scheduler.utils.clipboard import Clipboard
-
-    if is_html:
+    if params.is_html:
         content = Clipboard.paste_html_clip()
     else:
         content = Clipboard.paste_str_clip()
@@ -353,7 +354,7 @@ def stream_sse(pck: PipPackages, svc: Svc = Depends(get_svc)):
             install_proc = SubPopen(cmd=PipManager.install_pip_cmd(package, version, exec_python=exec_python)).run(
                 log=True
             )
-            sub_processes.append(download_proc)
+            sub_processes.append(install_proc)
             for log_data in log(install_proc):
                 yield log_data
         except Exception as e:
@@ -413,7 +414,7 @@ def send_alert(tip_data: dict, svc: Svc = Depends(get_svc)):
 
 
 @router.post("/send/sub_window")
-def send_alert(sub_window_data: dict, svc: Svc = Depends(get_svc)):
+def send_sub_window(sub_window_data: dict, svc: Svc = Depends(get_svc)):
     emit_to_front(EmitType.SUB_WINDOW, msg=sub_window_data)
     return res_msg(code=ResCode.SUCCESS, msg="", data=None)
 

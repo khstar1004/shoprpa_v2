@@ -1,4 +1,4 @@
-#name: rpa-opensource-studio
+name: shoprpa-server
 x-env-file: &env_file
   - .env
 
@@ -8,7 +8,7 @@ volumes:
 services:
   mysql:
     image: mysql:8.4.6
-    container_name: rpa-opensource-mysql
+    container_name: shoprpa-mysql
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
@@ -65,15 +65,15 @@ services:
       retries: 5
       start_period: 30s
     networks:
-      - rpa-opensource-network
+      - shoprpa-network
 
   atlas:
     image: arigaio/atlas:latest
-    container_name: rpa-opensource-atlas
+    container_name: shoprpa-atlas
     volumes:
       - ./volumes/atlas:/data/atlas
     networks:
-      - rpa-opensource-network
+      - shoprpa-network
     depends_on:
       mysql:
         condition: service_healthy
@@ -82,7 +82,7 @@ services:
 
   redis:
     image: bitnami/redis:latest
-    container_name: rpa-opensource-redis
+    container_name: shoprpa-redis
     restart: always
     user: root
     privileged: true
@@ -112,11 +112,11 @@ services:
       retries: 10
       start_period: 10s
     networks:
-      - rpa-opensource-network
+      - shoprpa-network
   
   minio:
     image: minio/minio:RELEASE.2025-06-13T11-33-47Z-cpuv1
-    container_name: rpa-opensource-minio
+    container_name: shoprpa-minio
     user: root
     privileged: true
     restart: always
@@ -161,11 +161,11 @@ services:
       retries: 3
       start_period: 30s
     networks:
-      - rpa-opensource-network
+      - shoprpa-network
 
   openresty-nginx:
     image: openresty/openresty:1.27.1.1-alpine
-    container_name: rpa-opensource-openresty-nginx
+    container_name: shoprpa-openresty-nginx
     restart: always
     ports:
       - "32742:80"
@@ -175,11 +175,16 @@ services:
       - ./volumes/nginx/static:/usr/local/openresty/nginx/static:ro
       - ./logs/nginx:/usr/local/openresty/nginx/logs
     depends_on:
-      - resource-service
-      - robot-service
-      - ai-service
-      - openapi-service
-      - rpa-auth
+      resource-service:
+        condition: service_healthy
+      robot-service:
+        condition: service_healthy
+      ai-service:
+        condition: service_healthy
+      openapi-service:
+        condition: service_healthy
+      rpa-auth:
+        condition: service_healthy
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1/health"]
       interval: 30s
@@ -187,11 +192,11 @@ services:
       retries: 3
       start_period: 10s
     networks:
-      - rpa-opensource-network
+      - shoprpa-network
 
   casdoor:
     image: casbin/casdoor:v2.67.0
-    container_name: rpa-opensource-casdoor
+    container_name: shoprpa-casdoor
     restart: always
     env_file: *env_file
     environment:
@@ -206,14 +211,14 @@ services:
       mysql:
         condition: service_healthy
     networks:
-      - rpa-opensource-network
+      - shoprpa-network
 
   ai-service:
     image: shoprpa/ai-service:local
     build:
       context: ..
       dockerfile: backend/ai-service/Dockerfile
-    container_name: rpa-opensource-ai-service
+    container_name: shoprpa-ai-service
     restart: always
     env_file: *env_file
     environment:
@@ -225,6 +230,12 @@ services:
     #   - "8010:8010"
     volumes:
       - ../backend/ai-service/app:/app/app
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://127.0.0.1:8010/health', timeout=5).read()\""]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
     depends_on:
       mysql:
         condition: service_healthy
@@ -233,14 +244,14 @@ services:
       casdoor:
         condition: service_started
     networks:
-      - rpa-opensource-network
+      - shoprpa-network
 
   openapi-service:
     image: shoprpa/openapi-service:local
     build:
       context: ..
       dockerfile: backend/openapi-service/Dockerfile
-    container_name: rpa-opensource-openapi-service
+    container_name: shoprpa-openapi-service
     restart: always
     env_file: *env_file
     environment:
@@ -252,6 +263,12 @@ services:
     #   - "8020:8020"
     volumes:
       - ../backend/openapi-service/app:/app/app
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://127.0.0.1:8020/health', timeout=5).read()\""]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
     depends_on:
       mysql:
         condition: service_healthy
@@ -260,20 +277,26 @@ services:
       casdoor:
         condition: service_started
     networks:
-      - rpa-opensource-network
+      - shoprpa-network
 
   resource-service:
     image: shoprpa/resource-service:local
     build:
       context: ..
       dockerfile: backend/resource-service/Dockerfile
-    container_name: rpa-opensource-resource-service
+    container_name: shoprpa-resource-service
     restart: always
     env_file: *env_file
     # ports:
     #   - "8030:8030"
     volumes:
       - ./logs/resource-service:/app/logs
+    healthcheck:
+      test: ["CMD", "java", "-cp", "/app/healthcheck", "com.iflytek.rpa.resource.common.health.HealthcheckProbe"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
     depends_on:
       mysql:
         condition: service_healthy
@@ -284,20 +307,28 @@ services:
       casdoor:
         condition: service_started
     networks:
-      - rpa-opensource-network
+      - shoprpa-network
 
   robot-service:
     image: shoprpa/robot-service:local
     build:
       context: ..
       dockerfile: backend/robot-service/Dockerfile
-    container_name: rpa-opensource-robot-service
+    container_name: shoprpa-robot-service
     restart: always
     env_file: *env_file
+    environment:
+      - ASTRON_AGENT_API_KEY=${INTERNAL_ADMIN_API_KEY}
     # ports:
     #   - "8040:8040"
     volumes:
       - ./logs/robot-service:/app/logs
+    healthcheck:
+      test: ["CMD", "java", "-cp", "/app/healthcheck", "com.iflytek.rpa.common.health.HealthcheckProbe"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
     depends_on:
       mysql:
         condition: service_healthy
@@ -306,20 +337,26 @@ services:
       casdoor:
         condition: service_started
     networks:
-      - rpa-opensource-network
+      - shoprpa-network
 
   rpa-auth:
     image: shoprpa/rpa-auth:local
     build:
       context: ..
       dockerfile: backend/rpa-auth/Dockerfile
-    container_name: rpa-opensource-rpa-auth
+    container_name: shoprpa-rpa-auth
     restart: always
     env_file: *env_file
     # ports:
     #   - "10251:10251"
     volumes:
       - ./logs/rpa-auth:/app/logs
+    healthcheck:
+      test: ["CMD", "java", "-cp", "/app/healthcheck", "com.iflytek.rpa.auth.health.HealthcheckProbe"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
     depends_on:
       mysql:
         condition: service_healthy
@@ -328,8 +365,8 @@ services:
       casdoor:
         condition: service_started
     networks:
-      - rpa-opensource-network
+      - shoprpa-network
 
 networks:
-  rpa-opensource-network:
+  shoprpa-network:
     driver: bridge

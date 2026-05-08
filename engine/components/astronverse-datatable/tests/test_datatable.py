@@ -1,3 +1,5 @@
+from pathlib import Path
+from uuid import uuid4
 from unittest import TestCase
 
 from astronverse.datatable import (
@@ -23,6 +25,14 @@ from astronverse.datatable import (
 from astronverse.datatable.datatable import DataTable
 
 
+_TEST_TMP_DIR = Path(__file__).resolve().parents[4] / "build" / "tmp" / "datatable-tests"
+
+
+def _test_path(file_name: str) -> Path:
+    _TEST_TMP_DIR.mkdir(parents=True, exist_ok=True)
+    return _TEST_TMP_DIR / f"{uuid4().hex}_{file_name}"
+
+
 class TestDataTable(TestCase):
         
     def test_read_cell(self):
@@ -32,7 +42,7 @@ class TestDataTable(TestCase):
             row=2,
             col="B",
         )
-        print(value)
+        self.assertIsNotNone(value)
         
     def test_read_row(self):
         dt = DataTable()
@@ -40,7 +50,7 @@ class TestDataTable(TestCase):
             read_type=ReadType.ROW,
             row=2,
         )
-        print(values)
+        self.assertIsInstance(values, list)
         
     def test_read_column(self):
         dt = DataTable()
@@ -48,7 +58,7 @@ class TestDataTable(TestCase):
             read_type=ReadType.COLUMN,
             col="C",
         )
-        print(values)
+        self.assertIsInstance(values, list)
         
     def test_read_area(self):
         dt = DataTable()
@@ -59,7 +69,7 @@ class TestDataTable(TestCase):
             end_col="C",
             end_row=3,
         )
-        print(values)
+        self.assertIsInstance(values, list)
     
     def test_read_all(self):
         dt = DataTable()
@@ -70,12 +80,12 @@ class TestDataTable(TestCase):
             end_col="",
             end_row=0,
         )
-        print(values)
+        self.assertIsInstance(values, list)
         
     def test_get_max_row(self):
         dt = DataTable()
         max_row = dt.get_max_row()
-        print(max_row)
+        self.assertGreaterEqual(max_row, 1)
     
     def test_get_max_column(self):
         pass
@@ -131,21 +141,21 @@ class TestDataTable(TestCase):
             row=2,
             col="B",
         )
-        print(data)
+        self.assertIsNotNone(data)
     
     def test_copy_row(self):
         data = DataTable().copy_data(
             copy_type=CopyType.ROW,
             row=2,
         )
-        print(data)
+        self.assertIsInstance(data, list)
     
     def test_copy_column(self):
         data = DataTable().copy_data(
             copy_type=CopyType.COLUMN,
             col="C",
         )
-        print(data)
+        self.assertIsInstance(data, list)
         
     def test_copy_area(self):
         data = DataTable().copy_data(
@@ -155,7 +165,7 @@ class TestDataTable(TestCase):
             end_col="C",
             end_row=3,
         )
-        print(data)
+        self.assertIsInstance(data, list)
         
     def test_paste_cell(self):
         DataTable().paste_data(
@@ -254,7 +264,7 @@ class TestDataTable(TestCase):
         title = dt.get_column_title(
             col="A"
         )
-        print(title)
+        self.assertIsInstance(title, str)
         
     def test_find_and_replace(self):
         dt = DataTable()
@@ -266,7 +276,7 @@ class TestDataTable(TestCase):
             is_replace=True,
             is_case_sensitive=False,
         )
-        print(data)
+        self.assertIsInstance(data, list)
     
     def test_filter_data_table_column(self):
         dt = DataTable()
@@ -278,7 +288,7 @@ class TestDataTable(TestCase):
             is_case_sensitive=True,
             is_save_filtered=True,
         )
-        print(filtered_dt)
+        self.assertIsInstance(filtered_dt, list)
         
     def test_filter_data_table_row(self):
         dt = DataTable()
@@ -290,7 +300,7 @@ class TestDataTable(TestCase):
             is_case_sensitive=False,
             is_save_filtered=True,
         )
-        print(filtered_dt)
+        self.assertIsInstance(filtered_dt, list)
         
     def test_filter_data_table_table(self):
         dt = DataTable()
@@ -301,7 +311,7 @@ class TestDataTable(TestCase):
             is_case_sensitive=False,
             is_save_filtered=True,
         )
-        print(filtered_dt)
+        self.assertIsInstance(filtered_dt, list)
         
     def test_filter_data_table_date_range(self):
         dt = DataTable()
@@ -315,20 +325,23 @@ class TestDataTable(TestCase):
             is_case_sensitive=False,
             is_save_filtered=False,
         )
-        print(filtered_dt)
+        self.assertIsInstance(filtered_dt, list)
         
     def test_import_data_table_from_file(self):
         dt = DataTable()
+        import_path = _test_path("file.csv")
+        import_path.write_text("name,score\nalpha,10\nbeta,20\n", encoding="utf-8")
         dt.import_data_table_from_file(
-            import_file_path="path/to/file.csv",
+            import_file_path=str(import_path),
             sheet_name="Sheet1"
         )
         
     def test_export_data_table_to_file(self):
         dt = DataTable()
-        dt.export_data_table_to_file(
-            export_dest_path="path/to/exported_file.csv",
-            export_file_name="exported_file",
+        export_name = f"exported_file_{uuid4().hex}"
+        export_path = dt.export_data_table_to_file(
+            export_dest_path=str(_TEST_TMP_DIR),
+            export_file_name=export_name,
             export_file_type=ExportFileType.CSV
         )
-        
+        self.assertTrue(Path(export_path).is_file())

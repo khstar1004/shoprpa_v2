@@ -1,4 +1,4 @@
-﻿<script lang="tsx">
+<script lang="tsx">
 import { CheckOutlined, FilterOutlined, SyncOutlined } from '@ant-design/icons-vue'
 import { Popover } from 'ant-design-vue'
 import type { TooltipPlacement } from 'ant-design-vue/es/tooltip'
@@ -46,7 +46,6 @@ export default defineComponent({
         })
       }
       option.checked = !option.checked
-      console.log(filterGroups.value)
     }
 
     const clearFilters = () => {

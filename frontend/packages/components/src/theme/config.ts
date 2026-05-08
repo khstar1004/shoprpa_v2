@@ -1,4 +1,4 @@
-﻿import * as darkTokens from '@rpa/shared/tokens/dark'
+import * as darkTokens from '@rpa/shared/tokens/dark'
 import * as lightTokens from '@rpa/shared/tokens/light'
 import type { ConfigProvider } from 'ant-design-vue'
 import { lowerFirst } from 'lodash-es'

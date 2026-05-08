@@ -1,4 +1,4 @@
-﻿import type { BrowserWindow } from 'electron'
+import type { BrowserWindow } from 'electron'
 import { app, dialog, Menu, Tray } from 'electron'
 
 import { APP_ICON_PATH } from './config'
@@ -124,13 +124,13 @@ export function changeTray(win: BrowserWindow, mode: 'scheduling' | 'normal', st
             if (result.response === 0) {
               changeTray(win, 'normal')// 수정변수메뉴
               win.webContents.send('exit_scheduling_mode', {}) // 출력스케줄링방식알림
-              win.show() // 
+              win.show() //
             }
           })
         },
       },
       {
-        label: 'shoprpa 종료',
+        label: 'ShopRPA 종료',
         click: () => {
           app.quit()
         },

@@ -77,5 +77,5 @@ class CompressCore:
             with py7zr.SevenZipFile(source_path, mode="r", password=pwd) as handler:
                 handler.extractall(path=dest_path)
         else:
-            raise ValueError("지원하지 않음의압축 해제유형")
+            raise ValueError("지원하지 않는 압축 해제 유형입니다")
         return os.path.abspath(dest_path)

@@ -26,7 +26,7 @@ class Dify:
         upload_url = self.base_url + "files/upload"
 
         try:
-            logger.info("업로드파일중...")
+            logger.info("파일 업로드 중...")
             mime_type, _ = mimetypes.guess_type(file_path)
 
             file_extension = os.path.splitext(file_path)[1].replace(".", "").upper()
@@ -41,14 +41,14 @@ class Dify:
                 data = {"user": user, "type": file_extension}  # 파일유형로이름
 
                 response = requests.post(upload_url, headers=self.headers, files=files, data=data)
-                if response.status_code == 201:  # 201 테이블생성성공
-                    logger.info("파일업로드성공")
+                if response.status_code == 201:
+                    logger.info("파일 업로드 성공")
                     return response.json().get("id")  # 가져오기업로드의파일 ID
                 else:
-                    logger.info(f"파일업로드실패, 상태코드: {response.status_code}")
+                    logger.info("파일 업로드 실패, 상태 코드: %s", response.status_code)
                     return None
         except Exception as e:
-            logger.info(f"발송오류: {str(e)}")
+            logger.info("파일 업로드 요청 오류: %s", e)
             return None
 
     def run_workflow(
@@ -83,19 +83,19 @@ class Dify:
         }
 
         try:
-            logger.info("실행워크플로...")
+            logger.info("워크플로 실행 중...")
             response = requests.post(workflow_url, headers=self.headers, json=data)
             if response.status_code == 200:
-                logger.info("워크플로실행성공")
+                logger.info("워크플로 실행 성공")
                 return response.json()
             else:
-                logger.info(f"워크플로실행실패, 상태코드: {response.status_code}")
+                logger.info("워크플로 실행 실패, 상태 코드: %s", response.status_code)
                 return {
                     "status": "error",
-                    "message": f"Failed to execute workflow, status code: {response.status_code}",
+                    "message": f"워크플로 실행 실패, 상태 코드: {response.status_code}",
                 }
         except Exception as e:
-            logger.info(f"발송오류: {str(e)}")
+            logger.info("워크플로 실행 요청 오류: %s", e)
             return {"status": "error", "message": str(e)}
 
     def run_chatflow(
@@ -126,17 +126,17 @@ class Dify:
         data = {"inputs": inputs, "response_mode": response_mode, "user": user, "query": query, "conversation_id": ""}
 
         try:
-            logger.info("실행워크플로...")
+            logger.info("채팅 플로 실행 중...")
             response = requests.post(chatflow_url, headers=self.headers, json=data)
             if response.status_code == 200:
-                logger.info("워크플로실행성공")
+                logger.info("채팅 플로 실행 성공")
                 return response.json()
             else:
-                logger.info(f"워크플로실행실패, 상태코드: {response.status_code}")
+                logger.info("채팅 플로 실행 실패, 상태 코드: %s", response.status_code)
                 return {
                     "status": "error",
-                    "message": f"Failed to execute workflow, status code: {response.status_code}",
+                    "message": f"채팅 플로 실행 실패, 상태 코드: {response.status_code}",
                 }
         except Exception as e:
-            logger.info(f"발송오류: {str(e)}")
+            logger.info("채팅 플로 실행 요청 오류: %s", e)
             return {"status": "error", "message": str(e)}

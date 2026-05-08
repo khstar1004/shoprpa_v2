@@ -1,5 +1,8 @@
 <script lang="ts" setup>
+import { useTranslation } from 'i18next-vue'
 import { computed } from 'vue'
+
+import { getPublicLanguage } from '@/plugins/i18next'
 
 import loadingSvg from '@/assets/img/loading.svg'
 
@@ -16,7 +19,9 @@ const props = defineProps<{
 
 const smartComp = useSmartComp()
 const { restoreChatHistory } = injectChatContext()
+const { i18next } = useTranslation()
 const currentVersion = computed(() => smartComp.editingSmartComp.value?.version)
+const displayLocale = computed(() => getPublicLanguage(i18next.language))
 
 const versionData = computed<SmartComp | undefined>(() => {
   if (!props.version) {
@@ -69,7 +74,7 @@ function handleSwitchVersion(version: number) {
           <div class="flex-1 flex flex-col overflow-hidden">
             <span class="font-medium text-ellipsis overflow-hidden whitespace-nowrap">{{ versionData.title || $t('smartComponent.componentVersionName') }}</span>
             <span v-if="showTime" class="text-[12px] text-text-tertiary">
-              {{ new Date(versionData.updateTime || versionData.createTime || Date.now()).toLocaleString('zh-CN') }}
+              {{ new Date(versionData.updateTime || versionData.createTime || Date.now()).toLocaleString(displayLocale) }}
             </span>
           </div>
           <rpa-hint-icon

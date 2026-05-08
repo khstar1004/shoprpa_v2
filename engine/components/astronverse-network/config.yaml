@@ -1,4 +1,4 @@
-﻿atomic:
+atomic:
   Network.ftp_create:
     title: 생성FTP연결
     comment: 생성및주소(@{host}),단말(@{port})의FTP연결, 출력로(@{ftp_instance})
@@ -33,7 +33,7 @@
     outputList:
       - key: close_ftp
         title: 열기결과저장
-        tip: FTP연결여부성공열기의불리언
+        tip: FTP연결여부성공열기의불리언 값
   Network.get_work_dir:
     title: 가져오기 디렉터리(FTP)
     comment: 가져오기(@{ftp_instance})현재의디렉터리, 출력로(@{get_work_dir})
@@ -46,7 +46,7 @@
     outputList:
       - key: get_work_dir
         title: 디렉터리저장
-        tip: 출력가져오기까지의디렉터리
+        tip: 가져온 작업 디렉터리를 출력합니다.
   Network.change_working_dir:
     title: 디렉터리(FTP)
     comment: >-
@@ -84,20 +84,20 @@
         title: 생성후폴더 경로
         tip: 를생성후의폴더 경로저장변수
   Network.get_ftp_list:
-    title: 가져오기파일/폴더(FTP)
+    title: 파일/폴더 목록 가져오기(FTP)
     comment: 가져오기 지정FTP연결(@{ftp_instance})아래의(@{file_type})목록,저장까지(@{get_ftp_list})중
     icon: get-folder
     helpManual: 가져오기 지정FTP연결아래의전체파일/폴더목록
     inputList:
       - key: ftp_instance
         title: FTP연결객체
-        tip: 가져올파일및폴더정보의FTP연결객체
+        tip: 가져올파일 및 폴더정보의FTP연결객체
       - key: file_type
-        title: 가져오기객체
-        tip: 선택할가져오기의객체
+        title: 수집 대상
+        tip: 가져올 객체를 선택합니다.
     outputList:
       - key: get_ftp_list
-        title: 가져오기의파일/폴더목록
+        title: 파일/폴더 목록
         tip: 를FTP연결아래의파일/폴더목록출력변수
   Network.ftp_rename:
     title: 이름 변경파일/폴더(FTP)
@@ -146,7 +146,7 @@
         tip: ''
       - key: ftp_pwd
         title: 디렉터리
-        tip: 파일/폴더업로드의디렉터리,비어 있습니다,업로드현재경로
+        tip: 파일/폴더업로드의디렉터리,비워 두면,업로드현재경로
       - key: file_path
         title: 대기업로드파일
         tip: 지원단일개또는다중개파일업로드,다중개파일이름사용열기,예:test1.txt,test2.txt,test3.txt
@@ -159,7 +159,7 @@
     outputList:
       - key: upload_ftp_list
         title: 업로드목록
-        tip: 출력완료업로드파일/폴더에서FTP서비스서버위의경로정보변수,데이터 유형로목록
+        tip: '출력완료업로드파일/폴더에서FTP서비스서버위의경로정보변수,데이터 유형: 목록'
   Network.ftp_download:
     title: 다운로드파일/폴더(FTP)
     comment: >-
@@ -183,15 +183,15 @@
         title: 다운로드
         tip: 본저장경로
       - key: state_type
-        title: 본경로찾을 수 없습니다시
-        tip: 본저장경로찾을 수 없습니다시실행의
+        title: 저장 경로가 없을 때
+        tip: 저장 경로가 없을 때 실행할 동작
       - key: exist_type
         title: 다운로드객체존재함시
         tip: 다운로드파일/폴더존재함시실행의
     outputList:
       - key: download_ftp_path
         title: 다운로드목록
-        tip: 출력완료다운로드의파일/폴더 경로목록변수,데이터 유형로목록
+        tip: '출력완료다운로드의파일/폴더 경로목록변수,데이터 유형: 목록'
   Network.ftp_delete:
     title: 삭제파일/폴더(FTP)
     comment: >-
@@ -214,79 +214,77 @@
     outputList:
       - key: delete_ftp_result
         title: 삭제결과
-        tip: 출력삭제결과까지변수,데이터 유형로불리언
+        tip: '출력삭제결과까지변수,데이터 유형: 불리언 값'
   Network.http_request:
-    title: HTTP요청 
-    comment: >-
-      URL(@{url})전송HTTP요청 (@{request_type}), 요청 (@{headers}), 요청 (@{body}),
-      저장결과까지{@{http_response}}
+    title: HTTP 요청
+    comment: URL(@{url})로 HTTP @{request_type} 요청을 보내고 결과를 @{http_response}에 저장합니다.
     icon: http-request
-    helpManual: 지정url전송HTTP요청 
+    helpManual: 지정한 URL로 HTTP 요청을 전송합니다.
     inputList:
       - key: url
         title: URL
         tip: ''
       - key: request_type
-        title: 요청 유형
+        title: 요청 방식
         tip: ''
       - key: headers
-        title: 요청 
-        tip: ''
+        title: 요청 헤더
+        tip: JSON 형식으로 요청 헤더를 입력합니다.
       - key: body
-        title: 요청 
-        tip: ''
+        title: 요청 본문
+        tip: POST, PUT, PATCH 요청에 보낼 본문을 입력합니다.
       - key: file_path
-        title: 대기업로드파일 경로
-        tip: ''
+        title: 업로드 파일
+        tip: POST 요청에 함께 보낼 파일 정보를 JSON 형식으로 입력합니다.
       - key: time_out
-        title: 시간 초과시간
-        tip: ''
+        title: 시간 초과(초)
+        tip: 요청 응답을 기다릴 최대 시간을 입력합니다.
       - key: save_type
-        title: 결과저장까지파일
-        tip: 를결과저장까지지정텍스트파일중
+        title: 결과 파일 저장
+        tip: HTTP 응답을 텍스트 파일로 저장할지 선택합니다.
       - key: save_path
-        title: 문서저장디렉터리
-        tip: 입력파일저장디렉터리
+        title: 저장 폴더
+        tip: 응답 파일을 저장할 폴더를 선택합니다.
       - key: save_name
-        title: 파일이름
-        tip: 입력저장파일이름, 로텍스트파일
+        title: 저장 파일명
+        tip: 저장할 파일명을 입력합니다. 비워두면 response.txt로 저장합니다.
     outputList:
       - key: http_response
-        title: 저장결과까지
-        tip: ''
+        title: HTTP 응답
+        tip: 저장하지 않으면 응답 내용, 저장하면 파일 경로를 저장합니다.
   Network.http_download:
-    title: HTTP다운로드
-    comment: HTTP다운로드
+    title: HTTP 다운로드
+    comment: URL(@{url})의 파일을 @{dst_dir}에 다운로드하고 경로를 @{http_download_path}에 저장합니다.
     icon: http-download
-    helpManual: 다운로드지정URL(@{url})의파일저장까지지정디렉터리(@{dst_dir})중,저장다운로드경로까지변수(@{http_download_path})
+    helpManual: 지정한 URL의 파일을 다운로드합니다.
     inputList:
       - key: url
-        title: 다운로드주소
-        tip: ''
+        title: 다운로드 URL
+        tip: 다운로드할 파일의 URL을 입력합니다.
       - key: dst_dir
-        title: 파일저장디렉터리
-        tip: ''
+        title: 저장 폴더
+        tip: 파일을 저장할 폴더를 선택합니다.
       - key: rename
-        title: 지정파일이름
-        tip: 아니오지정사용다운로드경로중의파일이름, 있음파일이름이면오류
+        title: 저장 파일명
+        tip: 비워두면 URL의 파일명을 사용합니다.
       - key: state_type
-        title: 디렉터리찾을 수 없습니다시
-        tip: 파일저장디렉터리찾을 수 없습니다시의관리방식
+        title: 디렉터리가 없을 때
+        tip: 파일 저장 디렉터리가 없을 때 처리 방식
       - key: exist_type
-        title: 파일존재함시
-        tip: 목록파일완료존재함시의관리방식
+        title: 같은 파일이 있을 때
+        tip: 저장 폴더에 같은 이름의 파일이 있을 때 처리 방식을 선택합니다.
     outputList:
       - key: http_download_path
-        title: 다운로드파일저장까지
-        tip: 를다운로드파일 경로저장까지변수중
+        title: 다운로드 파일 경로
+        tip: 다운로드된 파일 경로를 저장합니다.
 options:
   FileExistenceType:
     - value: rename
-      label: 생성파일본
+      label: 새 이름으로 저장
     - value: overwrite
-      label: 덮어쓰기기존있음파일
+      label: 덮어쓰기
     - value: cancel
-      label: 건너뛰기저장
+      label: 건너뛰기
   ListType:
     - value: all
       label: 전체
@@ -303,7 +301,7 @@ options:
     - value: create
       label: 생성
     - value: error
-      label: 안내오류
+      label: 오류 처리
   RequestType:
     - value: post
       label: post
@@ -327,4 +325,4 @@ options:
     - value: 'yes'
       label: 저장
     - value: 'no'
-      label: 삭제
+      label: 저장 안 함

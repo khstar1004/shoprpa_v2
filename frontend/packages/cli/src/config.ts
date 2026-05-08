@@ -1,20 +1,22 @@
-import { federation } from '@module-federation/vite'
-import path from 'node:path'
 import fs from 'node:fs'
-import { loadConfigFromFile, ConfigEnv } from 'vite'
+import path from 'node:path'
+
+import type { federation } from '@module-federation/vite'
+import type { ConfigEnv } from 'vite'
+import { loadConfigFromFile } from 'vite'
 
 export type RpaConfig = Parameters<typeof federation>[0]
 
-type UserConfigFnObject = (env: ConfigEnv) => RpaConfig;
-type UserConfigFnPromise = (env: ConfigEnv) => Promise<RpaConfig>;
-type UserConfigFn = (env: ConfigEnv) => RpaConfig | Promise<RpaConfig>;
-type UserConfigExport = RpaConfig | Promise<RpaConfig> | UserConfigFnObject | UserConfigFnPromise | UserConfigFn;
+type UserConfigFnObject = (env: ConfigEnv) => RpaConfig
+type UserConfigFnPromise = (env: ConfigEnv) => Promise<RpaConfig>
+type UserConfigFn = (env: ConfigEnv) => RpaConfig | Promise<RpaConfig>
+type UserConfigExport = RpaConfig | Promise<RpaConfig> | UserConfigFnObject | UserConfigFnPromise | UserConfigFn
 
-export function defineConfig(config: RpaConfig): RpaConfig;
-export function defineConfig(config: Promise<RpaConfig>): Promise<RpaConfig>;
-export function defineConfig(config: UserConfigFnObject): UserConfigFnObject;
-export function defineConfig(config: UserConfigFnPromise): UserConfigFnPromise;
-export function defineConfig(config: UserConfigFn): UserConfigFn;
+export function defineConfig(config: RpaConfig): RpaConfig
+export function defineConfig(config: Promise<RpaConfig>): Promise<RpaConfig>
+export function defineConfig(config: UserConfigFnObject): UserConfigFnObject
+export function defineConfig(config: UserConfigFnPromise): UserConfigFnPromise
+export function defineConfig(config: UserConfigFn): UserConfigFn
 export function defineConfig(config: UserConfigExport): UserConfigExport {
   return config
 }

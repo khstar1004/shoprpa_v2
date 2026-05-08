@@ -10,7 +10,7 @@ def test_browser_open_demo():
     try:
         # 직선연결호출browser_open데이터
         browser = BrowserSoftware.browser_open(
-            url="https://www.baidu.com",
+            url="https://example.com",
             browser_type=CommonForBrowserType.BTChrome,
             browser_abs_path="",
             open_args="",

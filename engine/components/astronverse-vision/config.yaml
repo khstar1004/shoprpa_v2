@@ -1,13 +1,13 @@
-﻿atomic:
+atomic:
   CV.cv_click:
     title: 이미지 클릭
-    comment: 마우스(@{btn_type})(@{btn_model})이미지(@{input_data})(@{click_position})
+    comment: 이미지 @{input_data}의 @{click_position} 위치를 @{btn_type}/@{btn_model} 방식으로 클릭합니다.
     icon: click-image
-    helpManual: 에서현재()창검색이미지, 에서창중클릭해당이미지.
+    helpManual: 현재 창에서 지정한 이미지를 찾아 클릭합니다.
     inputList:
       - key: input_data
         title: 이미지
-        tip: 지원에서이미지라이브러리중선택또는선택이미지가져오기이미지요소
+        tip: 이미지 라이브러리에서 선택하거나 화면에서 이미지를 선택합니다.
       - key: btn_type
         title: 마우스
         tip: ''
@@ -15,8 +15,8 @@
         title: 클릭방식
         tip: ''
       - key: click_position
-        title: 클릭위치
-        tip: 선택마우스클릭위치
+        title: 클릭 위치
+        tip: 마우스를 클릭할 이미지 내 위치를 선택합니다.
       - key: specified_position
         title: 위치 지정
         tip: ''
@@ -28,7 +28,7 @@
         tip: ''
       - key: match_similarity
         title: 매칭 정확도
-        tip: 조회이미지및현재페이지의정도값(높이매칭 정확도로99%), 매칭테이블현재저장된 가져오기의이미지전체일의시가능매칭성공
+        tip: 현재 화면에서 선택한 이미지와 일치하는 정도를 설정합니다. 값이 높을수록 더 엄격하게 매칭합니다.
       - key: move_type
         title: 마우스 이동 방식
         tip: ''
@@ -37,23 +37,23 @@
         tip: ''
       - key: wait_time
         title: 이미지 대기출력시간(초)
-        tip: 초과경과해당시간중지대기, 로10초
+        tip: 지정한 시간이 지나면 대기를 중지합니다.
     outputList: []
   CV.hover_image:
     title: 이미지 위로 마우스 이동
-    comment: 마우스에서이미지(@{input_data})의(@{click_position})
+    comment: 이미지 @{input_data}의 @{click_position} 위치로 마우스를 이동합니다.
     icon: mouse-hover-image
-    helpManual: 에서현재()창검색이미지, 를마우스까지해당이미지의위치 지정위.
+    helpManual: 현재 창에서 지정한 이미지를 찾아 해당 위치로 마우스를 이동합니다.
     inputList:
       - key: input_data
         title: 이미지
-        tip: 지원에서이미지라이브러리중선택또는선택이미지가져오기이미지요소
+        tip: 이미지 라이브러리에서 선택하거나 화면에서 이미지를 선택합니다.
       - key: click_position
         title: 위치
         tip: ''
       - key: specified_position
         title: 위치 지정
-        tip: 구격식이미지, 지원선택구격식작업일개, 선택이면에서이미지의중위치
+        tip: 이미지 내 기준 위치를 선택합니다.
       - key: horizontal_move
         title: 가로 이동
         tip: ''
@@ -62,7 +62,7 @@
         tip: ''
       - key: match_similarity
         title: 매칭 정확도
-        tip: 조회이미지및현재페이지의정도값(높이매칭 정확도로99%), 매칭테이블현재저장된 가져오기의이미지전체일의시가능매칭성공
+        tip: 현재 화면에서 선택한 이미지와 일치하는 정도를 설정합니다. 값이 높을수록 더 엄격하게 매칭합니다.
       - key: move_type
         title: 마우스 이동 방식
         tip: ''
@@ -71,66 +71,66 @@
         tip: ''
       - key: wait_time
         title: 이미지 대기출력시간(초)
-        tip: 초과경과해당시간중지대기, 로10초
+        tip: 지정한 시간이 지나면 대기를 중지합니다.
     outputList: []
   CV.is_image_exist:
     title: 이미지 존재 여부
-    comment: 이미지(@{input_data})에서현재(@{exist_type})
+    comment: 현재 화면에서 이미지 @{input_data}의 존재 여부를 확인합니다.
     icon: if-image-exists
-    helpManual: 에서현재()창검색이미지, 여부존재함.
+    helpManual: 현재 창에서 지정한 이미지가 존재하는지 확인합니다.
     inputList:
       - key: input_data
         title: 이미지
-        tip: 지원에서이미지라이브러리중선택또는선택이미지가져오기이미지요소
+        tip: 이미지 라이브러리에서 선택하거나 화면에서 이미지를 선택합니다.
       - key: exist_type
         title: 유형
-        tip: 이미지존재함또는찾을 수 없습니다, 분실행코드내용
+        tip: 이미지가 존재하는 경우와 찾을 수 없는 경우의 실행 흐름을 나눕니다.
       - key: match_similarity
         title: 매칭 정확도
-        tip: 조회이미지및현재페이지의정도값(높이매칭 정확도로99%), 매칭테이블현재저장된 가져오기의이미지전체일의시가능매칭성공
+        tip: 현재 화면에서 선택한 이미지와 일치하는 정도를 설정합니다. 값이 높을수록 더 엄격하게 매칭합니다.
       - key: wait_time
         title: 이미지 대기시간(초)
-        tip: 초과경과해당시간중지대기, 로10초
+        tip: 지정한 시간이 지나면 대기를 중지합니다.
     outputList: []
   CV.wait_image:
     title: 이미지 대기
     comment: 이미지 대기(@{input_data})(@{wait_type})
     icon: wait-image
-    helpManual: 대기이미지출력또는실패, 계속실행 흐름.
+    helpManual: 이미지가 나타나거나 사라질 때까지 기다린 뒤 다음 흐름을 실행합니다.
     inputList:
       - key: input_data
         title: 이미지
-        tip: 지원에서이미지라이브러리중선택또는선택이미지가져오기이미지요소
+        tip: 이미지 라이브러리에서 선택하거나 화면에서 이미지를 선택합니다.
       - key: wait_type
-        title: 대기유형
-        tip: 이미지 대기출력또는실패
+        title: 대기 유형
+        tip: 이미지가 나타나거나 사라질 때까지 대기합니다.
       - key: wait_time
         title: 대기시간(초)
-        tip: 초과경과해당시간중지대기, 로10초
+        tip: 지정한 시간이 지나면 대기를 중지합니다.
       - key: match_similarity
         title: 매칭 정확도
-        tip: 조회이미지및현재페이지의정도값(높이매칭 정확도로99%), 매칭테이블현재저장된 가져오기의이미지전체일의시가능매칭성공
+        tip: 현재 화면에서 선택한 이미지와 일치하는 정도를 설정합니다. 값이 높을수록 더 엄격하게 매칭합니다.
     outputList:
       - key: image_wait_result
-        title: 대기결과
-        tip: 이미지여부출력/실패, 에서대기시간내부출력/실패로true, 반대로false
+        title: 대기 결과
+        tip: 대기 시간 안에 조건을 만족하면 true, 아니면 false를 반환합니다.
   CV.image_input:
     title: 이미지 입력란에 입력
-    comment: 선택이미지입력란(@{input_data})으로(@{input_type})입력(@{input_content})
+    comment: 이미지로 찾은 입력란 @{input_data}에 @{input_type} 방식으로 @{input_content}를 입력합니다.
     icon: image-input-box
-    helpManual: 클릭목록입력란의이미지, 입력내용
+    helpManual: 이미지로 입력란을 찾아 클릭하고 내용을 입력합니다.
     inputList:
       - key: input_data
         title: 이미지
-        tip: 지원에서이미지라이브러리중선택또는선택이미지가져오기이미지요소
+        tip: 이미지 라이브러리에서 선택하거나 화면에서 이미지를 선택합니다.
       - key: input_type
         title: 입력방식
         tip: ''
       - key: input_content
-        title: 입력내용
+        title: 입력 내용
         tip: ''
       - key: simulate_flag
-        title: 사람입력
+        title: 시뮬레이션 클릭
         tip: ''
       - key: interval
         title: 입력
@@ -140,24 +140,24 @@
         tip: ''
       - key: wait_time
         title: 이미지 대기출력시간(초)
-        tip: 초과경과해당시간중지대기, 로10초
+        tip: 지정한 시간이 지나면 대기를 중지합니다.
     outputList: []
 options:
   BtnType:
     - value: left
       label: 왼쪽 버튼
     - value: middle
-      label: 중
+      label: 가운데 버튼
     - value: right
       label: 오른쪽 버튼
   BtnModel:
     - value: click
-      label: 단일
+      label: 클릭
     - value: double_click
       label: 더블클릭
   PositionType:
     - value: center
-      label: 중
+      label: 가운데 버튼
     - value: random
       label: 임의 위치
     - value: specific
@@ -166,9 +166,9 @@ options:
     - value: linear
       label: 직선
     - value: simulation
-      label: 사람
+      label: 자연스러운 이동
     - value: teleportation
-      label: 시
+      label: 즉시 이동
   Speed:
     - value: slow
       label: 느림
@@ -188,9 +188,9 @@ options:
       label: 이미지실패
   InputType:
     - value: text
-      label: 문자입력
+      label: 텍스트 입력
     - value: clip
-      label: 잘라내기입력
+      label: 클립보드 입력
   Simulate_flag:
     - value: 'yes'
       label: 예

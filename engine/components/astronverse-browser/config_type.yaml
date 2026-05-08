@@ -1,6 +1,6 @@
 types:
   Browser:
-    desc: 브라우저객체
+    desc: 브라우저 객체
     funcList:
       - key: Browser.get_url
         funcDesc: 해당웹 페이지의주소

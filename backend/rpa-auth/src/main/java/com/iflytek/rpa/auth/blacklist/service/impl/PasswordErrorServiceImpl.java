@@ -9,7 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 /**
- * 비밀번호오류계획데이터서비스
+ * 비밀번호 오류 횟수 관리 서비스
  *
  * @author system
  * @date 2025-12-16
@@ -25,33 +25,28 @@ public class PasswordErrorServiceImpl implements PasswordErrorService {
     public int recordPasswordError(String userId, String username) {
         String key = BlacklistConfig.getPasswordErrorKey(userId);
 
-        // 증가오류계획데이터
         long count = RedisUtils.incr(key, 1);
 
-        // 경과시간()
         if (count == 1) {
             RedisUtils.expire(key, blacklistConfig.getPasswordErrorExpire());
         }
 
         log.warn(
-                "사용자비밀번호오류, userId: {}, username: {}, 현재오류데이터: {}/{}",
+                "사용자 비밀번호 오류 기록, userId: {}, username: {}, count: {}/{}",
                 userId,
                 username,
                 count,
                 blacklistConfig.getPasswordErrorLimit());
 
-        // 조회여부까지값
         if (count >= blacklistConfig.getPasswordErrorLimit()) {
-            log.error("사용자비밀번호오류데이터까지값, 트리거, userId: {}, username: {}, 오류데이터: {}", userId, username, count);
+            log.error("비밀번호 오류 허용 횟수를 초과해 사용자 차단을 트리거합니다. userId: {}, username: {}, count: {}", userId, username, count);
 
-            // 지우기계획데이터
             RedisUtils.del(key);
 
-            // 출력예외
             throw new ShouldBeBlackException(
                     userId,
                     username,
-                    "비밀번호오류데이터경과다중(" + blacklistConfig.getPasswordErrorLimit() + ")",
+                    "비밀번호 오류 허용 횟수 초과(" + blacklistConfig.getPasswordErrorLimit() + "회)",
                     ShouldBeBlackException.BlackType.PASSWORD_ERROR);
         }
 
@@ -62,7 +57,7 @@ public class PasswordErrorServiceImpl implements PasswordErrorService {
     public void clearPasswordError(String userId) {
         String key = BlacklistConfig.getPasswordErrorKey(userId);
         RedisUtils.del(key);
-        log.debug("지우기비밀번호오류 기록, userId: {}", userId);
+        log.debug("비밀번호 오류 기록 삭제, userId: {}", userId);
     }
 
     @Override

@@ -75,6 +75,11 @@ export default antfu({
     'unicorn/prefer-dom-node-text-content': 'off',
   },
   ignores: [
+    '**/dist/**',
+    '**/out/**',
+    '**/release/**',
+    '**/dist-*/*',
+    '**/*.asar/**',
     'packages/electron-app/resources/**/*.js',
     'packages/components/lib/**/*.js',
     'public/*.js',

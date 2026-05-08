@@ -1,4 +1,4 @@
-﻿<script lang="ts" setup>
+<script lang="ts" setup>
 import { Empty } from 'ant-design-vue'
 import { useTranslation } from 'i18next-vue'
 import { computed, onBeforeMount } from 'vue'

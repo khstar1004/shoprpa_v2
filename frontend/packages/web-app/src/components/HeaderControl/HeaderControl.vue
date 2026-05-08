@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { NiceModal } from '@rpa/components'
 import { Tooltip } from 'ant-design-vue'
 import { storeToRefs } from 'pinia'

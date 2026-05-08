@@ -3,6 +3,7 @@ package com.iflytek.rpa.utils;
 import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 /**
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Component;
  *
  */
 @Component
+@Slf4j
 public class IdWorker {
     // 시간, 로, 일가져오기시스템의시간(일지정할 수 없음변수)
     private static final long twepoch = 1288834974657L;
@@ -159,18 +161,8 @@ public class IdWorker {
                 id = id % (maxDatacenterId + 1);
             }
         } catch (Exception e) {
-            System.out.println(" getDatacenterId: " + e.getMessage());
+            log.warn("데이터센터 ID 계산 실패: {}", e.getMessage(), e);
         }
         return id;
-    }
-
-    public static void main(String[] args) {
-
-        IdWorker idWorker = new IdWorker(0, 0);
-
-        for (int i = 0; i < 10000; i++) {
-            long nextId = idWorker.nextId();
-            System.out.println(nextId);
-        }
     }
 }

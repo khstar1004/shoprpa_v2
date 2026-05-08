@@ -1,6 +1,5 @@
 /* eslint-disable */
 self.addEventListener('message', (event) => {
-    console.log('worker on message: ', event);
     const { data } = event;
     quoteWorkerhandler(data.key, data.params);
 });

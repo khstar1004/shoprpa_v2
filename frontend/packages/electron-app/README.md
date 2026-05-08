@@ -1,34 +1,27 @@
-# my-app
+# ShopRPA Desktop
 
-A minimal Electron application with TypeScript
+Electron desktop shell for the ShopRPA automation client.
 
-## Recommended IDE Setup
-
-- [VSCode](https://code.visualstudio.com/) + [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) + [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
-
-## Project Setup
-
-### Install
+## Development
 
 ```bash
-$ pnpm install
+pnpm dev
 ```
 
-### Development
+## Portable Build
 
 ```bash
-$ pnpm dev
+pnpm build:portable
+pnpm verify:portable
 ```
 
-### Build
+The portable output is written to `dist/win-portable`. Users can start it with `ShopRPA.cmd`.
+
+## Windows Installer
 
 ```bash
-# For windows
-$ pnpm build:win
-
-# For macOS
-$ pnpm build:mac
-
-# For Linux
-$ pnpm build:linux
+pnpm doctor:installer
+pnpm build:win
 ```
+
+The installer build uses `electron-builder` and requires a Windows host where `node.exe` can launch `app-builder.exe` through child processes. If this preflight fails with `EPERM`, use the portable build or run the installer build outside the restricted host policy.

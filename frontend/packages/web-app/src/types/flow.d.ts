@@ -1,4 +1,4 @@
-﻿declare namespace RPA {
+declare namespace RPA {
   namespace Flow {
     type ProcessModuleType = 'process' | 'module'
 

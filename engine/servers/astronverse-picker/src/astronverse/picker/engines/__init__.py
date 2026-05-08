@@ -73,7 +73,7 @@ class RecordPickerAdapter:
             start_control = UIAOperate.get_windows_by_point(current_point)
             if not start_control:
                 logger.info(f"가져오기 위치에서uia-control출력오류{self.picker_core.last_point}")
-                raise Exception("선택변환기기출력오류, 요청 출력목록다시 열기 ")
+                raise Exception("선택 변환기에서 요소를 가져오지 못했습니다. 선택 목록을 다시 여세요.")
 
             process_id = UIAOperate.get_process_id(start_control)
             process_info = find_real_application_process(process_id)
@@ -254,7 +254,7 @@ class RecordManager:
             return OperationResult.success().to_dict()
         except Exception as e:
             logger.info(f' "error": f"불가열기 기록제어, 현재상태: {self.state.value} {e}"')
-            return OperationResult.error("불가열기 기록제어, 출력예외").to_dict()
+            return OperationResult.error("기록 제어를 시작하지 못했습니다.").to_dict()
 
     async def _handle_pause(self) -> dict[str, Any]:
         """관리일시중지기록제어"""
@@ -384,7 +384,7 @@ class RecordManager:
                 if self.record_adapter:
                     result: DrawResult = self.record_adapter.draw_for_record(self.svc, self.highlight_client, draw_data)
                 else:
-                    raise Exception("적음선택변환기기...")
+                    raise Exception("선택 변환기가 초기화되지 않았습니다.")
 
                 # 업데이트현재상태
                 if result.success and result.rect:

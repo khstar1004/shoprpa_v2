@@ -1,4 +1,4 @@
-﻿<script lang="ts" setup>
+<script lang="ts" setup>
 import { CodeEditor } from '@rpa/components'
 import { useDark } from '@vueuse/core'
 import { message } from 'ant-design-vue'
@@ -94,7 +94,7 @@ const handleRun = throttle(async () => {
         await installAllPackages()
       }
       catch (error) {
-        console.error('설치실패:', error)
+        console.error('설치 실패:', error)
         return
       }
     }
@@ -104,7 +104,7 @@ const handleRun = throttle(async () => {
     debug([componentId])
   }
   catch (error) {
-    console.error('실행실패:', error)
+    console.error('실행 실패:', error)
   }
 }, 1500, { leading: true, trailing: false })
 

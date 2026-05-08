@@ -336,7 +336,6 @@ public class AppMarketServiceImpl implements AppMarketService {
         appMarketDao.deleteMarket(appMarket.getMarketId());
         appMarketUserDao.deleteAllUser(appMarket.getMarketId());
 
-        // TODO : v 5.0 후추가  삭제모든의resource 및 닫기 의version
         //        appMarketResourceDao.deleteResource(appMarket.getMarketId());
         //        appMarketVersionDao.deletVersion(appMarket.getMarketId());
 

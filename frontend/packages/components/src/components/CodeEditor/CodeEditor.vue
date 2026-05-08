@@ -49,8 +49,7 @@ lspClient.requestNotification({
       },
     ]
   },
-  onWaitingForDiagnostics: (isWaiting) => {
-    console.log('isWaitingForResponse: ', isWaiting)
+  onWaitingForDiagnostics: (_isWaiting) => {
   },
 })
 

@@ -1,4 +1,4 @@
-﻿import { Node } from '@tiptap/core'
+import { Node } from '@tiptap/core'
 import { VueNodeViewRenderer } from '@tiptap/vue-3'
 
 import DescriptionDom from '../DescriptionNode.vue'
@@ -106,7 +106,7 @@ export const DescriptionNode = Node.create({
   addCommands() {
     return {
       insertDescriptionNode: (attrs: any = {}) => ({ chain }: any) => {
-        const content = attrs.content || '가능요소의'
+        const content = attrs.content || '선택한 요소'
         return chain()
           .insertContent({
             type: this.name,

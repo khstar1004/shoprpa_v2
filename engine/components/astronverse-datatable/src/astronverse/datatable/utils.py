@@ -13,11 +13,10 @@ from astronverse.datatable.error import (
 
 def validate(row=1, col="A"):
     """
-    인증행열형식
+    Validate row and column values.
     :param row: 행
     :param col: 열
     """
-    print(f"Validating row: {row}, col: {col}")
     try:
         row = int(row)
     except ValueError:
@@ -55,7 +54,7 @@ def validate_end_col(start_col, end_col):
     start_index = col_to_index(start_col)
     end_index = col_to_index(end_col)
     if end_index < start_index:
-        raise ValueError("끝 열할 수 없음소시작 열")
+        raise ValueError("끝 열은 시작 열보다 작을 수 없습니다")
 
 
 def validate_end_row(start_row, end_row):
@@ -65,11 +64,11 @@ def validate_end_row(start_row, end_row):
     except ValueError:
         raise DATAFRAME_EXPECTION(ROW_FORMAT_ERROR.format(end_row), "행형식오류")
     if end_row < start_row:
-        raise ValueError("끝 행할 수 없음소시작 행")
+        raise ValueError("끝 행은 시작 행보다 작을 수 없습니다")
 
 
 def col_to_index(col="A") -> int:
-    """를열변환로검색"""
+    """Convert an Excel column name to a 1-based column index."""
     try:
         col = int(col)
     except ValueError:
@@ -87,7 +86,7 @@ def col_to_index(col="A") -> int:
 
 
 def index_to_col(index=1) -> str:
-    """를검색변환로열"""
+    """Convert a zero-based index to an Excel column name."""
     col = ""
     index += 1  # 변환로1-based검색
     while index > 0:
@@ -98,8 +97,8 @@ def index_to_col(index=1) -> str:
 
 def validate_formula(formula: str):
     """
-    인증방식형식
-    :param formula: 방식문자열
+    Validate an Excel formula string.
+    :param formula: formula string
     """
     if not isinstance(formula, str) or not formula.startswith("="):
         raise DATAFRAME_EXPECTION(FORMULA_FORMAT_ERROR.format(formula), "방식형식오류")
@@ -151,7 +150,7 @@ def filter_data(
 def value_check(
     value, condition_type: ConditionType, condition_value: str, date_value, date_range, is_case_sensitive: bool
 ) -> bool:
-    """필터링관리기기"""
+    """Return whether a value matches the requested filter condition."""
     val = value
     cond_val = condition_value
 
@@ -231,7 +230,9 @@ def value_check(
 
 
 def ensure_xlsx_file(file_path):
-    # 결과가파일찾을 수 없습니다또는아니오예합치기법xlsx, 이면새생성일개
+    parent_dir = os.path.dirname(os.path.abspath(file_path))
+    if parent_dir:
+        os.makedirs(parent_dir, exist_ok=True)
     if not os.path.exists(file_path) or not is_valid_xlsx(file_path):
         wb = openpyxl.Workbook()
         wb.save(file_path)

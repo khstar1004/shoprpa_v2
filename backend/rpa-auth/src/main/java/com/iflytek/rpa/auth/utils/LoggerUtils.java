@@ -126,7 +126,7 @@ public class LoggerUtils {
             printStream.close();
             out.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            LoggerFactory.getLogger(LoggerUtils.class).warn("예외 정보 스트림 정리 실패", e);
         }
         return rs;
     }

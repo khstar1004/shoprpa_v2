@@ -27,7 +27,7 @@ public class EnterpriseAuthenticationServiceImpl implements AuthenticationServic
 
     @Override
     public String preAuthenticate(LoginDto loginDto, HttpServletRequest request) {
-        // TODO: SSO인증
+        // Enterprise SSO adapter is intentionally fail-closed until an OAuth2/OIDC provider is configured.
         // 1. 재지정까지SSO로그인
         // 2. 관리OAuth2권한 부여코드돌아가기조정
         // 3. token
@@ -37,7 +37,7 @@ public class EnterpriseAuthenticationServiceImpl implements AuthenticationServic
 
     @Override
     public User loginWithTenant(String tempToken, String tenantId, HttpServletRequest servletRequest) {
-        // TODO: SSO정상방식로그인
+        // Enterprise SSO adapter is intentionally fail-closed until an OAuth2/OIDC provider is configured.
         // 1. 인증시인증
         // 2. 에서저장중가져오기사용자 정보(패키지platform)
         // 3. 까지UAP생성session
@@ -49,25 +49,24 @@ public class EnterpriseAuthenticationServiceImpl implements AuthenticationServic
     @Override
     @Deprecated
     public User login(LoginDto loginDto, HttpServletRequest servletRequest) {
-        // 완료, 사용로그인
-        return null;
+        throw new UnsupportedOperationException("SSO 모드는 기존 로그인 경로를 지원하지 않습니다");
     }
 
     @Override
     public String getPhoneByTempToken(String tempToken) {
-        // TODO: 에서저장중가져오기사용자휴대폰 번호
+        // Enterprise SSO temp-token lookup is not available without a configured provider.
         throw new UnsupportedOperationException("가져오기휴대폰 번호공가능대기");
     }
 
     @Override
     public LoginDto getLoginInfoByTempToken(String tempToken) {
-        // TODO: 에서저장중가져오기사용자로그인정보
+        // Enterprise SSO temp-token lookup is not available without a configured provider.
         throw new UnsupportedOperationException("가져오기로그인정보공가능대기");
     }
 
     @Override
     public AppResponse<List<Tenant>> getTenantList(String tempToken, HttpServletRequest request) {
-        // TODO: SSO가져오기테넌트목록 
+        // Enterprise SSO tenant lookup is not available without a configured provider.
         // 1. 에서시인증중가져오기사용자 정보
         // 2. 호출SSO API가져오기테넌트목록
         log.warn("SSO방식가져오기테넌트목록공가능대기, 시인증: {}", tempToken);
@@ -94,8 +93,7 @@ public class EnterpriseAuthenticationServiceImpl implements AuthenticationServic
 
     @Override
     public boolean queryUserExist(String loginName) {
-        // TODO: 조회사용자여부저장에서
-        return false;
+        throw new UnsupportedOperationException("SSO 모드는 로컬 사용자 조회를 지원하지 않습니다");
     }
 
     @Override
@@ -105,7 +103,7 @@ public class EnterpriseAuthenticationServiceImpl implements AuthenticationServic
 
     @Override
     public AppResponse<Boolean> refreshToken(HttpServletRequest request, String accessToken) {
-        return null;
+        return AppResponse.error(ErrorCodeEnum.E_SERVICE_NOT_SUPPORT, "SSO 모드는 토큰 새로고침을 지원하지 않습니다");
     }
 
     @Override
@@ -139,6 +137,6 @@ public class EnterpriseAuthenticationServiceImpl implements AuthenticationServic
 
     @Override
     public AppResponse<String> addUser(AddUserDto user, HttpServletRequest request) {
-        return null;
+        return AppResponse.error(ErrorCodeEnum.E_SERVICE_NOT_SUPPORT, "SSO 모드는 직접 사용자 생성을 지원하지 않습니다");
     }
 }

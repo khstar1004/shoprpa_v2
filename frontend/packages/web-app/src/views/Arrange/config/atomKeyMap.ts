@@ -1,4 +1,4 @@
-﻿export const If = 'Code.If'
+export const If = 'Code.If'
 export const IfEnd = 'Code.IfEnd'
 export const ElseIf = 'Code.ElseIf'
 export const ElseIfEnd = 'Code.ElseIfEnd'
@@ -22,7 +22,6 @@ export const ForListEnd = 'Code.ForListEnd'
 export const While = 'Code.While'
 export const WhileEnd = 'Code.WhileEnd'
 export const ForEnd = 'Code.ForEnd'
-// const Netbreak = 'Code.Netbreak' // 네트워크중단감지 TODO
 // const NetbreakEnd = 'Code.NetbreakEnd'
 export const Break = 'Code.Break'
 export const Continue = 'Code.Continue'
@@ -56,84 +55,79 @@ export const TRY_END_TEXT = 'tryend'
 export const GROUP_TEXT = 'group'
 export const GROUP_END_TEXT = 'groupend'
 
-// 세트유형점key대상의결과점key
 export const LOOP_END_MAP = {
- [If]: IfEnd,
- [Try]: Catch,
- [Catch]: TryEnd,
- // [Finally]: TryEnd,
- [ForStep]: ForEnd,
- [ForDict]: ForEnd,
- [ForList]: ForEnd,
- [ForExcelContent]: ForEnd,
- [ForBrowserSimilar]: ForEnd,
- [ForDataTableLoop]: ForEnd,
- [While]: ForEnd,
- [Group]: GroupEnd,
- // [Netbreak]: NetbreakEnd, // 네트워크중단감지 TODO
- [CvImageExist]: IfEnd,
- [FileExist]: IfEnd,
- [FolderExist]: IfEnd,
- [WindowExist]: IfEnd,
+  [If]: IfEnd,
+  [Try]: Catch,
+  [Catch]: TryEnd,
+  // [Finally]: TryEnd,
+  [ForStep]: ForEnd,
+  [ForDict]: ForEnd,
+  [ForList]: ForEnd,
+  [ForExcelContent]: ForEnd,
+  [ForBrowserSimilar]: ForEnd,
+  [ForDataTableLoop]: ForEnd,
+  [While]: ForEnd,
+  [Group]: GroupEnd,
+  [CvImageExist]: IfEnd,
+  [FileExist]: IfEnd,
+  [FolderExist]: IfEnd,
+  [WindowExist]: IfEnd,
 }
 
-// 결과점key대상의세트유형점key
 export const LOOP_START_MAP = {
- [IfEnd]: If,
- [TryEnd]: Try,
- [WhileEnd]: While,
- [GroupEnd]: Group,
- // [NetbreakEnd]: Netbreak, // 네트워크중단감지 TODO
- [CvImageExistEnd]: CvImageExist,
+  [IfEnd]: If,
+  [TryEnd]: Try,
+  [WhileEnd]: While,
+  [GroupEnd]: Group,
+  [CvImageExistEnd]: CvImageExist,
 }
 
-// 매칭결과점후다음점의유형
 export const hideEndNextMap = {
- [IfEnd]: [ElseIf, Else],
- [ElseIfEnd]: [ElseIf, Else],
- [TryEnd]: [Catch, Finally],
- [CatchEnd]: [Finally],
+  [IfEnd]: [ElseIf, Else],
+  [ElseIfEnd]: [ElseIf, Else],
+  [TryEnd]: [Catch, Finally],
+  [CatchEnd]: [Finally],
 }
 
 export const LOOP_END = [
- IfEnd,
- ElseIfEnd,
- ElseEnd,
- TryEnd,
- CatchEnd,
- FinallyEnd,
- ForStepEnd,
- ForListEnd,
- ForDictEnd,
- ForEnd,
- WhileEnd,
- GroupEnd,
- CvImageExistEnd,
+  IfEnd,
+  ElseIfEnd,
+  ElseEnd,
+  TryEnd,
+  CatchEnd,
+  FinallyEnd,
+  ForStepEnd,
+  ForListEnd,
+  ForDictEnd,
+  ForEnd,
+  WhileEnd,
+  GroupEnd,
+  CvImageExistEnd,
 ]
 
 export const CONVERT_MAP = {
- [If]: IF_TEXT,
- [ElseIf]: ELSE_IF_TEXT,
- [Else]: ELSE_TEXT,
- [IfEnd]: IF_END_TEXT,
- [Try]: TRY_TEXT,
- [Catch]: CATCH_TEXT,
- [Finally]: FINALLY_TEXT,
- [TryEnd]: TRY_END_TEXT,
- [ForStep]: FOR_STEP_TEXT,
- [ForDict]: FOR_DICT_TEXT,
- [ForList]: FOR_LIST_TEXT,
- [ForExcelContent]: FOR_EXCEL_CONTENT,
- [ForBrowserSimilar]: FOR_BRO_SIMILAR,
- [ForDataTableLoop]: FOR_DATA_TABLE_LOOP,
- [ForEnd]: FOR_END_TEXT,
- [While]: WHILE_TEXT,
- [Group]: GROUP_TEXT,
- [GroupEnd]: GROUP_END_TEXT,
- [CvImageExist]: IF_TEXT,
- [FileExist]: IF_TEXT,
- [FolderExist]: IF_TEXT,
- [WindowExist]: IF_TEXT,
+  [If]: IF_TEXT,
+  [ElseIf]: ELSE_IF_TEXT,
+  [Else]: ELSE_TEXT,
+  [IfEnd]: IF_END_TEXT,
+  [Try]: TRY_TEXT,
+  [Catch]: CATCH_TEXT,
+  [Finally]: FINALLY_TEXT,
+  [TryEnd]: TRY_END_TEXT,
+  [ForStep]: FOR_STEP_TEXT,
+  [ForDict]: FOR_DICT_TEXT,
+  [ForList]: FOR_LIST_TEXT,
+  [ForExcelContent]: FOR_EXCEL_CONTENT,
+  [ForBrowserSimilar]: FOR_BRO_SIMILAR,
+  [ForDataTableLoop]: FOR_DATA_TABLE_LOOP,
+  [ForEnd]: FOR_END_TEXT,
+  [While]: WHILE_TEXT,
+  [Group]: GROUP_TEXT,
+  [GroupEnd]: GROUP_END_TEXT,
+  [CvImageExist]: IF_TEXT,
+  [FileExist]: IF_TEXT,
+  [FolderExist]: IF_TEXT,
+  [WindowExist]: IF_TEXT,
 }
 
 export const IS_SAME_GROUP = [GROUP_TEXT, IF_TEXT, ELSE_IF_TEXT, ELSE_TEXT, TRY_TEXT, CATCH_TEXT, FINALLY_TEXT, FOR_STEP_TEXT, FOR_DICT_TEXT, FOR_LIST_TEXT, WHILE_TEXT]
@@ -149,24 +143,24 @@ export const hideEndKeys = Object.keys(hideEndNextMap)
  * FINALLY의전점예TRY, CATCH
  */
 export const orderMap = {
- [Else]: {
- pre: [If, ElseIf],
- preDesc: '"else"컴포넌트전단계컴포넌트예"if건파일"컴포넌트또는"esle if"컴포넌트',
- },
- [ElseIf]: {
- pre: [If, ElseIf],
- preDesc: '"else if"컴포넌트전단계컴포넌트예"if건파일"컴포넌트또는"esle if"컴포넌트',
- },
- [Try]: {
- next: [Catch, Finally],
- nextDesc: '"try"컴포넌트후단계컴포넌트예"catch"컴포넌트또는"finally"컴포넌트',
- },
- [Catch]: {
- pre: [Try],
- preDesc: '"catch"컴포넌트전단계컴포넌트예"try"컴포넌트',
- },
- [Finally]: {
- pre: [Try, Catch],
- preDesc: '"finally"컴포넌트전단계컴포넌트예"try"컴포넌트또는"catch"컴포넌트',
- },
+  [Else]: {
+    pre: [If, ElseIf],
+    preDesc: '"else"컴포넌트전단계컴포넌트예"if건파일"컴포넌트또는"esle if"컴포넌트',
+  },
+  [ElseIf]: {
+    pre: [If, ElseIf],
+    preDesc: '"else if"컴포넌트전단계컴포넌트예"if건파일"컴포넌트또는"esle if"컴포넌트',
+  },
+  [Try]: {
+    next: [Catch, Finally],
+    nextDesc: '"try"컴포넌트후단계컴포넌트예"catch"컴포넌트또는"finally"컴포넌트',
+  },
+  [Catch]: {
+    pre: [Try],
+    preDesc: '"catch"컴포넌트전단계컴포넌트예"try"컴포넌트',
+  },
+  [Finally]: {
+    pre: [Try, Catch],
+    preDesc: '"finally"컴포넌트전단계컴포넌트예"try"컴포넌트또는"catch"컴포넌트',
+  },
 }

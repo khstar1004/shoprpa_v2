@@ -318,14 +318,16 @@ public class UAPAuthenticationServiceImpl implements AuthenticationService {
     @Override
     @Deprecated
     public User login(LoginDto loginDto, HttpServletRequest servletRequest) {
-        // 완료, 사용로그인
-        return null;
+        throw new UnsupportedOperationException("기존 로그인 경로는 지원하지 않습니다. pre-authenticate와 login을 사용하세요");
     }
 
     @Override
     public LoginDto getLoginInfoByTempToken(String tempToken) {
-        // TODO: 에서저장중가져오기사용자로그인정보
-        throw new UnsupportedOperationException("가져오기로그인정보공가능대기");
+        LoginDto loginDto = getLoginDtoByTempToken(tempToken);
+        if (loginDto == null) {
+            throw new RuntimeException("시인증완료경과또는없음");
+        }
+        return loginDto;
     }
 
     @Override
@@ -406,13 +408,13 @@ public class UAPAuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public String register(RegisterDto registerDto, HttpServletRequest request) {
-        // TODO: UAP회원가입
+        // UAP private mode manages registration outside this login adapter.
         throw new UnsupportedOperationException("UAP회원가입공가능대기");
     }
 
     @Override
     public User setPasswordAndLogin(String tempToken, String password, String tenantId, HttpServletRequest request) {
-        // TODO: UAP비밀번호로그인
+        // UAP private mode does not create a password during this flow.
         throw new UnsupportedOperationException("UAP비밀번호공가능대기");
     }
 
@@ -435,7 +437,10 @@ public class UAPAuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public AppResponse<Boolean> refreshToken(HttpServletRequest request, String accessToken) {
-        return null;
+        if (checkLoginStatus(request)) {
+            return AppResponse.success(true);
+        }
+        return AppResponse.error(ErrorCodeEnum.E_NOT_LOGIN, "로그인되지 않았습니다");
     }
 
     /**
@@ -784,6 +789,19 @@ public class UAPAuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public AppResponse<String> addUser(AddUserDto user, HttpServletRequest request) {
-        return null;
+        if (user == null) {
+            return AppResponse.error(ErrorCodeEnum.E_PARAM_LOSE, "사용자 매개변수는 비워 둘 수 없습니다");
+        }
+        if (StringUtils.hasText(user.getPassword())
+                && StringUtils.hasText(user.getConfirmPassword())
+                && !user.getPassword().equals(user.getConfirmPassword())) {
+            return AppResponse.error(ErrorCodeEnum.E_PARAM, "입력한 비밀번호가 올바르지 않습니다");
+        }
+        try {
+            return userServiceImpl.addUser(user, request);
+        } catch (Exception e) {
+            log.error("UAP 사용자 생성 실패, 휴대폰 번호: {}", user.getPhone(), e);
+            return AppResponse.error(ErrorCodeEnum.E_SERVICE, "사용자 생성 실패: " + e.getMessage());
+        }
     }
 }

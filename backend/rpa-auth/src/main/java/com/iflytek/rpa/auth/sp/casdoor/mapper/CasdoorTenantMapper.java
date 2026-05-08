@@ -34,7 +34,6 @@ public class CasdoorTenantMapper {
 
         com.iflytek.rpa.auth.core.entity.Tenant tenant = new com.iflytek.rpa.auth.core.entity.Tenant();
 
-        // TODO: id필드필요근거서비스완료, Casdoor의name가능로일식별자
         // 시사용name로id, 후가능필요근거서비스조정
         tenant.setId(casdoorOrg.name);
 
@@ -61,14 +60,12 @@ public class CasdoorTenantMapper {
             tenant.setIsDefaultTenant(false); // 아니요예테넌트
         }
 
-        // TODO: owner필드필요근거서비스지정, 가능테이블테넌트모든또는식별자
         // 시가능으로저장까지remark중, 또는필요근거서비스
         if (casdoorOrg.owner != null && !casdoorOrg.owner.isEmpty()) {
             // 가능으로를owner정보저장까지remark중
             tenant.setRemark("owner:" + casdoorOrg.owner);
         }
 
-        // TODO: 으로아래필드에서Casdoor Organization중있음직선연결, 필요근거서비스
         // creator필드시빈, 필요근거서비스
         // tenantType필드시빈, 필요근거서비스
         // websiteUrl, tags, languages대기필드가능으로저장까지remark중
@@ -109,12 +106,10 @@ public class CasdoorTenantMapper {
 
         org.casbin.casdoor.entity.Organization casdoorOrg = new org.casbin.casdoor.entity.Organization();
 
-        // TODO: name필드필요, 사용tenantCode로name(테넌트코드로Casdoor의name)
         // 결과가tenantCode비어 있습니다, 가능필요사용id또는필드, 필요근거서비스조정
         if (tenant.getTenantCode() != null && !tenant.getTenantCode().isEmpty()) {
             casdoorOrg.name = tenant.getTenantCode();
         } else {
-            // TODO: 결과가tenantCode비어 있습니다, 사용id로name, 필요서비스
             casdoorOrg.name = tenant.getId() != null ? tenant.getId() : "";
         }
 
@@ -130,20 +125,19 @@ public class CasdoorTenantMapper {
         casdoorOrg.createdTime = formatDateTime(tenant.getCreateTime());
         // Casdoor Organization있음updatedTime필드, 사용createdTime
 
-        // TODO: owner필드필요서비스, 가능으로에서remark중파싱
         // 시빈, 필요근거서비스
         casdoorOrg.owner = "";
 
         // 으로아래필드에서Casdoor Organization중필요값
-        casdoorOrg.websiteUrl = ""; // TODO: 가능으로에서remark중파싱websiteUrl, 필요근거서비스
+        casdoorOrg.websiteUrl = "";
         casdoorOrg.favicon = "";
-        casdoorOrg.passwordType = ""; // TODO: 필요근거서비스비밀번호유형
+        casdoorOrg.passwordType = "";
         casdoorOrg.passwordSalt = "";
         casdoorOrg.passwordOptions = new String[0];
         casdoorOrg.countryCodes = new String[0];
         casdoorOrg.defaultAvatar = "";
-        casdoorOrg.defaultApplication = ""; // TODO: 필요근거서비스사용
-        casdoorOrg.tags = new String[0]; // TODO: 가능으로에서remark중파싱tags, 필요근거서비스
+        casdoorOrg.defaultApplication = "";
+        casdoorOrg.tags = new String[0];
         casdoorOrg.languages = new String[0];
         casdoorOrg.themeData = null;
         casdoorOrg.masterPassword = "";

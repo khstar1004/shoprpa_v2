@@ -19,8 +19,8 @@ describe('contentInject', () => {
     expect(info.xpath).toBeDefined()
     expect(info.cssSelector).toBeDefined()
     expect(info.pathDirs).toBeDefined()
-    expect(info.tag).toBe('요소')
-    expect(info.text).toBe('미완료알림이름')
+    expect(info.tag).toBe('영역')
+    expect(info.text).toBe('텍스트 없음')
   })
 
   it('dispatchMouseSequence should dispatch events', () => {

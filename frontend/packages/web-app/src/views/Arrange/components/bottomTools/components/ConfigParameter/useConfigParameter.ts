@@ -1,4 +1,4 @@
-﻿import { createInjectionState, reactiveComputed, useToggle } from '@vueuse/core'
+import { createInjectionState, reactiveComputed, useToggle } from '@vueuse/core'
 import { message } from 'ant-design-vue'
 import { useTranslation } from 'i18next-vue'
 import { find, isEmpty } from 'lodash-es'
@@ -14,67 +14,67 @@ import Manager from './Manager.vue'
 import RightExtra from './RightExtra.vue'
 
 const [useProvideConfigParameter, useConfigParameter] = createInjectionState(() => {
- const { t } = useTranslation()
- const processStore = useProcessStore()
- const searchText = ref('')
+  const { t } = useTranslation()
+  const processStore = useProcessStore()
+  const searchText = ref('')
 
- const [isQuoted, toggleQuoted] = useToggle(false) // 여부열기시작조회사용
- const quotedData = shallowRef<{ name: string, items: Array<PickUseItemType> }>()
+  const [isQuoted, toggleQuoted] = useToggle(false) // 여부열기시작조회사용
+  const quotedData = shallowRef<{ name: string, items: Array<PickUseItemType> }>()
 
- let findQuotedRow: RPA.ConfigParamData | null = null
+  let findQuotedRow: RPA.ConfigParamData | null = null
 
- const config: TabConfig = reactiveComputed(() => ({
- text: processStore.isComponent && processStore.activeProcess?.isMain ? 'components.componentAttribute' : 'configParameters',
- key: 'config-params',
- icon: processStore.isComponent && processStore.activeProcess?.isMain ? 'bottom-menu-component-attribute-manage' : 'bottom-menu-config-param-manage',
- component: Manager,
- rightExtra: RightExtra,
- }))
+  const config: TabConfig = reactiveComputed(() => ({
+    text: processStore.isComponent && processStore.activeProcess?.isMain ? 'components.componentAttribute' : 'configParameters',
+    key: 'config-params',
+    icon: processStore.isComponent && processStore.activeProcess?.isMain ? 'bottom-menu-component-attribute-manage' : 'bottom-menu-config-param-manage',
+    component: Manager,
+    rightExtra: RightExtra,
+  }))
 
- watch(() => processStore.activeProcessId, () => {
- toggleQuoted(false)
- })
+  watch(() => processStore.activeProcessId, () => {
+    toggleQuoted(false)
+  })
 
- const findQuoted = (row?: RPA.ConfigParamData) => {
- findQuotedRow = row || findQuotedRow
- const processData = useFlowStore().simpleFlowUIData
+  const findQuoted = (row?: RPA.ConfigParamData) => {
+    findQuotedRow = row || findQuotedRow
+    const processData = useFlowStore().simpleFlowUIData
 
- const list = processData.reduce((acc, node, index) => {
- const formItems = [...node?.inputList, ...node?.outputList, ...node?.advanced]
- const findItem = formItems.find(item => Array.isArray(item.value) && find(item.value, { type: 'p_var', value: findQuotedRow.varName }))
- if (findItem) {
- acc.push({
- ...node,
- index: index + 1,
- level: 1,
- })
- }
- return acc
- }, [])
+    const list = processData.reduce((acc, node, index) => {
+      const formItems = [...node?.inputList, ...node?.outputList, ...node?.advanced]
+      const findItem = formItems.find(item => Array.isArray(item.value) && find(item.value, { type: 'p_var', value: findQuotedRow.varName }))
+      if (findItem) {
+        acc.push({
+          ...node,
+          index: index + 1,
+          level: 1,
+        })
+      }
+      return acc
+    }, [])
 
- const items = isEmpty(list)
- ? []
- : [{
- processId: processStore.activeProcess.resourceId,
- processName: processStore.activeProcess.name,
- atoms: list,
- }]
+    const items = isEmpty(list)
+      ? []
+      : [{
+          processId: processStore.activeProcess.resourceId,
+          processName: processStore.activeProcess.name,
+          atoms: list,
+        }]
 
- quotedData.value = { name: findQuotedRow.varName, items }
- if (!row) {
- message.success(t('common.refreshSuccess'))
- }
- toggleQuoted(true)
- }
+    quotedData.value = { name: findQuotedRow.varName, items }
+    if (!row) {
+      message.success(t('common.refreshSuccess'))
+    }
+    toggleQuoted(true)
+  }
 
- return {
- quotedData,
- config,
- searchText,
- isQuoted,
- toggleQuoted,
- findQuoted,
- }
+  return {
+    quotedData,
+    config,
+    searchText,
+    isQuoted,
+    toggleQuoted,
+    findQuoted,
+  }
 })
 
 export { useConfigParameter, useProvideConfigParameter }

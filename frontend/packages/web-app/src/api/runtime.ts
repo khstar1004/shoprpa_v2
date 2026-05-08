@@ -1,5 +1,7 @@
-import { utilsManager } from '@/platform'
 import { storage } from '@/utils/storage'
+
+import { utilsManager } from '@/platform'
+import { isWorkflowEditorSmokeMode } from '@/smoke/workflowEditorSmoke'
 
 const DEFAULT_LOCAL_ROUTE_PORT = 13159
 const DEFAULT_REMOTE_GATEWAY_PORT = 32742
@@ -17,6 +19,9 @@ function readPort(url?: string): number | null {
 }
 
 export async function hasLocalRuntimeRoute(): Promise<boolean> {
+  if (isWorkflowEditorSmokeMode())
+    return false
+
   if (utilsManager.isBrowser)
     return false
 

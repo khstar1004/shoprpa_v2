@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { Button, Checkbox, message } from 'ant-design-vue'
 import { useTranslation } from 'i18next-vue'
 import type { PropType } from 'vue'
@@ -42,8 +42,6 @@ async function handleSubmit(): Promise<void> {
       enableLastVersion: enableLastVersion.value,
     }),
   }
-  console.log('lastPublishData', lastPublishData)
-
   const res = await publishRobot(lastPublishData)
   message.success(t('publish.success'))
 
@@ -98,7 +96,7 @@ async function handleSubmit(): Promise<void> {
   margin-right: 36px;
 }
 .publish-content {
-  &::webkit-scrollbar {
+  &::-webkit-scrollbar {
     display: none;
   }
 }

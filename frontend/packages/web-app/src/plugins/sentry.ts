@@ -1,4 +1,4 @@
-﻿import type { User } from '@sentry/vue'
+import type { User } from '@sentry/vue'
 import type { App } from 'vue'
 
 import { isProd, isPublish } from '@/utils/env'

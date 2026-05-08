@@ -1,4 +1,4 @@
-﻿import { onBeforeUnmount, ref } from 'vue'
+import { onBeforeUnmount, ref } from 'vue'
 
 import { getKeyboard, resetKeyboard } from '@/utils/hotkeys'
 

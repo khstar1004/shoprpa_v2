@@ -1,4 +1,4 @@
-﻿import { ATOM_FORM_TYPE } from '@/constants/atom'
+import { ATOM_FORM_TYPE } from '@/constants/atom'
 import { getRealValue } from '@/views/Arrange/components/atomForm/hooks/usePreview'
 
 // 지정테이블단일정렬

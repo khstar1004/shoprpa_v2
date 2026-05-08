@@ -1,4 +1,4 @@
-﻿<script lang="ts" setup>
+<script lang="ts" setup>
 import { useToggle } from '@vueuse/core'
 import { computed, watch } from 'vue'
 import { onBeforeRouteLeave } from 'vue-router'

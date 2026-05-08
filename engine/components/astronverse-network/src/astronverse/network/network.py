@@ -1,4 +1,5 @@
 import os.path
+from urllib.parse import unquote, urlparse
 
 from astronverse.actionlib import AtomicFormType, AtomicFormTypeMeta, AtomicLevel, DynamicsItem
 from astronverse.actionlib.atomic import atomicMg
@@ -98,7 +99,7 @@ class Network:
                 if not file_is_exist(file_path):
                     raise BaseException(
                         FILE_EXIST_FORMAT.format(file_path),
-                        "지정파일찾을 수 없습니다, 확인하세요파일 경로",
+                        "지정한 파일을 찾을 수 없습니다. 파일 경로를 확인하세요.",
                     )
             http_response = NetworkCore.post_request(
                 url=url, header=headers, body=body, files=file_path, timeout=time_out
@@ -126,8 +127,9 @@ class Network:
             if not folder_is_exist(save_path):
                 raise BaseException(
                     FOLDER_EXIST_FORMAT.format(save_path),
-                    "폴더찾을 수 없습니다, 확인하세요경로정보",
+                    "폴더를 찾을 수 없습니다. 경로 정보를 확인하세요.",
                 )
+            save_name = (save_name or "").strip() or "response.txt"
             save_path = os.path.join(save_path, save_name)
             try:
                 with open(save_path, "w", encoding="utf-8") as f:
@@ -135,7 +137,7 @@ class Network:
                     f.write(response_str)
                 return save_path
             except Exception as e:
-                raise ValueError("파일입력실패, 확인하세요파일유형여부정상")
+                raise ValueError("파일 저장에 실패했습니다. 파일 형식과 경로를 확인하세요.")
         else:
             return http_response
 
@@ -186,11 +188,12 @@ class Network:
             elif state_type == StateType.ERROR:
                 raise BaseException(
                     FOLDER_EXIST_FORMAT.format(dst_dir=dst_dir),
-                    "지정디렉터리찾을 수 없습니다, 확인하세요경로정보",
+                    "지정한 디렉터리를 찾을 수 없습니다. 경로 정보를 확인하세요.",
                 )
 
         if not rename:
-            file_name = url.split("/")[-1]
+            url_path = unquote(urlparse(url).path).rstrip("/")
+            file_name = os.path.basename(url_path) or "download"
         else:
             file_name = rename
 
@@ -210,4 +213,4 @@ class Network:
             http_download_path = NetworkCore.http_download(url=url, dst_path=download_path)
             return http_download_path
         except BaseException as e:
-            raise BaseException(HTTP_DOWNLOAD_FORMAT.format(e), "파일다운로드실패")
+            raise BaseException(HTTP_DOWNLOAD_FORMAT.format(e), "파일 다운로드에 실패했습니다")

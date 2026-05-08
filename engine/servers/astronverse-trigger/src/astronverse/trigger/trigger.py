@@ -157,7 +157,7 @@ class Trigger:
             )
 
         else:
-            raise Exception("지원하지 않음의작업유형")
+            raise Exception("지원하지 않는 작업 유형입니다")
 
         self.tasks[trigger_id] = task
         return True

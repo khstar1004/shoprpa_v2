@@ -1,4 +1,4 @@
-﻿export const FILE_TYPE_IMG = {
+export const FILE_TYPE_IMG = {
   doc: new URL('../../assets/img/doc.png', import.meta.url).href,
   docx: new URL('../../assets/img/doc.png', import.meta.url).href,
   txt: new URL('../../assets/img/txt.png', import.meta.url).href,

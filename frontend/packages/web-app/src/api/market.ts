@@ -44,7 +44,6 @@ export function canAchieveApp(data) {
  * @description: 신청사용
  */
 export function useApplication(data) {
-  console.log('useApplication', data)
   return http.post('/api/robot/application/submit-use-application', data, { toast: false })
 }
 

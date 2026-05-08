@@ -99,9 +99,10 @@ class Agent:
             atomicMg.param("app_url", types="Str", required=False, level=AtomicLevel.ADVANCED),
             atomicMg.param("app_token", types="Str"),
             atomicMg.param("variable_name", types="Str", required=False),
-            atomicMg.param("variable_value", types="Str", required=False),
             atomicMg.param(
                 "variable_value",
+                types="Str",
+                required=False,
                 dynamics=[
                     DynamicsItem(
                         key="$this.variable_value.show",
@@ -171,8 +172,8 @@ class Agent:
     @atomicMg.atomic(
         "Agent",
         inputList=[
-            atomicMg.param("app_key", types="Str"),
-            atomicMg.param("app_secret", types="Str"),
+            atomicMg.param("api_key", types="Str"),
+            atomicMg.param("api_secret", types="Str"),
             atomicMg.param("flow_id", types="Str"),
             atomicMg.param(
                 "input_value",
@@ -180,9 +181,10 @@ class Agent:
                 formType=AtomicFormTypeMeta(type=AtomicFormType.INPUT.value),
             ),
             atomicMg.param("variable_name", types="Str", required=False),
-            atomicMg.param("variable_value", types="Str", required=False),
             atomicMg.param(
                 "variable_value",
+                types="Str",
+                required=False,
                 dynamics=[
                     DynamicsItem(
                         key="$this.variable_value.show",

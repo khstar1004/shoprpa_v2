@@ -24,8 +24,4 @@ public class ExampleConstants {
             put("c_param", CParam.class);
         }
     };
-
-    public static final String EXAMPLE_USER_NAME = "example-user";
-
-    public static final String WORKFLOWS_UPSERT_URL = "http://rpa-openapi:6699/workflows/upsert";
 }

@@ -11,12 +11,12 @@ from astronverse.dialog import *
 
 def wait_with_timeout(check_done: Callable[[], bool], reset_timeout_on_activity: bool, wait_time: int):
     """
-    대기대화상자결과, 지원사용자감지및시간 초과보관
+    대화상자 응답을 기다리되, 사용자의 마우스 활동이 있으면 제한 시간을 다시 계산합니다.
 
     Args:
-        check_done: 돌아가기조정데이터, 반환 True 테이블완료, False 테이블계속대기
-        reset_timeout_on_activity: 여부에서감지까지사용자(마우스)시재시간 초과계획시기기
-        wait_time: 시간 초과시간(초)
+        check_done: 응답 수신 여부를 반환하는 함수입니다.
+        reset_timeout_on_activity: 마우스 활동을 감지하면 제한 시간을 초기화할지 여부입니다.
+        wait_time: 제한 시간(초)입니다.
     """
     from pynput.mouse import Controller as MouseController
 
@@ -35,6 +35,13 @@ def wait_with_timeout(check_done: Callable[[], bool], reset_timeout_on_activity:
         if time.time() - start > wait_time:
             break
         time.sleep(0.1)
+
+
+def require_dialog_ws():
+    ws = atomicMg.cfg().get("WS", None)
+    if not ws:
+        raise RuntimeError("대화상자 UI 연결이 없습니다. ShopRPA 실행 환경에서 다시 시도하세요.")
+    return ws
 
 
 class Dialog:
@@ -129,7 +136,7 @@ class Dialog:
         outputList=[atomicMg.param("result_button", types="Str")],
     )
     def message_box(
-        box_title: str = "메시지안내",
+        box_title: str = "메시지 안내",
         message_type: MessageType = MessageType.MESSAGE,
         message_content: str = "",
         button_type: ButtonType = ButtonType.CONFIRM,
@@ -227,9 +234,9 @@ class Dialog:
         outputList=[atomicMg.param("input_content", types="Str")],
     )
     def input_box(
-        box_title: str = "입력대화상자",
+        box_title: str = "입력 대화상자",
         input_type: InputType = InputType.TEXT,
-        input_title: str = "입력란제목",
+        input_title: str = "입력 항목",
         default_input_text: str = "",
         default_input_pwd: str = "",
         preview_button=None,
@@ -260,9 +267,8 @@ class Dialog:
             "default_input": default_input,
             "outputkey": "input_content",
         }
-        ws = atomicMg.cfg().get("WS", None)
-        if ws:
-            ws.send_reply({"data": {"name": "userform", "option": payload}}, 600, callback_func)
+        ws = require_dialog_ws()
+        ws.send_reply({"data": {"name": "userform", "option": payload}}, 600, callback_func)
 
         done.wait()
         if res_e:
@@ -296,7 +302,7 @@ class Dialog:
         outputList=[atomicMg.param("select_result", types="Any")],
     )
     def select_box(
-        box_title: str = "선택대화상자",
+        box_title: str = "선택 대화상자",
         select_type: SelectType = SelectType.SINGLE,
         options: list = [],
         options_title: str = "",
@@ -322,9 +328,8 @@ class Dialog:
             "options_title": options_title,
             "outputkey": "select_result",
         }
-        ws = atomicMg.cfg().get("WS", None)
-        if ws:
-            ws.send_reply({"data": {"name": "userform", "option": payload}}, 600, callback_func)
+        ws = require_dialog_ws()
+        ws.send_reply({"data": {"name": "userform", "option": payload}}, 600, callback_func)
 
         done.wait()
         if res_e:
@@ -383,12 +388,12 @@ class Dialog:
         outputList=[atomicMg.param("select_time", types="Any")],
     )
     def select_time_box(
-        box_title: str = "날짜시간선택",
+        box_title: str = "날짜/시간 선택",
         time_type: TimeType = TimeType.TIME,
         time_format: TimeFormat = TimeFormat.YEAR_MONTH_DAY,
         default_time: str = "",
         default_time_range: list = ["", ""],
-        input_title: str = "입력란제목",
+        input_title: str = "입력 항목",
         preview_button: bool = None,
     ):
         done = threading.Event()
@@ -413,9 +418,8 @@ class Dialog:
             "input_title": input_title,
             "outputkey": "select_time",
         }
-        ws = atomicMg.cfg().get("WS", None)
-        if ws:
-            ws.send_reply({"data": {"name": "userform", "option": payload}}, 600, callback_func)
+        ws = require_dialog_ws()
+        ws.send_reply({"data": {"name": "userform", "option": payload}}, 600, callback_func)
 
         done.wait()
         if res_e:
@@ -495,8 +499,8 @@ class Dialog:
         outputList=[atomicMg.param("select_file", types="Any")],
     )
     def select_file_box(
-        box_title_file: str = "파일선택",
-        box_title_folder="폴더선택",
+        box_title_file: str = "파일 선택",
+        box_title_folder="폴더 선택",
         open_type: OpenType = OpenType.FILE,
         file_type: FileType = FileType.ALL,
         multiple_choice: bool = True,
@@ -532,9 +536,8 @@ class Dialog:
             "default_path": default_path,
             "outputkey": "select_file",
         }
-        ws = atomicMg.cfg().get("WS", None)
-        if ws:
-            ws.send_reply({"data": {"name": "userform", "option": payload}}, 600, callback_func)
+        ws = require_dialog_ws()
+        ws.send_reply({"data": {"name": "userform", "option": payload}}, 600, callback_func)
 
         done.wait()
         if res_e:
@@ -586,7 +589,7 @@ class Dialog:
         outputList=[atomicMg.param("dialog_result", types="DialogResult")],
     )
     def custom_box(
-        box_title: str = "지정대화상자",
+        box_title: str = "사용자 지정 대화상자",
         design_interface: dict = None,
         auto_check: bool = False,
         wait_time: int = 60,
@@ -623,7 +626,8 @@ class Dialog:
             raise Exception(res_e)
 
         if not res and auto_check:
-            if design_interface.get("value").get("table_required"):
+            interface_value = design_interface.get("value", {}) if isinstance(design_interface, dict) else {}
+            if interface_value.get("table_required"):
                 res["result_button"] = DefaultButtonCN.CANCEL.value
             else:
                 res["result_button"] = DefaultButtonCN.CONFIRM.value

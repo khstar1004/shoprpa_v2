@@ -1,4 +1,4 @@
-﻿import type { IPluginConfig } from './plugin'
+import type { IPluginConfig } from './plugin'
 
 export interface IAppConfig {
   remote_addr: string
@@ -7,7 +7,7 @@ export interface IAppConfig {
   app_edition: 'saas' | 'enterprise'
 }
 
-// 창관리관리닫기유형
+// Window management APIs exposed to the renderer runtime.
 export interface WindowManager {
   platform: string
   windows: Map<string, any>
@@ -27,6 +27,8 @@ export interface WindowManager {
   isMinimized: () => Promise<boolean>
   showDecorations: () => void
   hideDecorations: () => void
+  focusWindow: () => void
+  /** @deprecated Use focusWindow. */
   foucsWindow: () => void
   restoreLoginWindow: () => void
   getScreenWorkArea: () => any
@@ -39,7 +41,7 @@ export interface WindowManager {
 
 export type WindowPosition = 'left_top' | 'right_top' | 'left_bottom' | 'right_bottom' | 'top_center' | 'center' | 'right_center'
 
-// 창생성선택
+// Window creation options.
 export interface CreateWindowOptions {
   url: string
   position?: WindowPosition
@@ -74,7 +76,7 @@ export interface CreateWindowOptions {
   closable?: boolean
 }
 
-// 창메시지유형
+// Cross-window message payload.
 export interface WindowMessage {
   from?: string // window label
   target: string // window label
@@ -82,16 +84,16 @@ export interface WindowMessage {
   data?: any // message data
 }
 
-// 관리관리기기
+// Clipboard APIs exposed to plugins and renderer code.
 export interface ClipboardManager {
   writeClipboardText: (text: string) => Promise<void>
   readClipboardText: () => Promise<string>
 }
 
-// 사용유형
+// Runtime environment.
 export type AppEnv = 'tauri' | 'electron' | 'browser'
 
-// 도구관리관리기기
+// Utility APIs exposed to plugins and renderer code.
 export interface UtilsManager {
   isBrowser?: boolean
   getAppEnv: () => AppEnv
@@ -115,30 +117,34 @@ export interface UtilsManager {
   getPluginList: () => Promise<IPluginConfig[]>
 }
 
-// 빠름관리관리기기
+// Shortcut APIs exposed to plugins and renderer code.
 export interface ShortCutManager {
   register: (shortKey: string, handler: any) => void
   unregister: (shortKey: string) => void
   unregisterAll: () => void
+  registerToolbar: () => void
+  registerFlow: () => void
+  /** @deprecated Use registerToolbar. */
   regeisterToolbar: () => void
+  /** @deprecated Use registerFlow. */
   regeisterFlow: () => void
 }
 
-// 업데이트단일
+// Update manifest returned by the updater.
 export interface UpdateManifest {
   version: string
   date: string
   body: string
 }
 
-// 업데이트정보
+// Update status returned by the updater.
 export interface UpdateInfo {
   couldUpdate: boolean
   downloaded?: boolean
   manifest?: UpdateManifest | null
 }
 
-// 업데이트관리관리기기
+// Updater APIs exposed to the renderer runtime.
 export interface UpdaterManager {
   checkUpdate: () => Promise<UpdateInfo>
   quitAndInstall: () => void

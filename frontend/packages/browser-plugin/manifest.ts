@@ -1,18 +1,17 @@
 /** @format */
-import { readFileSync, writeFileSync } from 'node:fs'
+import { readFileSync } from 'node:fs'
 
 export function generateManifest(mode: string, environment) {
-  console.log('Generating manifest.json...')
   const packageJson = readFileSync('./package.json', 'utf-8')
   const { version } = JSON.parse(packageJson)
   const isFirefox = mode === 'firefox'
-  const appName = environment.VITE_APP_NAME
-  const appDescription = environment.VITE_APP_NAME
-  const appHomePage = environment.VITE_APP_HOMEPAGE
+  const appName = environment.VITE_APP_NAME || 'ShopRPA Browser Extension'
+  const appDescription = environment.VITE_APP_DESCRIPTION || 'ShopRPA browser automation connector'
+  const appHomePage = environment.VITE_APP_HOMEPAGE || 'https://shoprpa.local/'
   let manifest = {
     manifest_version: 3,
     name: appName,
-    description: mode !== 'production' ? `${appDescription}-${mode}` : appDescription,
+    description: mode !== 'production' ? `${appDescription} (${mode})` : appDescription,
     homepage_url: appHomePage,
     version,
     icons: {
@@ -66,7 +65,7 @@ export function generateManifest(mode: string, environment) {
       background: {
         scripts: ['background.js'],
       },
-      description: `${appDescription}-Firefox`,
+      description: `${appDescription} (Firefox)`,
       content_security_policy: 'script-src \'none\' \'unsafe-eval\';',
       browser_specific_settings: {
         gecko: {
@@ -80,6 +79,5 @@ export function generateManifest(mode: string, environment) {
     manifest = { ...manifest, ...manifestFirefox }
   }
 
-  writeFileSync('./public/manifest.json', JSON.stringify(manifest, null, 2))
-  console.log('manifest.json generated successfully.')
+  return manifest
 }

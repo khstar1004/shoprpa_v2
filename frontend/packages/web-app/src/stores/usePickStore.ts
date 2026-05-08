@@ -1,4 +1,4 @@
-﻿import { NiceModal } from '@rpa/components'
+import { NiceModal } from '@rpa/components'
 import { message } from 'ant-design-vue'
 import { useTranslation } from 'i18next-vue'
 import { defineStore } from 'pinia'
@@ -78,7 +78,6 @@ export const usePickStore = defineStore('pickStore', () => {
     // 지정메시지
     RpaPicker.bindMessage((res) => {
       const { key, data, err_msg } = res || {} // key: 'success' | 'error' | 'ping'
-      console.log('startPick res: ', res)
       if (key === 'success' && data) {
         const dataObj = JSON.parse(data)
         callback && callback({
@@ -124,9 +123,6 @@ export const usePickStore = defineStore('pickStore', () => {
     // 시작선택
     RpaPicker.create(() => {
       const _pickType = pickTypeMap[type] || 'ELEMENT'
-      console.log('type: ', type)
-      console.log('_pickType: ', _pickType)
-      console.log('element: ', element)
       pickerType.value = _pickType
       const data = element ? JSON.stringify(element) : ''
       const ext_data = { global: variableStore.globalVariableList }
@@ -137,7 +133,6 @@ export const usePickStore = defineStore('pickStore', () => {
           pick_mode: mode,
           data,
         }
-        console.log('startPick sendParams: ', sendParams)
         if (_pickType === 'SIMILAR') { // 선택 위ext_data
           sendParams.ext_data = ext_data
         }
@@ -179,7 +174,6 @@ export const usePickStore = defineStore('pickStore', () => {
   }
   // 열기 검증
   const startCheck = (type: string, data: any, callback: (params: { success: boolean, data: any }) => void, finshType = 'maximize') => {
-    // console.log('startCheck: ', data)
     type = type.toUpperCase()
     isChecking.value = true
     const ext_data = { global: variableStore.globalVariableList }
@@ -194,7 +188,6 @@ export const usePickStore = defineStore('pickStore', () => {
     })
     // 지정메시지
     RpaPicker.bindMessage((res) => {
-      console.log('startCheck res: ', res)
       if (res && res.key === 'success') {
         callback && callback({
           success: true,
@@ -229,7 +222,6 @@ export const usePickStore = defineStore('pickStore', () => {
   // 다시 선택
   const repick = (type: string, isModal: boolean = false, group: string, callback?: () => void) => {
     startPick(type, '', (res) => {
-      // console.log('repick res: ', res)
       if (res.success) {
         useElements.setTempElement(res.data, 'repick', group)
       }
@@ -240,7 +232,6 @@ export const usePickStore = defineStore('pickStore', () => {
   // 선택
   const similarPick = (element: any, callback?: () => void) => {
     startPick('SIMILAR', element, (res) => {
-      console.log('similarPick res: ', res)
       if (res.success) {
         useElements.setTempElement(res.data, 'similar')
       }

@@ -1,4 +1,4 @@
-﻿from datetime import UTC, datetime, timedelta
+from datetime import UTC, datetime, timedelta
 
 from redis.asyncio import Redis
 from sqlalchemy import select
@@ -31,10 +31,8 @@ class UserPointService:
             if cached_points is not None:
                 return int(cached_points)
         except Exception as e:
-            # Log the error if needed
-            logger.error(f"Error fetching cached points for user {user_id}: {e}")
+            logger.error("Error fetching cached points: %s", e)
 
-        # Fallback to database if cache miss
         user_point = await self._calculate_user_points(user_id)
         await self._set_cached_points(user_id, user_point)
 
@@ -44,17 +42,13 @@ class UserPointService:
         try:
             await self.redis.set(f"user_points:{user_id}", points, ex=3600)
         except Exception as e:
-            # Log the error if needed
-            logger.error(f"Error setting cached points for user {user_id}: {e}")
-            pass
+            logger.error("Error setting cached points: %s", e)
 
     async def _clear_cached_points(self, user_id: str):
         try:
             await self.redis.delete(f"user_points:{user_id}")
         except Exception as e:
-            # Log the error if needed
-            logger.error(f"Error clearing cached points for user {user_id}: {e}")
-            pass
+            logger.error("Error clearing cached points: %s", e)
 
     async def _get_available_allocations(self, user_id: str):
         current_time = datetime.now(UTC)
@@ -77,7 +71,7 @@ class UserPointService:
         return total_points
 
     def _get_priority_for_type(self, allocation_type: PointTransactionType) -> int:
-        """근거분유형단계"""
+        """Return consumption priority for an allocation type."""
         if allocation_type == PointTransactionType.MONTHLY_GRANT:
             return 50
         elif allocation_type == PointTransactionType.MANUAL_ADD:
@@ -130,37 +124,30 @@ class UserPointService:
             await self._clear_cached_points(user_id)
 
             await self.db.flush()
-            await self.db.commit()  # ✅ 제출서비스
+            await self.db.commit()
             return allocation
 
         except Exception as e:
-            await self.db.rollback()  # ❌ 출력오류돌아가기
-            raise e  # 다시 출력예외
+            await self.db.rollback()
+            raise
 
     async def grant_monthly_points(self, user_id: str):
         current_time = datetime.now(UTC)
         redis_key = f"points_monthly_grant:{user_id}:{current_time.year}-{current_time.month}"
 
-        # 추가디버그로그
-        logger.info(f"Checking monthly grant for user {user_id}")
-        logger.info(f"Current time (UTC): {current_time}")
-        logger.info(f"Redis key: {redis_key}")
+        logger.info("Checking monthly point grant")
 
         try:
             already_granted = await self.redis.get(redis_key)
             if already_granted:
-                logger.info(f"Redis shows already granted: {already_granted}")
+                logger.info("Monthly point grant already marked in Redis")
                 return None
         except Exception as e:
-            logger.error(f"Error checking Redis for monthly grant: {e}")
+            logger.error("Error checking Redis for monthly grant: %s", e)
 
         month_start = current_time.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
         month_end = (month_start + timedelta(days=32)).replace(day=1) - timedelta(seconds=1)
 
-        # 추가시간로그
-        logger.info(f"Month range: {month_start} to {month_end}")
-
-        # 조회전추가로그
         logger.info("Querying database for existing grants...")
 
         existing_grant = await self.db.execute(
@@ -170,27 +157,21 @@ class UserPointService:
                 PointAllocation.created_at.between(month_start, month_end),
             )
         )
-        existing_grant = existing_grant.scalar_one_or_none()
-
-        # 추가조회결과로그
-        logger.info(f"Existing grant found: {existing_grant}")
+        existing_grant = existing_grant.scalars().first()
 
         if existing_grant:
-            logger.info(f"Found existing grant: {existing_grant.created_at}")
-            # 결과가데이터베이스중완료있음발송기록,  Redis 반환
+            logger.info("Existing monthly grant found")
             try:
-                await self.redis.set(redis_key, "1", ex=2678400)  # 31경과
+                await self.redis.set(redis_key, "1", ex=2678400)
             except Exception as e:
-                logger.error(f"Error setting Redis key after finding existing grant: {e}")
+                logger.error("Error setting Redis key after finding existing grant: %s", e)
             return None
 
-        # 가져오기매칭의월정도발송분데이터
         settings = get_settings()
-        monthly_points = getattr(settings, "MONTHLY_POINTS", 100000)  # 1000분
+        monthly_points = getattr(settings, "MONTHLY_POINTS", 100000)
 
-        logger.info(f"Granting {monthly_points} points to user {user_id}")
+        logger.info("Granting monthly points: %s", monthly_points)
 
-        # 생성월정도발송
         allocation = await self.create_point_allocation(
             user_id=user_id,
             amount=monthly_points,
@@ -199,12 +180,11 @@ class UserPointService:
             expiration_policy=PointExpirationPolicy.END_OF_THIS_MONTH,
         )
 
-        #  Redis , 중지재복사발송
         try:
-            await self.redis.set(redis_key, "1", ex=2678400)  # 31경과
-            logger.info(f"Successfully set Redis key: {redis_key}")
+            await self.redis.set(redis_key, "1", ex=2678400)
+            logger.info("Monthly point grant marked in Redis")
         except Exception as e:
-            logger.error(f"Error setting Redis key: {e}")
+            logger.error("Error setting Redis key: %s", e)
 
         return allocation
 
@@ -227,10 +207,8 @@ class UserPointService:
         if amount <= 0:
             raise ValueError("Amount must be greater than zero.")
 
-        # 1. Get unexpired point allocations ordered by priority (high to low)
         allocations = await self._get_available_allocations(user_id)
 
-        # Calculate total available points
         available_points = sum(allocation.remaining_amount for allocation in allocations)
 
         if available_points < amount:
@@ -238,7 +216,6 @@ class UserPointService:
                 f"User {user_id} has only {available_points} points, but {amount} are required."
             )
 
-        # 2. Create transaction first (we'll link consumptions to it)
         transaction = PointTransaction(
             user_id=user_id,
             amount=-amount,
@@ -250,7 +227,6 @@ class UserPointService:
         self.db.add(transaction)
         await self.db.flush()
 
-        # 3. Consume points from allocations in priority order
         remaining_to_deduct = amount
         consumptions = []
 
@@ -258,10 +234,8 @@ class UserPointService:
             if remaining_to_deduct <= 0:
                 break
 
-            # Determine how much to take from this allocation
             consumption_amount = min(allocation.remaining_amount, remaining_to_deduct)
 
-            # Create consumption record
             consumption = PointConsumption(
                 transaction_id=transaction.id,
                 allocation_id=allocation.id,
@@ -270,15 +244,11 @@ class UserPointService:
             self.db.add(consumption)
             consumptions.append(consumption)
 
-            # Update the allocation's remaining amount
             allocation.remaining_amount -= consumption_amount
 
-            # Reduce the amount left to deduct
             remaining_to_deduct -= consumption_amount
         await self.db.flush()
 
-        # 4. Update UserPoint cache
-        # NOTE: 대모듈분예제거분, 으로직선연결업데이트저장.결과가직선연결관리, 이면가져오기 매다시 계획, 가능아니오상승반대.
         user_point = await self.get_cached_points(user_id)
         user_point -= amount
         await self._set_cached_points(user_id, user_point)
@@ -289,6 +259,6 @@ class UserPointService:
 
 
 class InsufficientPointsError(Exception):
-    """지정예외유형, 테이블분아니오의오류"""
+    """Raised when the user does not have enough points."""
 
     pass

@@ -40,7 +40,7 @@ class Excel:
         update_links: bool = True,
     ) -> ExcelObj:
         if not os.path.exists(file_path):
-            raise Exception("의파일 경로있음오류, 입력하세요정상의경로!")
+            raise Exception("파일 경로가 올바르지 않습니다. 올바른 경로를 입력하세요.")
         else:
             file_path = os.path.abspath(file_path)
         application = Application.init_app(
@@ -119,7 +119,7 @@ class Excel:
         password: str = "",
     ) -> tuple[ExcelObj, str]:
         if not os.path.exists(file_path):
-            raise Exception("의파일 경로있음오류, 입력하세요정상의경로!")
+            raise Exception("파일 경로가 올바르지 않습니다. 올바른 경로를 입력하세요.")
         else:
             file_path = os.path.abspath(file_path)
         if file_name:
@@ -1326,7 +1326,7 @@ class Excel:
         elif select_type == SearchRangeType.ALL:
             data_region = "{}{}:{}{}".format("A", "1", r_end_col_letter, r_end_row)
         else:
-            raise ValueError("지원하지 않음의유형: {}".format(select_type))
+            raise ValueError("지원하지 않는 유형입니다: {}".format(select_type))
 
         content = Range.get_range_data(Worksheet.get_range(worksheet, data_region), True if real_text else False)
         if content:
@@ -2186,7 +2186,7 @@ class Excel:
             cell_position: 셀위치( delete_all=False 시사용)
 
         Raises:
-            ValueError: 아니오저장된 비고시출력예외
+            ValueError: 저장되지 않은 비고 처리 중 오류
         """
         worksheet = Worksheet.get_worksheet(excel, sheet_name, default=1)
 

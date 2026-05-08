@@ -1,4 +1,4 @@
-﻿from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.dependencies import get_user_service, verify_getkey_bearer_token, verify_register_bearer_token
 from app.logger import get_logger
@@ -19,46 +19,44 @@ router = APIRouter(
     "/register",
     response_model=StandardResponse,
     status_code=status.HTTP_200_OK,
-    summary="사용자회원가입",
-    description="근거휴대폰 번호행사용자회원가입, 반환api_key, 비밀번호및다운로드연결",
+    summary="Register user",
+    description="Register a user by phone number and return the default API key.",
 )
 async def register_user(
     request: UserRegisterRequest,
     service: UserService = Depends(get_user_service),
     token: str = Depends(verify_register_bearer_token),
 ):
-    """가져오기API_KEY연결"""
+    """Register a user and return the default API key."""
     try:
         phone = request.phone
-        logger.info(f"사용자가져오기API_KEY연결요청 , phone: {phone}")
+        logger.info("User registration requested")
 
-        # 호출서비스행가져오기
-        result = await service.get_user_info(phone)
+        result = await service.register_user(phone)
 
         if not result:
-            logger.error(f"사용자가져오기API_KEY실패, phone: {phone}")
+            logger.error("User registration failed")
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="사용자미완료회원가입",
+                detail="User registration failed",
             )
 
-        # 생성반환데이터
         response_data = UserAPIKeyResponse(user_id=result.get("user_id") or "", api_key=result.get("api_key") or "")
 
-        logger.info(f"사용자회원가입성공, phone: {phone}, user_id: {result.get('user_id')}")
+        logger.info("User registration succeeded for user_id %s", result.get("user_id"))
 
         return StandardResponse(
             code=ResCode.SUCCESS,
-            msg="가져오기API_KEY성공",
+            msg="Registered",
             data=response_data.model_dump(),
         )
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"사용자가져오기API_KEY경과중출력오류: {str(e)}")
+        logger.error("Error during user registration: %s", str(e))
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="서비스서버내부 오류",
+            detail="Internal service error",
         )
 
 
@@ -66,44 +64,42 @@ async def register_user(
     "/get-key",
     response_model=StandardResponse,
     status_code=status.HTTP_200_OK,
-    summary="사용자가져오기API_KEY",
-    description="근거휴대폰 번호가져오기API_KEY",
+    summary="Get user API key",
+    description="Get the default API key for a user by phone number.",
 )
 async def get_user_api_key(
     request: UserRegisterRequest,
     service: UserService = Depends(get_user_service),
     token: str = Depends(verify_getkey_bearer_token),
 ):
-    """가져오기API_KEY연결"""
+    """Get a user's default API key."""
     try:
         phone = request.phone
-        logger.info(f"사용자가져오기API_KEY연결요청 , phone: {phone}")
+        logger.info("User API key requested")
 
-        # 호출서비스행가져오기
         result = await service.get_user_info(phone)
 
         if not result:
-            logger.error(f"사용자가져오기API_KEY실패, phone: {phone}")
+            logger.error("User API key lookup failed")
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="사용자미완료회원가입",
+                detail="User is not registered",
             )
 
-        # 생성반환데이터
         response_data = UserAPIKeyResponse(user_id=result.get("user_id") or "", api_key=result.get("api_key") or "")
 
-        logger.info(f"사용자가져오기API_KEY성공, phone: {phone}, user_id: {result.get('user_id')}")
+        logger.info("User API key lookup succeeded for user_id %s", result.get("user_id"))
 
         return StandardResponse(
             code=ResCode.SUCCESS,
-            msg="가져오기API_KEY성공",
+            msg="Loaded",
             data=response_data.model_dump(),
         )
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"사용자가져오기API_KEY경과중출력오류: {str(e)}")
+        logger.error("Error during user API key lookup: %s", str(e))
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="서비스서버내부 오류",
+            detail="Internal service error",
         )

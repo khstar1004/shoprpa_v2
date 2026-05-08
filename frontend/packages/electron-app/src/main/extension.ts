@@ -1,8 +1,10 @@
-﻿import fs from 'node:fs'
+import fs from 'node:fs'
 import path from 'node:path'
-import to from 'await-to-js'
-import type { IPluginConfig } from '@rpa/shared'
 
+import type { IPluginConfig } from '@rpa/shared'
+import to from 'await-to-js'
+
+import logger from './log'
 import { extensionPath } from './path'
 
 interface MainManifest {
@@ -24,13 +26,12 @@ interface IExtension {
 export let extensions: IExtension[] = []
 
 /**
- *  extensionPath 아래의 package, 가져오기 mf-manifest.json 중의내용
+ * Discover extension packages from every configured extension directory.
  */
 export async function init() {
   const validExtensions: IExtension[] = []
 
   const promises = extensionPath.map(async (basePath) => {
-    // 조회경로여부저장된 로디렉터리
     const [errStats, stats] = await to(fs.promises.stat(basePath))
     if (errStats || !stats.isDirectory()) {
       return
@@ -38,30 +39,31 @@ export async function init() {
 
     const [errItems, items] = await to(fs.promises.readdir(basePath))
     if (errItems) {
-      console.error(`Error reading extension directory ${basePath}:`, errItems)
+      logger.error(`Error reading extension directory ${basePath}:`, errItems)
       return
     }
 
     const itemPromises = items.map(async (item) => {
       const itemPath = path.join(basePath, item)
 
-      // 조회여부로디렉터리
       const [errItemStats, itemStats] = await to(fs.promises.stat(itemPath))
-      if (errItemStats || !itemStats.isDirectory()) return
+      if (errItemStats || !itemStats.isDirectory())
+        return
 
       const manifestJsonPath = path.join(itemPath, 'mf-manifest.json')
 
-      // 조회 mf-manifest.json 여부저장에서
       const [errManifestStats, manifestStats] = await to(fs.promises.stat(manifestJsonPath))
-      if (errManifestStats || !manifestStats.isFile()) return
+      if (errManifestStats || !manifestStats.isFile())
+        return
 
       const [errContent, content] = await to(fs.promises.readFile(manifestJsonPath, 'utf-8'))
-      if (errContent) return
+      if (errContent)
+        return
 
       try {
         const manifest: MainManifest = JSON.parse(content)
         const resourcePath = itemPath
-        const entryUrl = manifest.metaData.publicPath + 'mf-manifest.json'
+        const entryUrl = `${manifest.metaData.publicPath}mf-manifest.json`
 
         validExtensions.push({
           name: manifest.name,
@@ -71,11 +73,11 @@ export async function init() {
             version: manifest.metaData.buildInfo.buildVersion,
             entry: entryUrl,
             enabled: true,
-          }
+          },
         })
-      } catch (err) {
-        // JSON 파싱실패
-        console.error(`Error parsing manifest at ${manifestJsonPath}:`, err)
+      }
+      catch (err) {
+        logger.error(`Error parsing manifest at ${manifestJsonPath}:`, err)
       }
     })
 
@@ -91,7 +93,7 @@ init()
 
 export const loadExtensions = () => extensions.map(it => it.config)
 
-export const getExtensionResourcePath = (name: string) => {
+export function getExtensionResourcePath(name: string) {
   const extension = extensions.find(it => it.name === name)
   return extension?.resourcePath || ''
 }
